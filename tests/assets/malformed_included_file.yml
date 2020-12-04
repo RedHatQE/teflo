@@ -1,0 +1,6 @@
+---
+name: common
+description: common descriptor
+
+credentials:
+  - name: provider

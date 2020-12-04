@@ -1,0 +1,25 @@
+---
+# default openstack libcloud schema
+
+type: map
+allowempty: True
+mapping:
+  key1:
+    type: str
+    required: False
+  key2:
+    type: seq
+    required: False
+    sequence:
+      - type: str
+  credential:
+    required: False
+    type: map
+    mapping:
+      user:
+        type: str
+        required: True
+      password:
+        type: str
+        required: True
+

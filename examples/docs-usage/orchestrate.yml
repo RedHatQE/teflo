@@ -1,0 +1,266 @@
+---
+orchestrate:
+  - name:
+    description:
+    orchestrator:
+    hosts:
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    hosts: host01, host02
+
+---
+orchestrate:
+  - name: rhsm_register
+    hosts:
+      - host01
+      - host02
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    hosts: all
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    hosts:
+      - all
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    hosts:
+      - host01
+      - host02
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    hosts:
+      - host01
+      - host02
+    ansible_options:
+      extra_vars:
+        username: kingbob
+        password: minions
+        server_hostname: server01.example.com
+        auto_attach: true
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    hosts:
+      - host01
+      - host02
+    ansible_galaxy_options:
+      role_file: requirements.yml
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    hosts:
+      - host01
+      - host02
+    ansible_galaxy_options:
+      roles:
+        - oasis-roles.rhsm
+        - git+https://gitlab.cee.redhat.com/oasis-roles/coreos_infra.git,master,oasis_roles.coreos_infra
+      collections:
+        - geerlingguy.php_roles
+        - geerlingguy.k8s
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    hosts:
+      - host01
+      - host02
+    ansible_options:
+      extra_vars:
+        username: kingbob
+        password: minions
+        server_hostname: server01.example.com
+        auto_attach: true
+    ansible_galaxy_options:
+      role_file: roles.yml
+
+---
+orchestrate:
+  - name: custom.yml
+    description: "running a custom playbook, only running tasks when tag=prod"
+    orchestrator: ansible
+    hosts:
+      - host01
+    ansible_options:
+      tags:
+        - prod
+
+---
+orchestrate:
+  - name: custom2.yml
+    description: "custom playbook, w/ different connection options"
+    orchestrator: ansible
+    hosts:
+      - host07
+    ansible_options:
+      forks: 2
+      become: True
+      become_method: sudo
+      become_user: test_user2
+      remote_user: test_user
+      connection: paramiko
+      tags:
+        - prod
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    hosts: all
+    ansible_options:
+      extra_vars:
+        username: kingbob
+        password: minions
+        server_hostname: server01.example.com
+        auto_attach: true
+    ansible_galaxy_options:
+      role_file: roles.yml
+    cleanup:
+      name: rhsm_unregister.yml
+      description: "unregister systems under tests from rhsm"
+      orchestrator: ansible
+      hosts: all
+      ansible_galaxy_options:
+        role_file: roles.yml
+
+---
+orchestrate:
+  - name: rhsm_register.yml
+    hosts: clients
+
+---
+orchestrate:
+  - name: scripts/create_dir.sh
+    description: create a local dir
+    ansible_script: True
+    hosts: localhost
+    orchestrator: ansible
+
+---
+orchestrate:
+  - name: scripts/create_dir.sh
+    description: creates a local dir
+    ansible_options:
+      extra_args: -c -e 12
+    ansible_script: True
+    hosts: localhost
+    orchestrator: ansible
+
+---
+orchestrate:
+  - name: scripts/create_dir.sh
+    description: creates a remote dir
+    ansible_options:
+      remote_user: cloud-user
+      extra_args: -c -e 12 chdir=/home
+    ansible_script: True
+    hosts: host01
+    orchestrator: ansible
+
+---
+orchestrate:
+- name: ansible/ssh_connect.yml
+  description: "setup key authentication between driver and clients"
+  orchestrator: ansible
+  hosts: driver
+  ansible_options:
+    skip_tags:
+      - ssh_auth
+    extra_vars:
+      username: root
+      password: redhat
+  ansible_galaxy_options:
+    role_file: roles.yml
+
+---
+orchestrate:
+- name: rhsm_register.yml
+  description: "register systems under test against rhsm"
+  orchestrator: ansible
+  hosts:
+  - host01
+  - host02
+  ansible_galaxy_options:
+    role_file: roles.yml
+
+# Example 12
+---
+- name: orchestrate_1
+  description: "orchestrate1"
+  orchestrator: ansible
+  hosts: localhost
+  ansible_playbook:
+    name: ansible/list_block_devices.yml
+
+- name: orchestrate_2
+  description: "orchestrate2"
+  orchestrator: ansible
+  hosts: localhost
+  ansible_shell:
+    - chdir: ./test_sample_artifacts
+      command: ls
+    - chdir: ./test_sample_artifacts
+      command: cp a.txt b.txt
+
+- name: orchestrate_3
+  description: "orchestrate3"
+  orchestrator: ansible
+  hosts: localhost
+  ansible_script:
+    name: ./scripts/helloworld.py Teflo_user
+    executable: python
+
+
+# Example 13
+---
+- name: orchestrate_1
+  description: "orchestrate1"
+  orchestrator: ansible
+  hosts: localhost
+  ansible_script:
+    name: ./scripts/helloworld.py Teflo_user
+    executable: python
+
+# Example 14
+---
+- name: orchestrate_1
+  description: "orchestrate1"
+  orchestrator: ansible
+  hosts: localhost
+  ansible_script:
+    name: ./scripts/helloworld.py Teflo_user
+  ansible_options:
+    extra_args: executable=python
+
+# Example 15
+---
+- name: scripts/add_two_numbers.sh
+  description: ""
+  orchestrator: ansible
+  hosts: controller
+  ansible_script: True
+  ansible_options:
+    extra_args: X=12 Y=18

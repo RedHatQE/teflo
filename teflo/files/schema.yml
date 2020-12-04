@@ -1,0 +1,214 @@
+---
+# default teflo schema
+
+type: map
+allowempty: True
+mapping:
+  name:
+    required: True
+    type: str
+  description:
+    required: False
+    type: str
+
+  resource_check:
+    allowempty: True
+    type: map
+    mapping:
+      monitored_services:
+        allowempty: True
+        type: seq
+        sequence:
+          - type: str
+      playbook:
+        allowempty: True
+        type: seq
+        sequence:
+          - type: map
+            mapping:
+              name:
+                required: True
+                type: str
+              ansible_options:
+                required: False
+                type: any
+              ansible_galaxy_options:
+                allowempty: True
+                type: map
+      script:
+        allowempty: True
+        type: seq
+        sequence:
+          - type: map
+            mapping:
+              name:
+                required: True
+                type: str
+              chdir:
+                type: str
+              creates:
+                 type: str
+              decrypt:
+                type: str
+              executable:
+                type: str
+              removes:
+                type: str
+              warn:
+                type: str
+              stdin:
+                type: str
+              stdin_add_newline:
+                type: str
+              ansible_options:
+                required: False
+                type: any
+
+  include:
+    required: False
+    type: any
+
+  provision:
+    required: False
+    sequence:
+      - type: map
+        allowempty: True
+        matching-rule: any
+        mapping:
+          name:
+            required: True
+            type: str
+          description:
+            type: str
+          ip_address:
+            required: False
+            type: any
+          provisioner:
+            type: str
+          provider:
+            allowempty: True
+            required: False
+            type: map
+          ansible_params:
+            type: map
+            allowempty: True
+          labels:
+            type: any
+            func: type_str_list
+          metadata:
+            allowempty: True
+            type: map
+          credential:
+            required: False
+            type: str
+          regex;(role|groups):
+            required: False
+            type: any
+            func: type_str_list
+          regex;(.*):
+            required: False
+            type: any
+
+  orchestrate:
+    required: False
+    sequence:
+      - type: map
+        allowempty: True
+        mapping:
+          name:
+            required: True
+            type: str
+          description:
+            type: str
+          orchestrator:
+            type: str
+            func: valid_orchestrator
+          hosts:
+            required: True
+            type: any
+            func: type_str_list
+          labels:
+            type: any
+            func: type_str_list
+
+  execute:
+    required: False
+    sequence:
+      - type: map
+        allowempty: True
+        mapping:
+          name:
+            required: True
+            type: str
+          description:
+            type: str
+          executor:
+            required: True
+            type: str
+            func: valid_executor
+          hosts:
+            required: True
+            type: any
+            func: type_str_list
+          labels:
+            type: any
+            func: type_str_list
+
+  report:
+    required: False
+    sequence:
+    - type: map
+      allowempty: True
+      mapping:
+        name:
+          required: True
+          type: any
+        description:
+          type: str
+        executes:
+          type: any
+          func: type_str_list
+          required: False
+        provider:
+          type: map
+          allowempty: True
+          mapping:
+            name:
+              required: True
+              type: str
+        importer:
+          type: str
+        labels:
+          type: any
+          func: type_str_list
+
+  notifications:
+    required: False
+    sequence:
+    - type: map
+      allowempty: True
+      mapping:
+        name:
+          type: str
+        description:
+          type: str
+        notifier:
+          required: True
+          type: str
+        on_start:
+          required: False
+          type: bool
+        on_success:
+          required: False
+          type: bool
+        on_failure:
+          required: False
+          type: bool
+        on_demand:
+          required: False
+          type: bool
+        on_tasks:
+          required: False
+          type: seq
+          sequence:
+            - type: str

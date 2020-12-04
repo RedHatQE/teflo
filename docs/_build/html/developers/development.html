@@ -1,0 +1,615 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Development &mdash; Teflo 1.9.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'1.9.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Glossary" href="../glossary.html" />
+    <link rel="prev" title="Architecture" href="architecture.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Teflo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation &amp; Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../users/install.html">Install Teflo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../users/configuration.html">Configure Teflo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Teflo</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../users/index.html">User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../users/index.html#detailed-information">Detailed Information</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Teflo Development</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer’s Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#architecture-details">Architecture Details</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#development-information">Development Information</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Development</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#branch-model">Branch Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-setup-your-dev-environment">How to setup your dev environment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-run-tests-locally">How to run tests locally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-build-documentation">How to build documentation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-propose-a-new-change">How to propose a new change</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#feature-toggles">Feature Toggles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-write-an-plugin-for-teflo">How to write an plugin for teflo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contacts</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Teflo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Developer’s Guide</a> &raquo;</li>
+        
+      <li>Development</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/developers/development.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="development">
+<h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
+<p>Welcome!</p>
+<p>The teflo development team welcomes your contributions to the project. Please
+use this document as a guide to working on proposed changes to teflo. We ask
+that you read through this document to ensure you understand our development
+model and best practices before submitting changes.</p>
+<div class="section" id="branch-model">
+<h2>Branch Model<a class="headerlink" href="#branch-model" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Teflo has two branches</dt>
+<dd><ul class="first last simple">
+<li>develop - all work is done here</li>
+<li>master - stable tagged release that users can use</li>
+</ul>
+</dd>
+</dl>
+<p>The master branch is a protected branch. We do not allow commits directly to
+it. Master branch contains the latest stable release. The develop branch is
+where all active development takes place for the next upcoming release. All
+contributions are made to the develop branch.</p>
+<p>Most contributors create a new branch based off of develop to create their
+changes.</p>
+</div>
+<div class="section" id="how-to-setup-your-dev-environment">
+<h2>How to setup your dev environment<a class="headerlink" href="#how-to-setup-your-dev-environment" title="Permalink to this headline">¶</a></h2>
+<p>Lets first clone the source code. We will clone from the develop branch.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/RedHatQE/teflo.git -b develop
+</pre></div>
+</div>
+<p>Next lets create a Python virtual environment for teflo. This assumes you
+have virtualenv package installed.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mkdir ~/.virtualenvs
+$ virtualenv ~/.virtualenvs/teflo
+$ <span class="nb">source</span> ~/.virtualenvs/teflo/bin/activate
+</pre></div>
+</div>
+<p>Now that we have our virtual environment created. Lets go ahead and install
+the Python packages used for development.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ pip install -r teflo/test-requirements.txt
+</pre></div>
+</div>
+<p>Let’s create our new branch from develop. Do this step from teflo’s root folder</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ <span class="nb">cd</span> teflo
+<span class="o">(</span>teflo<span class="o">)</span> $ git checkout -b &lt;new branch&gt;
+<span class="o">(</span>teflo<span class="o">)</span> $ <span class="nb">cd</span> ..
+</pre></div>
+</div>
+<p>Finally install the teflo package itself using editable mode.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ pip install -e teflo/.
+</pre></div>
+</div>
+<p>You can verify teflo is installed by running the following commands.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ teflo
+<span class="o">(</span>teflo<span class="o">)</span> $ teflo --version
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-to-run-tests-locally">
+<h2>How to run tests locally<a class="headerlink" href="#how-to-run-tests-locally" title="Permalink to this headline">¶</a></h2>
+<p>We have the following standards and guidelines</p>
+<blockquote>
+<div><ul class="simple">
+<li>All tests must pass</li>
+<li>Code coverage must be above 50%</li>
+<li>Code meets PEP8 standards</li>
+</ul>
+</div></blockquote>
+<p>Before any change is proposed to teflo we ask that you run the tests
+to verify the above standards. If you forget to run the tests,
+we have a Jenkins job that runs through these on any changes.
+This allows us to make sure each patch meets the standards.</p>
+<p>We also highly encourage developers to be looking to provide more tests
+or enhance existing tests for fixes or new features they maybe submitting.
+If there is a reason that the changes don’t have any accompanying tests
+we should be annotating the code changes with TODO comments with the
+following information:</p>
+<blockquote>
+<div><ul class="simple">
+<li>State that the code needs tests coverage</li>
+<li>Quick statement of why it couldn’t be added.</li>
+</ul>
+</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#TODO: This needs test coverage. No mock fixture for the Teflo Orchestrator to test with.</span>
+</pre></div>
+</div>
+<div class="section" id="how-to-run-unit-tests">
+<h3>How to run unit tests<a class="headerlink" href="#how-to-run-unit-tests" title="Permalink to this headline">¶</a></h3>
+<p>You can run the unit tests and verify pep8 by the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ make test-functional
+</pre></div>
+</div>
+<p>This make target is actually executing the following tox environments:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ tox -e py3-unit
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">we use a generic tox python 3 environment to be flexible towards developer
+environments that might be using different versions of python 3. Note the
+minimum supported version of python is python 3.6.</p>
+</div>
+</div>
+<div class="section" id="how-to-run-localhost-scenario-tests">
+<h3>How to run localhost scenario tests<a class="headerlink" href="#how-to-run-localhost-scenario-tests" title="Permalink to this headline">¶</a></h3>
+<p>The local scenario test verify your changes don’t impact core functionality in the framework
+during provision, orchestrate, execute, or report. It runs a scenario descriptor file using
+localhost, a teflo.cfg, some dummy ansible playbooks/scripts, and dummy test artifacts.
+It does NOT run integration to real external system like OpenStack or Polarion.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ make test-scenario
+</pre></div>
+</div>
+<p>This make target is actually executing the following tox environments:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ tox -e py3-scenario
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If there is a need to test an integration with a real external system
+like OpenStack or Polarion, you could use this scenario as a basis of a
+more thorough integration test of your changes. It would require modifying
+the scenario descriptor and teflo.cfg file with the necessary parameters and
+information. But it is not recommended to check in this modified scenario
+as part of your patch set.</p>
+</div>
+</div>
+</div>
+<div class="section" id="how-to-build-documentation">
+<h2>How to build documentation<a class="headerlink" href="#how-to-build-documentation" title="Permalink to this headline">¶</a></h2>
+<p>If you are working on documentation changes, you probably will want to build
+the documentation locally. This way you can verify your change looks good. You
+can build the docs locally by running the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ make docs
+</pre></div>
+</div>
+<p>This make target is actually executing the following tox environments:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ tox -e docs
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-to-propose-a-new-change">
+<h2>How to propose a new change<a class="headerlink" href="#how-to-propose-a-new-change" title="Permalink to this headline">¶</a></h2>
+<p>The teflo project resides in Red Hat QE github space. To send the new changes you will
+need to create a PR against the develop branch .
+Once the PR is sent, the github actions will runt the unit tests and will inform the
+maintainers to review the PR.</p>
+<p>At this point you have your local development environment setup. You made some
+code changes, ran through the unit tests and pep8 validation. Before you submit
+your changes you should check a few things</p>
+<p>If the develop branch has changed since you last pulled it down it
+is important that you get the latest changes in your branch.
+You can do that in two ways:</p>
+<p>Rebase using the local develop branch</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ git checkout develop
+<span class="o">(</span>teflo<span class="o">)</span> $ git pull origin develop
+<span class="o">(</span>teflo<span class="o">)</span> $ git checkout &lt;branch&gt;
+<span class="o">(</span>teflo<span class="o">)</span> $ git rebase develop
+</pre></div>
+</div>
+<p>Rebase using the remote develop branch</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ git pull --rebase origin/develop
+</pre></div>
+</div>
+<p>Finally, if you have mutiple commits its best to squash them into a single commit.
+The interactive rebase menu will appear and guide you with what you need to do.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ git rebase -i HEAD~&lt;the number of commits to latest develop commit&gt;
+</pre></div>
+</div>
+<p>Once you’ve completed the above you’re good to go! All that is left is
+to submit your changes to your branch and create a new PR against the develop branch</p>
+</div>
+<div class="section" id="feature-toggles">
+<h2>Feature Toggles<a class="headerlink" href="#feature-toggles" title="Permalink to this headline">¶</a></h2>
+<p>Although this doesn’t happen very often this does warrant a mention. If a feature
+is too big to, where it would better suited to merge incrementally in a
+‘trunk’ style of development. Then we should consider utilizing
+feature toggles so as the develop branch can stay releasable at all times.</p>
+<p>The teflo.cfg is capable of reading feature toggles and utilizing them.
+It’s a very rudimentary implementation of a feature toggle mechanism but it has worked in
+the past on short notice. Below is the process when working at adding functionality to
+one of the main resources (Host, Actions, Executions, Reports).</p>
+<p>To the resource we are working on define the following feature toggle method</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">__set_feature_toggles_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">_feature_toggles</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TOGGLES&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&lt;name of resource the feature belongs to&gt;&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_feature_toggles</span> <span class="o">=</span> <span class="n">item</span>
+</pre></div>
+</div>
+<p>Then in the __init__ function of the resource you are working on add the
+following lines of code. This will help to keep teflo running original code
+path unless explicitly told to use the new feature</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature_toggles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature_toggles</span><span class="p">[</span><span class="s1">&#39;&lt;name of new feature toggle&gt;&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">:</span>
+    <span class="o">&lt;</span><span class="n">new</span> <span class="n">feature</span> <span class="n">path</span><span class="o">&gt;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="o">&lt;</span><span class="n">original</span> <span class="n">code</span> <span class="n">path</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Now in your teflo config file when you want to use the new code path
+for testing or continued development you can do the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>orchestrator:ansible<span class="o">]</span>
+<span class="nv">log_remove</span><span class="o">=</span>False
+<span class="nv">verbosity</span><span class="o">=</span>v
+
+<span class="o">[</span>feature_toggle:&lt;resource name from step <span class="m">1</span>&gt;<span class="o">]</span>
+&lt;feature toggle name specified in step <span class="m">2</span>&gt;<span class="o">=</span>True
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-to-write-an-plugin-for-teflo">
+<h2>How to write an plugin for teflo<a class="headerlink" href="#how-to-write-an-plugin-for-teflo" title="Permalink to this headline">¶</a></h2>
+<p>For developers who wish to put together their own plugins can follow these guidelines:</p>
+<ol class="arabic">
+<li><p class="first">The new plugin will need to import one of these Teflo classes based on the plugin they wish to develop
+Teflo Plugin classes:
+<strong>ProvisionerPlugin</strong>
+<strong>OrchestratorPlugin</strong>
+<strong>ExecutorPlugin</strong>
+<strong>ImporterPlugin</strong>
+<strong>NotificationPlugin</strong>
+from the <strong>teflo.core</strong> module.</p>
+</li>
+<li><p class="first">It should have the plugin name using variable <strong>__plugin_name__</strong></p>
+</li>
+<li><dl class="first docutils">
+<dt>It should implement the following key functions</dt>
+<dd><ul class="first last simple">
+<li>For provisioner plugins implement the <strong>create</strong>, <strong>delete</strong>, and <strong>validate</strong> functions</li>
+<li>For importer plugins implement the <strong>import_artifacts</strong> and <strong>validate</strong> functions</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">You should define a schema for Teflo to validate the required parameter inputs
+defined in the scenario file. Teflo use’s
+<a class="reference external" href="https://pykwalify.readthedocs.io/en/master/">pyqwalify</a> to validate schema. Below is an
+example schema</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="c1"># default openstack libcloud schema</span>
+
+<span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">map</span>
+<span class="nt">allowempty</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">mapping</span><span class="p">:</span>
+  <span class="nt">image</span><span class="p">:</span>
+    <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+  <span class="nt">flavor</span><span class="p">:</span>
+    <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+  <span class="nt">networks</span><span class="p">:</span>
+    <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">seq</span>
+    <span class="nt">sequence</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+  <span class="nt">floating_ip_pool</span><span class="p">:</span>
+    <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+  <span class="nt">keypair</span><span class="p">:</span>
+    <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+  <span class="nt">credential</span><span class="p">:</span>
+    <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">map</span>
+    <span class="nt">mapping</span><span class="p">:</span>
+      <span class="nt">auth_url</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+        <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+      <span class="nt">username</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+        <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+      <span class="nt">password</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+        <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+      <span class="nt">tenant_name</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+        <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+      <span class="nt">domain_name</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+        <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+      <span class="nt">region</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">str</span>
+        <span class="nt">required</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+</pre></div>
+</div>
+<p>Once you’ve created your schema and/or extension files. You can define them in the plugin
+as the following attributes <strong>__schema_file_path__</strong> and <strong>__schema_ext_path__</strong>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">__schema_file_path__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+                                                    <span class="s2">&quot;files/schema.yml&quot;</span><span class="p">))</span>
+<span class="n">__schema_ext_path__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+                                                   <span class="s2">&quot;files/lp_schema_extensions.py&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>To validate the schema, you can import the <strong>schema_validator</strong> function from the <strong>teflo.helpers</strong>
+class</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># validate teflo plugin schema first</span>
+    <span class="n">schema_validator</span><span class="p">(</span><span class="n">schema_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">build_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">),</span>
+                     <span class="n">schema_files</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__schema_file_path__</span><span class="p">],</span>
+                     <span class="n">schema_ext_files</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__schema_ext_path__</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">To enable logging you can create a logger using the <strong>create_logger</strong> function or calling python’s <strong>getLogger</strong></p>
+</li>
+<li><p class="first">The plugin needs to add an entry point in its setup.py file so that it can register the plugin where
+Teflo can find it. For provsioners register the plugin to <strong>provisioner_plugins</strong> and for importers
+register to <strong>importer_plugins</strong>. Refer the example below:</p>
+</li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span><span class="p">,</span> <span class="n">find_packages</span>
+
+<span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;new_plugin&#39;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;new plugin for teflo&quot;</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Red Hat Inc&quot;</span><span class="p">,</span>
+    <span class="n">packages</span><span class="o">=</span><span class="n">find_packages</span><span class="p">(),</span>
+    <span class="n">include_package_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">python_requires</span><span class="o">=</span><span class="s2">&quot;&gt;=3&quot;</span><span class="p">,</span>
+    <span class="n">install_requires</span><span class="o">=</span><span class="p">[</span>
+        <span class="s1">&#39;teflo@git+https://code.engineering.redhat.com/gerrit/p/teflo.git@master&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+                  <span class="s1">&#39;importer_plugins&#39;</span><span class="p">:</span> <span class="s1">&#39;new_plugin_importer = &lt;plugin pckage name&gt;:NewPluginClass&#39;</span>
+                 <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Please refer <a class="reference external" href="https://setuptools.readthedocs.io/en/latest/setuptools.html#dynamic-discovery-of-services-and-plugins">here</a>
+for more information on entry points</p>
+<p>Example for plugin:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">teflo.core</span> <span class="kn">import</span> <span class="n">ImporterPlugin</span>
+
+<span class="k">class</span> <span class="nc">NewPlugin</span><span class="p">(</span><span class="n">ImporterPlugin</span><span class="p">):</span>
+
+    <span class="n">__plugin_name__</span> <span class="o">=</span> <span class="s1">&#39;newplugin&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">NewPlugin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
+        <span class="c1"># creating logger for this plugin to get added to teflo&#39;s loggers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;newplugin&#39;</span><span class="p">,</span> <span class="n">data_folder</span><span class="o">=&lt;</span><span class="n">data</span> <span class="n">folder</span> <span class="n">name</span><span class="o">&gt;</span><span class="p">)</span>
+        <span class="c1"># OR</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;teflo&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">import_artifacts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Your code</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>#TODO Put a link or information about cookiecutter repo either copy that under teflo code or sing another</dt>
+<dd>opensource repo</dd>
+</dl>
+<p># this will give more information on how to put together the plugins</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../glossary.html" class="btn btn-neutral float-right" title="Glossary" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="architecture.html" class="btn btn-neutral float-left" title="Architecture" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Red Hat Inc.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

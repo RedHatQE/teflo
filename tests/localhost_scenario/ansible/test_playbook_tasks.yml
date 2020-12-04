@@ -1,0 +1,7 @@
+---
+- name: run playbook to list out local devices
+  hosts: localhost
+  
+  tasks:
+  - name: list out the local blk devices
+    shell: lsblk

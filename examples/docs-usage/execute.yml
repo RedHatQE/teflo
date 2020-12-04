@@ -1,0 +1,278 @@
+---
+execute:
+  - name:
+    description:
+    executor:
+    hosts:
+    ignore_rc: False
+    git:
+      - repo:
+        version:
+        dest:
+    shell:
+      - command: cmd_to_execute_the_tests
+        chdir:
+    artifacts:
+      - ~/restraint-example/tests
+      - ~/another_artificate_dir
+    ansible_options:
+
+---
+execute:
+  - name:
+    description:
+    executor:
+    hosts:
+    ignore_rc: False
+    git:
+      - repo:
+        version:
+        dest:
+    script:
+      - chdir: /tmp
+        name: tests.sh arg1 arg2
+    artifacts:
+      - ~/restraint-example/tests
+      - ~/another_artificate_dir
+    ansible_options:
+
+
+---
+execute:
+  - name:
+    description:
+    executor:
+    hosts:
+    ignore_rc: False
+    git:
+      - repo:
+        version:
+        dest:
+    playbook:
+      - name: tests/test.yml
+    artifacts:
+      - ~/restraint-example/tests
+      - ~/another_artificate_dir
+    ansible_options:
+
+...
+    ansible_options:
+      become: True
+      become_method: sudo
+      become_user: <become_user>
+      remote_user: <remote_user>
+...
+
+
+---
+execute:
+  - name: pytest execution
+    description: "execute pytests on the clients"
+    hosts: clients
+    executor: runner
+    ignore_rc: False
+    git:
+      - repo: https://gitlab.cee.redhat.com/PIT/teflo/pytest-example.git
+        version: master
+        dest: /home/cloud-user/pytest
+    shell:
+      - chdir: /home/cloud-user/pytest/tests
+        command: python -m pytest test_sample.py --junit-xml test-report/suite1_results.xml
+      - chdir: /home/cloud-user/pytest/tests
+        command: python -m pytest sample_unittest.py --junit-xml test-report/suite2_results.xml
+        ignore_rc: True
+    artifacts:
+      - /home/cloud-user/pytest/tests/test-report/suite1_results.xml
+      - /home/cloud-user/pytest/tests/test-report/suite2_results.xml
+...
+
+---
+execute:
+  - name: restraint test
+    description: "execute tests by restraint framework"
+    executor: runner
+    hosts: driver
+    git:
+      - repo: https://gitlab.cee.redhat.com/PIT/teflo/restraint-example.git
+        version: master
+        dest: ~/restraint-example
+    shell:
+      - command: /usr/bin/restraint -vvv --host 1=root@{ test_client_a.ip_address }:8081 --job ./test_sample.xml
+        chdir: ~/restraint-example/tests
+      - command: /usr/bin/restraint -vvv --host 1=root@{ test_client_b.ip_address }:8081 --job ./test_sample.xml
+        chdir: ~/restraint-example/tests
+    artifacts:
+      - ~/restraint-example/tests/test_*
+...
+
+
+---
+provision:
+  - name: test_client_a
+    provisioner: openstack
+    provider:
+      name: openstack
+      credential: openstack
+      image: rhel-7.6-server-x86_64-released
+      flavor: m1.small
+      networks: [<defined_os_network>]
+      floating_ip_pool: "<defined_fip>"
+      keypair: pit-jenkins
+    role: clients
+    ansible_params:
+      ansible_user: cloud_user
+      ansible_ssh_private_key_file: <defined_key_file>
+...
+
+
+---
+provision:
+  - name: test_client_a
+    provisioner: openstack
+    provider:
+      name: openstack
+      credential: openstack
+      image: rhel-7.6-server-x86_64-released
+      flavor: m1.small
+      networks: [<defined_os_network>]
+      floating_ip_pool: "<defined_fip>"
+      keypair: pit-jenkins
+      admin_pass: null
+      description: null
+      files: null
+      node_id: 82340e64-c7b7-4a20-a9e3-6511dbc79ded
+      security_groups: null
+    ip_address: 10.8.250.239
+    role: clients
+    ansible_params:
+      ansible_user: cloud_user
+      ansible_ssh_private_key_file: <defined_key_file>
+    data_folder: /var/local/teflo/ljcgm7yl5d
+    metadata: {}
+...
+
+
+---
+execute:
+...
+    artifacts:
+      - /home/cloud-user/pytest/tests/test-report/suite1_results.xml
+      - /home/cloud-user/pytest/tests/test-report/suite2_results.xml
+      - ~/restraint-example/tests/
+...
+
+
+...
+    artifacts:
+      - /home/cloud-user/pytest/tests/test-report/suite1_results.xml
+      - /home/cloud-user/pytest/tests/test-report/suite2_results.xml
+...
+
+...
+    artifacts:
+      - /home/cloud-user/pytest/tests/test-report/suite*.xml
+...
+
+...
+    artifacts:
+      - ~/restraint-example/tests
+...
+
+...
+    artifacts:
+      - ~/restraint-example/tests/
+...
+
+...
+    artifacts:
+      - ~/restraint-example/test*
+...
+
+...
+    artifacts:
+      - ~/restraint-example/test*/
+...
+
+---
+execute:
+  - name: pytest execution
+    description: "execute pytests on the clients"
+    hosts: clients
+    executor: runner
+    valid_rc: [3, 5, 9]
+    git:
+      - repo: https://gitlab.cee.redhat.com/PIT/teflo/pytest-example.git
+        version: master
+        dest: /home/cloud-user/pytest
+    shell:
+      - chdir: /home/cloud-user/pytest/tests
+        command: python -m pytest test_sample.py --junit-xml test-report/suite1_results.xml
+      - chdir: /home/cloud-user/pytest/tests
+        command: python -m pytest sample_unittest.py --junit-xml test-report/suite2_results.xml
+        valid_rc: [2, 7]
+    artifacts:
+      - /home/cloud-user/pytest/tests/test-report/suite1_results.xml
+      - /home/cloud-user/pytest/tests/test-report/suite2_results.xml
+...
+
+---
+execute:
+  - name: playbook execution
+    description: "execute playbook tests against the clients"
+    hosts: clients
+    executor: runner
+    playbook:
+    - name: ansible/test_gather_machine_facts.yml
+    ansible_options:
+      extra_vars:
+        workspace: .
+      skip_tags:
+       - cleanup
+    artifacts:
+    - ~/cloud-user/client.facts
+
+# artifact_locations
+---
+execute:
+  - name:
+    description:
+    executor:
+    hosts:
+    ignore_rc: False
+    git:
+      - repo:
+        version:
+        dest:
+    shell:
+      - command: cmd_to_execute_the_tests
+        chdir:
+    artifacts:
+      - ~/restraint-example/tests
+      - ~/another_artificate_dir
+    artifact_locations:
+      - payload_dir/results/
+      - payload_dir/results/artifacts/test1.log
+
+# artifact_locations1
+---
+execute:
+  - name:
+    description:
+    executor:
+    hosts:
+    ignore_rc: False
+    git:
+      - repo:
+        version:
+        dest:
+    shell:
+      - command: cmd_to_execute_the_tests
+        chdir:
+    artifacts:
+      - ~/restraint-example/tests
+      - ~/another_artificate_dir
+    artifact_locations:
+      - artifacts/payload_dir/
+      - artifacts/dir1/abc.log
+
+

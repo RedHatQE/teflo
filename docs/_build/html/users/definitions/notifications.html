@@ -1,0 +1,667 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Notification &mdash; Teflo 1.9.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_override.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'1.9.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Timeout settings for Teflo Tasks" href="timeout.html" />
+    <link rel="prev" title="Report" href="report.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Teflo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation &amp; Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install Teflo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configure Teflo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Teflo</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html#detailed-information">Detailed Information</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../scenario_descriptor.html">Scenario Descriptor</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="resource_check.html">Resource Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="credentials.html">Credentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Including Scenarios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="provision.html">Provision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orchestrate.html">Orchestrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="execute.html">Execute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="report.html">Report</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Notification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#triggers">Triggers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sending-email-notifications">Sending Email Notifications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#message-content">Message Content</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sending-chat-notifications">Sending Chat Notifications</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="timeout.html">Timeout settings for Teflo Tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../data_pass_through.html">Data Pass-through</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../output.html">Teflo Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../localhost.html">Using Localhost</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../variable_data.html">Using Jinja Variable Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resource_labels.html">Using Resource Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../faqs.html">FAQS</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Teflo Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/index.html">Developer’s Guide</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contacts</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Teflo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">User’s Guide</a> &raquo;</li>
+        
+          <li><a href="../scenario_descriptor.html">Scenario Descriptor</a> &raquo;</li>
+        
+      <li>Notification</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/users/definitions/notifications.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="notification">
+<h1>Notification<a class="headerlink" href="#notification" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Teflo’s notification section declares what messages are to be sent
+and to whom when triggered. The current notification mechanism
+is <a class="reference internal" href="#email-notify"><span class="std std-ref">email</span></a>.</p>
+<p>First lets go over the basic structure that defines a notification task.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">notifications</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">test_email</span>
+    <span class="n">notifier</span><span class="p">:</span> <span class="n">email</span><span class="o">-</span><span class="n">notifier</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">email</span>
+    <span class="n">on_success</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">to</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">jsmith</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">from</span><span class="p">:</span> <span class="n">qe</span><span class="o">-</span><span class="n">rh</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+<p>The above code snippet is the minimal structure that is required to create a
+notification task within teflo. This task is translated into a teflo notification
+object which is part of the teflo compound. You can learn more about this at
+the <a class="reference external" href="../../developers/architecture.html">architecture</a> page. Please see the table below to
+understand the key/values defined.</p>
+<table border="1" class="colwidths-auto docutils">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+<th class="head">Type</th>
+<th class="head">Required</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td>The name of the notification to define</td>
+<td>String</td>
+<td>Yes</td>
+<td>n/a</td>
+</tr>
+<tr class="row-odd"><td>description</td>
+<td>A description of what the notification is trying to accomplish</td>
+<td>String</td>
+<td>No</td>
+<td>n/a</td>
+</tr>
+<tr class="row-even"><td>notifier</td>
+<td>The notifier to use to send notifications when triggered
+above</td>
+<td>String</td>
+<td>Yes</td>
+<td>email-notifier</td>
+</tr>
+<tr class="row-odd"><td>on_start</td>
+<td>trigger to send a notification when a task is going to be executed</td>
+<td>Boolean</td>
+<td>No</td>
+<td>False</td>
+</tr>
+<tr class="row-even"><td>on_success</td>
+<td>trigger to send a notification when a task has executed successfully</td>
+<td>Boolean</td>
+<td>No</td>
+<td>True</td>
+</tr>
+<tr class="row-odd"><td>on_failure</td>
+<td>trigger to send a notification when a task has executed unsuccessfully</td>
+<td>Boolean</td>
+<td>No</td>
+<td>True</td>
+</tr>
+<tr class="row-even"><td>on_demand</td>
+<td>disable automatic trigger of the notification. Must be manually triggered</td>
+<td>Boolean</td>
+<td>No</td>
+<td>False</td>
+</tr>
+<tr class="row-odd"><td>on_tasks</td>
+<td>Filter for which tasks should trigger a notification</td>
+<td>List</td>
+<td>No</td>
+<td>All Tasks (Validate, Provision, Orchestrate, Execute, Report, Cleanup)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="triggers">
+<span id="notify-triggers"></span><h2>Triggers<a class="headerlink" href="#triggers" title="Permalink to this headline">¶</a></h2>
+<p>By default, Teflo implicitly triggers on both <strong>on_success</strong> and <strong>on_failure</strong> for all completed
+task types. If you would like to set it for either/or, you can explicitly set either parameter to <strong>true</strong>.</p>
+<p>If you would like to have teflo trigger notifications before the start of a task rather than after,
+you can set <strong>on_start</strong> to <strong>true</strong>. The <strong>on_start</strong> option is mutually exclusive to
+<strong>on_success</strong>/<strong>on_failure</strong>.</p>
+<p>If you would like to have teflo not trigger notifications automatically and you would like to control
+when to trigger notifications in your workflow, you can set the <strong>on_demand</strong> flag to true.</p>
+<p>If you would like to filter so that only certain tasks trigger notifications, you can set <strong>on_tasks</strong>
+to a list of any combination of supported teflo tasks. This does not apply to <strong>on_demand</strong>.</p>
+<p>There are further capabilities to controling the triggering of any notifications from the command line.</p>
+<p>For example, if you have defined different notifications in your scenario with different triggers but
+are interested in triggering certain ones for a particular run, you can specify which ones to skip
+using the <strong>–skip-notify</strong> option</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>teflo run -s scenario.yml -w . -t provision --skip-notify notification_a --skip-notify notification_b
+</pre></div>
+</div>
+<p>If you would like to temporarily disable triggering notifications for the entire scenario for a particular
+run without permanently setting them to <strong>on_demand</strong>. You can use the <strong>–no-notify</strong> option</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>teflo run -s scenario.yml -w . -t execute -t report --no-notify
+</pre></div>
+</div>
+</div>
+<div class="section" id="sending-email-notifications">
+<span id="email-notify"></span><h2>Sending Email Notifications<a class="headerlink" href="#sending-email-notifications" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="credentials-configure">
+<h3>Credentials/Configure<a class="headerlink" href="#credentials-configure" title="Permalink to this headline">¶</a></h3>
+<p>To configure the email notification, you will need to have your SMTP
+configuration in your teflo.cfg file, see <a class="reference external" href="credentials.html#email-notification">SMTP Configuration</a> for more details.</p>
+</div>
+<div class="section" id="email">
+<h3>Email<a class="headerlink" href="#email" title="Permalink to this headline">¶</a></h3>
+<p>The following shows all the possible keys for defining an email
+notification using the <strong>email-notifier</strong> notifier:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">notifications</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="nt">notifier</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;notifier&gt;</span>
+    <span class="nt">to</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;list_of_values&gt;</span>
+    <span class="nt">from</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;from&gt;</span>
+    <span class="nt">cc</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;list_of_values&gt;</span>
+    <span class="nt">subject</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;subject&gt;</span>
+    <span class="nt">attachments</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;list_of_values&gt;</span>
+    <span class="nt">message_body</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;multiline value&gt;</span>
+    <span class="nt">message_template</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;template_path&gt;</span>
+</pre></div>
+</div>
+<table border="1" class="colwidths-auto docutils">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+<th class="head">Type</th>
+<th class="head">Required</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>to</td>
+<td>A list of email addresses that this notification should be sent to.</td>
+<td>List</td>
+<td>True</td>
+</tr>
+<tr class="row-odd"><td>from</td>
+<td>The email address the notification should be from.</td>
+<td>String</td>
+<td>True</td>
+</tr>
+<tr class="row-even"><td>cc</td>
+<td>The list of email addresses that you want to send teflo copies to.</td>
+<td>List</td>
+<td>False</td>
+</tr>
+<tr class="row-odd"><td>subject</td>
+<td>The subject of the message that should be included.</td>
+<td>String</td>
+<td>False</td>
+</tr>
+<tr class="row-even"><td>attachments</td>
+<td>List of attachments to include when the message is sent.</td>
+<td>List</td>
+<td>False</td>
+</tr>
+<tr class="row-odd"><td>message_body</td>
+<td>The text body of the message to include overriding Teflo’s default message template.</td>
+<td>String</td>
+<td>False</td>
+</tr>
+<tr class="row-even"><td>message_template</td>
+<td>A relative path to a text email body template in Teflo’s workspace that should be used.
+It overrides Teflo’s default message template.</td>
+<td>String</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="message-content">
+<h2>Message Content<a class="headerlink" href="#message-content" title="Permalink to this headline">¶</a></h2>
+<p>Teflo has a default messaging template that is sent when no <strong>message_body</strong> or <strong>message_template</strong>
+parameter is used. Teflo uses some internal data about the tasks performed by the scenario.
+Below is the list of data being rendered into the message</p>
+<blockquote>
+<div><ul class="simple">
+<li>overall status of the Scenario execution</li>
+<li>The list of Teflo tasks that passed and/or failed</li>
+<li>The list of artifacts that were collected after test execution if any</li>
+<li>The import result urls of any test artifacts that were imported into a reporting system</li>
+</ul>
+</div></blockquote>
+<p>Teflo makes its scenario object avaialble along with the environmental variables to user when
+designing their own messaging template. The key for teflo’s scenario object is <strong>scenario</strong></p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Let’s go into some examples of you can define your notification resources</p>
+<div class="section" id="example-1">
+<h3>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h3>
+<p>You want to trigger a notification on all successful tasks using the default template</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">notifications</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">test_email</span>
+    <span class="n">notifier</span><span class="p">:</span> <span class="n">email</span><span class="o">-</span><span class="n">notifier</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">email</span>
+    <span class="n">on_success</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">to</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">jsmith</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">from</span><span class="p">:</span> <span class="n">qe</span><span class="o">-</span><span class="n">rh</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2">
+<h3>Example 2<a class="headerlink" href="#example-2" title="Permalink to this headline">¶</a></h3>
+<p>You want to trigger a notification before the start of all tasks using a messaging template</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">notifications</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">msg_template</span>
+    <span class="n">notifier</span><span class="p">:</span> <span class="n">email</span><span class="o">-</span><span class="n">notifier</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">email</span>
+    <span class="n">on_start</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">to</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">jsmith</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+      <span class="o">-</span> <span class="n">fbar</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">from</span><span class="p">:</span> <span class="n">qe</span><span class="o">-</span><span class="n">team</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">subject</span><span class="p">:</span> <span class="n">test</span> <span class="n">email</span> <span class="n">notification</span> <span class="n">using</span> <span class="n">default</span> <span class="n">template</span> <span class="p">{{</span> <span class="n">UUID</span> <span class="p">}}</span>
+    <span class="n">message_template</span><span class="p">:</span> <span class="n">email_templ</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Teflo’s scenario data could be used to format the template email_templ.txt as shown in the examples below:</p>
+<ol class="loweralpha simple">
+<li></li>
+</ol>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Hello All,</span>
+
+<span class="l l-Scalar l-Scalar-Plain">This is a Teflo Notification.</span>
+
+<span class="l l-Scalar l-Scalar-Plain">Teflo scenario, {{ scenario.name }}, has provisioned  the asset</span><span class="p p-Indicator">:</span>
+
+<span class="p p-Indicator">{{</span> <span class="nv">scenario.assets</span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">]</span><span class="nv">.name</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+<ol class="loweralpha simple" start="2">
+<li></li>
+</ol>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span>Hello All,
+
+This is a Teflo Notification for Execute task.
+
+ {% if scenario.executes %}
+     {% for execute in scenario.executes %}
+     Execute task name: {{ execute.name }}
+             {% if execute.artifact_locations %}
+     Collected the following artifacts:
+             {% for file in execute.artifact_locations %}
+             - {{ file }}
+             {% endfor %}
+         {% endif %}
+         {% if execute.testrun_results %}
+
+     These are the test results of the scenario:
+
+       Total Tests: {{ execute.testrun_results.aggregate_testrun_results.total_tests }}
+       Passed Tests: {{ execute.testrun_results.aggregate_testrun_results.passed_tests }}
+       Failed Tests: {{ execute.testrun_results.aggregate_testrun_results.failed_tests }}
+       Skipped Tests: {{ execute.testrun_results.aggregate_testrun_results.skipped_tests }}
+
+         {% endif %}
+     {% endfor %}
+ {% else %}
+  No execute tasks were run
+ {% endif %}
+</pre></div>
+</div>
+<p>This is how the email sent using above template  will read:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Hello All,</span>
+
+ <span class="l l-Scalar l-Scalar-Plain">This is a Teflo Notification for Execute task.</span>
+
+      <span class="l l-Scalar l-Scalar-Plain">Execute task name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Test running playbook</span>
+      <span class="l l-Scalar l-Scalar-Plain">Collected the following artifacts</span><span class="p p-Indicator">:</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">artifacts/localhost/rp_preproc_qmzls.log</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">artifacts/localhost/junit_example_5_orig.xml</span>
+
+<span class=" -Error">      </span><span class="nt">These are the test results of the scenario</span><span class="p">:</span>
+
+        <span class="nt">Total Tests</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">6</span>
+        <span class="nt">Passed Tests</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">4</span>
+        <span class="nt">Failed Tests</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
+        <span class="nt">Skipped Tests</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+
+      <span class="nt">Execute task name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Execute2</span>
+      <span class="nt">Collected the following artifacts</span><span class="p">:</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">artifacts/localhost/rp_preproc_qmzls.log</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">artifacts/localhost/junit_example_5_orig.xml</span>
+
+      <span class="nt">These are the test results of the scenario</span><span class="p">:</span>
+
+        <span class="nt">Total Tests</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">6</span>
+        <span class="nt">Passed Tests</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">4</span>
+        <span class="nt">Failed Tests</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
+        <span class="nt">Skipped Tests</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-3">
+<h3>Example 3<a class="headerlink" href="#example-3" title="Permalink to this headline">¶</a></h3>
+<p>You want to trigger a notification regardless on failures of the Validate and Provision task
+but you want to include a multiline string in the descriptor file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">notifications</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">msg_body_test</span>
+    <span class="n">notifier</span><span class="p">:</span> <span class="n">email</span><span class="o">-</span><span class="n">notifier</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">email</span>
+    <span class="n">on_failure</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">on_tasks</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">validate</span>
+      <span class="o">-</span> <span class="n">provision</span>
+    <span class="n">to</span><span class="p">:</span> <span class="p">[</span><span class="n">jsnith</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span><span class="p">,</span> <span class="n">fbar</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span><span class="p">]</span>
+    <span class="n">from</span><span class="p">:</span> <span class="n">qe</span><span class="o">-</span><span class="n">team</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">subject</span><span class="p">:</span> <span class="n">test</span> <span class="n">notification</span> <span class="n">using</span> <span class="n">message</span> <span class="n">body</span><span class="o">.</span>
+    <span class="n">message_body</span><span class="p">:</span> <span class="o">|</span>
+      <span class="n">Hello</span> <span class="n">All</span><span class="p">,</span>
+
+      <span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">Teflo</span> <span class="n">Test</span> <span class="n">notification</span><span class="o">.</span> <span class="n">For</span> <span class="n">Jenkins</span> <span class="n">Job</span> <span class="p">{{</span> <span class="n">Job</span> <span class="p">}}</span><span class="o">.</span>
+
+      <span class="n">Thanks</span><span class="p">,</span>
+
+      <span class="n">Waldo</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-4">
+<h3>Example 4<a class="headerlink" href="#example-4" title="Permalink to this headline">¶</a></h3>
+<p>You want to trigger a notification regardless only on failures of all tasks
+using the default template message but you want to include a file as an attachment.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">notifications</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">msg_test</span>
+    <span class="n">notifier</span><span class="p">:</span> <span class="n">email</span><span class="o">-</span><span class="n">notifier</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">email</span>
+    <span class="n">on_failure</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">to</span><span class="p">:</span> <span class="p">[</span><span class="n">jsnith</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span><span class="p">,</span> <span class="n">fbar</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span><span class="p">]</span>
+    <span class="n">from</span><span class="p">:</span> <span class="n">qe</span><span class="o">-</span><span class="n">team</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">subject</span><span class="p">:</span> <span class="n">test</span> <span class="n">notification</span> <span class="n">using</span> <span class="n">message</span> <span class="n">attachments</span><span class="o">.</span>
+    <span class="n">attachments</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">workpsace</span><span class="o">/</span><span class="n">folder</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-5">
+<h3>Example 5<a class="headerlink" href="#example-5" title="Permalink to this headline">¶</a></h3>
+<p>You don’t want a notification to trigger automatically.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">notifications</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">msg_test</span>
+    <span class="n">notifier</span><span class="p">:</span> <span class="n">email</span><span class="o">-</span><span class="n">notifier</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">email</span>
+    <span class="n">on_demand</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">to</span><span class="p">:</span> <span class="p">[</span><span class="n">jsnith</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span><span class="p">,</span> <span class="n">fbar</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span><span class="p">]</span>
+    <span class="n">from</span><span class="p">:</span> <span class="n">qe</span><span class="o">-</span><span class="n">team</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">subject</span><span class="p">:</span> <span class="n">test</span> <span class="n">notification</span> <span class="n">only</span> <span class="n">when</span> <span class="n">manually</span> <span class="n">triggered</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-6">
+<h3>Example 6<a class="headerlink" href="#example-6" title="Permalink to this headline">¶</a></h3>
+<p>Using custom template and using teflo’s data for formatting</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">notifications</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">msg_test</span>
+    <span class="n">notifier</span><span class="p">:</span> <span class="n">email</span><span class="o">-</span><span class="n">notifier</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">email</span>
+    <span class="n">on_demand</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">to</span><span class="p">:</span> <span class="p">[</span><span class="n">jsnith</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span><span class="p">,</span> <span class="n">fbar</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span><span class="p">]</span>
+    <span class="n">from</span><span class="p">:</span> <span class="n">qe</span><span class="o">-</span><span class="n">team</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">subject</span><span class="p">:</span> <span class="n">test</span> <span class="n">notification</span> <span class="n">only</span> <span class="n">when</span> <span class="n">manually</span> <span class="n">triggered</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sending-chat-notifications">
+<h2>Sending Chat Notifications<a class="headerlink" href="#sending-chat-notifications" title="Permalink to this headline">¶</a></h2>
+<p>Teflo 1.9.0 introduces teflo_webhooks_notification_plugin which allows users to send chat notification
+during and/or post teflo run. To get more information about this plugin ,on how to install and use it
+please visit <a class="reference external" href="https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_webhooks_notification_plugin/-/blob/master/README.md">teflo_webhooks_notification_plugin</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="timeout.html" class="btn btn-neutral float-right" title="Timeout settings for Teflo Tasks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="report.html" class="btn btn-neutral float-left" title="Report" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Red Hat Inc.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+---
+name: descriptor
+description: descriptor
+
+credentials:
+  - name: provider
+
+provision:
+
+orchestrate:
+
+execute:
+
+report:

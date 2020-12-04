@@ -1,0 +1,36 @@
+---
+name: descriptor
+description: descriptor
+
+credentials:
+  - name: provider
+
+include:
+  - ' '
+  - malformed_included_file.yml
+
+provision:
+  - name: {{ asset_name | default('test') }}
+    provider:
+      name: openstack
+
+orchestrate:
+
+execute:
+
+report:
+
+notifications:
+  - name: test_note_01
+    notifier: email-notifier
+    to: jsmit@redhat.com
+    from: qe-team@redhta.com
+    subjet: test_01
+    on_demand: true
+
+  - name: test_note_02
+    notifier: email-notifier
+    to: jsmit@redhat.com
+    from: qe-team@redhta.com
+    subjet: test_02
+    on_demand: true

@@ -1,0 +1,14 @@
+Running Junit Test Suite: SampleTest
+Number of tests to execute: 2
+
+   Starting: testMessageNotEqual
+   Finished: testMessageNotEqual
+   Time    : 8.0
+
+   Starting: testMessage
+   Finished: testMessage
+   Time    : 0.0
+
+Number of tests executed: 2
+Time: 14
+Successful: true ran 2 tests

@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using Jinja Variable Data &mdash; Teflo 1.9.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'1.9.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using Resource Labels" href="resource_labels.html" />
+    <link rel="prev" title="Using Localhost" href="localhost.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Teflo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation &amp; Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install Teflo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configure Teflo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Teflo</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html#detailed-information">Detailed Information</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="scenario_descriptor.html">Scenario Descriptor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_pass_through.html">Data Pass-through</a></li>
+<li class="toctree-l2"><a class="reference internal" href="output.html">Teflo Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="best_practices.html">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="localhost.html">Using Localhost</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Using Jinja Variable Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#raw-json">Raw JSON</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#variable-file">Variable File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="resource_labels.html">Using Resource Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faqs.html">FAQS</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Teflo Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/index.html">Developer’s Guide</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contacts</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Teflo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">User’s Guide</a> &raquo;</li>
+        
+      <li>Using Jinja Variable Data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/users/variable_data.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="using-jinja-variable-data">
+<h1>Using Jinja Variable Data<a class="headerlink" href="#using-jinja-variable-data" title="Permalink to this headline">¶</a></h1>
+<p>Teflo uses Jinja2 template engine to be able to template variables
+within a scenario file. Prior to 1.6.0, Teflo could template variable data
+set as environmental variables. As of 1.6.0, variable data can now be passed
+more directly.</p>
+<p>Here is an example scenario file using Jinja to template some variable data:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+
+<span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">linchpin_vars_example</span>
+<span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">template example</span>
+
+<span class="nt">provision</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">db2_dummy</span>
+    <span class="nt">provisioner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">linchpin-wrapper</span>
+    <span class="nt">groups</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">example</span>
+    <span class="nt">credential</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack</span>
+    <span class="nt">resource_group_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack</span>
+    <span class="nt">resource_definitions</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="p p-Indicator">{{</span> <span class="nv">name | default(&#39;database&#39;)</span> <span class="p p-Indicator">}}</span>
+        <span class="nt">role</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_server</span>
+        <span class="nt">flavor</span><span class="p">:</span> <span class="p p-Indicator">{{</span> <span class="nv">flavor | default(&#39;m1.small&#39;)</span> <span class="p p-Indicator">}}</span>
+        <span class="nt">image</span><span class="p">:</span>  <span class="l l-Scalar l-Scalar-Plain">rhel-7.5-server-x86_64-released</span>
+        <span class="nt">count</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+        <span class="nt">keypair</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test-keypair</span>
+        <span class="nt">networks</span><span class="p">:</span>
+          <span class="p p-Indicator">-</span> <span class="p p-Indicator">{{</span> <span class="nv">networks | default(&#39;provider_net_ipv6_only&#39;)</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+<p>The variable data can now be passed in one of two ways.</p>
+<div class="section" id="raw-json">
+<h2>Raw JSON<a class="headerlink" href="#raw-json" title="Permalink to this headline">¶</a></h2>
+<p>You can pass in the data raw as a JSON dictionary</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>teflo run -s scenario.yml -t provision --vars-data <span class="s1">&#39;{&quot;flavor&quot;: &quot;m2.small&quot;, &quot;name&quot;: &quot;test&quot;}&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="variable-file">
+<h2>Variable File<a class="headerlink" href="#variable-file" title="Permalink to this headline">¶</a></h2>
+<p>You can pass in a variable file defining the variable data you need. The variable file
+needs to be placed in the teflo workspace. Below is an example of the contents of a
+variable file.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">flavor</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">m2.small</span>
+<span class="nt">networks</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">provider_net_cci_5</span>
+<span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+</pre></div>
+</div>
+<p>You can pass in the variable file directly</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>teflo run -s scenario.yml -t provision --vars-data template_file.yml
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="resource_labels.html" class="btn btn-neutral float-right" title="Using Resource Labels" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="localhost.html" class="btn btn-neutral float-left" title="Using Localhost" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Red Hat Inc.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

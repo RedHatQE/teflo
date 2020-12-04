@@ -1,0 +1,66 @@
+---
+provision:
+- name: ci_test_client_b
+  role: client, vnc
+  provider: beaker
+
+---
+provision:
+- name: ci_test_client_b
+  role:
+    - client
+    - vnc
+  provider: beaker
+
+---
+provision:
+- name: ci_test_client_b
+  groups:
+  - client
+  - vnc
+  provider: beaker
+
+---
+name: common-provision
+description: 'common provisioning of resources used by the rest of the scenarios.'
+
+provision:
+- name: ci_test_client_b
+  groups:
+  - client
+  - vnc
+  provider: beaker
+
+---
+name: common-provision
+description: 'common provisioning of resources used by the rest of the scenarios.'
+
+provision:
+- name: ci_test_client_a
+  description:
+  role:
+  - client
+  - test_driver
+  provisioner: linchpin-wrapper
+  provider:
+    count: 1
+    credential: aws-creds
+    name: aws
+    region: us-east-2
+    hostname: ec2-host.us-east-2.compute.amazonaws.com
+    tx_id: 44
+    keypair: ci_aws_key_pair
+    node_id: i-0f452f3479919d703
+    role: aws_ec2
+    flavor: t2.nano
+    image: ami-0d8f6eb4f641ef691
+  ip_address:
+    public: 13.59.32.24
+    private: 172.31.33.91
+  ansible_params:
+    ansible_ssh_private_key_file: keys/ci_aws_key_pair.pem
+    ansible_user: centos
+  metadata: {}
+  workspace: /home/dbaez/projects/teflo/e2e-acceptance-tests
+  data_folder: /var/lib/workspace/teflo_data/fich6j1ooq
+

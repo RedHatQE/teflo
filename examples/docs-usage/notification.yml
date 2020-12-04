@@ -1,0 +1,79 @@
+---
+notifications:
+  - name: test_email
+    notifier: email-notifier
+    credential: email
+    on_success: true
+    to:
+      - jsmith@redhat.com
+    from: qe-rh@redhat.com
+    subject: This is teflo notification
+
+---
+notifications:
+  - name: msg_template
+    notifier: email-notifier
+    credential: email
+    on_start: true
+    to:
+      - jsmith@redhat.com
+      - fbar@redhat.com
+    from: qe-team@redhat.com
+    subject: test email notification using default template {{ UUID }}
+    message_template: email_templ.txt
+
+---
+notifications:
+  - name: msg_body_test
+    notifier: email-notifier
+    credential: email
+    on_failure: true
+    on_tasks:
+      - validate
+      - provision
+    to: [jsnith@redhat.com, fbar@redhat.com]
+    from: qe-team@redhat.com
+    subject: test notification using message body.
+    message_body: |
+      Hello All,
+
+      This is a Teflo Test notification. For Jenkins Job {{ Job }}.
+
+      Thanks,
+
+      Waldo
+
+---
+notifications:
+  - name: msg_test
+    notifier: email-notifier
+    credential: email
+    on_failure: true
+    to: [jsnith@redhat.com, fbar@redhat.com]
+    from: qe-team@redhat.com
+    subject: test notification using message attachments.
+    attachments:
+      - workpsace/folder/file.txt
+
+---
+notifications:
+  - name: msg_test
+    notifier: email-notifier
+    credential: email
+    on_demand: true
+    to: [jsnith@redhat.com, fbar@redhat.com]
+    from: qe-team@redhat.com
+    subject: test notification only when manually triggered.
+
+---
+notifications:
+  - name: msg_template
+    notifier: email-notifier
+    credential: email
+    on_start: true
+    to:
+      - jsmith@redhat.com
+      - fbar@redhat.com
+    from: qe-team@redhat.com
+    subject: test email notification using default template {{ UUID }}
+    message_template: email_templ.txt

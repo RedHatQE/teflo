@@ -1,0 +1,156 @@
+---
+name: LOCAL-EXAMPLE
+description: An example scenario for local running
+
+provision:
+  - name: dummy
+    groups: static-dummy
+    ip_address: 127.0.1.1
+    ansible_params:
+      ansible_connection: local
+    metadata:
+      x: '12'
+      y: '18'
+
+orchestrate:
+  - name: ansible/test_playbook_tasks.yml
+    description: "run orchestrate step w/non-template playbook"
+    orchestrator: ansible
+    hosts: localhost
+
+  - name: ansible/template_host_test_playbook_tasks.yml
+    description: "run orchestrate step w/template playbook"
+    orchestrator: ansible
+    hosts: localhost
+    ansible_options:
+      extra_vars:
+        ip: { dummy.ip_address }
+
+  - name: scripts/add_two_numbers.sh
+    description: "run orchestrate step w/bash script using no real host"
+    orchestrator: ansible
+    hosts: localhost
+    ansible_script: True
+    ansible_options:
+      extra_args: X={ dummy.metadata.x } Y={ dummy.metadata.y }
+
+  - name: scripts/add_two_numbers.sh X=10 Y=20
+    description: "run orchestrate step with passing params to script in the name field"
+    orchestrator: ansible
+    hosts: localhost
+    ansible_script: True
+
+  - name: scripts/hello_world.py Teflo_user
+    description: "test orchestrate step w/python script"
+    orchestrator: ansible
+    hosts: localhost
+    ansible_script: True
+    ansible_options:
+      extra_args: executable=python
+    cleanup:
+      name: scripts/cleanup_artifacts.sh
+      description: "cleanup the data passthrough artifact"
+      orchestrator: ansible
+      hosts: all
+      ansible_script: True
+
+  - name: scripts/hello_world.py
+    description: "test orchestrate step passing param in extra args"
+    orchestrator: ansible
+    hosts: localhost
+    ansible_script: True
+    ansible_options:
+      extra_args: Random_user executable=python
+
+  - name: orch_name_test
+    ansible_playbook:
+      name: ansible/test_playbook_tasks.yml
+    description: "run orchestrate with a name field not as playbook/script"
+    orchestrator: ansible
+    hosts: localhost
+
+  - name: orch_shell
+    orchestrator: ansible
+    description: "orch task to run shell commands"
+    hosts: localhost
+    ansible_shell:
+      - command: bash add_two_numbers.sh X=15 Y=15
+        chdir: ./scripts/
+
+  - name: orch_shell_1
+    orchestrator: ansible
+    description: "orch task to run shell commands with ansible_options"
+    hosts: localhost
+    ansible_shell:
+      - command: bash add_two_numbers.sh X=15 Y=15
+    ansible_options:
+      extra_args: chdir=./scripts/
+
+  - name: orch_extra_args
+    orchestrator: ansible
+    description: "orch task to run extra args as a part script"
+    hosts: localhost
+    ansible_script:
+      name: scripts/hello_world.py New_user
+      executable: python
+
+  - name: ansible/template_host_test_playbook_tasks.yml
+    description: "run orchestrate step using file key as extra_vars"
+    orchestrator: ansible
+    hosts: localhost
+    ansible_options:
+      extra_vars:
+        file: variable.yml
+
+execute:
+  - name: Test running command
+    description: "Test running command during execute"
+    executor: runner
+    hosts: localhost
+    shell: 
+      - chdir: {{ WORKSPACE }}/scripts
+        command: bash add_two_numbers.sh X=12 Y=12
+        valid_rc: [2]
+
+  - name: Test running script
+    description: "Test running script during execute"
+    executor: runner
+    hosts: localhost
+    script:
+      - name: {{ WORKSPACE }}/scripts/add_two_numbers.sh X=12 Y=12
+        ignore_rc: true
+
+  - name: Test running playbook
+    description: "Test running playbook during execute"
+    executor: runner
+    hosts: localhost
+    playbook:
+      - name: ansible/tests/test_execute_playbook.yml
+    ansible_options:
+      extra_vars:
+        X: '{ dummy.metadata.x }'
+        Y: 18
+        ch_dir: ../../scripts/
+
+  - name: Test collecting artifacts
+    description: "Test collecting artifacts"
+    executor: runner
+    hosts: localhost
+    shell:
+      - chdir: {{ WORKSPACE }}/sample_artifacts
+        command: ls -lrta
+      - chdir: {{ WORKSPACE }}/sample_artifacts
+        command: |
+           cp SampleTest.xml  SampleTest_{ dummy.ip_address }.xml
+           cp SampleTest_{ dummy.ip_address }.xml ../.teflo/{{ PY_VERSION }}/.results/artifacts/
+      - chdir: {{ WORKSPACE }}/sample_artifacts
+        command: |
+          cp SampleTest.log SampleDummy.log
+          cp SampleDummy.log ../.teflo/{{ PY_VERSION }}/.results/artifacts/
+    artifacts:
+      - {{ WORKSPACE }}/sample_artifacts/SampleTest.*
+    artifact_locations:
+      - artifacts/SampleTest_{ dummy.ip_address }.xml
+
+report:
+

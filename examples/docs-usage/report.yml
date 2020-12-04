@@ -1,0 +1,300 @@
+---
+report:
+- name: suite1_results.xml
+  description: import suite1 results to polarion
+  executes: pytest execution
+  importer: polarion
+  credential: polarion-creds
+
+---
+report:
+- name: suite1_results.xml
+  description: import suite1 results to polarion
+  executes: pytest execution
+  importer: polarion
+  credential: polarion-creds
+  project_id: Teflo1
+  testsuite_properties:
+    polarion-lookup-method: name
+    polarion-custom-os: RHEL 8
+    polarion-testrun-id: PolId-123
+    polarion-testrun-title: Sample Test Run
+
+---
+report:
+- name: suite1_results.xml
+  description: import suite1 results to polarion
+  executes: pytest execution
+  provider:
+    credential: polarion-creds
+    name: polarion
+    project_id: Teflo1
+    testsuite_properties:
+      polarion-custom-os: RHEL 8
+      polarion-testrun-id: PolId-123
+      polarion-testrun-title: Sample Test Run
+    testcase_properties:
+      test_sample.test_answer:
+        polarion-parameter-os: RHEL7
+        polarion-testcase-id: CARB1-225
+
+---
+report:
+- name: '{ sat_driver.ip_address }_results.xml'
+  description: import suite1 results to polarion
+  executes: pytest execution
+  provider:
+    credential: polarion-creds
+    name: polarion
+    project_id: Teflo1
+    testsuite_properties:
+      polarion-testrun-id: PolId-123
+      polarion-testrun-title: Sample Test Run
+
+---
+report:
+- name: '*.xml'
+  description: import suite1 results to polarion
+  executes: pytest execution
+  importer: polarion
+  credential: polarion-creds
+
+---
+report:
+- name: client-a-*/suite1_results.xml
+  description: import suite1 results to polarion
+  executes: pytest execution
+  provider:
+    credential: polarion-creds
+    name: polarion
+
+---
+report:
+- name: suite1_results.xml
+  description: import suite1 results to polarion
+  executes: pytest execution
+  importer: polarion
+  credential: polarion-creds
+  project_id: Teflo1
+  testsuite_properties:
+    polarion-lookup-method: custom
+    polarion-testrun-id: PolId-123
+    polarion-testrun-title: Sample Test Run
+  testcase_csv_file: polarion/workitems.csv
+
+---
+report:
+  - name: payload_example_medium/*
+    description: To test rp path
+    executes: rp_execute_test
+    importer: reportportal
+    credential: reportportal-creds
+# rp uc1
+---
+execute:
+    - name: rp_execute_test
+      description: execute poc for rp
+      hosts: test_host1
+      executor: runner
+      shell:
+        - chdir: /home/teflo_develop/e2e-acceptance-tests/
+          command: mkdir rp_examples/payload_eg;mkdir rp_examples/payload_eg/results; mkdir rp_examples/payload_eg/attachments; cp rp_examples/payload_example_medium/results/*.xml rp_examples/payload_eg/results/ ; cp -r rp_examples/payload_example_medium/attachments/* rp_examples/payload_eg/attachments/
+      artifacts:
+        - rp_examples/payload_eg/
+
+report:
+  - name: payload_eg/*
+    description: To test rp path
+    executes: rp_execute_test
+    importer: reportportal
+    credential: reportportal-creds
+    rp_project: teflo_1
+    launch_name: teflo_launch
+    launch_description: teflo_launch_desc
+    tags:
+    - tag1
+    - tag2
+    merge_launches: True
+#rp uc2
+---
+execute:
+    - name: rp_execute_test
+      description: execute poc for rp
+      hosts: test_host1
+      executor: runner
+      shell:
+        - chdir: /home/teflo_develop/e2e-acceptance-tests/rp_examples
+          command: pwd;ls
+      artifact_locations:
+         payload_example_medium :
+           - results/
+           - attachments/
+
+report:
+  - name: payload_example_medium/*
+    description: To test rp path
+    executes: rp_execute_test
+    importer: reportportal
+    credential: reportportal-creds
+    rp_project: teflo_1
+    launch_name: teflo_launch
+    launch_description: teflo_launch_desc
+    tags:
+    - tag1
+    - tag2
+    merge_launches: False
+#rp uc3
+---
+execute:
+    - name: rp_execute_test
+      description: execute poc for rp
+      hosts: test_host1
+      executor: runner
+      shell:
+        - chdir: /home/teflo_develop/e2e-acceptance-tests/rp_examples
+          command: pwd;ls
+      artifacts:
+        - rp_examples/payload_uc3
+
+report:
+  - name: '*.xml'
+    description: To test rp path
+    executes: rp_execute_test
+    importer: reportportal
+    credential: reportportal-creds
+    rp_project: teflo_1
+    launch_name: teflo_launch
+    launch_description: teflo_launch_desc
+    tags:
+    - tag1
+    - tag2
+    merge_launches: False
+#rp uc4
+---
+execute:
+    - name: rp_execute_test
+      description: execute poc for rp
+      hosts: test_host1
+      executor: runner
+      shell:
+        - chdir: /home/teflo_develop/e2e-acceptance-tests/rp_examples
+          command: pwd;ls
+      artifact_locations:
+         payload_teflo :
+           - tempest-results-all.1.xml
+           - junit_example.xml
+           - MyTest.test_method3
+
+report:
+  - name: '*.xml'
+    description: To test rp path
+    executes: rp_execute_test
+    provider:
+      name: reportportal
+      credential: reportportal-creds
+      launch_name: teflo_launch1
+      rp_project: teflo_1
+      json_path: rp_config_1.json
+#rp_uc5
+---
+execute:
+    - name: rp_execute_test
+      description: execute poc for rp
+      hosts: test_host1
+      executor: runner
+      shell:
+        - chdir: /home/teflo_develop/e2e-acceptance-tests/rp_examples
+          command: pwd;ls
+      artifacts:
+        - /home/teflo_develop/e2e-acceptance-tests/rp_examples/payload_example_medium
+      artifact_locations:
+         payload_teflo :
+           - tempest-results-all.1.xml
+           - junit_example.xml
+           - MyTest.test_method3 
+
+report:
+  - name: '*.xml'
+    description: To test rp path
+    executes: rp_execute_test
+    provider:
+      name: reportportal
+      credential: reportportal-creds
+      rp_project: teflo_rujuta
+      launch_name: teflo_launch
+      launch_description: teflo_launch_desc
+      tags:
+      - tag1
+      - tag2
+      merge_launches: True
+#rp uc6
+---
+execute:
+    - name: rp_execute_test
+      description: execute poc for rp
+      hosts: test_host1
+      executor: runner
+      shell:
+        - chdir: /home/rushinde/teflo_develop/e2e-acceptance-tests/rp_examples
+          command: pwd;ls
+
+report:
+  - name: payload_example_medium/*
+    description: To test rp path
+    executes: rp_execute_test
+    provider:
+      name: reportportal
+      credential: reportportal-creds
+      rp_project: teflo_1
+      launch_name: teflo_launch
+      launch_description: teflo_launch_desc
+      tags:
+      - tag1
+      - tag2
+      merge_launches: False
+# rp_json_eg1
+---
+report:
+  - name: payload_example_medium/*
+    description: To test rp path
+    executes: rp_execute_test
+    importer:reportportal
+    credential: reportportal-creds
+    rp_project: teflo_1
+    launch_name: teflo_launch
+    launch_description: teflo_launch_desc
+    tags:
+    - tag1
+    - tag2
+    merge_launches: False
+    simple_xml: False
+    auto_dashboard: True
+#rp_json_eg2
+---
+report:
+  - name: payload_example_medium/*
+    description: To test rp path
+    executes: rp_execute_test
+    importer: reportportal
+    credential: reportportal-creds
+    rp_project: teflo_1
+    launch_name: teflo_launch
+    json_path: rp_config_1.json
+#rp_json_eg3
+---
+report:
+  - name: payload_example_medium/*
+    description: To test rp path
+    executes: rp_execute_test
+    provider:
+      name: reportportal
+      credential: reportportal-creds
+      rp_project: teflo_1
+      launch_name: teflo_launch
+      launch_description: teflo_launch_desc
+      tags:
+      - tag1
+      - tag2
+      merge_launches: False
+      auto_dashboard: True
+      json_path: rp_config_1.json

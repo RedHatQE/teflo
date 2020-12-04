@@ -1,0 +1,66 @@
+# example 1
+---
+name: Example Discriptor
+description: Descriptor file with resource check section
+
+resource_check:
+  monitored_services:
+    - polarion
+    - umb
+  playbook:
+    - name: ansible/list_block_devices.yml
+      ansible_options:
+        extra_vars:
+          X: 18
+          Y: 12
+          ch_dir: ./scripts/
+    - name: ansible/tests/test_execute_playbook.yml
+      ansible_options:
+        extra_vars:
+          X: 12
+          Y: 12
+          ch_dir: ../../scripts/
+  script:
+      - name: ./scripts/hello_world1.py Teflo_user
+        executable: python
+      - name: ./scripts/add_two_numbers.sh X=15 Y=15
+
+
+provision:
+   .
+   .
+   .
+
+orchestrate:
+   .
+   .
+   .
+
+execute:
+   .
+   .
+   .
+
+# example 2
+---
+name: Example Discriptor
+description: Descriptor file with resource check section
+
+resource_check:
+  monitored_services: ['polarion', 'umb']
+
+provision:
+   .
+   .
+   .
+
+orchestrate:
+   .
+   .
+   .
+
+execute:
+   .
+   .
+   .
+

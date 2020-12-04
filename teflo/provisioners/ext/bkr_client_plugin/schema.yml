@@ -1,0 +1,133 @@
+---
+# default beaker client provisioner schema
+
+type: map
+allowempty: True
+mapping:
+  arch:
+    type: str
+    required: True
+  variant:
+    type: str
+    required: True
+  distro:
+    type: str
+    required: False
+  family:
+    type: str
+    required: False
+  whitboard:
+    type: str
+    required: False
+  kernel_options:
+    required: False
+    type: seq
+    sequence:
+      - type: str
+  kernel_post_options:
+    required: False
+    type: seq
+    sequence:
+      - type: str
+  host_requires_options:
+    required: False
+    type: seq
+    sequence:
+      - type: str
+  distro_requires_options:
+    required: False
+    type: seq
+    sequence:
+      - type: str
+  virtual_machine:
+    required: False
+    type: bool
+  virt_capable:
+    required: False
+    type: bool
+  retention_tag:
+    required: False
+    type: str
+  tag:
+    required: False
+    type: str
+  priority:
+    required: False
+    type: str
+  jobgroup:
+    required: False
+    type: str
+  key_values:
+    required: False
+    type: str
+  timeout:
+    required: False
+    type: int
+  hostname:
+    required: False
+    type: str
+  ip_address:
+    required: False
+    type: str
+  job_id:
+    required: False
+    type: str
+  ssh_key:
+    required: False
+    type: str
+  username:
+    required: False
+    type: str
+  password:
+    required: False
+    type: str
+  taskparam:
+    required: False
+    type: seq
+    sequence:
+      - type: str
+  ignore_panic:
+    required: False
+    type: str
+  kickstart:
+    required: False
+    type: str
+  ksmeta:
+    required: False
+    type: seq
+    sequence:
+      - type: str
+  job_url:
+    required: False
+    type: str
+  credential:
+    required: False
+    type: map
+    mapping:
+      hub_url:
+        required: True
+        type: str
+      keytab_principal:
+        required: False
+        type: str
+      keytab:
+        required: False
+        type: str
+      username:
+        required: False
+        type: str
+      password:
+        required: False
+        type: str
+      ca_cert:
+        required: False
+        type: str
+      realm:
+        required: False
+        type: str
+      service:
+        required: False
+        type: str
+      ccache:
+        required: False
+        type: str

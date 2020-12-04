@@ -1,0 +1,13 @@
+---
+name: descriptor
+description: descriptor
+
+credentials:
+  - name: provider
+
+include:
+  - ../assets/common.yml
+
+execute:
+
+report:

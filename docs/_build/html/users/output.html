@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Teflo Output &mdash; Teflo 1.9.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'1.9.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Data Pass-through" href="data_pass_through.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Teflo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation &amp; Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install Teflo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configure Teflo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Teflo</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html#detailed-information">Detailed Information</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="scenario_descriptor.html">Scenario Descriptor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_pass_through.html">Data Pass-through</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Teflo Output</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data-folder">Data Folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#results-file">Results File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#included-scenario-results-file">Included Scenario Results File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#results-folder">Results Folder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="best_practices.html">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="localhost.html">Using Localhost</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variable_data.html">Using Jinja Variable Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resource_labels.html">Using Resource Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faqs.html">FAQS</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Teflo Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/index.html">Developer’s Guide</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contacts</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Teflo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">User’s Guide</a> &raquo;</li>
+        
+      <li>Teflo Output</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/users/output.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="teflo-output">
+<h1>Teflo Output<a class="headerlink" href="#teflo-output" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="data-folder">
+<h2>Data Folder<a class="headerlink" href="#data-folder" title="Permalink to this headline">¶</a></h2>
+<p>When you call teflo, all runtime files, logs, artifacts, etc get stored
+within a data folder. By default teflo sets the base data folder as the <em>/tmp</em>
+directory. This can be overridden by either the command line option or
+within the <em>teflo.cfg</em>. Each teflo run creates a unique data folder for that
+specific run. This unique data folder is stored at the parent data folder
+mentioned above. With having this unique data folder per teflo run. It allows
+you to keep those logs for that specific run for historical purposes. These
+unique data folders are based on a UUID. You must be thinking, how can I
+reference a data folder to my given run? To help easily find the last execution
+data folder, teflo provides an additional folder for easily accessing this. At
+the end of each teflo run, a new directory named <em>.results</em> will be created at
+the data folder you supplied to teflo. This directory is a exact copy of the
+data folder for the last given teflo run. It allows you to easily access the
+last runs files.</p>
+</div>
+<div class="section" id="results-file">
+<h2>Results File<a class="headerlink" href="#results-file" title="Permalink to this headline">¶</a></h2>
+<p>Each time you call teflo, you supply it a scenario descriptor file. This file
+tells teflo exactly what it should do. After teflo finishes running the task
+it was supplied with it needs to potentially update the scenario descriptor
+file with additional information from that given run. Instead of modifying the
+input file, teflo creates a new scenario descriptor file (an exact copy of the
+input one) just with additional information from the run. For example: the
+provision task finishes and has additional data about the host machines created.
+The results file would include this additional data returned back from the
+provision task. This file is stored in the data folder <em>.results</em> directory
+named <em>results.yml</em>. This allows users to continue executing teflo tasks if
+run individually. It eliminates the need for restarting the entire scenario
+from the beginning.</p>
+<p>Below is an example emphasizing on the additional data added back to the
+scenario descriptor file after a successful provision task run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>...
+name: ffdriver
+provider:
+  credential: openstack
+  flavor: m1.small
+  floating_ip_pool: &lt;definied ip pool&gt;
+<span class="hll">  hostname: ffdriver_l3zqh
+</span>  image: rhel-7.5-server-x86_64-released
+  keypair: pit-jenkins
+  name: openstack
+  networks:
+  - pit-jenkins
+<span class="hll">  node_id: 4beb3789-1e61-4f7c-bf9e-722ed480b280
+</span><span class="hll">ip_address: <span class="m">10</span>.8.249.2
+</span>...
+</pre></div>
+</div>
+</div>
+<div class="section" id="included-scenario-results-file">
+<h2>Included Scenario Results File<a class="headerlink" href="#included-scenario-results-file" title="Permalink to this headline">¶</a></h2>
+<p>If <em>include</em> section is present in the scenario file and it has a valid scenario descriptor
+file, then on a teflo run there will be an additional results file for this included
+scenario with its name in the prefix. e.g. common_results.yml will be the name of the results
+file for included scenario with name common. This allows the users to use this common_results.yml
+file and include it in other scenarios as needed, reducing the execution time and code
+duplication. The included scenario results file is also located in the .results folder where
+results.yml is stored</p>
+</div>
+<div class="section" id="results-folder">
+<h2>Results Folder<a class="headerlink" href="#results-folder" title="Permalink to this headline">¶</a></h2>
+<p>As mentioned above in the <a class="reference external" href="output.html#data-folder">data folder</a> section,
+at the end of each teflo run a <em>.results</em> directory is created with the latest
+results for a given run. You will find a variety of directories/files here.
+Lets go over some of the common ones you will see.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Each teflo task can produce different files that will be archived in the
+results directory. For example: when running the orchestrate task you would
+see an inventory directory created along with an ansible log. During the
+execute task you would see a directory for artifacts containing results
+produced from automated test suites.</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.results/
+├── artifacts
+│   ├── client-a
+│   │   ├── suite1_results.xml
+│   │   └── suite2_results.xml
+│   └── client-b
+│       ├── suite1_results.xml
+│       └── suite2_results.xml
+├── inventory
+│   └── master
+├── logs
+│   ├── ansible_executor
+│   │   └── ansible.log
+│   └── ansible_orchestrator
+│       └── ansible.log
+├── &lt;included_scenario_name&gt;_results.yml
+└── results.yml
+</pre></div>
+</div>
+<table border="1" class="colwidths-auto docutils">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+<th class="head">Type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>artifacts</td>
+<td>A directory containing all artifacts generated by the given tests
+stored in sub directories named by the test machine they were fetched
+from.</td>
+<td>Directory</td>
+</tr>
+<tr class="row-odd"><td>inventory</td>
+<td>A directory where all ansible inventory files are stored for the
+given run.</td>
+<td>Diretory</td>
+</tr>
+<tr class="row-even"><td>logs</td>
+<td>A directory where all log files are stored from the run. Logs here
+consist of teflo runtime logs, ansible logs, etc.</td>
+<td>Directory</td>
+</tr>
+<tr class="row-odd"><td>ansible_orchestrator</td>
+<td>The directory under logs directory where ansible logs related to
+orchestrate actionsare stored</td>
+<td>Directory</td>
+</tr>
+<tr class="row-even"><td>ansible_executor</td>
+<td>The directory under logs directory where ansible logs related to
+execute tasks are stored</td>
+<td>Directory</td>
+</tr>
+<tr class="row-odd"><td>results.yml</td>
+<td>The updated scenario descriptor file (created by teflo). This file
+can be used to pick up where you left off with teflo. You can easily
+run another task with this given file. It removes the need from
+starting a whole run over from the beginning.</td>
+<td>File</td>
+</tr>
+<tr class="row-even"><td>&lt;included_scenario_name&gt;_results.yml</td>
+<td>The updated scenario descriptor file for included scenario (created by teflo)
+This allows the users to use this file to include it in other scenarios as needed
+to eliminate common provisioning,orchestration,execute steps
+[NOTE : This file is generated only when a scenario is present in the <em>include</em> section]</td>
+<td>File</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="data_pass_through.html" class="btn btn-neutral float-left" title="Data Pass-through" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Red Hat Inc.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

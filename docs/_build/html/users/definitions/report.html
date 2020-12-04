@@ -1,0 +1,1273 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Report &mdash; Teflo 1.9.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_override.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'1.9.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Notification" href="notifications.html" />
+    <link rel="prev" title="Execute" href="execute.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Teflo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation &amp; Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install Teflo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configure Teflo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Teflo</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html#detailed-information">Detailed Information</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../scenario_descriptor.html">Scenario Descriptor</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="resource_check.html">Resource Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="credentials.html">Credentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Including Scenarios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="provision.html">Provision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orchestrate.html">Orchestrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="execute.html">Execute</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Report</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#executes">Executes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#finding-the-right-artifacts">Finding the right artifacts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#importing-artifacts-into-polarion">Importing artifacts into Polarion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#importing-artifacts-into-report-portal">Importing artifacts into Report Portal</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html">Notification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="timeout.html">Timeout settings for Teflo Tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../data_pass_through.html">Data Pass-through</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../output.html">Teflo Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../localhost.html">Using Localhost</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../variable_data.html">Using Jinja Variable Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resource_labels.html">Using Resource Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../faqs.html">FAQS</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Teflo Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/index.html">Developer’s Guide</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contacts</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Teflo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">User’s Guide</a> &raquo;</li>
+        
+          <li><a href="../scenario_descriptor.html">Scenario Descriptor</a> &raquo;</li>
+        
+      <li>Report</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/users/definitions/report.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="report">
+<h1>Report<a class="headerlink" href="#report" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Teflo’s report section declares which test artifacts collected during execution
+are to be imported into a Report &amp; Analysis system. The input for artifact import
+will depend on the destination system. The Reporting systems currently supported are:
+<a class="reference internal" href="#polarion-importing"><span class="std std-ref">Polarion</span></a> and <a class="reference internal" href="#report-portal-importing"><span class="std std-ref">Report Portal</span></a></p>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">To be able to use Polarion and Report Portal with teflo, new teflo_polarion_plugin and teflo_rppreproc_plugin will
+have to be installed in your workspace prior to running any scenarios. Please see
+<a class="reference internal" href="../install.html#cbn-importer-plugin"><span class="std std-ref">Teflo Importer Plugin Requirements</span></a> for installation process</p>
+</div>
+<p>First, let’s go over the basic structure that defines a Report resource.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">report</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;description&gt;</span>
+    <span class="nt">executes</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;execute&gt;</span>
+    <span class="nt">importer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;importer&gt;</span>
+    <span class="nt">provider</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;dict_key_values&gt;</span>
+</pre></div>
+</div>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last"><strong>Starting with Teflo version 1.7.0 the use of Provider will be deprecated. All the attributes which were
+put under provider dictionary can be set as a key under the report block. When provider key is not being used,
+it is mandatory to use the importer key to state which importer needs to be used</strong></p>
+</div>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">Also see <a class="reference internal" href="../install.html#cbn-plugin-matrix"><span class="std std-ref">Teflo Matrix for Plugins</span></a> to find the correct plugin versions supported by
+Teflo</p>
+</div>
+<table border="1" class="colwidths-auto docutils">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+<th class="head">Type</th>
+<th class="head">Required</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td>The name of the test artifact to import. This can be a
+full name of an artifact, a shell pattern matching string, or
+a string using Teflo’s data-passthru mechanism</td>
+<td>String</td>
+<td>True</td>
+</tr>
+<tr class="row-odd"><td>description</td>
+<td>A description of the artifact being imported</td>
+<td>String</td>
+<td>False</td>
+</tr>
+<tr class="row-even"><td>executes</td>
+<td>The name of the execute block that collected
+the artifact.</td>
+<td>List</td>
+<td>False</td>
+</tr>
+<tr class="row-odd"><td>importer</td>
+<td>The name of the importer to perform the import process.</td>
+<td>String</td>
+<td>True (False if provider key is used)</td>
+</tr>
+<tr class="row-even"><td>provider</td>
+<td>Dictionary of the specific provider key/values.</td>
+<td>Dict</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+<p>If you are familiar with the structure of Provision then the same
+concept of Provider has been utilized in the Report. We will dive
+into the different report providers further below.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Starting Teflo 1.7.0 use of provider is deprecated</p>
+</div>
+</div>
+<div class="section" id="executes">
+<h2>Executes<a class="headerlink" href="#executes" title="Permalink to this headline">¶</a></h2>
+<p>Defining a Teflo execute resource is optional. Teflo uses the execute resource
+for two reasons:</p>
+<blockquote>
+<div><ul class="simple">
+<li>It uses the <strong>artifact_locations</strong>  key as a quick way to check if the artifact
+being requested was collected and where to find it.</li>
+<li>It uses the Asset resources assigned to the Execute to perform the internal
+templating if a data-passthru string is being used in the name key
+as search criteria.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="finding-the-right-artifacts">
+<span id="finding-artifacts"></span><h2>Finding the right artifacts<a class="headerlink" href="#finding-the-right-artifacts" title="Permalink to this headline">¶</a></h2>
+<p>As noted in the table, the driving input will be the name key.
+The name can be a string defining the exact file/folder name,
+a shell matching pattern, or a teflo data-passthru pattern.
+Depending on the pattern used it will narrow or widen the search
+scope of the search. How teflo performs the search is by the following</p>
+<blockquote>
+<div><ul class="simple">
+<li>Check if an execute resource was defined with the <strong>execute</strong>
+and then check <strong>artifact_locations</strong> key is defined for
+the execute in the execute section.</li>
+<li>If there is an <strong>execute</strong> key and the artifact is listed as
+an item that was collected in the <strong>artifact_locations</strong> key, teflo
+will immediately validate the location.</li>
+<li>If no <strong>execute</strong> key is defined, or an execute with no <strong>artifact_location</strong>
+key is used, or the artifacts is not shown as one of the items contained in the
+the artifact_location key, or the item location in the artifact_location key is
+no longer valid, it proceeds to walk the <em>data_folder/.results</em> folder.</li>
+<li>If no artifacts are found after walking the <em>data_folder/.results</em>, teflo will abort the
+import process.</li>
+<li>If artifacts are found, the list of artifacts will be processed and imported into
+the respective reporting system.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="importing-artifacts-into-polarion">
+<span id="polarion-importing"></span><h2>Importing artifacts into Polarion<a class="headerlink" href="#importing-artifacts-into-polarion" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="credentials">
+<h3>Credentials<a class="headerlink" href="#credentials" title="Permalink to this headline">¶</a></h3>
+<p>To authenticate with Polarion, you will need to have your Polarion credentials
+in your teflo.cfg file, see <a class="reference external" href="credentials.html#polarion-credentials">Polarion Credentials</a> for more details.</p>
+</div>
+<div class="section" id="polarion-artifact">
+<h3>Polarion Artifact<a class="headerlink" href="#polarion-artifact" title="Permalink to this headline">¶</a></h3>
+<p>The following shows all the possible keys for defining the artifact import
+for the Polarion xUnit Importer:</p>
+<p>Without Provider :</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">report</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;description&gt;</span>
+    <span class="nt">executes</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;execute name&gt;</span>
+    <span class="nt">importer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">polarion</span>
+    <span class="nt">credential</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">polarion-creds</span>
+    <span class="nt">project_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;project_id&gt;</span>
+    <span class="nt">testsuite_properties</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;ts_properties&gt;</span>
+    <span class="nt">testcase_properties</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tc_properties&gt;</span>
+    <span class="nt">testcase_csv_file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;path_to_csv&gt;</span>
+</pre></div>
+</div>
+<p>With Provider :</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">report</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;description&gt;</span>
+    <span class="nt">executes</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;execute name&gt;</span>
+    <span class="nt">importer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;importer&gt;</span>
+    <span class="nt">provider</span><span class="p">:</span>
+      <span class="nt">credential</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">polarion-creds</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">polarion</span>
+      <span class="nt">project_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;project_id&gt;</span>
+      <span class="nt">testsuite_properties</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;ts_properties&gt;</span>
+      <span class="nt">testcase_properties</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tc_properties&gt;</span>
+      <span class="nt">testcase_csv_file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;path_to_csv&gt;</span>
+</pre></div>
+</div>
+<table border="1" class="colwidths-auto docutils">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+<th class="head">Type</th>
+<th class="head">Required</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td>The name of the provider (polarion).</td>
+<td>String</td>
+<td>True(Only when Provider is being used)</td>
+</tr>
+<tr class="row-odd"><td>credential</td>
+<td>The name of the credentials to use to import the artifact
+into polarion. This is the one defined in the credentials
+section of the teflo config file.</td>
+<td>String</td>
+<td>True</td>
+</tr>
+<tr class="row-even"><td>project_id</td>
+<td>The Polarion project id</td>
+<td>String</td>
+<td>False (True for xUnit conversion)</td>
+</tr>
+<tr class="row-odd"><td>testsuite_properties</td>
+<td>These are the specific Polarion test suite
+properties to apply to the xUnit file before
+importing. Any polarion-custom property can be used as well.
+format: &lt;polarion-ts-property&gt;: &lt;value&gt;</td>
+<td>Dictionary</td>
+<td>False</td>
+</tr>
+<tr class="row-even"><td>testcase_properties</td>
+<td>These are the specific testcases in the xUnit file and
+associated Polarion test cases properties to apply to
+the xUnit file before importing. Any polarion-custom
+property can be used as well. format:
+&lt;test_classname&gt;.&lt;name_attribute&gt;:
+&lt;polarion-tc-property&gt;: &lt;value&gt;</td>
+<td>Dictionary</td>
+<td>False</td>
+</tr>
+<tr class="row-odd"><td>testcase_csv_file</td>
+<td>An export csv file from Polarion that contains testcase
+work item fields - id, title, and testcaseid. Using this
+will allow teflo to dynamically assign the testcases
+the proper polarion-testcase-id based on the specified lookup
+method specified in testsuite_properties</td>
+<td>String</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p>It’s important to note when project_id, testsuite_properties, testcase_properties
+and/or testcase_csv_file are specified the importer will take those parameters and
+attempt to do the xUnit conversion. When supplying these provider
+parameters a minimum required parameter for xUnit conversion is project_id.</p>
+<p class="last">If project_id, testsuite_properties, testcase_properties, and testcase_csv_file are
+not specified teflo will not perform the xUnit conversion. It will proceed with
+importing the artifact and monitoring for import status.</p>
+</div>
+</div>
+<div class="section" id="xunit-test-case-properties">
+<h3>xUnit Test Case Properties<a class="headerlink" href="#xunit-test-case-properties" title="Permalink to this headline">¶</a></h3>
+<p>For the xUnit conversion process there are two options for tagging test cases with the
+appropriate id, <strong>testcase_properties</strong> or <strong>testcase_csv_file</strong>. Teflo has opted to follow
+the general guidelines set forth by Polarion.</p>
+</div>
+<div class="section" id="testcase-csv-file">
+<h3>testcase_csv_file<a class="headerlink" href="#testcase-csv-file" title="Permalink to this headline">¶</a></h3>
+<p>For a dynamic approach a user can export a csv file from Polarion containing the <em>id</em>, <em>title</em>,
+and <em>testcaseid</em> fields. This file is used in conjunction with a lookup-method. The <em>testcaseid</em>
+field is enabled by default in Polarion but is not available in the Form UI until it has been
+explicitly enabled by a project administrator. Once enabled the field should contain the name
+of the xUnit test case in the format of <strong>&lt;testclassname&gt;.&lt;name attribute&gt;</strong>.  For more
+information about the <em>testcaseid</em> field refer to the following <a class="reference external" href="https://mojo.redhat.com/docs/DOC-1073077#jive_content_id_Polarion_Configuration">Polarion
+documentation</a></p>
+<p>If no lookup method is specified in the testsuite_properties the Polarion xUnit Importer will
+default to looking for test cases using its id. Teflo will parse the <em>testcaseid</em> from the csv file
+and see if it is in the xUnit file. When found it will add the <strong>polarion-testcase-id</strong> property value
+to the <em>id</em>. The same applies if the lookup method was explicitly set to <em>id</em>.</p>
+<p>If the lookup method is set to <em>custom</em>. Teflo will parse the <em>testcaseid</em> from the csv file and see if
+it is in the xUnitfile. When found it will add the <strong>polarion-testcase-id</strong> property value to the
+<em>testcaseid</em>.</p>
+<p>If the lookup method is set to <em>name</em>. There is no need to specify this parameter since the Polarion
+xUnit Importer will search for the test case by the <em>title</em> and a <strong>polarion-testcase-id</strong> is not required.
+In order for Polarion to successfully find the test case the <em>title</em> has to be in the
+<strong>&lt;testclassname&gt;.&lt;name attribute&gt;</strong> format.</p>
+</div>
+<div class="section" id="testcase-properties">
+<h3>testcase_properties<a class="headerlink" href="#testcase-properties" title="Permalink to this headline">¶</a></h3>
+<p>This a static approach to defining what tags are to be applied to the xUnit test case. This
+is the recommended approach when a test case needs to have iterations added before the import.
+This is also the recommended method if Polarion projects have not enabled and are not using the
+testcaseid field for automated test cases being imported.</p>
+</div>
+<div class="section" id="teflo-polarion-configuration">
+<h3>Teflo Polarion Configuration<a class="headerlink" href="#teflo-polarion-configuration" title="Permalink to this headline">¶</a></h3>
+<p>In the teflo configuration file, you can set some options related to Polarion.
+These values should be set in the <strong>[importer:polarion]</strong> section of the
+config file.  The following are the settings.</p>
+<table border="1" class="colwidths-auto docutils">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>save_file</td>
+<td>configuration option to save a copy of the xUnit file
+before performing the xUnit conversion.</td>
+<td>By default this is set to True to make a copy.</td>
+</tr>
+<tr class="row-odd"><td>wait_timeout</td>
+<td>configuration option to set how long teflo should
+wait for the import process to complete.</td>
+<td>By default, teflo will set the timeout to 15 minutes.
+This value can be overwritten but must be specified in
+seconds, i.e. 15 minutes = 900 seconds.</td>
+</tr>
+<tr class="row-even"><td>poll_interval</td>
+<td>configuration option to set how often teflo should check
+with the Polarion xUnit queue for import process status.</td>
+<td>By default, teflo will poll the xUnit queue every 1 minute.
+This value can be overwritten but must be specified in seconds
+i.e. 1 minute = 60 seconds.</td>
+</tr>
+<tr class="row-odd"><td>concurrent_processing</td>
+<td>configuration option on whether the polarion library
+should perform each activity (xunit translation/
+initial import/waiting for import completion)concurrently
+or serially.</td>
+<td>By default this is set to True to perform the different
+actions concurrently.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="examples">
+<span id="report-examples"></span><h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<p>Lets dive into a couple different examples. These examples show use of both provider key and no provider key</p>
+</div>
+<div class="section" id="example-1">
+<h3>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h3>
+<p>You have an xUnit artifact that has already gone through conversion as part of
+the test process and needs to be imported into Polarion.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">suite1_results</span><span class="o">.</span><span class="n">xml</span>
+  <span class="n">description</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">suite1</span> <span class="n">results</span> <span class="n">to</span> <span class="n">polarion</span>
+  <span class="n">executes</span><span class="p">:</span> <span class="n">pytest</span> <span class="n">execution</span>
+  <span class="n">importer</span><span class="p">:</span> <span class="n">polarion</span>
+  <span class="n">credential</span><span class="p">:</span> <span class="n">polarion</span><span class="o">-</span><span class="n">creds</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2">
+<h3>Example 2<a class="headerlink" href="#example-2" title="Permalink to this headline">¶</a></h3>
+<p>You have an xUnit artifact that needs just some testsuite properties applied,
+where the lookup method is set to name. Then the artifact is imported afterwards.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">suite1_results</span><span class="o">.</span><span class="n">xml</span>
+  <span class="n">description</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">suite1</span> <span class="n">results</span> <span class="n">to</span> <span class="n">polarion</span>
+  <span class="n">executes</span><span class="p">:</span> <span class="n">pytest</span> <span class="n">execution</span>
+  <span class="n">importer</span><span class="p">:</span> <span class="n">polarion</span>
+  <span class="n">credential</span><span class="p">:</span> <span class="n">polarion</span><span class="o">-</span><span class="n">creds</span>
+  <span class="n">project_id</span><span class="p">:</span> <span class="n">Teflo1</span>
+  <span class="n">testsuite_properties</span><span class="p">:</span>
+    <span class="n">polarion</span><span class="o">-</span><span class="n">lookup</span><span class="o">-</span><span class="n">method</span><span class="p">:</span> <span class="n">name</span>
+    <span class="n">polarion</span><span class="o">-</span><span class="n">custom</span><span class="o">-</span><span class="n">os</span><span class="p">:</span> <span class="n">RHEL</span> <span class="mi">8</span>
+    <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="nb">id</span><span class="p">:</span> <span class="n">PolId</span><span class="o">-</span><span class="mi">123</span>
+    <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="n">title</span><span class="p">:</span> <span class="n">Sample</span> <span class="n">Test</span> <span class="n">Run</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-3">
+<h3>Example 3<a class="headerlink" href="#example-3" title="Permalink to this headline">¶</a></h3>
+<p>You have an xUnit artifact that needs a full set of properties applied and
+imported afterwards. No lookup method is supplied because the id for the
+test case has been explicitly defined and an iteration.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">suite1_results</span><span class="o">.</span><span class="n">xml</span>
+  <span class="n">description</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">suite1</span> <span class="n">results</span> <span class="n">to</span> <span class="n">polarion</span>
+  <span class="n">executes</span><span class="p">:</span> <span class="n">pytest</span> <span class="n">execution</span>
+  <span class="n">provider</span><span class="p">:</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">polarion</span><span class="o">-</span><span class="n">creds</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">polarion</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="n">Teflo1</span>
+    <span class="n">testsuite_properties</span><span class="p">:</span>
+      <span class="n">polarion</span><span class="o">-</span><span class="n">custom</span><span class="o">-</span><span class="n">os</span><span class="p">:</span> <span class="n">RHEL</span> <span class="mi">8</span>
+      <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="nb">id</span><span class="p">:</span> <span class="n">PolId</span><span class="o">-</span><span class="mi">123</span>
+      <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="n">title</span><span class="p">:</span> <span class="n">Sample</span> <span class="n">Test</span> <span class="n">Run</span>
+    <span class="n">testcase_properties</span><span class="p">:</span>
+      <span class="n">test_sample</span><span class="o">.</span><span class="n">test_answer</span><span class="p">:</span>
+        <span class="n">polarion</span><span class="o">-</span><span class="n">parameter</span><span class="o">-</span><span class="n">os</span><span class="p">:</span> <span class="n">RHEL7</span>
+        <span class="n">polarion</span><span class="o">-</span><span class="n">testcase</span><span class="o">-</span><span class="nb">id</span><span class="p">:</span> <span class="n">CARB1</span><span class="o">-</span><span class="mi">225</span>
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-4">
+<h3>Example 4<a class="headerlink" href="#example-4" title="Permalink to this headline">¶</a></h3>
+<p>You have an xUnit artifact that was named using Teflo’s data pass-through in
+the execute phase that needs to have some testsuite properties applied to it and
+imported afterwards.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;{ sat_driver.ip_address }_results.xml&#39;</span>
+  <span class="n">description</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">suite1</span> <span class="n">results</span> <span class="n">to</span> <span class="n">polarion</span>
+  <span class="n">executes</span><span class="p">:</span> <span class="n">pytest</span> <span class="n">execution</span>
+  <span class="n">provider</span><span class="p">:</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">polarion</span><span class="o">-</span><span class="n">creds</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">polarion</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="n">Teflo1</span>
+    <span class="n">testsuite_properties</span><span class="p">:</span>
+      <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="nb">id</span><span class="p">:</span> <span class="n">PolId</span><span class="o">-</span><span class="mi">123</span>
+      <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="n">title</span><span class="p">:</span> <span class="n">Sample</span> <span class="n">Test</span> <span class="n">Run</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-5">
+<h3>Example 5<a class="headerlink" href="#example-5" title="Permalink to this headline">¶</a></h3>
+<p>You have a set of xUnit files that have already gone through conversion
+during the test process and just need to be bulk imported.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;*.xml&#39;</span>
+  <span class="n">description</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">suite1</span> <span class="n">results</span> <span class="n">to</span> <span class="n">polarion</span>
+  <span class="n">executes</span><span class="p">:</span> <span class="n">pytest</span> <span class="n">execution</span>
+  <span class="n">importer</span><span class="p">:</span> <span class="n">polarion</span>
+  <span class="n">credential</span><span class="p">:</span> <span class="n">polarion</span><span class="o">-</span><span class="n">creds</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-6">
+<h3>Example 6<a class="headerlink" href="#example-6" title="Permalink to this headline">¶</a></h3>
+<p>You have a set of xUnit files that have the same name
+that have already gone through conversion during the test process
+but you only need one from a specific host in teflo’s artifact directory.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">client</span><span class="o">-</span><span class="n">a</span><span class="o">-*/</span><span class="n">suite1_results</span><span class="o">.</span><span class="n">xml</span>
+  <span class="n">description</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">suite1</span> <span class="n">results</span> <span class="n">to</span> <span class="n">polarion</span>
+  <span class="n">executes</span><span class="p">:</span> <span class="n">pytest</span> <span class="n">execution</span>
+  <span class="n">provider</span><span class="p">:</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">polarion</span><span class="o">-</span><span class="n">creds</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">polarion</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-7">
+<h3>Example 7<a class="headerlink" href="#example-7" title="Permalink to this headline">¶</a></h3>
+<p>You have an xUnit file that needs to be properly tagged with testsuite
+properties and the testcases should dynamically tagged with their polarion
+id using the contents of the csv file. Then imported afterwards.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">suite1_results</span><span class="o">.</span><span class="n">xml</span>
+  <span class="n">description</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">suite1</span> <span class="n">results</span> <span class="n">to</span> <span class="n">polarion</span>
+  <span class="n">executes</span><span class="p">:</span> <span class="n">pytest</span> <span class="n">execution</span>
+  <span class="n">importer</span><span class="p">:</span> <span class="n">polarion</span>
+  <span class="n">credential</span><span class="p">:</span> <span class="n">polarion</span><span class="o">-</span><span class="n">creds</span>
+  <span class="n">project_id</span><span class="p">:</span> <span class="n">Teflo1</span>
+  <span class="n">testsuite_properties</span><span class="p">:</span>
+    <span class="n">polarion</span><span class="o">-</span><span class="n">lookup</span><span class="o">-</span><span class="n">method</span><span class="p">:</span> <span class="n">custom</span>
+    <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="nb">id</span><span class="p">:</span> <span class="n">PolId</span><span class="o">-</span><span class="mi">123</span>
+    <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="n">title</span><span class="p">:</span> <span class="n">Sample</span> <span class="n">Test</span> <span class="n">Run</span>
+  <span class="n">testcase_csv_file</span><span class="p">:</span> <span class="n">polarion</span><span class="o">/</span><span class="n">workitems</span><span class="o">.</span><span class="n">csv</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="importing-artifacts-into-report-portal">
+<span id="report-portal-importing"></span><h2>Importing artifacts into Report Portal<a class="headerlink" href="#importing-artifacts-into-report-portal" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Credentials<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>To authenticate with Report Portal, you will need to have your Report Portal credentials
+in your teflo.cfg file, see <a class="reference external" href="credentials.html#report-portal-credentials">Report Portal Credentials</a>
+for more details.</p>
+</div>
+<div class="section" id="ccit-report-portal-client">
+<h3>CCIT  Report Portal Client<a class="headerlink" href="#ccit-report-portal-client" title="Permalink to this headline">¶</a></h3>
+<p>Teflo uses CCIT Report Portal client to import artifacts to the Report Portal instance.
+To know more about Report Portal Client, please refer
+<a class="reference external" href="https://docs.engineering.redhat.com/pages/viewpage.action?pageId=81876674">here</a></p>
+</div>
+<div class="section" id="teflo-report-portal-configuration">
+<h3>Teflo Report Portal Configuration<a class="headerlink" href="#teflo-report-portal-configuration" title="Permalink to this headline">¶</a></h3>
+<p>The following shows all the possible keys for defining the artifact import
+for the Report Portal Importer:</p>
+<p>Without Provider:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">report</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;description&gt;</span>
+    <span class="nt">executes</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;execute name&gt;</span>
+    <span class="nt">importer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">reportportal</span>
+    <span class="nt">credential</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">reportportal-creds</span>
+    <span class="nt">rp_project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;project_name&gt;</span>
+    <span class="nt">launch_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;launch_name&gt;</span>
+    <span class="nt">launch_description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;launch_description&gt;</span>
+    <span class="nt">simple_xml</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;to just import XML file directly&gt;</span>
+    <span class="nt">auto_dashboard</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;create dashboard&gt;</span>
+    <span class="nt">merge_launches</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;merge multiple launches into single true/false&gt;</span>
+    <span class="nt">tags</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tag1&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tag2&gt;</span>
+    <span class="nt">json_path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;relative path for report portal config file&gt;</span>
+</pre></div>
+</div>
+<p>With Provider:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">report</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;description&gt;</span>
+    <span class="nt">executes</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;execute name&gt;</span>
+    <span class="nt">importer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;importer&gt;</span>
+    <span class="nt">provider</span><span class="p">:</span>
+      <span class="nt">credential</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">reportportal-creds</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">reportportal</span>
+      <span class="nt">rp_project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;project_name&gt;</span>
+      <span class="nt">launch_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;launch_name&gt;</span>
+      <span class="nt">launch_description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;launch_description&gt;</span>
+      <span class="nt">simple_xml</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;to just import XML file directly&gt;</span>
+      <span class="nt">auto_dashboard</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;create dashboard&gt;</span>
+      <span class="nt">merge_launches</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;merge multiple launches into single true/false&gt;</span>
+      <span class="nt">tags</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tag1&gt;</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tag2&gt;</span>
+      <span class="nt">json_path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;relative path for report portal config file&gt;</span>
+</pre></div>
+</div>
+<table border="1" class="colwidths-auto docutils">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+<th class="head">Type</th>
+<th class="head">Required</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td>The name of the provider (reportportal).</td>
+<td>String</td>
+<td>True (Only when Provider is used)</td>
+</tr>
+<tr class="row-odd"><td>credential</td>
+<td>The name of the credentials to use to import the artifact
+into report portal. This is the one defined in the credentials
+section of the teflo config file.</td>
+<td>String</td>
+<td>True</td>
+</tr>
+<tr class="row-even"><td>rp_project</td>
+<td>The Report Portal project name</td>
+<td>String</td>
+<td>True</td>
+</tr>
+<tr class="row-odd"><td>launch_name</td>
+<td>The name of the launch(import session)</td>
+<td>String</td>
+<td>True</td>
+</tr>
+<tr class="row-even"><td>launch_description</td>
+<td>The description of the launch</td>
+<td>String</td>
+<td>False</td>
+</tr>
+<tr class="row-odd"><td>tags</td>
+<td>Tags set for each launch</td>
+<td>list</td>
+<td>False</td>
+</tr>
+<tr class="row-even"><td>merge_launches</td>
+<td>report portal client sends one xml file as one launch. To send multiple
+xml files as a single launch this option is used. If set to false there
+we can see multiple launches and multiple launch ids will be provided.
+(Default: True)</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr class="row-odd"><td>auto_dashboard</td>
+<td>report portal client creates dashboard and populate it with a basic
+table widget filtered on the launch name specified. It returns a
+dashboard url. (Default: True)</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr class="row-even"><td>simple_xml</td>
+<td>bypass the pre-processor and just import the XML file directly. Attachments,
+and other benefits of parsing into individual API calls, will not be available.
+(Default: False)</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr class="row-odd"><td>json_path</td>
+<td>relative path for json file for the report portal configuration. When this option
+is used, the rest of the provider params are ignored. User can set all the above
+params in a json config file and provide ts path here.</td>
+<td>String</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">At this time Report Portal Client can create a dashboard for the launches using a single widget
+and one filter (name of the launch).</p>
+</div>
+</div>
+<div class="section" id="report-portal-config-file">
+<h3>Report Portal Config File<a class="headerlink" href="#report-portal-config-file" title="Permalink to this headline">¶</a></h3>
+<p>Uers can provide a custom config json file using the key <em>json_path</em> under the provider
+section of the report section in the SDF.</p>
+<p>Please refer report portal config section in the Report Portal client documentation to understand
+more about the config json file
+<a class="reference external" href="https://docs.engineering.redhat.com/pages/viewpage.action?pageId=81876674#CCITReportPortalUser'sGuide-rp_preproc">here</a></p>
+<p>Example for json config:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+ <span class="nt">&quot;rp_preproc&quot;</span><span class="p">:</span> <span class="p">{</span>
+     <span class="nt">&quot;service_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://rp-preproc-downstream-ccit-reportportal.cloud.paas.psi.redhat.com/&quot;</span><span class="p">,</span>
+     <span class="nt">&quot;payload_dir&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+
+ <span class="p">},</span>
+ <span class="nt">&quot;reportportal&quot;</span><span class="p">:</span> <span class="p">{</span>
+     <span class="nt">&quot;host_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://rp-ea.cloud.paas.psi.redhat.com&quot;</span><span class="p">,</span>
+     <span class="nt">&quot;api_token&quot;</span><span class="p">:</span> <span class="s2">&quot;000-000-000-000&quot;</span><span class="p">,</span>
+     <span class="nt">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;teflo_project&quot;</span><span class="p">,</span>
+     <span class="nt">&quot;merge_launches&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+     <span class="nt">&quot;auto_dashboard&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+     <span class="nt">&quot;simple_xml&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+     <span class="nt">&quot;launch&quot;</span><span class="p">:</span> <span class="p">{</span>
+         <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;teflo1&quot;</span><span class="p">,</span>
+         <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;teflo_launch_desc&quot;</span><span class="p">,</span>
+         <span class="nt">&quot;tags&quot;</span><span class="p">:[</span>
+             <span class="s2">&quot;tag1&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;tag2&quot;</span>
+         <span class="p">]</span>
+
+     <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If config json file is not provided by the user then Teflo creates the file using the
+different report portal provider parameters in the report section of the SDF as <strong>&lt;uuid&gt;.json</strong> and stores
+it under a folder named <strong>rp_config_files</strong>. Here uuid is a unique id generated for every report portal block/run in
+teflo. User has the option to save this Teflo created file for future use. By default the file gets deleted after
+every run.</p>
+<p>In the teflo configuration file, user can set the following parameter in the <strong>[importer:reportportal]</strong>
+section to save the Teflo created reportportal config file.</p>
+<table border="1" class="colwidths-auto docutils">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>save_json_config</td>
+<td>configuration option to save a copy of the reportportal config json file
+created by Teflo</td>
+<td>By default this is set to False to delete the file after every run</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Even if the user provided config json file has a payload directory given, it gets overwritten
+by the one created/validated by Teflo</p>
+</div>
+<p><strong>Example 1</strong></p>
+<p>In the following example, <em>json_path</em> parameter is not provided, Teflo uses the reportportal provider’s
+remaining params and creates the json file <strong>&lt;uuid&gt;.json</strong> in a directory <strong>rp_config_files</strong> under the workspace
+directory and uses it to pass paylaod to the Report Portal Client</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">payload_example_medium</span><span class="o">/*</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">To</span> <span class="n">test</span> <span class="n">rp</span> <span class="n">path</span>
+    <span class="n">executes</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+    <span class="n">importer</span><span class="p">:</span><span class="n">reportportal</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">reportportal</span><span class="o">-</span><span class="n">creds</span>
+    <span class="n">rp_project</span><span class="p">:</span> <span class="n">teflo_1</span>
+    <span class="n">launch_name</span><span class="p">:</span> <span class="n">teflo_launch</span>
+    <span class="n">launch_description</span><span class="p">:</span> <span class="n">teflo_launch_desc</span>
+    <span class="n">tags</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">tag1</span>
+    <span class="o">-</span> <span class="n">tag2</span>
+    <span class="n">merge_launches</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="n">simple_xml</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="n">auto_dashboard</span><span class="p">:</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<p>In the following example, json_path is provided. Here Teflo uses the user provided config file to send
+the payload to the Report Portal Client</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">payload_example_medium</span><span class="o">/*</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">To</span> <span class="n">test</span> <span class="n">rp</span> <span class="n">path</span>
+    <span class="n">executes</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+    <span class="n">importer</span><span class="p">:</span> <span class="n">reportportal</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">reportportal</span><span class="o">-</span><span class="n">creds</span>
+    <span class="n">rp_project</span><span class="p">:</span> <span class="n">teflo_1</span>
+    <span class="n">launch_name</span><span class="p">:</span> <span class="n">teflo_launch</span>
+    <span class="n">json_path</span><span class="p">:</span> <span class="n">rp_config_1</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<p><strong>Example 3</strong></p>
+<p>In the following example both json_path and other params are given. Here since json_path is provided
+it will be used as the config file to send the payload, the other params are ignored</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">payload_example_medium</span><span class="o">/*</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">To</span> <span class="n">test</span> <span class="n">rp</span> <span class="n">path</span>
+    <span class="n">executes</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+    <span class="n">provider</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">reportportal</span>
+      <span class="n">credential</span><span class="p">:</span> <span class="n">reportportal</span><span class="o">-</span><span class="n">creds</span>
+      <span class="n">rp_project</span><span class="p">:</span> <span class="n">teflo_1</span>
+      <span class="n">launch_name</span><span class="p">:</span> <span class="n">teflo_launch</span>
+      <span class="n">launch_description</span><span class="p">:</span> <span class="n">teflo_launch_desc</span>
+      <span class="n">tags</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">tag1</span>
+      <span class="o">-</span> <span class="n">tag2</span>
+      <span class="n">merge_launches</span><span class="p">:</span> <span class="kc">False</span>
+      <span class="n">auto_dashboard</span><span class="p">:</span> <span class="kc">True</span>
+      <span class="n">json_path</span><span class="p">:</span> <span class="n">rp_config_1</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-payload-directory-for-report-portal-client">
+<h3>Setting up payload directory for Report Portal Client<a class="headerlink" href="#setting-up-payload-directory-for-report-portal-client" title="Permalink to this headline">¶</a></h3>
+<p>The CCIT Report Portal client requires artifacts to be presented in a specific payload directory structure.
+It needs all the xml files(test cases) to be in a folder named <strong>results</strong> and any specific test case related
+logs to be in a folder named <strong>attachments</strong>. The results folder is required. The attachments folder is optional,
+it is needed only when related items like pictures/logs need to be sent to Report Portal. The attachments folder
+also has a set of rules regarding sub-folder structure. Please refer to the Report Portal Payload Directory structure
+<a class="reference external" href="https://docs.engineering.redhat.com/pages/viewpage.action?pageId=81876674#CCITReportPortalUser'sGuide-payloaddirectory">Payload Structure</a></p>
+<p>There are a few ways Teflo can handle this:</p>
+<p><strong>Structured</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>User can pre create the artifacts payload directory as per the Report Portal requirement in the
+execute stage and collect it as part of the <em>artifacts</em></li>
+<li>User can pre-create the artifacts payload directory as per the Report Portal client requirements
+but they aren’t collected as part of <em>artifacts</em>. Probably as an intermediate step between the
+Execute and Report phases, the user would have to place the payload directory under the <em>.results</em> folder.
+User can then put the name of the payload folder in the <em>artifact_location</em> key or let Teflo
+walk the data_folder directories.</li>
+</ul>
+</div></blockquote>
+<p><strong>Unstructured</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>User doesn’t pre-create the payload directory and collects the unstructured artifacts they need in the execute
+phase using <em>artifacts</em>. Teflo will filter the list of artifacts for any .xml files,
+then create a new folder under Teflo’s data folder named <strong>&lt;data folder&gt;/rp_paylods/&lt;uuid&gt;/results</strong>, and place
+the xml files in this directory. Here uuid is a unique id generated for every report portal block/run in
+teflo</li>
+<li>User doesn’t pre-create the payload directory and doesn’t collect the unstructured artifacts in the execute
+phase using <em>artifacts</em>. Probably as an intermediate step between the Execute and Report phases.
+The user would have to place the artifacts under the teflo’s <em>.results</em> folder. User can then put the name of the
+payload folder in the <em>artifact_location</em> key or let Teflo walk the data_folder directories.
+Teflo will filter the list of artifacts for any .xml files, then creates a new folder under Teflo’s
+data folder named <strong>&lt;data folder&gt;/rp_paylods/&lt;uuid&gt;/results</strong>, and place the xml files in this directory.
+Here uuid is a unique id generated for every report portal block/run in
+teflo</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="use-case-1">
+<h3>Use Case 1<a class="headerlink" href="#use-case-1" title="Permalink to this headline">¶</a></h3>
+<p>Using execute section to collect artifacts with correct structure and send them as payload to the Report Portal Client</p>
+<p>In this use case the user needs to setup the execute section with an additional step to collect the artifacts and place
+them in the required directory structure needed by the Report Portal Client. i.e all xmls under results folder and all
+logs related to the test cases under attachments folder.</p>
+<p>In the example below, the execute stage is setup to collect artifacts from location /rp_examples/payload_eg in the required
+structure. The report name in this case is a pattern payload/* to consider the payload_eg dir entirely as the payload
+to be sent to the Report Portal Client</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">execute</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+      <span class="n">description</span><span class="p">:</span> <span class="n">execute</span> <span class="n">poc</span> <span class="k">for</span> <span class="n">rp</span>
+      <span class="n">hosts</span><span class="p">:</span> <span class="n">test_host1</span>
+      <span class="n">executor</span><span class="p">:</span> <span class="n">runner</span>
+      <span class="n">shell</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">chdir</span><span class="p">:</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">teflo_develop</span><span class="o">/</span><span class="n">e2e</span><span class="o">-</span><span class="n">acceptance</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span>
+          <span class="n">command</span><span class="p">:</span> <span class="n">mkdir</span> <span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_eg</span><span class="p">;</span><span class="n">mkdir</span> <span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_eg</span><span class="o">/</span><span class="n">results</span><span class="p">;</span> <span class="n">mkdir</span> <span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_eg</span><span class="o">/</span><span class="n">attachments</span><span class="p">;</span> <span class="n">cp</span> <span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_example_medium</span><span class="o">/</span><span class="n">results</span><span class="o">/*.</span><span class="n">xml</span> <span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_eg</span><span class="o">/</span><span class="n">results</span><span class="o">/</span> <span class="p">;</span> <span class="n">cp</span> <span class="o">-</span><span class="n">r</span> <span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_example_medium</span><span class="o">/</span><span class="n">attachments</span><span class="o">/*</span> <span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_eg</span><span class="o">/</span><span class="n">attachments</span><span class="o">/</span>
+      <span class="n">artifacts</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_eg</span><span class="o">/</span>
+
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">payload_eg</span><span class="o">/*</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">To</span> <span class="n">test</span> <span class="n">rp</span> <span class="n">path</span>
+    <span class="n">executes</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+    <span class="n">importer</span><span class="p">:</span> <span class="n">reportportal</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">reportportal</span><span class="o">-</span><span class="n">creds</span>
+    <span class="n">rp_project</span><span class="p">:</span> <span class="n">teflo_1</span>
+    <span class="n">launch_name</span><span class="p">:</span> <span class="n">teflo_launch</span>
+    <span class="n">launch_description</span><span class="p">:</span> <span class="n">teflo_launch_desc</span>
+    <span class="n">tags</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">tag1</span>
+    <span class="o">-</span> <span class="n">tag2</span>
+    <span class="n">merge_launches</span><span class="p">:</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-case-2">
+<h3>Use Case 2<a class="headerlink" href="#use-case-2" title="Permalink to this headline">¶</a></h3>
+<p>Artifacts/payload to be sent is not collected using the execute section of Teflo and payload directory structure is
+as required by Report Portal client</p>
+<p>In this usecase the artifacts/payload to be sent to Report Portal are not collected as a part of execute phase.
+Here the user can place the payload directory created separately under teflo’s <em>.results</em>  folder and use the key
+<em>artifact_locations</em> under the execute section to let Teflo know to look in the .results folder for this payload
+directory. In this usecase the directory structure is as per requirement.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please refer <a class="reference internal" href="execute.html#finding-locations"><span class="std std-ref">here</span></a>  to know more about using artifact_locations key under execute section
+of Teflo’s SDF</p>
+</div>
+<p>Teflo verifies that the given path has correct directory structure  and then passes that as the payload directory
+to the Report Portal client</p>
+<p>In the below example the payload_example_medium is a directory placed under <em>.results</em> folder and has the correct
+directory structure of results and attachments folder under it. The name of the report used is payload_example/medium/*</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">execute</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+      <span class="n">description</span><span class="p">:</span> <span class="n">execute</span> <span class="n">poc</span> <span class="k">for</span> <span class="n">rp</span>
+      <span class="n">hosts</span><span class="p">:</span> <span class="n">test_host1</span>
+      <span class="n">executor</span><span class="p">:</span> <span class="n">runner</span>
+      <span class="n">shell</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">chdir</span><span class="p">:</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">teflo_develop</span><span class="o">/</span><span class="n">e2e</span><span class="o">-</span><span class="n">acceptance</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">rp_examples</span>
+          <span class="n">command</span><span class="p">:</span> <span class="n">pwd</span><span class="p">;</span><span class="n">ls</span>
+      <span class="n">artifact_locations</span><span class="p">:</span>
+         <span class="n">payload_example_medium</span> <span class="p">:</span>
+           <span class="o">-</span> <span class="n">results</span><span class="o">/</span>
+           <span class="o">-</span> <span class="n">attachments</span><span class="o">/</span>
+
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">payload_example_medium</span><span class="o">/*</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">To</span> <span class="n">test</span> <span class="n">rp</span> <span class="n">path</span>
+    <span class="n">executes</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+    <span class="n">importer</span><span class="p">:</span> <span class="n">reportportal</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">reportportal</span><span class="o">-</span><span class="n">creds</span>
+    <span class="n">rp_project</span><span class="p">:</span> <span class="n">teflo_1</span>
+    <span class="n">launch_name</span><span class="p">:</span> <span class="n">teflo_launch</span>
+    <span class="n">launch_description</span><span class="p">:</span> <span class="n">teflo_launch_desc</span>
+    <span class="n">tags</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">tag1</span>
+    <span class="o">-</span> <span class="n">tag2</span>
+    <span class="n">merge_launches</span><span class="p">:</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-case-3">
+<h3>Use Case 3<a class="headerlink" href="#use-case-3" title="Permalink to this headline">¶</a></h3>
+<p>Artifacts are collected by the execute section of the Teflo SDF , but they are not stored in the correct directory
+structure as needed by the Report Portal client.</p>
+<p>In this case Teflo will create a separate directory named rp_payload under Teflo’s data folder. Here ONLY the
+xml files are copied from artifacts in execute phase  over to rp_payload/results.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In case attachments/logs were collected as part of artifacts they are ignored. At this time Teflo does not
+support collecting additional logs and sending them as part of payload directory structure. To send the
+additional logs as a part of payload please look at usecase 1 or 2 examples.</p>
+</div>
+<p>In the below example rp_examples/payload_uc3 is where artifacts are stored but not in correct format. Teflo looks through
+this folder, copies all the xml files and puts them under .teflo/&lt;data folder&gt;/rp_payloads/&lt;uuid&gt;/results.</p>
+<p><strong>.teflo/&lt;data folder&gt;/rp_payloads/&lt;uuid&gt;</strong> is the payload directory path given to the Report Portal client</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">execute</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+      <span class="n">description</span><span class="p">:</span> <span class="n">execute</span> <span class="n">poc</span> <span class="k">for</span> <span class="n">rp</span>
+      <span class="n">hosts</span><span class="p">:</span> <span class="n">test_host1</span>
+      <span class="n">executor</span><span class="p">:</span> <span class="n">runner</span>
+      <span class="n">shell</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">chdir</span><span class="p">:</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">teflo_develop</span><span class="o">/</span><span class="n">e2e</span><span class="o">-</span><span class="n">acceptance</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">rp_examples</span>
+          <span class="n">command</span><span class="p">:</span> <span class="n">pwd</span><span class="p">;</span><span class="n">ls</span>
+      <span class="n">artifacts</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_uc3</span>
+
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;*.xml&#39;</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">To</span> <span class="n">test</span> <span class="n">rp</span> <span class="n">path</span>
+    <span class="n">executes</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+    <span class="n">importer</span><span class="p">:</span> <span class="n">reportportal</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">reportportal</span><span class="o">-</span><span class="n">creds</span>
+    <span class="n">rp_project</span><span class="p">:</span> <span class="n">teflo_1</span>
+    <span class="n">launch_name</span><span class="p">:</span> <span class="n">teflo_launch</span>
+    <span class="n">launch_description</span><span class="p">:</span> <span class="n">teflo_launch_desc</span>
+    <span class="n">tags</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">tag1</span>
+    <span class="o">-</span> <span class="n">tag2</span>
+    <span class="n">merge_launches</span><span class="p">:</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-case-4">
+<h3>Use Case 4<a class="headerlink" href="#use-case-4" title="Permalink to this headline">¶</a></h3>
+<p>Artifacts/payload to be sent are NOT collected using the execute section of teflo and payload directory structure
+is NOT as required  by Report Portal client</p>
+<p>In this usecase the user can place the payload directory created separately under Teflo’s <em>.results</em>  folder
+and can place the path of the payload directory under <em>artifact_locations</em> key of the execute section of the SDF.
+Teflo will create a separate directory rp_payload as .teflo/&lt;data folder&gt;/rp_payload/results and since the
+directory structure is NOT as required, will copy ONLY the xml files from payload directory which user has put
+under <em>.results</em> folder.</p>
+<p>In the below example the payload_teflo is a directory placed under teflo’s  <em>.results</em> folder and does not have
+the correct directory structure of results and attachments folder under it.Here teflo will create a separate
+directory rp_payloads if it is not already there and then create a folder with uuid as</p>
+<blockquote>
+<div>.teflo/&lt;data folder&gt;/rp_payloads/&lt;uuid&gt;/results and copy all the xml files from .teflo/.results/payload_teflo/.</div></blockquote>
+<p>The payload directory sent to report portal client will be <strong>.teflo/.results/rp_payloads/uuid</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">execute</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+      <span class="n">description</span><span class="p">:</span> <span class="n">execute</span> <span class="n">poc</span> <span class="k">for</span> <span class="n">rp</span>
+      <span class="n">hosts</span><span class="p">:</span> <span class="n">test_host1</span>
+      <span class="n">executor</span><span class="p">:</span> <span class="n">runner</span>
+      <span class="n">shell</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">chdir</span><span class="p">:</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">teflo_develop</span><span class="o">/</span><span class="n">e2e</span><span class="o">-</span><span class="n">acceptance</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">rp_examples</span>
+          <span class="n">command</span><span class="p">:</span> <span class="n">pwd</span><span class="p">;</span><span class="n">ls</span>
+      <span class="n">artifact_locations</span><span class="p">:</span>
+         <span class="n">payload_teflo</span> <span class="p">:</span>
+           <span class="o">-</span> <span class="n">tempest</span><span class="o">-</span><span class="n">results</span><span class="o">-</span><span class="nb">all</span><span class="o">.</span><span class="mf">1.</span><span class="n">xml</span>
+           <span class="o">-</span> <span class="n">junit_example</span><span class="o">.</span><span class="n">xml</span>
+           <span class="o">-</span> <span class="n">MyTest</span><span class="o">.</span><span class="n">test_method3</span>
+
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;*.xml&#39;</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">To</span> <span class="n">test</span> <span class="n">rp</span> <span class="n">path</span>
+    <span class="n">executes</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+    <span class="n">provider</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">reportportal</span>
+      <span class="n">credential</span><span class="p">:</span> <span class="n">reportportal</span><span class="o">-</span><span class="n">creds</span>
+      <span class="n">launch_name</span><span class="p">:</span> <span class="n">teflo_launch1</span>
+      <span class="n">rp_project</span><span class="p">:</span> <span class="n">teflo_1</span>
+      <span class="n">json_path</span><span class="p">:</span> <span class="n">rp_config_1</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-case-5">
+<h3>Use Case 5<a class="headerlink" href="#use-case-5" title="Permalink to this headline">¶</a></h3>
+<p>Artifacts are collected by execute section (unstructured) of the SDF and there are other xml files
+(seperate from artifacts) that are needed to be added to the payload</p>
+<p>In this case the artifacts to be collected are put under the <em>artifact</em> key. The additional files to be added
+to payload are placed under teflo’s <em>.results</em> folder and they are mentioned under the <em>artifact_locations</em>
+key</p>
+<p>This case even is used when the artifacts and artifac_location files are unstructured. Teflo creates a directory
+.teflo&lt;data folder&gt;rp_payload/results. It will then go through the paths in artifacts and artifact_locations and
+collect all the xml files there. Any other files will be ignored.</p>
+<p>The path for payload directory is <strong>.teflo/&lt;data folder&gt;/rp_payloads/&lt;uuid&gt;</strong></p>
+<p>In the below example the artifacts collected during execute phase are present under artifacts as
+/home/teflo_develop/e2e-acceptance-tests/rp_examples/payload_example_medium and the other xml files not collected
+during execute are under artifact_locations and stored under Teflo’s <em>.results</em> folder</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">execute</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+      <span class="n">description</span><span class="p">:</span> <span class="n">execute</span> <span class="n">poc</span> <span class="k">for</span> <span class="n">rp</span>
+      <span class="n">hosts</span><span class="p">:</span> <span class="n">test_host1</span>
+      <span class="n">executor</span><span class="p">:</span> <span class="n">runner</span>
+      <span class="n">shell</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">chdir</span><span class="p">:</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">teflo_develop</span><span class="o">/</span><span class="n">e2e</span><span class="o">-</span><span class="n">acceptance</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">rp_examples</span>
+          <span class="n">command</span><span class="p">:</span> <span class="n">pwd</span><span class="p">;</span><span class="n">ls</span>
+      <span class="n">artifacts</span><span class="p">:</span>
+        <span class="o">-</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">teflo_develop</span><span class="o">/</span><span class="n">e2e</span><span class="o">-</span><span class="n">acceptance</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">rp_examples</span><span class="o">/</span><span class="n">payload_example_medium</span>
+      <span class="n">artifact_locations</span><span class="p">:</span>
+         <span class="n">payload_teflo</span> <span class="p">:</span>
+           <span class="o">-</span> <span class="n">tempest</span><span class="o">-</span><span class="n">results</span><span class="o">-</span><span class="nb">all</span><span class="o">.</span><span class="mf">1.</span><span class="n">xml</span>
+           <span class="o">-</span> <span class="n">junit_example</span><span class="o">.</span><span class="n">xml</span>
+           <span class="o">-</span> <span class="n">MyTest</span><span class="o">.</span><span class="n">test_method3</span> 
+
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;*.xml&#39;</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">To</span> <span class="n">test</span> <span class="n">rp</span> <span class="n">path</span>
+    <span class="n">executes</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+    <span class="n">provider</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">reportportal</span>
+      <span class="n">credential</span><span class="p">:</span> <span class="n">reportportal</span><span class="o">-</span><span class="n">creds</span>
+      <span class="n">rp_project</span><span class="p">:</span> <span class="n">teflo_rujuta</span>
+      <span class="n">launch_name</span><span class="p">:</span> <span class="n">teflo_launch</span>
+      <span class="n">launch_description</span><span class="p">:</span> <span class="n">teflo_launch_desc</span>
+      <span class="n">tags</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">tag1</span>
+      <span class="o">-</span> <span class="n">tag2</span>
+      <span class="n">merge_launches</span><span class="p">:</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-case-6">
+<h3>Use Case 6<a class="headerlink" href="#use-case-6" title="Permalink to this headline">¶</a></h3>
+<p>The execute stage keys, artifact or artifact_locations are not used to mention the payload,
+but the xml files have been put under teflo’s .results folder</p>
+<p>Here if the artifacts or artifact_locations are not populated, Teflo goes through teflo’s data folder
+and teflo’s <em>.results</em> folder to find the artifacts matching the name provided in the report section’s
+name key.</p>
+<p>If found, teflo creates a directory .teflo/&lt;data folder&gt;/rp_payloads/&lt;uuid&gt;/results and collects all the xml files
+from the matching artifacts list . Any other files are ignored</p>
+<p>The payload directory path given to the Report Portal client is  <strong>.teflo/&lt;data folder&gt;/rp_payloads/uuid</strong></p>
+<p>In the below example the  data folder directory and .results directory are walked and the pattern payload_example_medium/*
+is  matched with files found in there. xml files are selected from the matched paths/files and added to the payload directory.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">execute</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+      <span class="n">description</span><span class="p">:</span> <span class="n">execute</span> <span class="n">poc</span> <span class="k">for</span> <span class="n">rp</span>
+      <span class="n">hosts</span><span class="p">:</span> <span class="n">test_host1</span>
+      <span class="n">executor</span><span class="p">:</span> <span class="n">runner</span>
+      <span class="n">shell</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">chdir</span><span class="p">:</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">rushinde</span><span class="o">/</span><span class="n">teflo_develop</span><span class="o">/</span><span class="n">e2e</span><span class="o">-</span><span class="n">acceptance</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">rp_examples</span>
+          <span class="n">command</span><span class="p">:</span> <span class="n">pwd</span><span class="p">;</span><span class="n">ls</span>
+
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">payload_example_medium</span><span class="o">/*</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">To</span> <span class="n">test</span> <span class="n">rp</span> <span class="n">path</span>
+    <span class="n">executes</span><span class="p">:</span> <span class="n">rp_execute_test</span>
+    <span class="n">provider</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">reportportal</span>
+      <span class="n">credential</span><span class="p">:</span> <span class="n">reportportal</span><span class="o">-</span><span class="n">creds</span>
+      <span class="n">rp_project</span><span class="p">:</span> <span class="n">teflo_1</span>
+      <span class="n">launch_name</span><span class="p">:</span> <span class="n">teflo_launch</span>
+      <span class="n">launch_description</span><span class="p">:</span> <span class="n">teflo_launch_desc</span>
+      <span class="n">tags</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">tag1</span>
+      <span class="o">-</span> <span class="n">tag2</span>
+      <span class="n">merge_launches</span><span class="p">:</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="notifications.html" class="btn btn-neutral float-right" title="Notification" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="execute.html" class="btn btn-neutral float-left" title="Execute" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Red Hat Inc.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

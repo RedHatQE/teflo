@@ -1,0 +1,92 @@
+---
+name: Include_example1
+description: Descriptor file with include section
+
+resource_check:
+
+include:
+   - provision.yml
+
+orchestrate:
+   .
+   .
+   .
+execute:
+   .
+   .
+   .
+report:
+   .
+   .
+   .     
+---
+name: Include_example2
+description: Descriptor file with include section
+
+include: 
+    - provision.yml
+    - orchestrate.yml
+
+execute:
+   .
+   .
+   .
+
+report:
+   .
+   .
+   .
+
+---
+name: Include_example3
+description: Descriptor file with include section
+
+include:
+  - /var/lib/workspace/teflo_data/.results/common-provision_results.yml
+
+orchestrate:
+  .
+  .
+  .
+
+execute:
+   .
+   .
+   .
+
+report:
+   .
+   .
+   .
+
+---
+name: Include_example4
+description: Descriptor file with include section
+
+include:
+- provision.yml
+- orchestrate.yml
+
+orchestrate:
+- name: ansible/ssh_connect.yml
+    description: "setup key authentication between driver and clients"
+    orchestrator: ansible
+    hosts: driver
+    ansible_options:
+      skip_tags:
+      - ssh_auth
+      extra_vars:
+        username: root
+        password: redhat
+    ansible_galaxy_options:
+      role_file: roles.yml
+
+execute:
+  .
+  .
+  .
+
+report:
+  .
+  .
+  .

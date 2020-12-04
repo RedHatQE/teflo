@@ -1,0 +1,9 @@
+---
+- name: run playbook to execute test script
+  hosts: '{{ hosts }}'
+
+  tasks:
+  - name: execute test script
+    shell: "bash add_two_numbers.sh X='{{ X }}' Y='{{ Y }}'"
+    args:
+      chdir: '{{ ch_dir }}'

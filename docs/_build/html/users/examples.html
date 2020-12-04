@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Examples &mdash; Teflo 1.9.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'1.9.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Best Practices" href="best_practices.html" />
+    <link rel="prev" title="Teflo Output" href="output.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Teflo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation &amp; Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install Teflo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configure Teflo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Teflo</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html#detailed-information">Detailed Information</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="scenario_descriptor.html">Scenario Descriptor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_pass_through.html">Data Pass-through</a></li>
+<li class="toctree-l2"><a class="reference internal" href="output.html">Teflo Output</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#test-setup-execution">Test Setup &amp; Execution</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#junit">Junit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytest">Pytest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#restraint">Restraint</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="best_practices.html">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="localhost.html">Using Localhost</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variable_data.html">Using Jinja Variable Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resource_labels.html">Using Resource Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faqs.html">FAQS</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Teflo Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers/index.html">Developer’s Guide</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contacts</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Teflo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">User’s Guide</a> &raquo;</li>
+        
+      <li>Examples</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/users/examples.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<p>This page is intended to provide you with detailed examples on how you can use
+teflo to perform various actions. Some of the actions below may redirect you
+to a git repository where further detail is given.</p>
+<hr class="docutils" />
+<div class="section" id="test-setup-execution">
+<h2>Test Setup &amp; Execution<a class="headerlink" href="#test-setup-execution" title="Permalink to this headline">¶</a></h2>
+<p>This section provides you with detailed examples on how teflo can perform
+test setup and execution using common test frameworks. Below you will find
+sub-sections with examples for installation and execution using commonly used
+test frameworks. Each framework has an associated repository containing all
+necessary files to call teflo to demonstrate test setup and execution. Each
+of the examples demonstrates how teflo consumes the external
+automated scripts (i.e, ansible roles/playbooks, bash scripts, etc) to install
+the test frameworks, and how teflo executes example tests and gets the
+artifacts of the execution.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These frameworks below are just examples on how you can use teflo to run
+existing automation you may have to install/setup/execute using common
+test frameworks. Since teflos primary purpose is to conduct “orchestrate”
+the E2E flow of a multi-product scenario, it has the flexibility to consume
+any sort of automation to run against your scenarios test machines defined.
+This allows you to focus on building the automation to setup test
+frameworks and then just tell teflo how you wish to run it.</p>
+</div>
+<div class="section" id="junit">
+<h3>Junit<a class="headerlink" href="#junit" title="Permalink to this headline">¶</a></h3>
+<p>Please reference the example <a class="reference external" href="https://gitlab.cee.redhat.com/qeet/teflo/junit-example">junit repository</a> for all details on how you
+can execute this example with teflo to run a junit example.</p>
+</div>
+<div class="section" id="pytest">
+<h3>Pytest<a class="headerlink" href="#pytest" title="Permalink to this headline">¶</a></h3>
+<p>Please reference the example <a class="reference external" href="https://gitlab.cee.redhat.com/qeet/teflo/pytest-example">pytest repository</a> for all details on how you
+can execute this example with teflo to run a pytest example.</p>
+</div>
+<div class="section" id="restraint">
+<h3>Restraint<a class="headerlink" href="#restraint" title="Permalink to this headline">¶</a></h3>
+<p>Please reference the example <a class="reference external" href="https://gitlab.cee.redhat.com/qeet/teflo/restraint-example">restraint repository</a> for all details on how you
+can execute this example with teflo to run a restraint example.</p>
+<hr class="docutils" />
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="best_practices.html" class="btn btn-neutral float-right" title="Best Practices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="output.html" class="btn btn-neutral float-left" title="Teflo Output" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Red Hat Inc.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

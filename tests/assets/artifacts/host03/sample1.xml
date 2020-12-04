@@ -1,0 +1,5 @@
+
+<testsuite errors="0" failures="0" name="SampleTest" skipped="0" tests="2" time="14">
+     <testcase classname="SampleTest" name="testMessageNotEqual" time="8.0" />
+     <testcase classname="SampleTest" name="testMessage" time="0.0" />
+</testsuite>

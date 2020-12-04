@@ -1,0 +1,104 @@
+# default schema for ansible executor
+
+type: map
+allowempty: True
+func: valid_execute_types
+mapping:
+  git:
+    allowempty: True
+    type: seq
+    sequence:
+      - type: map
+        mapping:
+          repo:
+            required: True
+            type: str
+          version:
+            required: True
+            type: str
+          dest:
+            required: True
+            type: str
+  shell:
+    allowempty: True
+    type: seq
+    sequence:
+      - type: map
+        mapping:
+          chdir:
+            type: str
+          creates:
+            type: str
+          decrypt:
+            type: str
+          executable:
+            type: str
+          removes:
+            type: str
+          warn:
+            type: str
+          stdin:
+            type: str
+          stdin_add_newline:
+            type: str
+          ignore_rc:
+            type: bool
+          valid_rc:
+            type: any
+            func: type_int_list
+          command:
+            required: True
+            type: str
+  script:
+    allowempty: True
+    type: seq
+    sequence:
+      - type: map
+        mapping:
+          chdir:
+            type: str
+          creates:
+            type: str
+          decrypt:
+            type: str
+          executable:
+            type: str
+          removes:
+            type: str
+          warn:
+            type: str
+          stdin:
+            type: str
+          stdin_add_newline:
+            type: str
+          ignore_rc:
+            type: bool
+          valid_rc:
+            type: any
+            func: type_int_list
+          name:
+            required: True
+            type: str
+  playbook:
+    allowempty: True
+    type: seq
+    sequence:
+      - type: map
+        mapping:
+          chdir:
+            type: str
+          ignore_rc:
+            type: bool
+          name:
+            required: True
+            type: str
+  artifacts:
+    type: seq
+    sequence:
+      - type: str
+  artifact_locations:
+    type: seq
+    sequence:
+      - type: str
+  ignore_rc:
+    type: bool

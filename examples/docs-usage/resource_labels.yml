@@ -1,0 +1,60 @@
+---
+provision:
+    - name: db2_ci_test_client_a
+      role: client
+      provisioner: openstack-libcloud
+      provider:
+        name: openstack
+        credential: openstack
+        image: rhel-7.5-server-x86_64-released
+        flavor: m1.small
+        networks:
+          - {{ OS_NETWORK }}
+        keypair: {{ OS_KEYPAIR }}
+      ansible_params:
+        ansible_user: cloud-user
+        ansible_ssh_private_key_file: keys/{{ OS_KEYPAIR }}
+      labels: prod_a
+
+    - name: laptop
+      groups: localhost
+      ip_address: 127.0.0.1
+      ansible_params:
+        ansible_connection: local
+      labels: abc, prod_b
+
+    - name: laptop1
+      groups: localhost
+      ip_address: 127.0.0.1
+      ansible_params:
+        ansible_connection: local
+      labels:
+        - pqr
+        - lmn
+
+orchestrate:
+    - name: ansible/install-certs.yml
+      description: "install internal certificates"
+      orchestrator: ansible
+      hosts: client
+      ansible_galaxy_options:
+        role_file: roles.yml
+      labels: prod_a1
+
+    - name: ansible/junit-install.yml
+      description: "install junit framework on test clients"
+      orchestrator: ansible
+      hosts: laptop
+      ansible_galaxy_options:
+        role_file: roles.yml
+      labels: prod_b
+
+
+
+    - name: ansible/install-certs.yml
+      description: "install internal certificates"
+      orchestrator: ansible
+      hosts: laptop
+      ansible_galaxy_options:
+        role_file: roles.yml
+      labels: prod_b

@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Including Scenarios &mdash; Teflo 1.9.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_override.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'1.9.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Provision" href="provision.html" />
+    <link rel="prev" title="Credentials" href="credentials.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Teflo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation &amp; Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install Teflo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configure Teflo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Teflo</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html#detailed-information">Detailed Information</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../scenario_descriptor.html">Scenario Descriptor</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="resource_check.html">Resource Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="credentials.html">Credentials</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Including Scenarios</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="provision.html">Provision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orchestrate.html">Orchestrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="execute.html">Execute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="report.html">Report</a></li>
+<li class="toctree-l3"><a class="reference internal" href="notifications.html">Notification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="timeout.html">Timeout settings for Teflo Tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../data_pass_through.html">Data Pass-through</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../output.html">Teflo Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../localhost.html">Using Localhost</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../variable_data.html">Using Jinja Variable Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resource_labels.html">Using Resource Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../faqs.html">FAQS</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Teflo Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/index.html">Developer’s Guide</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contacts</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Teflo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">User’s Guide</a> &raquo;</li>
+        
+          <li><a href="../scenario_descriptor.html">Scenario Descriptor</a> &raquo;</li>
+        
+      <li>Including Scenarios</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/users/definitions/include.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="including-scenarios">
+<h1>Including Scenarios<a class="headerlink" href="#including-scenarios" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The <em>Include</em> section is introduced to provide a way to include common steps of
+provisioning, orchestration, execute or reports under one common scenario file.
+This reduces the redundancy of putting the same set of steps in every scenario file.</p>
+<p>When running a scenario that is using the include option, two results files will be generated.
+One for the main scenario which will still be results.yml and one for the included scenario which
+will use the scenario’s name as a prefix. e.g. common_scenario_results.yml where common_scenario
+is the name of the included scenario file. This file will be stored in the same location as the result.yml file.
+This allows users to run the common.yml once and its result can be included in other
+scenario files saving time on test executions. Also see <a class="reference external" href="../output.html">Teflo Output</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For any given task the included scenario is checked and executed first followed by the main
+scenario. For example, for Orchestrate task, if you have an orchestrate section in both the included
+and main scenario, then the orchestrate tasks in included scenario will be performed first followed
+by the orchestrate tasks in the main scenario.</p>
+</div>
+<div class="section" id="example-1">
+<h3>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h3>
+<p>You want to separate out provision of a set of resources because this is a common resource
+used in all of your scenarios.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">Include_example1</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Descriptor</span> <span class="n">file</span> <span class="k">with</span> <span class="n">include</span> <span class="n">section</span>
+
+<span class="n">resource_check</span><span class="p">:</span>
+
+<span class="n">include</span><span class="p">:</span>
+   <span class="o">-</span> <span class="n">provision</span><span class="o">.</span><span class="n">yml</span>
+
+<span class="n">orchestrate</span><span class="p">:</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+<span class="n">execute</span><span class="p">:</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+<span class="n">report</span><span class="p">:</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+   <span class="o">.</span>     
+</pre></div>
+</div>
+<p>The provision.yml could look like below</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">common</span><span class="o">-</span><span class="n">provision</span>
+<span class="n">description</span><span class="p">:</span> <span class="s1">&#39;common provisioning of resources used by the rest of the scenarios.&#39;</span>
+
+<span class="n">provision</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ci_test_client_b</span>
+  <span class="n">groups</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">client</span>
+  <span class="o">-</span> <span class="n">vnc</span>
+  <span class="n">provider</span><span class="p">:</span> <span class="n">beaker</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2">
+<h3>Example 2<a class="headerlink" href="#example-2" title="Permalink to this headline">¶</a></h3>
+<p>You want to separate out provision and orchestrate because this is common configuration across all your
+scenarios.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">Include_example2</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Descriptor</span> <span class="n">file</span> <span class="k">with</span> <span class="n">include</span> <span class="n">section</span>
+
+<span class="n">include</span><span class="p">:</span> 
+    <span class="o">-</span> <span class="n">provision</span><span class="o">.</span><span class="n">yml</span>
+    <span class="o">-</span> <span class="n">orchestrate</span><span class="o">.</span><span class="n">yml</span>
+
+<span class="n">execute</span><span class="p">:</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+
+<span class="n">report</span><span class="p">:</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+</pre></div>
+</div>
+<p>The orchstrate.yml could look like below</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">username</span><span class="p">:</span> <span class="n">root</span>
+      <span class="n">password</span><span class="p">:</span> <span class="n">redhat</span>
+  <span class="n">ansible_galaxy_options</span><span class="p">:</span>
+    <span class="n">role_file</span><span class="p">:</span> <span class="n">roles</span><span class="o">.</span><span class="n">yml</span>
+
+<span class="o">---</span>
+<span class="n">orchestrate</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
+  <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;register systems under test against rhsm&quot;</span>
+  <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
+  <span class="n">hosts</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">host01</span>
+  <span class="o">-</span> <span class="n">host02</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-3">
+<h3>Example 3<a class="headerlink" href="#example-3" title="Permalink to this headline">¶</a></h3>
+<p>You’ve already provisioned a resource from a scenario that contained just the provision
+and you want to include it’s results.yml in another scenario.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">Include_example3</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Descriptor</span> <span class="n">file</span> <span class="k">with</span> <span class="n">include</span> <span class="n">section</span>
+
+<span class="n">include</span><span class="p">:</span>
+  <span class="o">-</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">teflo_data</span><span class="o">/.</span><span class="n">results</span><span class="o">/</span><span class="n">common</span><span class="o">-</span><span class="n">provision_results</span><span class="o">.</span><span class="n">yml</span>
+
+<span class="n">orchestrate</span><span class="p">:</span>
+  <span class="o">.</span>
+  <span class="o">.</span>
+  <span class="o">.</span>
+
+<span class="n">execute</span><span class="p">:</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+
+<span class="n">report</span><span class="p">:</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+   <span class="o">.</span>
+</pre></div>
+</div>
+<p>The common-provision_results.yml could look like below</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">common</span><span class="o">-</span><span class="n">provision</span>
+<span class="n">description</span><span class="p">:</span> <span class="s1">&#39;common provisioning of resources used by the rest of the scenarios.&#39;</span>
+
+<span class="n">provision</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ci_test_client_a</span>
+  <span class="n">description</span><span class="p">:</span>
+  <span class="n">role</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">client</span>
+  <span class="o">-</span> <span class="n">test_driver</span>
+  <span class="n">provisioner</span><span class="p">:</span> <span class="n">linchpin</span><span class="o">-</span><span class="n">wrapper</span>
+  <span class="n">provider</span><span class="p">:</span>
+    <span class="n">count</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">aws</span><span class="o">-</span><span class="n">creds</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">aws</span>
+    <span class="n">region</span><span class="p">:</span> <span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mi">2</span>
+    <span class="n">hostname</span><span class="p">:</span> <span class="n">ec2</span><span class="o">-</span><span class="n">host</span><span class="o">.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">tx_id</span><span class="p">:</span> <span class="mi">44</span>
+    <span class="n">keypair</span><span class="p">:</span> <span class="n">ci_aws_key_pair</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="n">i</span><span class="o">-</span><span class="mi">0</span><span class="n">f452f3479919d703</span>
+    <span class="n">role</span><span class="p">:</span> <span class="n">aws_ec2</span>
+    <span class="n">flavor</span><span class="p">:</span> <span class="n">t2</span><span class="o">.</span><span class="n">nano</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">ami</span><span class="o">-</span><span class="mi">0</span><span class="n">d8f6eb4f641ef691</span>
+  <span class="n">ip_address</span><span class="p">:</span>
+    <span class="n">public</span><span class="p">:</span> <span class="mf">13.59</span><span class="o">.</span><span class="mf">32.24</span>
+    <span class="n">private</span><span class="p">:</span> <span class="mf">172.31</span><span class="o">.</span><span class="mf">33.91</span>
+  <span class="n">ansible_params</span><span class="p">:</span>
+    <span class="n">ansible_ssh_private_key_file</span><span class="p">:</span> <span class="n">keys</span><span class="o">/</span><span class="n">ci_aws_key_pair</span><span class="o">.</span><span class="n">pem</span>
+    <span class="n">ansible_user</span><span class="p">:</span> <span class="n">centos</span>
+  <span class="n">metadata</span><span class="p">:</span> <span class="p">{}</span>
+  <span class="n">workspace</span><span class="p">:</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dbaez</span><span class="o">/</span><span class="n">projects</span><span class="o">/</span><span class="n">teflo</span><span class="o">/</span><span class="n">e2e</span><span class="o">-</span><span class="n">acceptance</span><span class="o">-</span><span class="n">tests</span>
+  <span class="n">data_folder</span><span class="p">:</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">teflo_data</span><span class="o">/</span><span class="n">fich6j1ooq</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-4">
+<h3>Example 4<a class="headerlink" href="#example-4" title="Permalink to this headline">¶</a></h3>
+<p>You want to separate out provision and orchestrate because this is common configuration across all your
+scenarios but with this particular scenario you want to also a run a non-common orchestration task.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">Include_example4</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Descriptor</span> <span class="n">file</span> <span class="k">with</span> <span class="n">include</span> <span class="n">section</span>
+
+<span class="n">include</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">provision</span><span class="o">.</span><span class="n">yml</span>
+<span class="o">-</span> <span class="n">orchestrate</span><span class="o">.</span><span class="n">yml</span>
+
+<span class="n">orchestrate</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">ssh_connect</span><span class="o">.</span><span class="n">yml</span>
+    <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;setup key authentication between driver and clients&quot;</span>
+    <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
+    <span class="n">hosts</span><span class="p">:</span> <span class="n">driver</span>
+    <span class="n">ansible_options</span><span class="p">:</span>
+      <span class="n">skip_tags</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">ssh_auth</span>
+      <span class="n">extra_vars</span><span class="p">:</span>
+        <span class="n">username</span><span class="p">:</span> <span class="n">root</span>
+        <span class="n">password</span><span class="p">:</span> <span class="n">redhat</span>
+    <span class="n">ansible_galaxy_options</span><span class="p">:</span>
+      <span class="n">role_file</span><span class="p">:</span> <span class="n">roles</span><span class="o">.</span><span class="n">yml</span>
+
+<span class="n">execute</span><span class="p">:</span>
+  <span class="o">.</span>
+  <span class="o">.</span>
+  <span class="o">.</span>
+
+<span class="n">report</span><span class="p">:</span>
+  <span class="o">.</span>
+  <span class="o">.</span>
+  <span class="o">.</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="provision.html" class="btn btn-neutral float-right" title="Provision" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="credentials.html" class="btn btn-neutral float-left" title="Credentials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Red Hat Inc.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+include CHANGES LICENSE AUTHORS README.rst
+include teflo/files/schema.yml
+include teflo/files/extensions.py
+include teflo/provisioners/ext/bkr_client_plugin/schema.yml
+include teflo/provisioners/ext/os_libcloud_plugin/schema.yml
+include teflo/notifiers/ext/email/schema/schema.yml
+include teflo/notifiers/ext/email/schema/email_extensions.py
+include teflo/notifiers/ext/email/templates/email_on_start_txt_template.jinja
+include teflo/notifiers/ext/email/templates/email_txt_template.jinja
+recursive-include teflo/orchestrators/ext/ansible_orchestrator_plugin/files *
+recursive-include teflo/executors/ext/ansible_executor_plugin/files *
+exclude setup.cfg
+prune docs/_build
+prune docs/.ropeproject
+prune docs/.gitignore
+prune tests/.cache
+prune extensions
+prune .ropeproject
+prune .git
+prune .gitignore

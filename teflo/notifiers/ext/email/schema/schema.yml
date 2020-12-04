@@ -1,0 +1,51 @@
+---
+# default email notifier schema
+
+type: map
+allowempty: True
+func: valid_email_combos
+mapping:
+  to:
+    required: True
+    type: seq
+    sequence:
+      - type: str
+  from:
+    required: True
+    type: str
+  subject:
+    required: False
+    type: str
+  cc:
+    required: False
+    type: seq
+    sequence:
+      - type: str
+  attachments:
+    required: False
+    type: seq
+    sequence:
+      - type: str
+  signature_file:
+    required: False
+    type: str
+  message_body:
+    required: False
+    type: str
+  message_template:
+    required: False
+    type: str
+  credential:
+    type: map
+    allowempty: True
+    mapping:
+      smtp_host:
+        required: True
+      smtp_port:
+        required: False
+      smtp_user:
+        required: False
+      smtp_password:
+        required: False
+      smtp_starttls:
+        required: False

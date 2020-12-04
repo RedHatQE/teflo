@@ -1,0 +1,17 @@
+---
+name: descriptor
+description: descriptor
+
+credentials:
+  - name: provider
+
+include:
+  - cdf.yml
+
+provision:
+
+orchestrate:
+
+execute:
+
+report:
