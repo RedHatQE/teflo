@@ -26,29 +26,29 @@ jobs:
       - uses: actions/checkout@v2
       - run: cat /etc/os-release
 
-      - name: running a shell script file
-        run: |
-             chmod +x ./.github/install_dependencies.sh
-             ./.github/install_dependencies.sh
-          
-#      # Runs a single command using the runners shell
-#      - name: install required packages
+#      - name: running a shell script file
 #        run: |
-#          yum install -y gcc python3 python3-devel python3-pip beaker-client krb5-workstation krb5-devel
+#             chmod +x ./.github/install_dependencies.sh
+#             ./.github/install_dependencies.sh
+
+      # Runs a single command using the runners shell
+      - name: install required packages
+        run: |
+          yum install -y gcc python3 python3-devel python3-pip krb5-workstation krb5-devel
 
       - name: install pip virtualenv and tox
         run: pip3 install virtualenv tox
 
       # Runs a set of commands using the runners shell
       - name: Run functional unit tests
-#        env:
-#          LC_ALL: en_US.utf8
-#          LANG: en_US.utf8
+        env:
+          LC_ALL: en_US.utf8
+          LANG: en_US.utf8
         run: tox -e py3-unit
 
       # Runs a set of commands using the runners shell
       - name: Run local scenario unit test
-#        env:
-#          LC_ALL: en_US.utf8
-#          LANG: en_US.utf8
+        env:
+          LC_ALL: en_US.utf8
+          LANG: en_US.utf8
         run: tox -e py3-scenario

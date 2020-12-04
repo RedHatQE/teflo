@@ -14,8 +14,7 @@ then
     export LC_ALL=C.UTF-8;
     export LANG=C.UTF-8;
     yum install -y python3 which git wget;
-    yum install -y python3-pip python3-devel gcc;
-    yum install -y python3-pytest beaker-client krb5-workstation krb5-devel;
+    yum install -y python3-pip python3-devel gcc krb5-workstation krb5-devel;
 elif [ $VERSION_ID = "7" ]
 then
     echo "This is centos7";
