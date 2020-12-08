@@ -60,9 +60,10 @@ setup(
         'requests>=2.20.1',
         'urllib3<1.26'
     ],
-    extras_require={#'linchpin-wrapper': ['teflo_linchpin_plugin@git+https://github.com/rujutashinde/teflo_linchpin_plugin.git@develop#egg=teflo_linchpin_plugin']
-                    #'openstack-client-plugin':['teflo_openstack_client_plugin@git+https://gitlab.cee.redhat.com/ccit/carbon/plugins/carbon_openstack_client_plugin.git@1.1.1#egg=carbon_openstack_client_plugin'
-                 #]
+    extras_require={
+                    'linchpin-wrapper': ['teflo_linchpin_plugin'],
+                    'openstack-client-plugin': ['teflo_openstack_client_plugin']
+
                     },
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
