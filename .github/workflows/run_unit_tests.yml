@@ -44,7 +44,6 @@ jobs:
       - name: create and set new user
         run: |
              whoami
-             useradd 1001
              su 1001
              whoami
 
