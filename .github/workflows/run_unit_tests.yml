@@ -43,8 +43,11 @@ jobs:
 
       - name: create and set new user
         run: |
+             whoami
              useradd teflo_user
              su teflo_user
+             whoami
+
 
       # Runs a set of commands using the runners shell
       - name: Run functional unit tests
