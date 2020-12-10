@@ -43,7 +43,7 @@ jobs:
 
       - name: create and set new user
         run: |
-             sudo useradd teflo_user
+             useradd teflo_user
              su teflo_user
 
       # Runs a set of commands using the runners shell
