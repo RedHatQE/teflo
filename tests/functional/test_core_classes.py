@@ -344,14 +344,19 @@ class TestLoggerMixin(object):
         logger_mixin.create_logger(name=__name__, config=cfg)
 
     # TODO commented the following test, as it is failing on github action env. Need to investigate this and uncomment
-    # @staticmethod
-    # def test_create_logger_dir_permission_denied(logger_mixin, config):
-    #
-    #     with pytest.raises(LoggerMixinError):
-    #         logger_mixin.logger.handlers = []
-    #         cfg = copy.copy(config)
-    #         cfg['DATA_FOLDER'] = '/root'
-    #         logger_mixin.create_logger(name=__name__, config=cfg)
+    @staticmethod
+    def test_create_logger_dir_permission_denied(logger_mixin, config):
+        os.system('mkdir /tmp/dir1')
+        print(os.system('ls -ltr /tmp/'))
+        os.system('chmod 444 /tmp/dir1')
+        print(os.system('ls -ltr /tmp/dir1'))
+        with pytest.raises(LoggerMixinError):
+            logger_mixin.logger.handlers = []
+            cfg = copy.copy(config)
+            # cfg['DATA_FOLDER'] = '/root'
+            cfg['DATA_FOLDER'] = '/tmp/dir1'
+            logger_mixin.create_logger(name=__name__, config=cfg)
+        os.system('rm -rf /tmp/ruj')
 
 
 class TestTefloResource(object):

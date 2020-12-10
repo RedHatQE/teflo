@@ -44,7 +44,10 @@ def print_header():
               help="Add verbosity to the commands.")
 @click.version_option()
 def teflo(verbose):
-    """Teflo - Interoperability Testing Framework"""
+    """Teflo - (Test Execution Framework Libraries and Objects) \n
+       It is an orchestration software that controls the flow of a set of testing scenarios.\n
+       It was formerly known as Carbon
+      """
     if verbose:
         click.echo('\n--- Verbose mode ON (verbosity %s)---\n' % verbose)
 

@@ -475,12 +475,18 @@ class TestScenarioResource(object):
         os.removedirs(scenario.data_folder)
 
     # TODO commented the following test, as it is failing on github action env. Need to investigate this and uncomment
-    # @staticmethod
-    # def test_create_scenario_03():
-    #     config = Config()
-    #     config['DATA_FOLDER'] = '/root/%s' % uuid.uuid4()
-    #     with pytest.raises(ScenarioError):
-    #         Scenario(config=config, parameters={'k': 'v'})
+    @staticmethod
+    def test_create_scenario_03():
+        os.system('mkdir /tmp/dir1')
+        print(os.system('ls -ltr /tmp/'))
+        os.system('chmod 444 /tmp/dir1')
+        print(os.system('ls -ltr /tmp/dir1'))
+        config = Config()
+        # config['DATA_FOLDER'] = '/root/%s' % uuid.uuid4()
+        config['DATA_FOLDER'] = '/tmp/dir1/%s' % uuid.uuid4()
+        with pytest.raises(ScenarioError):
+            Scenario(config=config, parameters={'k': 'v'})
+        os.system('rm -rf /tmp/dir1')
 
 
     @staticmethod

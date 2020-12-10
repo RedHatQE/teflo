@@ -113,13 +113,18 @@ class Scenario(TefloResource):
         # create the runtime data folder for the scenario life cycle
         # TODO: cleanup task should remove this directory after report task
         try:
+            print('here')
             if not os.path.exists(self.data_folder):
                 os.makedirs(self.data_folder)
         except OSError as ex:
+            print('error')
+            print(ex)
             if ex.errno == errno.EACCES:
+                print('if')
                 raise ScenarioError('You do not have permission to create'
                                     ' the workspace.')
             else:
+                print('else')
                 raise ScenarioError('Error creating scenario workspace: '
                                     '%s' % ex)
 
