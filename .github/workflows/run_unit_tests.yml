@@ -17,8 +17,15 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['centos:7', 'centos:8']
+        container: ['centos:7']
       fail-fast: false
+
+#    container:
+#      image: ${{ matrix.container-version }}
+#      options: --user 1001
+#      strategy:
+#        matrix:
+#          container-version: ['centos:7']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -33,6 +40,11 @@ jobs:
 
       - name: install pip virtualenv and tox
         run: pip3 install virtualenv tox
+
+      - name: create and set new user
+        run: |
+             sudo useradd teflo_user
+             su teflo_user
 
       # Runs a set of commands using the runners shell
       - name: Run functional unit tests
