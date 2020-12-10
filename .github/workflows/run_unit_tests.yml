@@ -44,8 +44,8 @@ jobs:
       - name: create and set new user
         run: |
              whoami
-             useradd teflo_user
-             su teflo_user
+             useradd 1001
+             su 1001
              whoami
 
 
