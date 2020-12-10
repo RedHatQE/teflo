@@ -5,46 +5,60 @@ orchestrate:
     orchestrator:
     hosts:
 
+# hosts
 ---
 orchestrate:
-  - name: rhsm_register.yml
+  - name: register_task
     hosts: host01, host02
+    ansible_playbook:
+      name: rhsm_register.yml
 
 ---
 orchestrate:
-  - name: rhsm_register
+  - name: -_taskregister
     hosts:
       - host01
       - host02
-
+    ansible_playbook:
+      name: rhsm_register.yml
+#all hosts/role
 ---
 orchestrate:
-  - name: rhsm_register.yml
+  - name: register_task
     hosts: all
+    ansible_playbook:
+      name: rhsm_register.yml
 
 ---
 orchestrate:
-  - name: rhsm_register.yml
+  - name: task1
+    hosts: clients
+    ansible_playbook:
+      name: rhsm_register.yml
+
+# Example 1
+---
+orchestrate:
+  - name: register_task
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    ansible_playbook:
+      name: rhsm_register.yml
     hosts:
-      - all
+      - host01
+      - host02
 
+# Example 2
 ---
 orchestrate:
-  - name: rhsm_register.yml
+  - name: register_task
     description: "register systems under test against rhsm"
     orchestrator: ansible
     hosts:
       - host01
       - host02
-
----
-orchestrate:
-  - name: rhsm_register.yml
-    description: "register systems under test against rhsm"
-    orchestrator: ansible
-    hosts:
-      - host01
-      - host02
+    ansible_playbook:
+      name: rhsm_register.yml
     ansible_options:
       extra_vars:
         username: kingbob
@@ -52,68 +66,30 @@ orchestrate:
         server_hostname: server01.example.com
         auto_attach: true
 
+# Example 3
 ---
 orchestrate:
-  - name: rhsm_register.yml
-    description: "register systems under test against rhsm"
-    orchestrator: ansible
-    hosts:
-      - host01
-      - host02
-    ansible_galaxy_options:
-      role_file: requirements.yml
-
----
-orchestrate:
-  - name: rhsm_register.yml
-    description: "register systems under test against rhsm"
-    orchestrator: ansible
-    hosts:
-      - host01
-      - host02
-    ansible_galaxy_options:
-      roles:
-        - oasis-roles.rhsm
-        - git+https://gitlab.cee.redhat.com/oasis-roles/coreos_infra.git,master,oasis_roles.coreos_infra
-      collections:
-        - geerlingguy.php_roles
-        - geerlingguy.k8s
-
----
-orchestrate:
-  - name: rhsm_register.yml
-    description: "register systems under test against rhsm"
-    orchestrator: ansible
-    hosts:
-      - host01
-      - host02
-    ansible_options:
-      extra_vars:
-        username: kingbob
-        password: minions
-        server_hostname: server01.example.com
-        auto_attach: true
-    ansible_galaxy_options:
-      role_file: roles.yml
-
----
-orchestrate:
-  - name: custom.yml
+  - name: custom
     description: "running a custom playbook, only running tasks when tag=prod"
     orchestrator: ansible
     hosts:
       - host01
+    ansible_playbook:
+      name: custom.yml
     ansible_options:
       tags:
         - prod
 
+# Example 4
 ---
 orchestrate:
-  - name: custom2.yml
+  - name: custom2
     description: "custom playbook, w/ different connection options"
     orchestrator: ansible
     hosts:
       - host07
+    ansible_playbook:
+      name: custom2.yml
     ansible_options:
       forks: 2
       become: True
@@ -124,12 +100,68 @@ orchestrate:
       tags:
         - prod
 
+# Example 5
 ---
 orchestrate:
-  - name: rhsm_register.yml
+  - name: register_task
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    ansible_playbook:
+      name: rhsm_register.yml
+    hosts:
+      - host01
+      - host02
+    ansible_galaxy_options:
+      role_file: requirements.yml
+
+# collections
+---
+orchestrate:
+  - name: register_task
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    hosts:
+      - host01
+      - host02
+    ansible_playbook:
+      name: rhsm_register.yml
+    ansible_galaxy_options:
+      roles:
+        - oasis-roles.rhsm
+        - git+https://gitlab.cee.redhat.com/oasis-roles/coreos_infra.git,master,oasis_roles.coreos_infra
+      collections:
+        - geerlingguy.php_roles
+        - geerlingguy.k8s
+
+# Example 6
+---
+orchestrate:
+  - name: register_task
+    description: "register systems under test against rhsm"
+    orchestrator: ansible
+    hosts:
+      - host01
+      - host02
+    ansible_playbook:
+      name: rhsm_register.yml
+    ansible_options:
+      extra_vars:
+        username: kingbob
+        password: minions
+        server_hostname: server01.example.com
+        auto_attach: true
+    ansible_galaxy_options:
+      role_file: roles.yml
+
+# Example 7
+---
+orchestrate:
+  - name: register_task
     description: "register systems under test against rhsm"
     orchestrator: ansible
     hosts: all
+    ansible_playbook:
+      name: rhsm_register.yml
     ansible_options:
       extra_vars:
         username: kingbob
@@ -139,70 +171,65 @@ orchestrate:
     ansible_galaxy_options:
       role_file: roles.yml
     cleanup:
-      name: rhsm_unregister.yml
+      name: unregister_task
       description: "unregister systems under tests from rhsm"
       orchestrator: ansible
       hosts: all
+      ansible_playbook:
+        name: rhsm_unregister.yml
       ansible_galaxy_options:
         role_file: roles.yml
 
+# Example 8
 ---
 orchestrate:
-  - name: rhsm_register.yml
-    hosts: clients
-
----
-orchestrate:
-  - name: scripts/create_dir.sh
+  - name: orc_script
     description: create a local dir
-    ansible_script: True
+    ansible_script:
+      name: scripts/create_dir.sh
     hosts: localhost
     orchestrator: ansible
 
+# Example 9
 ---
 orchestrate:
-  - name: scripts/create_dir.sh
+  - name: orc_script
     description: creates a local dir
     ansible_options:
       extra_args: -c -e 12
-    ansible_script: True
+    ansible_script:
+      name: scripts/create_dir.sh
     hosts: localhost
     orchestrator: ansible
 
+# Example 10
 ---
 orchestrate:
-  - name: scripts/create_dir.sh
+  - name: orc_script
     description: creates a remote dir
     ansible_options:
       remote_user: cloud-user
       extra_args: -c -e 12 chdir=/home
-    ansible_script: True
+    ansible_script:
+      name: scripts/create_dir.sh
     hosts: host01
     orchestrator: ansible
 
+# Example 11
 ---
 orchestrate:
-- name: ansible/ssh_connect.yml
+- name: orc_task_auth
   description: "setup key authentication between driver and clients"
   orchestrator: ansible
   hosts: driver
+  ansible_playbook:
+    name: ansible/ssh_connect.yml
   ansible_options:
     skip_tags:
       - ssh_auth
     extra_vars:
       username: root
       password: redhat
-  ansible_galaxy_options:
-    role_file: roles.yml
-
----
-orchestrate:
-- name: rhsm_register.yml
-  description: "register systems under test against rhsm"
-  orchestrator: ansible
-  hosts:
-  - host01
-  - host02
   ansible_galaxy_options:
     role_file: roles.yml
 
@@ -257,10 +284,11 @@ orchestrate:
 
 # Example 15
 ---
-- name: scripts/add_two_numbers.sh
+- name: scripta_task
   description: ""
   orchestrator: ansible
   hosts: controller
-  ansible_script: True
+  ansible_script:
+    name: scripts/add_two_numbers.sh
   ansible_options:
     extra_args: X=12 Y=18

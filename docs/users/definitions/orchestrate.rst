@@ -62,12 +62,12 @@ You can associate hosts to a given orchestrate task a couple of different ways.
 First is to define your hosts in a comma separated string.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 8-11
+    :lines: 9-14
 
 You can also define your hosts as a list.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 13-18
+    :lines: 16-23
 
 It can become tedious if an orchestrate task needs to be performed on multiple
 or all hosts within the scenario and you have many hosts declared. Teflo
@@ -78,13 +78,11 @@ to define every host per multiple tasks. It can be either in string or list
 format.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 145-148
+    :lines: 25-30
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 20-23
+    :lines: 32-37
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 25-29
 
 Re-running Tasks and Status Code
 --------------------------------
@@ -107,9 +105,8 @@ start from the beginning, you can modify the status code back 0.
 ----
 
 Since teflos development model is plug and play. This means different
-orchestrator's could be used to execute configuration tasks declared. For the
-remainder of this page, please go to your preferred orchestrator below. To
-learn more on how you can setup your orchestrate task structures.
+orchestrator's could be used to execute configuration tasks declared.
+Ansible is Teflo's default orchestrator. Its information can be found below.
 
 .. _ans:
 
@@ -117,13 +114,10 @@ Ansible
 -------
 
 Ansible is teflos default orchestrator. As we mentioned above each task has
-a given **name** (action). This name can be the ansible playbook name (including the
-file extension) or a script name (including the file extension), OR just the orchestrate
-task name. Teflo has the ability to find the playbook or script.
+a given **name** (action). This name is the orchestrate task name.
 
-Teflo uses keywords to detect to ansible playbook, script or shell command **ansible_playbook, ansible_script, ansible_shell**
-respectively. (keeping backward compatibility for using name field to provide script and playbook)
-
+Teflo uses these keywords to detect to ansible playbook, script or shell command **ansible_playbook, ansible_script, ansible_shell**
+respectively.
 Please refer :ref:`here<ans_keys>` to get an idea on how to use the keys
 
 
@@ -155,34 +149,28 @@ on your selected orchestrator.Lets dive into them..
         - n/a
 
     *   - ansible_script
-        - This key can be a boolean or a dictionary
-          Boolean to define if you are executing a user defined script
-          (required to be set to True, if using a user defined script)
-          OR name of the script to be run
-        - Boolean or dictionary
+        - scribt to be executed
+        - Dictionary
         - (Not required; however, one of the following must be defined:
-          ansible_shell/script/playbook)
+          ansible_shell/ansible_script/ansible_playbook)
         - False
 
     *   - ansible_playbook
         - playbook to be run.
         - dictionary
         - (Not required; however, one of the following must be defined:
-          ansible_shell/script/playbook)
+          ansible_shell/ansible_script/ansible_playbook)
         - False
 
     *   - ansible_shell
         - shell commands to be run.
         - list of dictionary
         - (Not required; however, one of the following must be defined:
-          ansible_shell/script/playbook)
+          ansible_shell/ansible_script/ansible_playbook)
         - False
 
 The table above describes additional key:values you can set within your
 orchestrate task. Each of those keys can accept additional key:values.
-
-.. note::
-   The ansible_script field as Boolean will be deprecated in the coming releases.
 
 
 Teflo Ansible Configuration
@@ -248,9 +236,8 @@ please see `Teflo Output <../output.html>`_ for more details.
 Using ansible_script
 ~~~~~~~~~~~~~~~~~~~~
 
-Orchestrate task uses ansible script module to run the user provided scripts.
-The script name can be given under the name field of the orchestrator task or
-within the *name* key of the ansible_script list of dictionary.
+Orchestrate task uses ansible playbook module to run the user provided scripts.
+The script name can be given within the **name** key of the ansible_script list of dictionary.
 
 The script parameters can be provided along with name of the script by separating
 it using space.
@@ -357,8 +344,7 @@ Using ansible_playbook
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Using the ansible_playbook parameter you can provide the playbook to be run
-The name of the playbook can be provided as the *name* key of the orchestrate task
-OR under the ansible_playbook list of dictionary
+The name of the playbook can be provided as the **name** under the ansible_playbook list of dictionary
 
 :ref:`Example2<eg_2>`
 :ref:`Example12<eg_12>`
@@ -412,7 +398,7 @@ The vault-password-file can be passed using **vault-password-file** under **ansi
         orchestrator: ansible
         hosts: all
         ansible_options:
-          vault-password-file: 
+          vault-password-file:
             - "./vaultpass"
 
 Extra_vars
@@ -484,7 +470,7 @@ You have a playbook which needs to run against x number of hosts and does not
 require any additional extra variables.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 31-38
+    :lines: 40-49
 
 .. _eg_2:
 
@@ -495,7 +481,7 @@ You have a playbook which needs to run against x number of hosts and requires
 additional extra variables.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 40-53
+    :lines: 52-67
 
 Example 3
 ~~~~~~~~~
@@ -504,7 +490,7 @@ You have a playbook which needs to run against x number of hosts and requires
 only tasks with a tag set to prod.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 99-108
+    :lines: 70-81
 
 Example 4
 ~~~~~~~~~
@@ -513,7 +499,7 @@ You have a playbook which needs to run against x number of hosts and requires
 only tasks with a tag set to prod and requires connection settings that conflicts with your ansible.cfg.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 110-125
+    :lines: 84-101
 
 
 Example 5
@@ -526,7 +512,7 @@ an ansible role to be downloaded.
          Although the option is called *role_file:* but it relates both, roles and collections.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 55-64
+    :lines: 104-115
 
 Content of requirements.yml as a dictionary, suitable for both roles and collections:
 
@@ -545,15 +531,16 @@ requirements filename. Teflo will consume that file and download all the
 roles and collections defined within.
 
 .. note::
+
          We can define roles in the req file as a list or as dictionary, Teflo support both ways.
-          but if we chose to set roles as list then we can't set collections in the same file. 
+         but if we chose to set roles as list then we can't set collections in the same file.
 
 Content of requirements.yml file as a list, only suitable for roles:
 
 .. code-block:: yaml
 
     ---
-    - src: oasis-roles.rhsm 
+    - src: oasis-roles.rhsm
     - src: https://gitlab.cee.redhat.com/PIT/roles/junit-install.git
       scm: git
 
@@ -561,7 +548,7 @@ An alternative to using the requirements file is you can directly define them us
 the roles or collections key.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 66-80
+    :lines: 118-134
 
 It is possible to define both role_file and direct definitions. Teflo will install the
 roles and collections first from the role_file and then the roles and collections defined using the keys. It is up to the
@@ -580,7 +567,7 @@ You have a playbook which needs to run against x number of hosts, requires
 ansible roles to be downloaded and requires additional extra variables.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 82-97
+    :lines: 137-154
 
 .. attention::
 
@@ -612,7 +599,7 @@ deleting the configured hosts. You want to run a playbook to do some post
 tasks.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 127-147
+    :lines: 157-181
 
 
 Example 8
@@ -623,7 +610,7 @@ example of a script running on the localhost. For localhost usage refer
 to the`localhost <../localhost.html>`_ page.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 154-160
+    :lines: 184-191
 
 Example 9
 ~~~~~~~~~
@@ -633,7 +620,7 @@ can add options to the script they are executing (In the example below,
 the script is run with options as **create_dir.sh -c -e 12**).
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 162-170
+    :lines: 194-203
 
 Example 10
 ~~~~~~~~~~
@@ -648,7 +635,7 @@ To see all script options see ansible's documentation `here
 <https://docs.ansible.com/ansible/latest/modules/script_module.html>`_.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 172-181
+    :lines: 206-216
 
 Example 11
 ~~~~~~~~~~
@@ -657,7 +644,7 @@ You have a playbook which needs to run against x number of hosts and requires
 skipping tasks with a tag set to ssh_auth and requires extra variables.
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 183-196
+    :lines: 219-234
 
 .. _eg_12:
 
@@ -667,7 +654,7 @@ Example 12
 Example to run playbooks, scripts and shell command as a part of orchestrate task
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 210-234
+    :lines: 237-261
 
 .. _Example_13:
 
@@ -678,9 +665,8 @@ Example to use ansible_script with extra arags with in the ansible_script
 list of dictionary and its paramter in the name field
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 238-245
+    :lines: 265-272
 
-----
 
 .. _Example_14:
 
@@ -690,7 +676,7 @@ Example 14
 Example to use ansible_script with extra arags as a part of ansible_options
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 249-256
+    :lines: 275-283
 
 .. _Example_15:
 
@@ -701,7 +687,7 @@ Example to use ansible_script and using ansible_options: extra_args to
 provide the script parameters
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
-    :lines: 259-266
+    :lines: 286-294
 
 Resources
 ~~~~~~~~~
