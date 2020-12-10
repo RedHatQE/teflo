@@ -356,7 +356,7 @@ class TestLoggerMixin(object):
             # cfg['DATA_FOLDER'] = '/root'
             cfg['DATA_FOLDER'] = '/tmp/dir1'
             logger_mixin.create_logger(name=__name__, config=cfg)
-        os.system('rm -rf /tmp/ruj')
+        os.system('rm -rf /tmp/dir1')
 
 
 class TestTefloResource(object):
