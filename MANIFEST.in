@@ -18,3 +18,4 @@ prune extensions
 prune .ropeproject
 prune .git
 prune .gitignore
+prune .idea
