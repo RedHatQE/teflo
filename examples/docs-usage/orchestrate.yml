@@ -292,3 +292,72 @@ orchestrate:
     name: scripts/add_two_numbers.sh
   ansible_options:
     extra_args: X=12 Y=18
+
+# example data_pass_through
+---
+
+name: orchestrate example
+description: orchestrate example showing data pass through
+
+provision:
+  - name: localhost
+    role: local
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+
+orchestrate:
+  - name: orc_task1
+    description: "Install product a."
+    orchestrator: ansible
+    hosts: localhost
+    ansible_playbook:
+      name: ansible/install_product_a.yml
+    cleanup:
+      name: ansible/post_product_a_install.yml
+      description: "Perform post product a tasks prior to deleting host."
+      orchestrator: ansible
+      hosts: localhost
+
+  - name: orc_task2
+    description: "Install product b using data from product a."
+    orchestrator: ansible
+    hosts: localhost
+     ansible_playbook:
+       name: ansible/install_product_b.yml
+
+# example for local scenario
+
+---
+
+name: orchestrate example
+description: orchestrate example using local host
+
+provision:
+  - name: localhost
+    role: local
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+
+orchestrate:
+  - name: orc_task1
+    description: "Print system information."
+    orchestrator: ansible
+    hosts: localhost
+    ansible_playbook:
+      name: ansible/system_info.yml
+    cleanup:
+      name: cleanup_playbook
+      description: "Print system information post execution."
+      orchestrator: ansible
+      hosts: localhost
+      ansible_playbook:
+        name: ansible/system_info.yml
+
+  - name: orc_task2
+    description: "Mock aka fake a kernel update"
+    orchestrator: ansible
+    hosts: localhost
+    ansible_playbook:
+      name: ansible/mock_kernel_update.yml

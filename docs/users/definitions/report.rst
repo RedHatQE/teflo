@@ -724,7 +724,7 @@ under *.results* folder.
 In the below example the payload_teflo is a directory placed under teflo’s  *.results* folder and does not have
 the correct directory structure of results and attachments folder under it.Here teflo will create a separate 
 directory rp_payloads if it is not already there and then create a folder with uuid as
- .teflo/<data folder>/rp_payloads/<uuid>/results and copy all the xml files from .teflo/.results/payload_teflo/.
+.teflo/<data folder>/rp_payloads/<uuid>/results and copy all the xml files from .teflo/.results/payload_teflo/
 The payload directory sent to report portal client will be **.teflo/.results/rp_payloads/uuid**
 
 .. literalinclude:: ../../../examples/docs-usage/report.yml

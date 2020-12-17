@@ -89,4 +89,4 @@ When we put all of these sections together, we have a complete scenario to
 provide to teflo. You can see an example of a complete scenario descriptor
 below:
 
-.. literalinclude:: ../.examples/e2e/template.yml
+.. literalinclude:: ../../examples/docs-usage/template.yml

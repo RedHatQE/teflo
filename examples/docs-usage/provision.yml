@@ -64,3 +64,63 @@ provision:
   workspace: /home/dbaez/projects/teflo/e2e-acceptance-tests
   data_folder: /var/lib/workspace/teflo_data/fich6j1ooq
 
+# beaker scenario example
+---
+
+name: beaker resource
+description: define a teflo host beaker resource to be provisioned
+
+provision:
+  - name: beaker-node
+    role: node
+    provider:
+      name: beaker
+      credential: beaker-creds
+      arch: x86_64
+      distro: RHEL-7.5
+      variant: Server
+      whiteboard: teflo beaker resource example
+      jobgroup: '{{ jobgroup }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      host_requires_options:
+        - "force={{ host_fqdn }}"
+      ssh_key: "keys/{{ key_name }}"
+    ansible_params:
+      ansible_user: root
+      ansible_ssh_private_key_file: "keys/{{ key_name }}"
+
+# openstack scenario
+---
+
+name: openstack resource
+description: define a teflo host openstack resource to be provisioned
+
+provision:
+  - name: openstack-node
+    role: node
+    provider:
+      name: openstack
+      credential: openstack-creds
+      image: rhel-7.5-server-x86_64-released
+      flavor: m1.small
+      networks:
+        - '{{ network }}'
+      floating_ip_pool: "10.8.240.0"
+      keypair: '{{ keypair }}'
+    ansible_params:
+      ansible_user: cloud-user
+      ansible_ssh_private_key_file: "keys/{{ keypair }}"
+
+# static scenario
+---
+name: static resource
+description: define a static resource to be used throughout teflo
+
+provision:
+  - name: static-node
+    role: node
+    ip_address: 1.1.1.1
+    ansible_params:
+      ansible_user: root
+      ansible_ssh_private_key_file: "keys/{{ key_name }}"
