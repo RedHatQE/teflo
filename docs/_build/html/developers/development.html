@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Development &mdash; Teflo 1.9.1 documentation</title>
+  <title>Development &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -115,10 +115,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#branch-model">Branch Model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#how-to-setup-your-dev-environment">How to setup your dev environment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#how-to-run-tests-locally">How to run tests locally</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#how-to-build-documentation">How to build documentation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#how-to-propose-a-new-change">How to propose a new change</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#feature-toggles">Feature Toggles</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#how-to-write-an-plugin-for-teflo">How to write an plugin for teflo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-build-documentation">How to build documentation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wip-how-to-write-an-plugin-for-teflo">[WIP] How to write an plugin for teflo</a></li>
 </ul>
 </li>
 </ul>
@@ -205,6 +205,8 @@
 use this document as a guide to working on proposed changes to teflo. We ask
 that you read through this document to ensure you understand our development
 model and best practices before submitting changes.</p>
+<p>Any questions regarding this guide, or in general? Please feel free to
+file an <a class="reference external" href="https://github.com/RedHatQE/teflo/issues">issue</a></p>
 <div class="section" id="branch-model">
 <h2>Branch Model<a class="headerlink" href="#branch-model" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -255,6 +257,7 @@ the Python packages used for development.</p>
 <span class="o">(</span>teflo<span class="o">)</span> $ teflo --version
 </pre></div>
 </div>
+<p>You can now make changes/do feature development in this branch</p>
 </div>
 <div class="section" id="how-to-run-tests-locally">
 <h2>How to run tests locally<a class="headerlink" href="#how-to-run-tests-locally" title="Permalink to this headline">¶</a></h2>
@@ -268,7 +271,7 @@ the Python packages used for development.</p>
 </div></blockquote>
 <p>Before any change is proposed to teflo we ask that you run the tests
 to verify the above standards. If you forget to run the tests,
-we have a Jenkins job that runs through these on any changes.
+we have a github actions job that runs through these on any changes.
 This allows us to make sure each patch meets the standards.</p>
 <p>We also highly encourage developers to be looking to provide more tests
 or enhance existing tests for fixes or new features they maybe submitting.
@@ -325,19 +328,6 @@ as part of your patch set.</p>
 </div>
 </div>
 </div>
-<div class="section" id="how-to-build-documentation">
-<h2>How to build documentation<a class="headerlink" href="#how-to-build-documentation" title="Permalink to this headline">¶</a></h2>
-<p>If you are working on documentation changes, you probably will want to build
-the documentation locally. This way you can verify your change looks good. You
-can build the docs locally by running the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ make docs
-</pre></div>
-</div>
-<p>This make target is actually executing the following tox environments:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ tox -e docs
-</pre></div>
-</div>
-</div>
 <div class="section" id="how-to-propose-a-new-change">
 <h2>How to propose a new change<a class="headerlink" href="#how-to-propose-a-new-change" title="Permalink to this headline">¶</a></h2>
 <p>The teflo project resides in Red Hat QE github space. To send the new changes you will
@@ -347,7 +337,7 @@ maintainers to review the PR.</p>
 <p>At this point you have your local development environment setup. You made some
 code changes, ran through the unit tests and pep8 validation. Before you submit
 your changes you should check a few things</p>
-<p>If the develop branch has changed since you last pulled it down it
+<p>If the develop branch has changed since you last pulled it down. it
 is important that you get the latest changes in your branch.
 You can do that in two ways:</p>
 <p>Rebase using the local develop branch</p>
@@ -368,6 +358,19 @@ The interactive rebase menu will appear and guide you with what you need to do.<
 </div>
 <p>Once you’ve completed the above you’re good to go! All that is left is
 to submit your changes to your branch and create a new PR against the develop branch</p>
+<p>Submitting the PR</p>
+<p>Once a set of commits for the feature have been completed and tested. It is time to
+submit a Pull Request. Please follow the github article, <a class="reference external" href="https://help.github.com/articles/creating-a-pull-request/">Creating a pull request</a>.</p>
+<p>Submit the Pull Request (PR) against the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch.</p>
+<p>Once the PR is created, it will need to be reviewed, and CI automation testing
+must be executed. It is possible that additional commits will be needed to
+pass the tests, address issues in the PR, etc.</p>
+<p>Once the PR is approved, it can be merged.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Merging is currently done only by the maintainers of the repo
+This will be opened up to contributors at a future time</p>
+</div>
 </div>
 <div class="section" id="feature-toggles">
 <h2>Feature Toggles<a class="headerlink" href="#feature-toggles" title="Permalink to this headline">¶</a></h2>
@@ -409,8 +412,21 @@ for testing or continued development you can do the following:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="how-to-write-an-plugin-for-teflo">
-<h2>How to write an plugin for teflo<a class="headerlink" href="#how-to-write-an-plugin-for-teflo" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="how-to-build-documentation">
+<h2>How to build documentation<a class="headerlink" href="#how-to-build-documentation" title="Permalink to this headline">¶</a></h2>
+<p>If you are working on documentation changes, you probably will want to build
+the documentation locally. This way you can verify your change looks good. You
+can build the docs locally by running the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ make docs
+</pre></div>
+</div>
+<p>This make target is actually executing the following tox environments:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>teflo<span class="o">)</span> $ tox -e docs
+</pre></div>
+</div>
+</div>
+<div class="section" id="wip-how-to-write-an-plugin-for-teflo">
+<h2>[WIP] How to write an plugin for teflo<a class="headerlink" href="#wip-how-to-write-an-plugin-for-teflo" title="Permalink to this headline">¶</a></h2>
 <p>For developers who wish to put together their own plugins can follow these guidelines:</p>
 <ol class="arabic">
 <li><p class="first">The new plugin will need to import one of these Teflo classes based on the plugin they wish to develop
@@ -548,11 +564,6 @@ for more information on entry points</p>
         <span class="c1"># Your code</span>
 </pre></div>
 </div>
-<dl class="docutils">
-<dt>#TODO Put a link or information about cookiecutter repo either copy that under teflo code or sing another</dt>
-<dd>opensource repo</dd>
-</dl>
-<p># this will give more information on how to put together the plugins</p>
 </div>
 </div>
 

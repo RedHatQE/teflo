@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Orchestrate &mdash; Teflo 1.9.1 documentation</title>
+  <title>Orchestrate &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -279,17 +279,21 @@ Please refer <a class="reference internal" href="#ans"><span class="std std-ref"
 First is to define your hosts in a comma separated string.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">register_task</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="n">host01</span><span class="p">,</span> <span class="n">host02</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
 <p>You can also define your hosts as a list.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="o">-</span><span class="n">_taskregister</span>
     <span class="n">hosts</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">host01</span>
       <span class="o">-</span> <span class="n">host02</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
 <p>It can become tedious if an orchestrate task needs to be performed on multiple
@@ -299,23 +303,20 @@ To run against multiple hosts use the name defined in the <strong>role</strong> 
 your hosts or use <strong>all</strong> to run against all hosts.  This eliminates the need
 to define every host per multiple tasks. It can be either in string or list
 format.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">hosts</span><span class="p">:</span> <span class="nb">all</span>
-      <span class="n">ansible_galaxy_options</span><span class="p">:</span>
-        <span class="n">role_file</span><span class="p">:</span> <span class="n">roles</span><span class="o">.</span><span class="n">yml</span>
-
-</pre></div>
-</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">register_task</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="nb">all</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
-    <span class="n">hosts</span><span class="p">:</span>
-      <span class="o">-</span> <span class="nb">all</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">task1</span>
+    <span class="n">hosts</span><span class="p">:</span> <span class="n">clients</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
 </div>
@@ -334,20 +335,16 @@ all the way from the beginning. If at some point you would rather have the orche
 start from the beginning, you can modify the status code back 0.</p>
 <hr class="docutils" />
 <p>Since teflos development model is plug and play. This means different
-orchestrator’s could be used to execute configuration tasks declared. For the
-remainder of this page, please go to your preferred orchestrator below. To
-learn more on how you can setup your orchestrate task structures.</p>
+orchestrator’s could be used to execute configuration tasks declared.
+Ansible is Teflo’s default orchestrator. Its information can be found below.</p>
 </div>
 <div class="section" id="ansible">
 <span id="ans"></span><h2>Ansible<a class="headerlink" href="#ansible" title="Permalink to this headline">¶</a></h2>
 <p>Ansible is teflos default orchestrator. As we mentioned above each task has
-a given <strong>name</strong> (action). This name can be the ansible playbook name (including the
-file extension) or a script name (including the file extension), OR just the orchestrate
-task name. Teflo has the ability to find the playbook or script.</p>
-<p>Starting version 1.5.0 Teflo supports running shell commands as well. Teflo will use new keywords
-to detect to ansible playbook, script or shell command <strong>ansible_playbook, ansible_script, ansible_shell</strong>
-respectively. (keeping backward compatibility for using name field to provide script and playbook)</p>
-<p>Please refer <a class="reference internal" href="#ans-keys"><span class="std std-ref">here</span></a> to get an idea on how to use the keys</p>
+a given <strong>name</strong> (action). This name is the orchestrate task name.</p>
+<p>Teflo uses these keywords to detect to ansible playbook, script or shell command <strong>ansible_playbook, ansible_script, ansible_shell</strong>
+respectively.
+Please refer <a class="reference internal" href="#ans-keys"><span class="std std-ref">here</span></a> to get an idea on how to use the keys</p>
 <p>In addition to the required orchestrate base keys, there are more you can define based
 on your selected orchestrator.Lets dive into them..</p>
 <table border="1" class="colwidths-auto docutils">
@@ -375,37 +372,30 @@ ansible roles and collections</td>
 <td>n/a</td>
 </tr>
 <tr class="row-even"><td>ansible_script</td>
-<td>This key can be a boolean or a dictionary
-Boolean to define if you are executing a user defined script
-(required to be set to True, if using a user defined script)
-OR name of the script to be run</td>
-<td>Boolean or dictionary</td>
+<td>scribt to be executed</td>
+<td>Dictionary</td>
 <td>(Not required; however, one of the following must be defined:
-ansible_shell/script/playbook)</td>
+ansible_shell/ansible_script/ansible_playbook)</td>
 <td>False</td>
 </tr>
 <tr class="row-odd"><td>ansible_playbook</td>
 <td>playbook to be run.</td>
 <td>dictionary</td>
 <td>(Not required; however, one of the following must be defined:
-ansible_shell/script/playbook)</td>
+ansible_shell/ansible_script/ansible_playbook)</td>
 <td>False</td>
 </tr>
 <tr class="row-even"><td>ansible_shell</td>
 <td>shell commands to be run.</td>
 <td>list of dictionary</td>
 <td>(Not required; however, one of the following must be defined:
-ansible_shell/script/playbook)</td>
+ansible_shell/ansible_script/ansible_playbook)</td>
 <td>False</td>
 </tr>
 </tbody>
 </table>
 <p>The table above describes additional key:values you can set within your
 orchestrate task. Each of those keys can accept additional key:values.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The ansible_script field as Boolean will be deprecated in the coming releases.</p>
-</div>
 <div class="section" id="teflo-ansible-configuration">
 <h3>Teflo Ansible Configuration<a class="headerlink" href="#teflo-ansible-configuration" title="Permalink to this headline">¶</a></h3>
 <p>In the teflo configuration file, you can set some options related to ansible.
@@ -448,21 +438,21 @@ teflo’s logging level</p>
 own ansible.cfg file. This can be used for specific connection requirements,
 logging, and other settings for the scenario.  The following is an example
 of a configuration file that can be used as a base.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">defaults</span><span class="p">]</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">[</span><span class="nv">defaults</span><span class="p p-Indicator">]</span>
 <span class="c1"># disable strict SSH key host checking</span>
-<span class="n">host_key_checking</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="l l-Scalar l-Scalar-Plain">host_key_checking = False</span>
 
-<span class="c1"># filter out logs that are not ansible related</span>
-<span class="n">log_filter</span> <span class="o">=</span> <span class="n">paramiko</span><span class="p">,</span><span class="n">pykwalify</span><span class="p">,</span><span class="n">teflo</span><span class="p">,</span><span class="n">blaster</span><span class="p">,</span><span class="n">urllib3</span>
+<span class="l l-Scalar l-Scalar-Plain"># filter out logs that are not ansible related</span>
+<span class="l l-Scalar l-Scalar-Plain">log_filter = paramiko,pykwalify,teflo,blaster,urllib3</span>
 
-<span class="c1"># set the path to set ansible logs</span>
-<span class="n">log_path</span> <span class="o">=</span> <span class="o">./</span><span class="n">ansible</span><span class="o">.</span><span class="n">log</span>
+<span class="l l-Scalar l-Scalar-Plain"># set the path to set ansible logs</span>
+<span class="l l-Scalar l-Scalar-Plain">log_path = ./ansible.log</span>
 
-<span class="c1"># set specific privelege escalation if necessary for the scenario</span>
-<span class="p">[</span><span class="n">privilege_escalation</span><span class="p">]</span>
-<span class="n">become</span><span class="o">=</span><span class="kc">True</span>
-<span class="n">become_method</span><span class="o">=</span><span class="n">sudo</span>
-<span class="n">become_user</span><span class="o">=</span><span class="n">test</span>
+<span class="l l-Scalar l-Scalar-Plain"># set specific privelege escalation if necessary for the scenario</span>
+<span class="l l-Scalar l-Scalar-Plain">[privilege_escalation]</span>
+<span class="l l-Scalar l-Scalar-Plain">become=True</span>
+<span class="l l-Scalar l-Scalar-Plain">become_method=sudo</span>
+<span class="l l-Scalar l-Scalar-Plain">become_user=test</span>
 </pre></div>
 </div>
 <p>To see all of the settings that can be set see <a class="reference external" href="https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-configuration-settings">Ansible Configuation Settings</a>.</p>
@@ -478,9 +468,8 @@ please see <a class="reference external" href="../output.html">Teflo Output</a> 
 </div>
 <div class="section" id="using-ansible-script">
 <span id="ans-keys"></span><h3>Using ansible_script<a class="headerlink" href="#using-ansible-script" title="Permalink to this headline">¶</a></h3>
-<p>Orchestrate task uses ansible script module to run the user provided scripts.
-The script name can be given under the name field of the orchestrator task or
-within the <em>name</em> key of the ansible_script list of dictionary.</p>
+<p>Orchestrate task uses ansible playbook module to run the user provided scripts.
+The script name can be given within the <strong>name</strong> key of the ansible_script list of dictionary.</p>
 <p>The script parameters can be provided along with name of the script by separating
 it using space.</p>
 <div class="admonition note">
@@ -571,8 +560,7 @@ issues with teflo parsing the output</p>
 <div class="section" id="using-ansible-playbook">
 <h3>Using ansible_playbook<a class="headerlink" href="#using-ansible-playbook" title="Permalink to this headline">¶</a></h3>
 <p>Using the ansible_playbook parameter you can provide the playbook to be run
-The name of the playbook can be provided as the <em>name</em> key of the orchestrate task
-OR under the ansible_playbook list of dictionary</p>
+The name of the playbook can be provided as the <strong>name</strong> under the ansible_playbook list of dictionary</p>
 <p><a class="reference internal" href="#eg-2"><span class="std std-ref">Example2</span></a>
 <a class="reference internal" href="#eg-12"><span class="std std-ref">Example12</span></a></p>
 <div class="admonition note">
@@ -692,9 +680,11 @@ the <strong>ansible_options</strong> section</p>
 require any additional extra variables.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">register_task</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;register systems under test against rhsm&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">hosts</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">host01</span>
       <span class="o">-</span> <span class="n">host02</span>
@@ -707,12 +697,14 @@ require any additional extra variables.</p>
 additional extra variables.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">register_task</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;register systems under test against rhsm&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
     <span class="n">hosts</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">host01</span>
       <span class="o">-</span> <span class="n">host02</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">ansible_options</span><span class="p">:</span>
       <span class="n">extra_vars</span><span class="p">:</span>
         <span class="n">username</span><span class="p">:</span> <span class="n">kingbob</span>
@@ -728,11 +720,13 @@ additional extra variables.</p>
 only tasks with a tag set to prod.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">custom</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">custom</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;running a custom playbook, only running tasks when tag=prod&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
     <span class="n">hosts</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">host01</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">custom</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">ansible_options</span><span class="p">:</span>
       <span class="n">tags</span><span class="p">:</span>
         <span class="o">-</span> <span class="n">prod</span>
@@ -745,11 +739,13 @@ only tasks with a tag set to prod.</p>
 only tasks with a tag set to prod and requires connection settings that conflicts with your ansible.cfg.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">custom2</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">custom2</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;custom playbook, w/ different connection options&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
     <span class="n">hosts</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">host07</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">custom2</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">ansible_options</span><span class="p">:</span>
       <span class="n">forks</span><span class="p">:</span> <span class="mi">2</span>
       <span class="n">become</span><span class="p">:</span> <span class="kc">True</span>
@@ -772,9 +768,11 @@ an ansible role to be downloaded.</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">register_task</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;register systems under test against rhsm&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">hosts</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">host01</span>
       <span class="o">-</span> <span class="n">host02</span>
@@ -797,10 +795,8 @@ requirements filename. Teflo will consume that file and download all the
 roles and collections defined within.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<dl class="last docutils">
-<dt>We can define roles in the req file as a list or as dictionary, Teflo support both ways.</dt>
-<dd>but if we chose to set roles as list then we can’t set collections in the same file.</dd>
-</dl>
+<p class="last">We can define roles in the req file as a list or as dictionary, Teflo support both ways.
+but if we chose to set roles as list then we can’t set collections in the same file.</p>
 </div>
 <p>Content of requirements.yml file as a list, only suitable for roles:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
@@ -813,12 +809,14 @@ roles and collections defined within.</p>
 the roles or collections key.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">register_task</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;register systems under test against rhsm&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
     <span class="n">hosts</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">host01</span>
       <span class="o">-</span> <span class="n">host02</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">ansible_galaxy_options</span><span class="p">:</span>
       <span class="n">roles</span><span class="p">:</span>
         <span class="o">-</span> <span class="n">oasis</span><span class="o">-</span><span class="n">roles</span><span class="o">.</span><span class="n">rhsm</span>
@@ -844,12 +842,14 @@ such as ansible galaxy, external web servers, etc.</p>
 ansible roles to be downloaded and requires additional extra variables.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">register_task</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;register systems under test against rhsm&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
     <span class="n">hosts</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">host01</span>
       <span class="o">-</span> <span class="n">host02</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">ansible_options</span><span class="p">:</span>
       <span class="n">extra_vars</span><span class="p">:</span>
         <span class="n">username</span><span class="p">:</span> <span class="n">kingbob</span>
@@ -887,10 +887,12 @@ deleting the configured hosts. You want to run a playbook to do some post
 tasks.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">register_task</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;register systems under test against rhsm&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="nb">all</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">ansible_options</span><span class="p">:</span>
       <span class="n">extra_vars</span><span class="p">:</span>
         <span class="n">username</span><span class="p">:</span> <span class="n">kingbob</span>
@@ -900,10 +902,12 @@ tasks.</p>
     <span class="n">ansible_galaxy_options</span><span class="p">:</span>
       <span class="n">role_file</span><span class="p">:</span> <span class="n">roles</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">cleanup</span><span class="p">:</span>
-      <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_unregister</span><span class="o">.</span><span class="n">yml</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">unregister_task</span>
       <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;unregister systems under tests from rhsm&quot;</span>
       <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
       <span class="n">hosts</span><span class="p">:</span> <span class="nb">all</span>
+      <span class="n">ansible_playbook</span><span class="p">:</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_unregister</span><span class="o">.</span><span class="n">yml</span>
       <span class="n">ansible_galaxy_options</span><span class="p">:</span>
         <span class="n">role_file</span><span class="p">:</span> <span class="n">roles</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
@@ -916,9 +920,10 @@ example of a script running on the localhost. For localhost usage refer
 to the`localhost &lt;../localhost.html&gt;`_ page.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">scripts</span><span class="o">/</span><span class="n">create_dir</span><span class="o">.</span><span class="n">sh</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orc_script</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">create</span> <span class="n">a</span> <span class="n">local</span> <span class="nb">dir</span>
-    <span class="n">ansible_script</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="n">ansible_script</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">scripts</span><span class="o">/</span><span class="n">create_dir</span><span class="o">.</span><span class="n">sh</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
 </pre></div>
@@ -931,11 +936,12 @@ can add options to the script they are executing (In the example below,
 the script is run with options as <strong>create_dir.sh -c -e 12</strong>).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">scripts</span><span class="o">/</span><span class="n">create_dir</span><span class="o">.</span><span class="n">sh</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orc_script</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">creates</span> <span class="n">a</span> <span class="n">local</span> <span class="nb">dir</span>
     <span class="n">ansible_options</span><span class="p">:</span>
       <span class="n">extra_args</span><span class="p">:</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">e</span> <span class="mi">12</span>
-    <span class="n">ansible_script</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="n">ansible_script</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">scripts</span><span class="o">/</span><span class="n">create_dir</span><span class="o">.</span><span class="n">sh</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
 </pre></div>
@@ -951,12 +957,13 @@ example below sets the <strong>remote_user</strong> option.</p>
 <p>To see all script options see ansible’s documentation <a class="reference external" href="https://docs.ansible.com/ansible/latest/modules/script_module.html">here</a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">scripts</span><span class="o">/</span><span class="n">create_dir</span><span class="o">.</span><span class="n">sh</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orc_script</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">creates</span> <span class="n">a</span> <span class="n">remote</span> <span class="nb">dir</span>
     <span class="n">ansible_options</span><span class="p">:</span>
       <span class="n">remote_user</span><span class="p">:</span> <span class="n">cloud</span><span class="o">-</span><span class="n">user</span>
       <span class="n">extra_args</span><span class="p">:</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">e</span> <span class="mi">12</span> <span class="n">chdir</span><span class="o">=/</span><span class="n">home</span>
-    <span class="n">ansible_script</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="n">ansible_script</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">scripts</span><span class="o">/</span><span class="n">create_dir</span><span class="o">.</span><span class="n">sh</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="n">host01</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
 </pre></div>
@@ -968,10 +975,12 @@ example below sets the <strong>remote_user</strong> option.</p>
 skipping tasks with a tag set to ssh_auth and requires extra variables.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">ssh_connect</span><span class="o">.</span><span class="n">yml</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orc_task_auth</span>
   <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;setup key authentication between driver and clients&quot;</span>
   <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
   <span class="n">hosts</span><span class="p">:</span> <span class="n">driver</span>
+  <span class="n">ansible_playbook</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">ssh_connect</span><span class="o">.</span><span class="n">yml</span>
   <span class="n">ansible_options</span><span class="p">:</span>
     <span class="n">skip_tags</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">ssh_auth</span>
@@ -1028,12 +1037,12 @@ list of dictionary and its paramter in the name field</p>
     <span class="n">executable</span><span class="p">:</span> <span class="n">python</span>
 </pre></div>
 </div>
-<hr class="docutils" />
 </div>
 <div class="section" id="example-14">
 <span id="id2"></span><h3>Example 14<a class="headerlink" href="#example-14" title="Permalink to this headline">¶</a></h3>
 <p>Example to use ansible_script with extra arags as a part of ansible_options</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orchestrate_1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orchestrate_1</span>
   <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;orchestrate1&quot;</span>
   <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
   <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
@@ -1049,11 +1058,12 @@ list of dictionary and its paramter in the name field</p>
 <p>Example to use ansible_script and using ansible_options: extra_args to
 provide the script parameters</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
-<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">scripts</span><span class="o">/</span><span class="n">add_two_numbers</span><span class="o">.</span><span class="n">sh</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">scripta_task</span>
   <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
   <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
   <span class="n">hosts</span><span class="p">:</span> <span class="n">controller</span>
-  <span class="n">ansible_script</span><span class="p">:</span> <span class="kc">True</span>
+  <span class="n">ansible_script</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">scripts</span><span class="o">/</span><span class="n">add_two_numbers</span><span class="o">.</span><span class="n">sh</span>
   <span class="n">ansible_options</span><span class="p">:</span>
     <span class="n">extra_args</span><span class="p">:</span> <span class="n">X</span><span class="o">=</span><span class="mi">12</span> <span class="n">Y</span><span class="o">=</span><span class="mi">18</span>
 </pre></div>

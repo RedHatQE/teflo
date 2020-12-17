@@ -313,8 +313,8 @@ provisioning resource for Beaker using the **bkr-client** provisioner:
 Example
 +++++++
 
-.. literalinclude:: ../../.examples/provision/beaker/scenario.yml
-
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
+    :lines: 68-91
 
 .. _openstack_provisioning:
 
@@ -400,7 +400,8 @@ resource for OpenStack using the **openstack-libcloud** provisioner:
 Example
 +++++++
 
-.. literalinclude:: ../../.examples/provision/openstack/scenario.yml
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
+    :lines: 94-113
 
 Provisioning Openstack Assets using teflo_openstack_client_plugin
 ------------------------------------------------------------------
@@ -641,7 +642,8 @@ The following is an example of a statically defined machine:
 Example
 +++++++
 
-.. literalinclude:: ../../.examples/provision/static/scenario.yml
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
+    :lines: 116-126
 
 There may also be a scenario where you want to run cmds or scripts on the
 local system instead of the provisioned resources.  Refer to the

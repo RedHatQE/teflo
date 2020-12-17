@@ -15,8 +15,8 @@ The following is an example of a statically defined local machine:
 Example
 +++++++
 
-.. literalinclude:: ../.examples/orchestrate/ansible/basic/scenario.yml
-    :lines: 1-11
+.. literalinclude:: ../../examples/docs-usage/orchestrate.yml
+    :lines: 331-363
 
 When explicitly defined, this host entry is written to the master inventory
 file and the localhost will be accessible to ALL the Orchestrate and Execute tasks

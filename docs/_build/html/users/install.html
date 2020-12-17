@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Install Teflo &mdash; Teflo 1.9.1 documentation</title>
+  <title>Install Teflo &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -263,7 +263,7 @@ currently. Once compatibile it can be installed with teflo. Teflo is Python 3 co
 </div>
 </div>
 <div class="section" id="teflo-external-plugin-requirements">
-<span id="cbn-importer-plugin"></span><h2>Teflo External Plugin Requirements<a class="headerlink" href="#teflo-external-plugin-requirements" title="Permalink to this headline">¶</a></h2>
+<h2>Teflo External Plugin Requirements<a class="headerlink" href="#teflo-external-plugin-requirements" title="Permalink to this headline">¶</a></h2>
 <p>Teflo is able to use external tools using its plugins. These plugins need to be installed
 separately.</p>
 <p>Teflo has plugins for provisioners, orchestrators, executors , importers and notifiers
@@ -275,7 +275,7 @@ Following are the plugins currently developed and supported by Teflo</p>
 <p>This plugin can be use to provision using the Linchpin tool.
 The Linchpin plugin will be available as an extra. To install Linchpin certain requirements need to be
 met so that it can be installed correctly. Please refer to the
-<a class="reference external" href="https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_linchpin_plugin/blob/develop/docs/user.md#installation">pre-install section</a>
+<a class="reference external" href="https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#before-install">pre-install section</a>
 of the plugin documentation on how to install them.</p>
 <p>Once installed, you can install Linchpin from Teflo</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install teflo<span class="o">[</span>linchpin-wrapper<span class="o">]</span>
@@ -283,25 +283,26 @@ of the plugin documentation on how to install them.</p>
 </div>
 <p>Once Linchpin_Plugin is installed, you will get support for all providers that linchpin supports. Although there are
 some providers that require a few more dependencies to be installed. Refer to the
-<a class="reference external" href="https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#post-install">post-install section</a>
+<a class="reference external" href="https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#post-install">post-install section</a>
 of the plugin document for methods on how to install those dependencies.</p>
 </div>
 <div class="section" id="openstack-client-plugin">
 <h4>Openstack_Client_Plugin<a class="headerlink" href="#openstack-client-plugin" title="Permalink to this headline">¶</a></h4>
 <p>This plugin is used to Provision openstack assets using openstack-client tool
 This plugin is also available as extra. To install this  plugin do the following
-Refer <a href="#id3"><span class="problematic" id="id4">`here &lt;&gt;`__</span></a> to get more information on how to use the plugin</p>
+Refer <a class="reference external" href="https://github.com/RedHatQE/teflo_openstack_client_plugin/blob/master/docs/user.md">here</a> to get more
+information on how to use the plugin</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install teflo<span class="o">[</span>openstack-client-plugin<span class="o">]</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="importer-plugins">
-<h3>Importer Plugins<a class="headerlink" href="#importer-plugins" title="Permalink to this headline">¶</a></h3>
+<span id="cbn-importer-plugin"></span><h3>Importer Plugins<a class="headerlink" href="#importer-plugins" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="teflo-polarion-plugin">
 <h4>Teflo_Polarion_Plugin<a class="headerlink" href="#teflo-polarion-plugin" title="Permalink to this headline">¶</a></h4>
 <p>This plugin allows teflo to send test results to Polarion tool. You can read more about the plugin in the
-<a href="#id3"><span class="problematic" id="id5">`repo link&lt;https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_polarion_plugin.git&gt;`__</span></a></p>
+<a class="reference external" href="https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_polarion_plugin.git">repo link</a></p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This plugin is meant for Internal RED HAT use and is not available publicly yet</p>
@@ -340,9 +341,9 @@ $ <span class="nb">source</span> reportportal/bin/activate
 <div class="section" id="teflo-webhooks-notification-plugin">
 <h4>Teflo_Webhooks_Notification_Plugin<a class="headerlink" href="#teflo-webhooks-notification-plugin" title="Permalink to this headline">¶</a></h4>
 <p>This plugin is used to notify based users using chat applications gchat and slack.
-Please review the repo documentation &lt;./definitions&gt; and how to use the plugin.
-Please review <a class="reference external" href="./definitions/notification.rst#notify_triggers">Teflo’s notification triggers</a> to get more info on
-using Teflo`s notification feature</p>
+Please review the <a class="reference external" href="https://github.com/RedHatQE/teflo_webhooks_notification_plugin/blob/master/docs/user.md">repo documentation</a>
+and how to use the plugin.Please review <a class="reference external" href="./definitions/notification.rst#notify_triggers">Teflo’s notification triggers</a>
+to get more info on using Teflo`s notification feature</p>
 </div>
 </div>
 </div>

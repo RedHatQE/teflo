@@ -2,9 +2,8 @@ Using Jinja Variable Data
 =========================
 
 Teflo uses Jinja2 template engine to be able to template variables
-within a scenario file. Prior to 1.6.0, Teflo could template variable data
-set as environmental variables. As of 1.6.0, variable data can now be passed
-more directly.
+within a scenario file. Teflo allows template variable data to be
+set as environmental variables as well as pass variable data via command line.
 
 Here is an example scenario file using Jinja to template some variable data:
 

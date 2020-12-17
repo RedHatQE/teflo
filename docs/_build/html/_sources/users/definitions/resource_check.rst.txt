@@ -4,11 +4,6 @@ Resource Check
 Teflo's Resource Dependency Check Section is optional. It is run during the Validate task
 Resource_check is a dictionary which takes in three keys **monitored_services (formerly was service), playbook, script**
 
-.. note::
-
-   With teflo version 1.9.1 , the keyword **service** is being replaced with keyword **monitored_services**
-   This is to provide more clarity as to what is being done under that block
-
 Monitored_Services
 ~~~~~~~~~~~~~~~~~~
 

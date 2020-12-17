@@ -234,7 +234,7 @@ Teflo's scenario data could be used to format the template email_templ.txt as sh
 
 a.
 
-.. code-block:: yaml
+.. code-block:: bash
 
    Hello All,
 
@@ -246,7 +246,7 @@ a.
 
 b.
 
-.. code-block:: yaml
+.. code-block:: bash
 
    Hello All,
 

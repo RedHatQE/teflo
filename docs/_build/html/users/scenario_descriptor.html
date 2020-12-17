@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Scenario Descriptor &mdash; Teflo 1.9.1 documentation</title>
+  <title>Scenario Descriptor &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -307,37 +307,64 @@ below:</p>
 <span class="c1"># resource checking section</span>
 <span class="c1"># As part of the validation that teflo performs, it can also</span>
 <span class="c1"># check the status of resources that an end to end scenario</span>
-<span class="c1"># relies on.  The user can set a list of resources to check.</span>
+<span class="c1"># relies on.  The user can set a list of services</span>
+<span class="c1"># that need to be checked for status</span>
+<span class="c1"># prior to the start of the teflo workflow under monitored_services.</span>
 <span class="c1">#</span>
-<span class="c1"># Note: these dependencies will only be validated if you</span>
-<span class="c1"># set the resource_check_endpoint key in your teflo.cfg file</span>
+<span class="c1"># Note: these services will only be validated if you</span>
+<span class="c1"># set the resource_check_endpoint key in your teflo.cfg file e.g.</span>
 <span class="c1">#</span>
-<span class="c1"># internally, most likely Semaphore will be used:</span>
 <span class="c1"># in teflo.cfg add:</span>
 <span class="c1"># [defaults]</span>
 <span class="c1"># resource_check_endpoint=https://semaphore.cloud.upshift.engineering.redhat.com/api/v1</span>
-
-<span class="c1"># the following is a list of some resources that Semaphore</span>
-<span class="c1"># allows you to check:</span>
+<span class="c1">#</span>
+<span class="c1"># Along with services, users can run their own validation playbooks or scripts before</span>
+<span class="c1"># starting the teflo workflow. If the validation here fails the workflow doe snot move ahead</span>
+<span class="c1"># Playbooks and scripts use Teflo&#39;s ansible executor/runner</span>
 
 <span class="n">resource_check</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">ci</span><span class="o">-</span><span class="n">rhos</span>
-  <span class="o">-</span> <span class="n">brew</span>
-  <span class="o">-</span> <span class="n">polarion</span>
-  <span class="o">-</span> <span class="n">umb</span>
-  <span class="o">-</span> <span class="n">errata</span>
-  <span class="o">-</span> <span class="n">rdo</span><span class="o">-</span><span class="n">cloud</span>
-  <span class="o">-</span> <span class="n">covscan</span>
-  <span class="o">-</span> <span class="n">rpmdiff</span>
-  <span class="o">-</span> <span class="n">gerrit</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">prod</span><span class="o">.</span><span class="n">eng</span><span class="o">.</span><span class="n">bos</span><span class="o">.</span><span class="n">redhat</span><span class="o">.</span><span class="n">com</span>
-  <span class="o">-</span> <span class="n">code</span><span class="o">.</span><span class="n">engineering</span><span class="o">.</span><span class="n">redhat</span><span class="o">.</span><span class="n">com</span>
+  <span class="n">monitored_services</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">ci</span><span class="o">-</span><span class="n">rhos</span>
+    <span class="o">-</span> <span class="n">brew</span>
+    <span class="o">-</span> <span class="n">polarion</span>
+    <span class="o">-</span> <span class="n">umb</span>
+    <span class="o">-</span> <span class="n">errata</span>
+    <span class="o">-</span> <span class="n">rdo</span><span class="o">-</span><span class="n">cloud</span>
+    <span class="o">-</span> <span class="n">covscan</span>
+    <span class="o">-</span> <span class="n">rpmdiff</span>
+    <span class="o">-</span> <span class="n">gerrit</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">prod</span><span class="o">.</span><span class="n">eng</span><span class="o">.</span><span class="n">bos</span><span class="o">.</span><span class="n">redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="o">-</span> <span class="n">code</span><span class="o">.</span><span class="n">engineering</span><span class="o">.</span><span class="n">redhat</span><span class="o">.</span><span class="n">com</span>
+  <span class="n">playbook</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">list_block_devices</span><span class="o">.</span><span class="n">yml</span>
+      <span class="n">ansible_options</span><span class="p">:</span>
+        <span class="n">extra_vars</span><span class="p">:</span>
+          <span class="n">X</span><span class="p">:</span> <span class="mi">18</span>
+          <span class="n">Y</span><span class="p">:</span> <span class="mi">12</span>
+          <span class="n">ch_dir</span><span class="p">:</span> <span class="o">./</span><span class="n">scripts</span><span class="o">/</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">test_execute_playbook</span><span class="o">.</span><span class="n">yml</span>
+      <span class="n">ansible_options</span><span class="p">:</span>
+        <span class="n">extra_vars</span><span class="p">:</span>
+          <span class="n">X</span><span class="p">:</span> <span class="mi">12</span>
+          <span class="n">Y</span><span class="p">:</span> <span class="mi">12</span>
+          <span class="n">ch_dir</span><span class="p">:</span> <span class="o">../../</span><span class="n">scripts</span><span class="o">/</span>
+  <span class="n">script</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">hello_world1</span><span class="o">.</span><span class="n">py</span> <span class="n">Teflo_user</span>
+        <span class="n">executable</span><span class="p">:</span> <span class="n">python</span>
+      <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">add_two_numbers</span><span class="o">.</span><span class="n">sh</span> <span class="n">X</span><span class="o">=</span><span class="mi">15</span> <span class="n">Y</span><span class="o">=</span><span class="mi">15</span>
+
+<span class="c1"># include section</span>
+<span class="c1"># Defines any other scenario files that need to be executed</span>
+<span class="c1"># These scenario files have to be in the same workspace as the master/original scenario</span>
+<span class="c1"># During running of teflo workflow tasks from the included scenarios will be run</span>
+<span class="c1"># e.g if task selected is provision, the resources of master scenario will be provisioned</span>
+<span class="c1"># followed by provisioning of resources defined in the included scenarios</span>
+
+<span class="n">include</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">py3_incl_prov</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">py3_incl_orch</span><span class="o">.</span><span class="n">yml</span>
 
 <span class="c1"># provision section</span>
 <span class="c1"># defines all systems required for the scenario</span>
-
-<span class="c1"># note:</span>
-<span class="c1"># ----</span>
-<span class="c1"># the defined definition below is active and supported by teflo framework</span>
 
 <span class="n">provision</span><span class="p">:</span>
   <span class="c1"># test driver</span>
@@ -346,7 +373,7 @@ below:</p>
     <span class="n">provider</span><span class="p">:</span>
       <span class="n">name</span><span class="p">:</span> <span class="n">openstack</span>                           <span class="c1"># provider to create host in</span>
       <span class="n">credential</span><span class="p">:</span> <span class="n">openstack</span>                     <span class="c1"># ref above ^^: credentials.openstack</span>
-      <span class="n">image</span><span class="p">:</span> <span class="n">rhel</span><span class="o">-</span><span class="mf">7.5</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">released</span>    <span class="c1"># qcow image to boot instance based on</span>
+      <span class="n">image</span><span class="p">:</span> <span class="n">rhel</span><span class="o">-</span><span class="mf">7.5</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">released</span>    <span class="c1"># image to boot instance based on</span>
       <span class="n">flavor</span><span class="p">:</span> <span class="n">m1</span><span class="o">.</span><span class="n">small</span>                          <span class="c1"># instance size</span>
       <span class="n">networks</span><span class="p">:</span>                                 <span class="c1"># instance internal network</span>
         <span class="o">-</span> <span class="o">&lt;</span><span class="n">internal</span><span class="o">-</span><span class="n">network</span><span class="o">&gt;</span>
@@ -363,7 +390,7 @@ below:</p>
     <span class="n">provider</span><span class="p">:</span>
       <span class="n">name</span><span class="p">:</span> <span class="n">openstack</span>                           <span class="c1"># provider to create host in</span>
       <span class="n">credential</span><span class="p">:</span> <span class="n">openstack</span>                     <span class="c1"># ref above ^^: credentials.openstack</span>
-      <span class="n">image</span><span class="p">:</span> <span class="n">rhel</span><span class="o">-</span><span class="mf">7.5</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">released</span>    <span class="c1"># qcow image to boot instance based on</span>
+      <span class="n">image</span><span class="p">:</span> <span class="n">rhel</span><span class="o">-</span><span class="mf">7.5</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">released</span>    <span class="c1"># image to boot instance based on</span>
       <span class="n">flavor</span><span class="p">:</span> <span class="n">m1</span><span class="o">.</span><span class="n">small</span>                          <span class="c1"># instance size</span>
       <span class="n">networks</span><span class="p">:</span>                                 <span class="c1"># instance internal network</span>
         <span class="o">-</span> <span class="o">&lt;</span><span class="n">internal</span><span class="o">-</span><span class="n">network</span><span class="o">&gt;</span>
@@ -390,20 +417,22 @@ below:</p>
 <span class="c1"># defines all actions to be performed for the scenario. these actions will be</span>
 <span class="c1"># executed against the systems defined in the provision section. Each action</span>
 <span class="c1"># will define which system to run against.</span>
-
-<span class="c1"># note:</span>
-<span class="c1"># ----</span>
-<span class="c1"># the defined definition below is active and supported by teflo framework</span>
+<span class="c1"># Then, three types of orchestrate actions are supported by the default orchestrator (ansible):</span>
+<span class="c1"># 1. ansible_shell</span>
+<span class="c1"># 2. ansible_script</span>
+<span class="c1"># 3. ansible_playbook</span>
+<span class="c1"># Only one type of orchestrate action can be run per action.</span>
 
 <span class="n">orchestrate</span><span class="p">:</span>
   <span class="c1"># user defined playbook to execute</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">custom</span><span class="o">.</span><span class="n">yml</span>                            <span class="c1"># action name (playbook name) (full filename</span>
-                                                <span class="c1"># and path relative to the workspace)</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">task_1</span>                                <span class="c1"># action name</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;performs custom config&quot;</span>       <span class="c1"># describes what is being performed on the hosts</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>                       <span class="c1"># orchestrator module to use in this case ansible</span>
     <span class="n">hosts</span><span class="p">:</span>                                      <span class="c1"># hosts which the action is executed on</span>
       <span class="o">-</span> <span class="n">testclient01</span>                            <span class="c1"># ref above ^^: provision.testclient01</span>
       <span class="o">-</span> <span class="n">testclient02</span>                            <span class="c1"># ref above ^^: provision.testclient02</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>                           <span class="c1"># using ansible playbook</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">custom</span><span class="o">.</span><span class="n">yml</span>                          <span class="c1"># name (playbook name) (full filename and path relative to the workspace)</span>
     <span class="n">ansible_options</span><span class="p">:</span>                            <span class="c1"># options used by ansible orchestrator</span>
       <span class="n">extra_vars</span><span class="p">:</span>
         <span class="n">var01</span><span class="p">:</span> <span class="n">value01</span>
@@ -411,23 +440,25 @@ below:</p>
       <span class="n">role_file</span><span class="p">:</span> <span class="n">role</span><span class="o">.</span><span class="n">yml</span>
 
   <span class="c1"># create ssh key pair for ssh connection between driver/client(s)</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">create_ssh_keypair</span><span class="o">.</span><span class="n">yml</span>                 <span class="c1"># action name (playbook name) (full filename</span>
-                                                 <span class="c1"># and path relative to the workspace)</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">create_ssh_keypair</span>                     <span class="c1"># action name</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;creates ssh key pair for auth&quot;</span> <span class="c1"># describes what is being performed on the hosts</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>                        <span class="c1"># orchestrator module to use in this case ansible</span>
     <span class="n">hosts</span><span class="p">:</span>                                       <span class="c1"># hosts which the action is executed on</span>
       <span class="o">-</span> <span class="n">testdriver</span>                               <span class="c1"># ref above ^^: provision.testdriver</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>                            <span class="c1"># playbook name(full filename and path relative to the workspace)</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">create_ssh_keypair</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">ansible_options</span><span class="p">:</span>                             <span class="c1"># options used by ansible orchestrator</span>
       <span class="n">extra_vars</span><span class="p">:</span>
         <span class="n">user</span><span class="p">:</span> <span class="n">root</span>
 
   <span class="c1"># inject driver ssh public key pair to client(s)</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">inject_pub_key</span><span class="o">.</span><span class="n">yml</span>                    <span class="c1"># action name (playbook name) (full filename</span>
-                                                <span class="c1"># and path relative to the workspace)</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">inject_pub_key</span>                        <span class="c1"># action name</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;injects ssh keys into sut&quot;</span>    <span class="c1"># describes what is being performed on the hosts</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>                       <span class="c1"># orchestrator module to use in this case ansible</span>
     <span class="n">hosts</span><span class="p">:</span>                                      <span class="c1"># hosts which the action is executed on</span>
-      <span class="o">-</span> <span class="n">testdriver</span>                              <span class="c1"># ref above ^^: provision.testdriver</span>
+      <span class="o">-</span> <span class="n">testdriver</span>                              <span class="c1"># ref above ^^: provision.testdrive</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">inject_pub_key</span><span class="o">.</span><span class="n">yml</span>                  <span class="c1"># playbook name(full filename and path relative to the workspace)</span>
     <span class="n">ansible_options</span><span class="p">:</span>                            <span class="c1"># options used by ansible orchestrator</span>
       <span class="n">extra_vars</span><span class="p">:</span>
         <span class="n">user</span><span class="p">:</span> <span class="n">root</span>
@@ -435,12 +466,13 @@ below:</p>
           <span class="o">-</span> <span class="n">testclient01</span>
           <span class="o">-</span> <span class="n">testclient02</span>
 
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhn_subscribe</span><span class="o">.</span><span class="n">yml</span>                     <span class="c1"># action name (playbook name) (full filename</span>
-                                                <span class="c1"># and path relative to the workspace)</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhn_subscribe</span>                         <span class="c1"># action name</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;subscribe to rhsm&quot;</span>            <span class="c1"># describes what is being performed on the hosts</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>                       <span class="c1"># orchestrator module to use in this case ansible</span>
     <span class="n">hosts</span><span class="p">:</span>                                      <span class="c1"># hosts which the action is executed on</span>
       <span class="o">-</span> <span class="nb">all</span>                                     <span class="c1"># ref above ^^ to all hosts : provision.*</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">rhn_subscribe</span><span class="o">.</span><span class="n">yml</span>                   <span class="c1"># playbook name(full filename and path relative to the workspace)</span>
     <span class="n">ansible_options</span><span class="p">:</span>                            <span class="c1"># options used by ansible orchestrator</span>
       <span class="n">extra_vars</span><span class="p">:</span>
         <span class="n">rhn_hostname</span><span class="p">:</span> <span class="n">subscription</span><span class="o">.</span><span class="n">rhsm</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">redhat</span><span class="o">.</span><span class="n">com</span>
@@ -461,7 +493,7 @@ below:</p>
 <span class="c1"># data gathering after the test execution.</span>
 
 <span class="n">execute</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">test</span> <span class="n">suite</span> <span class="mi">01</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">test_suite_01</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;execute tests against test clients&quot;</span>
     <span class="n">executor</span><span class="p">:</span> <span class="n">runner</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="n">driver</span>
@@ -474,7 +506,7 @@ below:</p>
         <span class="n">command</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">restraint</span> <span class="o">--</span><span class="n">host</span> <span class="mi">1</span><span class="o">=</span><span class="p">{{</span><span class="n">testclient01</span><span class="p">}}:</span><span class="mi">8081</span> <span class="o">--</span><span class="n">job</span> <span class="n">foo</span><span class="o">.</span><span class="n">xml</span>
     <span class="n">artifacts</span><span class="p">:</span> <span class="n">retraint</span><span class="o">-*</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">log</span>
 
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">test</span> <span class="n">suite</span> <span class="mi">02</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">test_suite_02</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;execute tests against test clients&quot;</span>
     <span class="n">executor</span><span class="p">:</span> <span class="n">runner</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="n">driver</span>
@@ -487,7 +519,7 @@ below:</p>
         <span class="n">name</span><span class="p">:</span> <span class="n">tests</span><span class="o">.</span><span class="n">sh</span> <span class="n">arg1</span> <span class="n">arg2</span>
     <span class="n">artifacts</span><span class="p">:</span> <span class="n">retraint</span><span class="o">-*</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">log</span>
 
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">test</span> <span class="n">suite</span> <span class="mi">03</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">test_suite_03</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;execute tests against test clients&quot;</span>
     <span class="n">executor</span><span class="p">:</span> <span class="n">runner</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="n">driver</span>
@@ -500,9 +532,42 @@ below:</p>
         <span class="n">name</span><span class="p">:</span> <span class="n">test</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">artifacts</span><span class="p">:</span> <span class="n">retraint</span><span class="o">-*</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">log</span>
 
-<span class="c1"># report section, coming soon, currently not defined</span>
+<span class="c1"># report section</span>
+<span class="c1"># Teflo supports importing to external tools using teflo plugins. Please refer the report section</span>
+<span class="c1"># under Scenario Descriptor for more information on plugins</span>
+<span class="c1"># Below example is for importing test runs xmls to Polarion</span>
 
 <span class="n">report</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">suite1_results</span><span class="o">.</span><span class="n">xml</span>                           <span class="c1"># pattern to match the xml file to be imported</span>
+      <span class="n">description</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">suite1</span> <span class="n">results</span> <span class="n">to</span> <span class="n">polarion</span>     <span class="c1"># description of the reporting task</span>
+      <span class="n">executes</span><span class="p">:</span> <span class="n">test_suite_01</span>                            <span class="c1"># execute task to look for the artifacts/xml mentioned under name</span>
+      <span class="n">importer</span><span class="p">:</span> <span class="n">polarion</span>                                 <span class="c1"># importer to be used</span>
+      <span class="n">credential</span><span class="p">:</span> <span class="n">polarion</span><span class="o">-</span><span class="n">creds</span>                         <span class="c1"># credentials to connect to the external tool(provided under teflo.cfg)</span>
+      <span class="n">project_id</span><span class="p">:</span> <span class="n">Teflo1</span>                                 <span class="c1"># Polarion project id</span>
+      <span class="n">testsuite_properties</span><span class="p">:</span>                              <span class="c1"># test suite properties for Polarion</span>
+        <span class="n">polarion</span><span class="o">-</span><span class="n">lookup</span><span class="o">-</span><span class="n">method</span><span class="p">:</span> <span class="n">name</span>
+        <span class="n">polarion</span><span class="o">-</span><span class="n">custom</span><span class="o">-</span><span class="n">os</span><span class="p">:</span> <span class="n">RHEL</span> <span class="mi">8</span>
+        <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="nb">id</span><span class="p">:</span> <span class="n">PolId</span><span class="o">-</span><span class="mi">123</span>
+        <span class="n">polarion</span><span class="o">-</span><span class="n">testrun</span><span class="o">-</span><span class="n">title</span><span class="p">:</span> <span class="n">Sample</span> <span class="n">Test</span> <span class="n">Run</span>
+
+<span class="c1"># notification tasks</span>
+<span class="c1"># Teflo supports notification using email as default. Please refer notification section under</span>
+<span class="c1"># scenario descriptor to know more about notification using webhook plugins and different triggers</span>
+<span class="c1"># that can be set for notification</span>
+<span class="c1"># Below example is for notification using email on completion of provision task</span>
+
+<span class="n">notifications</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">notify1</span>                                         <span class="c1"># task name</span>
+    <span class="n">notifier</span><span class="p">:</span> <span class="n">email</span><span class="o">-</span><span class="n">notifier</span>                              <span class="c1"># notifier to be used</span>
+    <span class="n">credential</span><span class="p">:</span> <span class="n">email</span>                                     <span class="c1"># credentials needed for notifier to be set under teflo.cfg</span>
+    <span class="n">on_tasks</span><span class="p">:</span>                                             <span class="c1"># trigger for notification to be sent</span>
+      <span class="o">-</span> <span class="n">provision</span>
+    <span class="n">to</span><span class="p">:</span>                                                   <span class="c1"># list of email addresses to send the notification to</span>
+      <span class="o">-</span> <span class="n">abc</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+      <span class="o">-</span> <span class="n">pqr</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+      <span class="o">-</span> <span class="n">xyz</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">from</span><span class="p">:</span> <span class="n">team</span><span class="nd">@redhat</span><span class="o">.</span><span class="n">com</span>                                 <span class="c1"># email the notification is from</span>
+    <span class="n">subject</span><span class="p">:</span> <span class="s1">&#39;Provision task completed&#39;</span>                   <span class="c1"># subject of the email</span>
 </pre></div>
 </div>
 </div>

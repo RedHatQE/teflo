@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Report &mdash; Teflo 1.9.1 documentation</title>
+  <title>Report &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -278,22 +278,13 @@ the artifact.</td>
 <tr class="row-odd"><td>importer</td>
 <td>The name of the importer to perform the import process.</td>
 <td>String</td>
-<td>True (False if provider key is used)</td>
-</tr>
-<tr class="row-even"><td>provider</td>
-<td>Dictionary of the specific provider key/values.</td>
-<td>Dict</td>
-<td>False</td>
+<td>True</td>
 </tr>
 </tbody>
 </table>
 <p>If you are familiar with the structure of Provision then the same
 concept of Provider has been utilized in the Report. We will dive
 into the different report providers further below.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Starting Teflo 1.7.0 use of provider is deprecated</p>
-</div>
 </div>
 <div class="section" id="executes">
 <h2>Executes<a class="headerlink" href="#executes" title="Permalink to this headline">¶</a></h2>
@@ -668,6 +659,10 @@ for more details.</p>
 <p>Teflo uses CCIT Report Portal client to import artifacts to the Report Portal instance.
 To know more about Report Portal Client, please refer
 <a class="reference external" href="https://docs.engineering.redhat.com/pages/viewpage.action?pageId=81876674">here</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The report portal client is only for internal RED HAT usage and not available publicly</p>
+</div>
 </div>
 <div class="section" id="teflo-report-portal-configuration">
 <h3>Teflo Report Portal Configuration<a class="headerlink" href="#teflo-report-portal-configuration" title="Permalink to this headline">¶</a></h3>
@@ -691,28 +686,6 @@ for the Report Portal Importer:</p>
     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tag1&gt;</span>
     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tag2&gt;</span>
     <span class="nt">json_path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;relative path for report portal config file&gt;</span>
-</pre></div>
-</div>
-<p>With Provider:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
-<span class="nt">report</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
-    <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;description&gt;</span>
-    <span class="nt">executes</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;execute name&gt;</span>
-    <span class="nt">importer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;importer&gt;</span>
-    <span class="nt">provider</span><span class="p">:</span>
-      <span class="nt">credential</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">reportportal-creds</span>
-      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">reportportal</span>
-      <span class="nt">rp_project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;project_name&gt;</span>
-      <span class="nt">launch_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;launch_name&gt;</span>
-      <span class="nt">launch_description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;launch_description&gt;</span>
-      <span class="nt">simple_xml</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;to just import XML file directly&gt;</span>
-      <span class="nt">auto_dashboard</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;create dashboard&gt;</span>
-      <span class="nt">merge_launches</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;merge multiple launches into single true/false&gt;</span>
-      <span class="nt">tags</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tag1&gt;</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;tag2&gt;</span>
-      <span class="nt">json_path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;relative path for report portal config file&gt;</span>
 </pre></div>
 </div>
 <table border="1" class="colwidths-auto docutils">
@@ -1092,10 +1065,9 @@ directory structure is NOT as required, will copy ONLY the xml files from payloa
 under <em>.results</em> folder.</p>
 <p>In the below example the payload_teflo is a directory placed under teflo’s  <em>.results</em> folder and does not have
 the correct directory structure of results and attachments folder under it.Here teflo will create a separate
-directory rp_payloads if it is not already there and then create a folder with uuid as</p>
-<blockquote>
-<div>.teflo/&lt;data folder&gt;/rp_payloads/&lt;uuid&gt;/results and copy all the xml files from .teflo/.results/payload_teflo/.</div></blockquote>
-<p>The payload directory sent to report portal client will be <strong>.teflo/.results/rp_payloads/uuid</strong></p>
+directory rp_payloads if it is not already there and then create a folder with uuid as
+.teflo/&lt;data folder&gt;/rp_payloads/&lt;uuid&gt;/results and copy all the xml files from .teflo/.results/payload_teflo/
+The payload directory sent to report portal client will be <strong>.teflo/.results/rp_payloads/uuid</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">execute</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rp_execute_test</span>

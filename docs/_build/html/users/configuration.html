@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Configure Teflo &mdash; Teflo 1.9.1 documentation</title>
+  <title>Configure Teflo &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -220,13 +220,14 @@ be the TEFLO_SETTINGS environment variable.</p>
 
 <span class="p">[</span><span class="n">defaults</span><span class="p">]</span>
 <span class="n">log_level</span><span class="o">=</span><span class="n">debug</span>
+<span class="c1"># Path for teflo&#39;s data folder where teflo logs will be stored</span>
 <span class="n">data_folder</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">teflo</span>
 <span class="n">workspace</span><span class="o">=.</span>
 <span class="c1"># Endpoint URL of Cachet Status page</span>
 <span class="c1"># Cachet status page.</span>
 <span class="n">resource_check_endpoint</span><span class="o">=&lt;</span><span class="n">endpoint_</span> <span class="n">url_for_dependency_check</span><span class="o">&gt;</span>
 <span class="c1">#</span>
-<span class="c1"># A static inventory path to be used for ansible inventory files.</span>
+<span class="c1"># A static inventory path can be used for ansible inventory file.</span>
 <span class="c1"># Can be relative path in teflo scenario workspace</span>
 <span class="c1"># inventory_folder=static/inventory</span>
 <span class="c1">#</span>
@@ -238,7 +239,26 @@ be the TEFLO_SETTINGS environment variable.</p>
 <span class="c1">#</span>
 <span class="c1"># Can be a path containing an environment variable</span>
 <span class="c1"># inventory_folder=$WORKSPACE/scenario/static/inventory</span>
+<span class="c1"># default value of the inventory folder is &#39;TEFLO_DATA_FOLDER/.results/inventory&#39;</span>
 <span class="n">inventory_folder</span><span class="o">=&lt;</span><span class="n">path</span> <span class="k">for</span> <span class="n">ansible</span> <span class="n">inventory</span> <span class="n">files</span><span class="o">&gt;</span>
+<span class="c1"># credentials file and Vault password</span>
+<span class="c1"># User can set all teh credential information in a text file and encrypt it using ansible vault</span>
+<span class="c1"># provide the path in under CREDENTIALS_PATH. Provide the vault password here. This password can be</span>
+<span class="c1"># exported as an environmental variable</span>
+<span class="n">CREDENTIAL_PATH</span><span class="o">=&lt;</span><span class="n">path</span> <span class="k">for</span> <span class="n">the</span> <span class="n">credetials</span> <span class="n">txt</span> <span class="n">file</span><span class="o">&gt;</span>
+<span class="n">VAULTPASS</span><span class="o">=&lt;</span><span class="n">ansible</span> <span class="n">vault</span> <span class="n">password</span><span class="o">&gt;</span>
+
+
+<span class="c1"># time out for each stage</span>
+<span class="c1"># you can set the timeout value for each of teflo&#39;s stages (validation, provision, orchestrate, execute, report and cleanup)</span>
+<span class="p">[</span><span class="n">timeout</span><span class="p">]</span>
+<span class="n">provision</span><span class="o">=</span><span class="mi">500</span>
+<span class="n">cleanup</span><span class="o">=</span><span class="mi">1000</span>
+<span class="n">orchestrate</span><span class="o">=</span><span class="mi">300</span>
+<span class="n">execute</span><span class="o">=</span><span class="mi">200</span>
+<span class="n">report</span><span class="o">=</span><span class="mi">100</span>
+<span class="n">validate</span><span class="o">=</span><span class="mi">10</span>
+
 
 <span class="c1"># credentials settings</span>
 
@@ -267,9 +287,20 @@ be the TEFLO_SETTINGS environment variable.</p>
 
 <span class="p">[</span><span class="n">task_concurrency</span><span class="p">]</span>
 <span class="c1"># this controls how tasks (provision, orchestrate, execute, report) are executed</span>
-<span class="c1"># by Teflo either parallel or sequential. </span>
-<span class="c1"># When set to False the task will execute sequentially. </span>
+<span class="c1"># by Teflo either parallel or sequential.</span>
+<span class="c1"># When set to False the task will execute sequentially.</span>
 <span class="n">provision</span><span class="o">=</span><span class="kc">False</span>
+
+
+<span class="c1"># executor settings</span>
+
+<span class="p">[</span><span class="n">executor</span><span class="p">:</span><span class="n">runner</span><span class="p">]</span>
+<span class="c1"># set the testrun_results to false if you dont want it to be collected in the logs for the xml files collected during</span>
+<span class="c1"># execution</span>
+<span class="n">testrun_results</span><span class="o">=</span><span class="kc">False</span>
+<span class="c1"># Teflo by default will NOT exit if the collection of artifact task fails. In order to exit the run on an error during</span>
+<span class="c1"># collection of artifacts user can set this field to true , else False or ignore the field.</span>
+<span class="n">exit_on_error</span><span class="o">=</span><span class="kc">True</span>
 </pre></div>
 </div>
 <div class="admonition note">

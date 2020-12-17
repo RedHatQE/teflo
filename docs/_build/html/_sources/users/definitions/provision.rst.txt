@@ -313,8 +313,8 @@ provisioning resource for Beaker using the **bkr-client** provisioner:
 Example
 +++++++
 
-.. literalinclude:: ../../.examples/provision/beaker/scenario.yml
-
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
+    :lines: 68-91
 
 .. _openstack_provisioning:
 
@@ -400,12 +400,13 @@ resource for OpenStack using the **openstack-libcloud** provisioner:
 Example
 +++++++
 
-.. literalinclude:: ../../.examples/provision/openstack/scenario.yml
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
+    :lines: 94-113
 
 Provisioning Openstack Assets using teflo_openstack_client_plugin
 ------------------------------------------------------------------
 
-Starting with version 1.8.0, Teflo is offering a new plugin **teflo_openstack_client_plugin**. to provision
+Teflo is offers a plugin **teflo_openstack_client_plugin**. to provision
 openstack resources. This plugin utilizes the openstackclient to provision resources.
 
 User can now install this plugin from Teflo
@@ -430,9 +431,8 @@ please refer `here <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_opens
 Provisioning Assets with Linchpin
 ----------------------------------
 
-Starting in Teflo 1.6.0 you can fully provision all Linchpin supported providers
-using the Linchpin plugin. The code has also been pulled out of Teflo and maintained
-as a separate plugin.
+Usera can provision assets using all Linchpin supported providers
+using the Linchpin plugin.
 
 First the plugin must be installed. Refer to the teflo `installation <install.html>`__ document on
 how you can install the plugin as an extra package.
@@ -449,7 +449,7 @@ In your scenario file specify the **provisioner** key in your provision section.
 
 
 Specify any of the
-`keys <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_linchpin_plugin/blob/develop/docs/user.md#provisioning-assets-with-linchpin>`__
+`keys <https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#provisioning-assets-with-linchpin>`__
 supported by the linchpin provisioner.
 
 
@@ -485,14 +485,14 @@ following options
    credential environmental variables supported by Linchpin/Ansible yourself.
 
 For more information refer to the plugins
-`credential <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_linchpin_plugin/blob/develop/docs/user.md#provisioning-assets-with-linchpin>`__
+`credential <https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#provisioning-assets-with-linchpin>`__
 document section.
 
 Examples
 ++++++++
 
 Below we will just touch on a couple examples. You can see the rest of the
-`examples <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_linchpin_plugin/blob/develop/docs/user.md#credentials>`__
+`examples <https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#credentials>`__
 in the plugin documentation.
 
 Example 1
@@ -642,7 +642,8 @@ The following is an example of a statically defined machine:
 Example
 +++++++
 
-.. literalinclude:: ../../.examples/provision/static/scenario.yml
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
+    :lines: 116-126
 
 There may also be a scenario where you want to run cmds or scripts on the
 local system instead of the provisioned resources.  Refer to the

@@ -104,8 +104,8 @@ scenario descriptor by the host as **credential: beaker-creds**:
 The following is an example of a resource in the scenario descriptor file
 that references this credential:
 
-.. literalinclude:: ../../.examples/provision/beaker/scenario.yml
-
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
+    :lines: 68-91
 
 OpenStack Credentials
 ---------------------
@@ -167,8 +167,31 @@ your credential section in your teflo.cfg file.
 The following is an example of a resource in the scenario descriptor file
 that references this credential:
 
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
+    :lines: 94-113
 
-.. literalinclude:: ../../.examples/provision/openstack/scenario.yml
+.. code-block:: yaml
+
+    ---
+
+    name: openstack resource
+    description: define a teflo host openstack resource to be provisioned
+
+    provision:
+      - name: openstack-node
+        role: node
+        provider:
+          name: openstack
+          credential: openstack-creds
+          image: rhel-7.5-server-x86_64-released
+          flavor: m1.small
+          networks:
+            - '{{ network }}'
+          floating_ip_pool: "10.8.240.0"
+          keypair: '{{ keypair }}'
+        ansible_params:
+          ansible_user: cloud-user
+          ansible_ssh_private_key_file: "keys/{{ keypair }}"
 
 
 Polarion Credentials

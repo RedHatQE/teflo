@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using Localhost &mdash; Teflo 1.9.1 documentation</title>
+  <title>Using Localhost &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -224,6 +224,28 @@ to be able to do this.</p>
     <span class="n">ip_address</span><span class="p">:</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span>
     <span class="n">ansible_params</span><span class="p">:</span>
       <span class="n">ansible_connection</span><span class="p">:</span> <span class="n">local</span>
+
+<span class="n">orchestrate</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orc_task1</span>
+    <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;Print system information.&quot;</span>
+    <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
+    <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">system_info</span><span class="o">.</span><span class="n">yml</span>
+    <span class="n">cleanup</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">cleanup_playbook</span>
+      <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;Print system information post execution.&quot;</span>
+      <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
+      <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
+      <span class="n">ansible_playbook</span><span class="p">:</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">system_info</span><span class="o">.</span><span class="n">yml</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orc_task2</span>
+    <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;Mock aka fake a kernel update&quot;</span>
+    <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
+    <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">mock_kernel_update</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
 <p>When explicitly defined, this host entry is written to the master inventory

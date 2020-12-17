@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Notification &mdash; Teflo 1.9.1 documentation</title>
+  <title>Notification &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -452,45 +452,45 @@ designing their own messaging template. The key for teflo’s scenario object is
 <ol class="loweralpha simple">
 <li></li>
 </ol>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Hello All,</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Hello All,
 
-<span class="l l-Scalar l-Scalar-Plain">This is a Teflo Notification.</span>
+This is a Teflo Notification.
 
-<span class="l l-Scalar l-Scalar-Plain">Teflo scenario, {{ scenario.name }}, has provisioned  the asset</span><span class="p p-Indicator">:</span>
+Teflo scenario, <span class="o">{{</span> scenario.name <span class="o">}}</span>, has provisioned  the asset:
 
-<span class="p p-Indicator">{{</span> <span class="nv">scenario.assets</span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">]</span><span class="nv">.name</span> <span class="p p-Indicator">}}</span>
+<span class="o">{{</span> scenario.assets<span class="o">[</span><span class="m">0</span><span class="o">]</span>.name <span class="o">}}</span>
 </pre></div>
 </div>
 <ol class="loweralpha simple" start="2">
 <li></li>
 </ol>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span>Hello All,
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Hello All,
 
-This is a Teflo Notification for Execute task.
+This is a Teflo Notification <span class="k">for</span> Execute task.
 
- {% if scenario.executes %}
-     {% for execute in scenario.executes %}
-     Execute task name: {{ execute.name }}
-             {% if execute.artifact_locations %}
+ <span class="o">{</span>% <span class="k">if</span> scenario.executes %<span class="o">}</span>
+     <span class="o">{</span>% <span class="k">for</span> execute in scenario.executes %<span class="o">}</span>
+     Execute task name: <span class="o">{{</span> execute.name <span class="o">}}</span>
+             <span class="o">{</span>% <span class="k">if</span> execute.artifact_locations %<span class="o">}</span>
      Collected the following artifacts:
-             {% for file in execute.artifact_locations %}
-             - {{ file }}
-             {% endfor %}
-         {% endif %}
-         {% if execute.testrun_results %}
+             <span class="o">{</span>% <span class="k">for</span> file in execute.artifact_locations %<span class="o">}</span>
+             - <span class="o">{{</span> file <span class="o">}}</span>
+             <span class="o">{</span>% endfor %<span class="o">}</span>
+         <span class="o">{</span>% endif %<span class="o">}</span>
+         <span class="o">{</span>% <span class="k">if</span> execute.testrun_results %<span class="o">}</span>
 
-     These are the test results of the scenario:
+     These are the <span class="nb">test</span> results of the scenario:
 
-       Total Tests: {{ execute.testrun_results.aggregate_testrun_results.total_tests }}
-       Passed Tests: {{ execute.testrun_results.aggregate_testrun_results.passed_tests }}
-       Failed Tests: {{ execute.testrun_results.aggregate_testrun_results.failed_tests }}
-       Skipped Tests: {{ execute.testrun_results.aggregate_testrun_results.skipped_tests }}
+       Total Tests: <span class="o">{{</span> execute.testrun_results.aggregate_testrun_results.total_tests <span class="o">}}</span>
+       Passed Tests: <span class="o">{{</span> execute.testrun_results.aggregate_testrun_results.passed_tests <span class="o">}}</span>
+       Failed Tests: <span class="o">{{</span> execute.testrun_results.aggregate_testrun_results.failed_tests <span class="o">}}</span>
+       Skipped Tests: <span class="o">{{</span> execute.testrun_results.aggregate_testrun_results.skipped_tests <span class="o">}}</span>
 
-         {% endif %}
-     {% endfor %}
- {% else %}
+         <span class="o">{</span>% endif %<span class="o">}</span>
+     <span class="o">{</span>% endfor %<span class="o">}</span>
+ <span class="o">{</span>% <span class="k">else</span> %<span class="o">}</span>
   No execute tasks were run
- {% endif %}
+ <span class="o">{</span>% endif %<span class="o">}</span>
 </pre></div>
 </div>
 <p>This is how the email sent using above template  will read:</p>
@@ -602,9 +602,9 @@ using the default template message but you want to include a file as an attachme
 </div>
 <div class="section" id="sending-chat-notifications">
 <h2>Sending Chat Notifications<a class="headerlink" href="#sending-chat-notifications" title="Permalink to this headline">¶</a></h2>
-<p>Teflo 1.9.0 introduces teflo_webhooks_notification_plugin which allows users to send chat notification
+<p>Teflo_webhooks_notification_plugin allows users to send chat notification
 during and/or post teflo run. To get more information about this plugin ,on how to install and use it
-please visit <a class="reference external" href="https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_webhooks_notification_plugin/-/blob/master/README.md">teflo_webhooks_notification_plugin</a></p>
+please visit <a class="reference external" href="https://github.com/RedHatQE/teflo_webhooks_notification_plugin.git">teflo_webhooks_notification_plugin</a></p>
 </div>
 </div>
 

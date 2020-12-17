@@ -1,0 +1,96 @@
+# teflo config file
+# ==================
+
+# the config file provides an additional way to define teflo parameters
+
+# config file is searched for in the following order below. a configuration
+# setting will be overrided if another source is found last
+#   1. /etc/teflo/teflo.cfg
+#   2. ./teflo.cfg (current working directory)
+#   3. TEFLO_SETTINGS (environment variable)
+
+# default settings
+
+[defaults]
+log_level=debug
+# Path for teflo's data folder where teflo logs will be stored
+data_folder=/var/local/teflo
+workspace=.
+# Endpoint URL of Cachet Status page
+# Cachet status page.
+resource_check_endpoint=<endpoint_ url_for_dependency_check>
+#
+# A static inventory path can be used for ansible inventory file.
+# Can be relative path in teflo scenario workspace
+# inventory_folder=static/inventory
+#
+# Can be a directory in the user $HOME path
+# inventory_folder=~/scenario/static/inventory
+#
+# Can be an absolute path
+# inventory_folder=/test/scenario/static/inventory
+#
+# Can be a path containing an environment variable
+# inventory_folder=$WORKSPACE/scenario/static/inventory
+# default value of the inventory folder is 'TEFLO_DATA_FOLDER/.results/inventory'
+inventory_folder=<path for ansible inventory files>
+# credentials file and Vault password
+# User can set all teh credential information in a text file and encrypt it using ansible vault
+# provide the path in under CREDENTIALS_PATH. Provide the vault password here. This password can be
+# exported as an environmental variable
+CREDENTIAL_PATH=<path for the credetials txt file>
+VAULTPASS=<ansible vault password>
+
+
+# time out for each stage
+# you can set the timeout value for each of teflo's stages (validation, provision, orchestrate, execute, report and cleanup)
+[timeout]
+provision=500
+cleanup=1000
+orchestrate=300
+execute=200
+report=100
+validate=10
+
+
+# credentials settings
+
+[credentials:beaker-creds]
+hub_url=<hub_url>
+keytab=<keytab>
+keytab_principal=<keytab_principal>
+username=<username>
+password=<password>
+
+[credentials:openstack-creds]
+auth_url=<auth_url>
+tenant_name=<tenant_name>
+username=<username>
+password=<password>
+domain_name=<domain_name>
+
+# orchestrator settings
+
+[orchestrator:ansible]
+# remove ansible log
+log_remove=False
+# set the verbosity
+# this option will override the max verbosity when log level is set to debug.
+verbosity=vv
+
+[task_concurrency]
+# this controls how tasks (provision, orchestrate, execute, report) are executed
+# by Teflo either parallel or sequential.
+# When set to False the task will execute sequentially.
+provision=False
+
+
+# executor settings
+
+[executor:runner]
+# set the testrun_results to false if you dont want it to be collected in the logs for the xml files collected during
+# execution
+testrun_results=False
+# Teflo by default will NOT exit if the collection of artifact task fails. In order to exit the run on an error during
+# collection of artifacts user can set this field to true , else False or ignore the field.
+exit_on_error=True

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Including Scenarios &mdash; Teflo 1.9.1 documentation</title>
+  <title>Including Scenarios &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -294,19 +294,19 @@ scenarios.</p>
 </pre></div>
 </div>
 <p>The orchstrate.yml could look like below</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">username</span><span class="p">:</span> <span class="n">root</span>
-      <span class="n">password</span><span class="p">:</span> <span class="n">redhat</span>
-  <span class="n">ansible_galaxy_options</span><span class="p">:</span>
-    <span class="n">role_file</span><span class="p">:</span> <span class="n">roles</span><span class="o">.</span><span class="n">yml</span>
-
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example 9</span>
 <span class="o">---</span>
 <span class="n">orchestrate</span><span class="p">:</span>
-<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">rhsm_register</span><span class="o">.</span><span class="n">yml</span>
-  <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;register systems under test against rhsm&quot;</span>
-  <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
-  <span class="n">hosts</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">host01</span>
-  <span class="o">-</span> <span class="n">host02</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orc_script</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">creates</span> <span class="n">a</span> <span class="n">local</span> <span class="nb">dir</span>
+    <span class="n">ansible_options</span><span class="p">:</span>
+      <span class="n">extra_args</span><span class="p">:</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">e</span> <span class="mi">12</span>
+    <span class="n">ansible_script</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">scripts</span><span class="o">/</span><span class="n">create_dir</span><span class="o">.</span><span class="n">sh</span>
+    <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
+    <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
+
+<span class="c1"># Example 10</span>
 </pre></div>
 </div>
 </div>

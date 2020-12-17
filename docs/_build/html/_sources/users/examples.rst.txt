@@ -50,6 +50,6 @@ can execute this example with teflo to run a restraint example.
 
 ----
 
-.. _junit repository: https://gitlab.cee.redhat.com/qeet/teflo/junit-example
-.. _pytest repository: https://gitlab.cee.redhat.com/qeet/teflo/pytest-example
-.. _restraint repository: https://gitlab.cee.redhat.com/qeet/teflo/restraint-example
+.. _junit repository: https://github.com/RedHatQE/teflo_examples/tree/master/junit-example
+.. _pytest repository: https://github.com/RedHatQE/teflo_examples/tree/master/pytest-example
+.. _restraint repository: https://github.com/RedHatQE/teflo_examples/tree/master/restraint-example

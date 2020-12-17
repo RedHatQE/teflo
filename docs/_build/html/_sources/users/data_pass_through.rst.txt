@@ -12,7 +12,8 @@ frameworks, etc. This is all defined by the user. When you setup your scenario
 descriptor file (SDF) orchestrate section, you define the actions you wish to
 run. Lets look at an example below:
 
-.. literalinclude:: ../.examples/orchestrate/ansible/data_pass_through/scenario.yml
+.. literalinclude:: ../../examples/docs-usage/orchestrate.yml
+    :lines: 297-327
 
 The orchestrate section above has two actions to be run. Both actions are
 ansible playbooks. This example shows installing product a then product b.
@@ -24,8 +25,8 @@ anything wrote to memory goes out of scope. Using ansible custom facts to
 write to disk allows the second playbook to have access to the return data
 from product a install.
 
-This example can be found at the following `page <https://gitlab.cee.redhat.
-com/qeet/teflo/examples/tree/master/orchestrate/ansible/data_pass_through>`_
+This example can be found at the following
+`page <https://github.com/RedHatQE/teflo_examples/tree/master/orchestrate/ansible/data_pass_through>`_
 for you to run.
 
 .. note::
@@ -75,19 +76,22 @@ Let's take a look at a couple examples:
           ...
 
     orchestrate:
-      - name: ansible/configure_task_01.yml
+      - name: orc_playbook
         description: run configure playbook and do something with ip
         orchestrator: ansible
         hosts: host01
+        ansible_playbook:
+          name: ansible/configure_task_01.yml
         ansible_options:
           extra_vars:
             priv_ip: <NEED PRIVATE IP OF HOST>
 
-      - name: scripts/configure_task_02.sh
+      - name: orc_script
         description: run configure bash script and do something with metadata
         orchestrator: ansible
         hosts: host01
-        ansible_script: True
+        ansible_script:
+          name: scripts/configure_task_02.sh
         ansible_options:
           extra_args: X=<NEED METADATA> Y=<NEED METADATA>
 
@@ -102,19 +106,22 @@ in the test resource. Here is how you could do that
       <truncated>
 
     orchestrate:
-      - name: ansible/configure_task_01.yml
+      - name: orc_task1
         description: run configure playbook and do something with ip
         orchestrator: ansible
         hosts: host01
+        ansible_playbook:
+          name: ansible/configure_task_01.yml
         ansible_options:
           extra_vars:
             priv_ip: '{ host01.ip_address.private }'
 
-      - name: scripts/configure_task_02.sh
+      - name: orc_task2
         description: run configure bash script and do something with metadata
         orchestrator: ansible
         hosts: host01
-        ansible_script: True
+        ansible_script:
+          name: scripts/configure_task_02.sh
         ansible_options:
           extra_args: X={ host01.metadata.key1 } Y={ host01.metadata.key2 }
 

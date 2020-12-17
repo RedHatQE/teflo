@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Provision &mdash; Teflo 1.9.1 documentation</title>
+  <title>Provision &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -547,10 +547,10 @@ placed in your scenario workspace directory.</td>
       <span class="n">password</span><span class="p">:</span> <span class="s1">&#39;{{ password }}&#39;</span>
       <span class="n">host_requires_options</span><span class="p">:</span>
         <span class="o">-</span> <span class="s2">&quot;force={{ host_fqdn }}&quot;</span>
-      <span class="n">ssh_key</span><span class="p">:</span> <span class="n">keys</span><span class="o">/</span><span class="n">demo</span>
+      <span class="n">ssh_key</span><span class="p">:</span> <span class="s2">&quot;keys/{{ key_name }}&quot;</span>
     <span class="n">ansible_params</span><span class="p">:</span>
       <span class="n">ansible_user</span><span class="p">:</span> <span class="n">root</span>
-      <span class="n">ansible_ssh_private_key_file</span><span class="p">:</span> <span class="n">keys</span><span class="o">/</span><span class="n">demo</span>
+      <span class="n">ansible_ssh_private_key_file</span><span class="p">:</span> <span class="s2">&quot;keys/{{ key_name }}&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -659,7 +659,7 @@ defined in the credentials section of the teflo config file.</td>
 </div>
 <div class="section" id="provisioning-openstack-assets-using-teflo-openstack-client-plugin">
 <h2>Provisioning Openstack Assets using teflo_openstack_client_plugin<a class="headerlink" href="#provisioning-openstack-assets-using-teflo-openstack-client-plugin" title="Permalink to this headline">¶</a></h2>
-<p>Starting with version 1.8.0, Teflo is offering a new plugin <strong>teflo_openstack_client_plugin</strong>. to provision
+<p>Teflo is offers a plugin <strong>teflo_openstack_client_plugin</strong>. to provision
 openstack resources. This plugin utilizes the openstackclient to provision resources.</p>
 <p>User can now install this plugin from Teflo</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install teflo<span class="o">[</span>openstack-client-plugin<span class="o">]</span>
@@ -674,9 +674,8 @@ please refer <a class="reference external" href="https://gitlab.cee.redhat.com/c
 </div>
 <div class="section" id="provisioning-assets-with-linchpin">
 <span id="linchpin-provisioning"></span><h2>Provisioning Assets with Linchpin<a class="headerlink" href="#provisioning-assets-with-linchpin" title="Permalink to this headline">¶</a></h2>
-<p>Starting in Teflo 1.6.0 you can fully provision all Linchpin supported providers
-using the Linchpin plugin. The code has also been pulled out of Teflo and maintained
-as a separate plugin.</p>
+<p>Usera can provision assets using all Linchpin supported providers
+using the Linchpin plugin.</p>
 <p>First the plugin must be installed. Refer to the teflo <a class="reference external" href="install.html">installation</a> document on
 how you can install the plugin as an extra package.</p>
 <p>You can also refer to the
@@ -687,7 +686,7 @@ documentation directly</p>
 </pre></div>
 </div>
 <p>Specify any of the
-<a class="reference external" href="https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_linchpin_plugin/blob/develop/docs/user.md#provisioning-assets-with-linchpin">keys</a>
+<a class="reference external" href="https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#provisioning-assets-with-linchpin">keys</a>
 supported by the linchpin provisioner.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -721,13 +720,13 @@ credential environmental variables supported by Linchpin/Ansible yourself.</li>
 </ul>
 </div></blockquote>
 <p>For more information refer to the plugins
-<a class="reference external" href="https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_linchpin_plugin/blob/develop/docs/user.md#provisioning-assets-with-linchpin">credential</a>
+<a class="reference external" href="https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#provisioning-assets-with-linchpin">credential</a>
 document section.</p>
 </div>
 <div class="section" id="examples">
 <h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
 <p>Below we will just touch on a couple examples. You can see the rest of the
-<a class="reference external" href="https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_linchpin_plugin/blob/develop/docs/user.md#credentials">examples</a>
+<a class="reference external" href="https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#credentials">examples</a>
 in the plugin documentation.</p>
 <div class="section" id="example-1">
 <h4>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h4>
@@ -864,7 +863,6 @@ The main key that needs to be stated is the <strong>ip_address</strong>.</p>
 <div class="section" id="id5">
 <h3>Example<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
-
 <span class="n">name</span><span class="p">:</span> <span class="n">static</span> <span class="n">resource</span>
 <span class="n">description</span><span class="p">:</span> <span class="n">define</span> <span class="n">a</span> <span class="n">static</span> <span class="n">resource</span> <span class="n">to</span> <span class="n">be</span> <span class="n">used</span> <span class="n">throughout</span> <span class="n">teflo</span>
 
@@ -874,7 +872,7 @@ The main key that needs to be stated is the <strong>ip_address</strong>.</p>
     <span class="n">ip_address</span><span class="p">:</span> <span class="mf">1.1</span><span class="o">.</span><span class="mf">1.1</span>
     <span class="n">ansible_params</span><span class="p">:</span>
       <span class="n">ansible_user</span><span class="p">:</span> <span class="n">root</span>
-      <span class="n">ansible_ssh_private_key_file</span><span class="p">:</span> <span class="n">keys</span><span class="o">/</span><span class="n">demo</span>
+      <span class="n">ansible_ssh_private_key_file</span><span class="p">:</span> <span class="s2">&quot;keys/{{ key_name }}&quot;</span>
 </pre></div>
 </div>
 <p>There may also be a scenario where you want to run cmds or scripts on the

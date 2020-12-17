@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data Pass-through &mdash; Teflo 1.9.1 documentation</title>
+  <title>Data Pass-through &mdash; Teflo 0.1.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../',
-              VERSION:'1.9.1',
+              VERSION:'0.1.2',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.9.1
+                0.1.2
               </div>
             
           
@@ -220,20 +220,24 @@ run. Lets look at an example below:</p>
       <span class="n">ansible_connection</span><span class="p">:</span> <span class="n">local</span>
 
 <span class="n">orchestrate</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">install_product_a</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orc_task1</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;Install product a.&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
+    <span class="n">ansible_playbook</span><span class="p">:</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">install_product_a</span><span class="o">.</span><span class="n">yml</span>
     <span class="n">cleanup</span><span class="p">:</span>
       <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">post_product_a_install</span><span class="o">.</span><span class="n">yml</span>
       <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;Perform post product a tasks prior to deleting host.&quot;</span>
       <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
       <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
 
-  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">install_product_b</span><span class="o">.</span><span class="n">yml</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">orc_task2</span>
     <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;Install product b using data from product a.&quot;</span>
     <span class="n">orchestrator</span><span class="p">:</span> <span class="n">ansible</span>
     <span class="n">hosts</span><span class="p">:</span> <span class="n">localhost</span>
+     <span class="n">ansible_playbook</span><span class="p">:</span>
+       <span class="n">name</span><span class="p">:</span> <span class="n">ansible</span><span class="o">/</span><span class="n">install_product_b</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
 <p>The orchestrate section above has two actions to be run. Both actions are
@@ -245,7 +249,8 @@ a to disk. This would make the data persistent since when a playbook exits,
 anything wrote to memory goes out of scope. Using ansible custom facts to
 write to disk allows the second playbook to have access to the return data
 from product a install.</p>
-<p>This example can be found at the following <a class="reference external" href="https://gitlab.cee.redhat.com/qeet/teflo/examples/tree/master/orchestrate/ansible/data_pass_through">page</a>
+<p>This example can be found at the following
+<a class="reference external" href="https://github.com/RedHatQE/teflo_examples/tree/master/orchestrate/ansible/data_pass_through">page</a>
 for you to run.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -290,19 +295,22 @@ Let’s take a look at a couple examples:</p>
       <span class="l l-Scalar l-Scalar-Plain">...</span>
 
 <span class="nt">orchestrate</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible/configure_task_01.yml</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">orc_playbook</span>
     <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">run configure playbook and do something with ip</span>
     <span class="nt">orchestrator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible</span>
     <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">host01</span>
+    <span class="nt">ansible_playbook</span><span class="p">:</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible/configure_task_01.yml</span>
     <span class="nt">ansible_options</span><span class="p">:</span>
       <span class="nt">extra_vars</span><span class="p">:</span>
         <span class="nt">priv_ip</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;NEED PRIVATE IP OF HOST&gt;</span>
 
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">scripts/configure_task_02.sh</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">orc_script</span>
     <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">run configure bash script and do something with metadata</span>
     <span class="nt">orchestrator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible</span>
     <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">host01</span>
-    <span class="nt">ansible_script</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="nt">ansible_script</span><span class="p">:</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">scripts/configure_task_02.sh</span>
     <span class="nt">ansible_options</span><span class="p">:</span>
       <span class="nt">extra_args</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">X=&lt;NEED METADATA&gt; Y=&lt;NEED METADATA&gt;</span>
 </pre></div>
@@ -315,19 +323,22 @@ in the test resource. Here is how you could do that</p>
   <span class="l l-Scalar l-Scalar-Plain">&lt;truncated&gt;</span>
 
 <span class="nt">orchestrate</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible/configure_task_01.yml</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">orc_task1</span>
     <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">run configure playbook and do something with ip</span>
     <span class="nt">orchestrator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible</span>
     <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">host01</span>
+    <span class="nt">ansible_playbook</span><span class="p">:</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible/configure_task_01.yml</span>
     <span class="nt">ansible_options</span><span class="p">:</span>
       <span class="nt">extra_vars</span><span class="p">:</span>
         <span class="nt">priv_ip</span><span class="p">:</span> <span class="s">&#39;{</span><span class="nv"> </span><span class="s">host01.ip_address.private</span><span class="nv"> </span><span class="s">}&#39;</span>
 
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">scripts/configure_task_02.sh</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">orc_task2</span>
     <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">run configure bash script and do something with metadata</span>
     <span class="nt">orchestrator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible</span>
     <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">host01</span>
-    <span class="nt">ansible_script</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="nt">ansible_script</span><span class="p">:</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">scripts/configure_task_02.sh</span>
     <span class="nt">ansible_options</span><span class="p">:</span>
       <span class="nt">extra_args</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">X={ host01.metadata.key1 } Y={ host01.metadata.key2 }</span>
 </pre></div>

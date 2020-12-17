@@ -65,18 +65,11 @@ First, let's go over the basic structure that defines a Report resource.
     *   - importer
         - The name of the importer to perform the import process.
         - String
-        - True (False if provider key is used)
-
-    *   - provider
-        - Dictionary of the specific provider key/values.
-        - Dict
-        - False
+        - True
 
 If you are familiar with the structure of Provision then the same
 concept of Provider has been utilized in the Report. We will dive 
 into the different report providers further below.
-
-.. note:: Starting Teflo 1.7.0 use of provider is deprecated
 
 
 Executes
@@ -410,6 +403,10 @@ Teflo uses CCIT Report Portal client to import artifacts to the Report Portal in
 To know more about Report Portal Client, please refer
 `here <https://docs.engineering.redhat.com/pages/viewpage.action?pageId=81876674>`__
 
+.. note::
+
+   The report portal client is only for internal RED HAT usage and not available publicly
+
 Teflo Report Portal Configuration
 ++++++++++++++++++++++++++++++++++
 
@@ -437,30 +434,6 @@ Without Provider:
         - <tag1>
         - <tag2>
         json_path: <relative path for report portal config file>
-
-With Provider:
-
-.. code-block:: yaml
-
-    ---
-    report:
-      - name: <name>
-        description: <description>
-        executes: <execute name>
-        importer: <importer>
-        provider:
-          credential: reportportal-creds
-          name: reportportal
-          rp_project: <project_name>
-          launch_name: <launch_name>
-          launch_description: <launch_description>
-          simple_xml: <to just import XML file directly>
-          auto_dashboard: <create dashboard>
-          merge_launches: <merge multiple launches into single true/false>
-          tags:
-          - <tag1>
-          - <tag2>
-          json_path: <relative path for report portal config file>
 
 .. list-table::
     :widths: auto
@@ -751,7 +724,7 @@ under *.results* folder.
 In the below example the payload_teflo is a directory placed under teflo’s  *.results* folder and does not have
 the correct directory structure of results and attachments folder under it.Here teflo will create a separate 
 directory rp_payloads if it is not already there and then create a folder with uuid as
- .teflo/<data folder>/rp_payloads/<uuid>/results and copy all the xml files from .teflo/.results/payload_teflo/.
+.teflo/<data folder>/rp_payloads/<uuid>/results and copy all the xml files from .teflo/.results/payload_teflo/
 The payload directory sent to report portal client will be **.teflo/.results/rp_payloads/uuid**
 
 .. literalinclude:: ../../../examples/docs-usage/report.yml

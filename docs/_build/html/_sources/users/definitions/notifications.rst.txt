@@ -234,7 +234,7 @@ Teflo's scenario data could be used to format the template email_templ.txt as sh
 
 a.
 
-.. code-block:: yaml
+.. code-block:: bash
 
    Hello All,
 
@@ -246,7 +246,7 @@ a.
 
 b.
 
-.. code-block:: yaml
+.. code-block:: bash
 
    Hello All,
 
@@ -349,7 +349,7 @@ Using custom template and using teflo's data for formatting
 
 Sending Chat Notifications
 ---------------------------
-Teflo 1.9.0 introduces teflo_webhooks_notification_plugin which allows users to send chat notification
+Teflo_webhooks_notification_plugin allows users to send chat notification
 during and/or post teflo run. To get more information about this plugin ,on how to install and use it
 please visit `teflo_webhooks_notification_plugin
-<https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_webhooks_notification_plugin/-/blob/master/README.md>`_
+<https://github.com/RedHatQE/teflo_webhooks_notification_plugin.git>`_
