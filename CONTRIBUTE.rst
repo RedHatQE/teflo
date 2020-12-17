@@ -5,6 +5,9 @@ use this document as a guide to working on proposed changes to teflo. We ask
 that you read through this document to ensure you understand our development
 model and best practices before submitting changes.
 
+Any questions regarding this guide, or in general? Please feel free to
+file an `issue <https://github.com/RedHatQE/teflo/issues>`_
+
 Branch Model
 ------------
 
@@ -66,7 +69,7 @@ You can verify teflo is installed by running the following commands.
     (teflo) $ teflo
     (teflo) $ teflo --version
 
-
+You can now make changes/do feature development in this branch
 
 How to run tests locally
 ------------------------
@@ -79,7 +82,7 @@ We have the following standards and guidelines
 
 Before any change is proposed to teflo we ask that you run the tests
 to verify the above standards. If you forget to run the tests,
-we have a Jenkins job that runs through these on any changes.
+we have a github actions job that runs through these on any changes.
 This allows us to make sure each patch meets the standards.
 
 We also highly encourage developers to be looking to provide more tests
@@ -142,23 +145,6 @@ This make target is actually executing the following tox environments:
     information. But it is not recommended to check in this modified scenario
     as part of your patch set.
 
-How to build documentation
---------------------------
-
-If you are working on documentation changes, you probably will want to build
-the documentation locally. This way you can verify your change looks good. You
-can build the docs locally by running the following command:
-
-.. code-block:: bash
-
-    (teflo) $ make docs
-
-This make target is actually executing the following tox environments:
-
-.. code-block:: bash
-
-    (teflo) $ tox -e docs
-
 How to propose a new change
 ---------------------------
 
@@ -171,7 +157,7 @@ At this point you have your local development environment setup. You made some
 code changes, ran through the unit tests and pep8 validation. Before you submit
 your changes you should check a few things
 
-If the develop branch has changed since you last pulled it down it
+If the develop branch has changed since you last pulled it down. it
 is important that you get the latest changes in your branch.
 You can do that in two ways:
 
@@ -200,6 +186,22 @@ The interactive rebase menu will appear and guide you with what you need to do.
 Once you've completed the above you're good to go! All that is left is
 to submit your changes to your branch and create a new PR against the develop branch
 
+Submitting the PR
+
+Once a set of commits for the feature have been completed and tested. It is time to
+submit a Pull Request. Please follow the github article, `Creating a pull request
+<https://help.github.com/articles/creating-a-pull-request/>`_.
+
+Submit the Pull Request (PR) against the ``develop`` branch.
+
+Once the PR is created, it will need to be reviewed, and CI automation testing
+must be executed. It is possible that additional commits will be needed to
+pass the tests, address issues in the PR, etc.
+
+Once the PR is approved, it can be merged.
+
+.. note:: Merging is currently done only by the maintainers of the repo
+          This will be opened up to contributors at a future time
 
 Feature Toggles
 ---------------
@@ -252,9 +254,25 @@ for testing or continued development you can do the following:
     [feature_toggle:<resource name from step 1>]
     <feature toggle name specified in step 2>=True
 
+How to build documentation
+--------------------------
 
-How to write an plugin for teflo
----------------------------------------------------------
+If you are working on documentation changes, you probably will want to build
+the documentation locally. This way you can verify your change looks good. You
+can build the docs locally by running the following command:
+
+.. code-block:: bash
+
+    (teflo) $ make docs
+
+This make target is actually executing the following tox environments:
+
+.. code-block:: bash
+
+    (teflo) $ tox -e docs
+
+[WIP] How to write an plugin for teflo
+--------------------------------------
 For developers who wish to put together their own plugins can follow these guidelines:
 
 1. The new plugin will need to import one of these Teflo classes based on the plugin they wish to develop
@@ -397,6 +415,3 @@ Example for plugin:
         def import_artifacts(self):
             # Your code
 
-#TODO Put a link or information about cookiecutter repo either copy that under teflo code or sing another
- opensource repo
-# this will give more information on how to put together the plugins

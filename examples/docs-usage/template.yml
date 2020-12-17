@@ -1,0 +1,277 @@
+---
+
+# template used to demonstrate the layout of a multi product (interop)
+# scenario definition consumable by the interop framework in this case
+# teflo.
+
+# generic section
+# defines common information about the scenario
+
+name: demo
+description: >
+    Scenario to demonstration the teflo framework.
+
+# resource checking section
+# As part of the validation that teflo performs, it can also
+# check the status of resources that an end to end scenario
+# relies on.  The user can set a list of services
+# that need to be checked for status
+# prior to the start of the teflo workflow under monitored_services.
+#
+# Note: these services will only be validated if you
+# set the resource_check_endpoint key in your teflo.cfg file e.g.
+#
+# in teflo.cfg add:
+# [defaults]
+# resource_check_endpoint=https://semaphore.cloud.upshift.engineering.redhat.com/api/v1
+#
+# Along with services, users can run their own validation playbooks or scripts before
+# starting the teflo workflow. If the validation here fails the workflow doe snot move ahead
+# Playbooks and scripts use Teflo's ansible executor/runner
+
+resource_check:
+  monitored_services:
+    - ci-rhos
+    - brew
+    - polarion
+    - umb
+    - errata
+    - rdo-cloud
+    - covscan
+    - rpmdiff
+    - gerrit.host.prod.eng.bos.redhat.com
+    - code.engineering.redhat.com
+  playbook:
+    - name: ansible/list_block_devices.yml
+      ansible_options:
+        extra_vars:
+          X: 18
+          Y: 12
+          ch_dir: ./scripts/
+    - name: ansible/tests/test_execute_playbook.yml
+      ansible_options:
+        extra_vars:
+          X: 12
+          Y: 12
+          ch_dir: ../../scripts/
+  script:
+      - name: ./scripts/hello_world1.py Teflo_user
+        executable: python
+      - name: ./scripts/add_two_numbers.sh X=15 Y=15
+
+# include section
+# Defines any other scenario files that need to be executed
+# These scenario files have to be in the same workspace as the master/original scenario
+# During running of teflo workflow tasks from the included scenarios will be run
+# e.g if task selected is provision, the resources of master scenario will be provisioned
+# followed by provisioning of resources defined in the included scenarios
+
+include:
+  - py3_incl_prov.yml
+  - py3_incl_orch.yml
+
+# provision section
+# defines all systems required for the scenario
+
+provision:
+  # test driver
+  - name: testdriver                            # machine name used for creation
+    description: "test driver"                  # describes the purpose of the host
+    provider:
+      name: openstack                           # provider to create host in
+      credential: openstack                     # ref above ^^: credentials.openstack
+      image: rhel-7.5-server-x86_64-released    # image to boot instance based on
+      flavor: m1.small                          # instance size
+      networks:                                 # instance internal network
+        - <internal-network>
+      floating_ip_pool: "10.8.240.0"            # instance external network
+      keypair: <keypair>                        # instance ssh key pair
+    role: testdriver                            # host role
+    ansible_params:                             # defines ansible parameters for connection
+      ansible_user: root
+      ansible_ssh_private_key_file: <private-key-filename>
+
+  # test client 1
+  - name: testclient01                          # machine name used for creation
+    description: "test client 01"               # describes the purpose of the host
+    provider:
+      name: openstack                           # provider to create host in
+      credential: openstack                     # ref above ^^: credentials.openstack
+      image: rhel-7.5-server-x86_64-released    # image to boot instance based on
+      flavor: m1.small                          # instance size
+      networks:                                 # instance internal network
+        - <internal-network>
+      floating_ip_pool: "10.8.240.0"            # instance external network
+      keypair: <keypair>                        # instance ssh key pair
+    role: testclient                            # host role
+    ansible_params:                             # defines ansible parameters for connection
+      ansible_user: root
+      ansible_ssh_private_key_file: <private-key-filename>
+
+  # test client 2, defining a static machine
+  # this is useful if you wish to skip teflo's provisioning
+  # this machine can be referenced in orchestrate and execute
+  - name: testclient02                          # machine name used for creation
+    description: "test client 02"               # describes the purpose of the host
+    ip_address: <machine_ip_address>
+    role: testclient                            # host role
+    ansible_params:                             # defines ansible parameters for connection
+      ansible_user: root
+      ansible_ssh_private_key_file: <private-key-filename>
+
+
+# orchestrate section
+# defines all actions to be performed for the scenario. these actions will be
+# executed against the systems defined in the provision section. Each action
+# will define which system to run against.
+# Then, three types of orchestrate actions are supported by the default orchestrator (ansible):
+# 1. ansible_shell
+# 2. ansible_script
+# 3. ansible_playbook
+# Only one type of orchestrate action can be run per action.
+
+orchestrate:
+  # user defined playbook to execute
+  - name: task_1                                # action name
+    description: "performs custom config"       # describes what is being performed on the hosts
+    orchestrator: ansible                       # orchestrator module to use in this case ansible
+    hosts:                                      # hosts which the action is executed on
+      - testclient01                            # ref above ^^: provision.testclient01
+      - testclient02                            # ref above ^^: provision.testclient02
+    ansible_playbook:                           # using ansible playbook
+      name: custom.yml                          # name (playbook name) (full filename and path relative to the workspace)
+    ansible_options:                            # options used by ansible orchestrator
+      extra_vars:
+        var01: value01
+    ansible_galaxy_options:                     # options used by ansible galaxy
+      role_file: role.yml
+
+  # create ssh key pair for ssh connection between driver/client(s)
+  - name: create_ssh_keypair                     # action name
+    description: "creates ssh key pair for auth" # describes what is being performed on the hosts
+    orchestrator: ansible                        # orchestrator module to use in this case ansible
+    hosts:                                       # hosts which the action is executed on
+      - testdriver                               # ref above ^^: provision.testdriver
+    ansible_playbook:                            # playbook name(full filename and path relative to the workspace)
+      name: create_ssh_keypair.yml
+    ansible_options:                             # options used by ansible orchestrator
+      extra_vars:
+        user: root
+
+  # inject driver ssh public key pair to client(s)
+  - name: inject_pub_key                        # action name
+    description: "injects ssh keys into sut"    # describes what is being performed on the hosts
+    orchestrator: ansible                       # orchestrator module to use in this case ansible
+    hosts:                                      # hosts which the action is executed on
+      - testdriver                              # ref above ^^: provision.testdrive
+    ansible_playbook:
+      name: inject_pub_key.yml                  # playbook name(full filename and path relative to the workspace)
+    ansible_options:                            # options used by ansible orchestrator
+      extra_vars:
+        user: root
+        machine:
+          - testclient01
+          - testclient02
+
+  - name: rhn_subscribe                         # action name
+    description: "subscribe to rhsm"            # describes what is being performed on the hosts
+    orchestrator: ansible                       # orchestrator module to use in this case ansible
+    hosts:                                      # hosts which the action is executed on
+      - all                                     # ref above ^^ to all hosts : provision.*
+    ansible_playbook:
+      name: rhn_subscribe.yml                   # playbook name(full filename and path relative to the workspace)
+    ansible_options:                            # options used by ansible orchestrator
+      extra_vars:
+        rhn_hostname: subscription.rhsm.stage.redhat.com
+        rhn_user: rhel_server_01
+        rhn_password: password
+        auto: True
+
+# execute section
+# defines all the tests to be executed for the scenario
+# Each execute task has an option to clone a git,
+# where the tests resides if not done in orchestrate
+# Then, three types of execution supported by the default executor (runner):
+# 1. shell
+# 2. script
+# 3. playbook
+# One must be selected
+# Finally, each task has an optional artifacts key used for
+# data gathering after the test execution.
+
+execute:
+  - name: test_suite_01
+    description: "execute tests against test clients"
+    executor: runner
+    hosts: driver
+    git:
+      - repo: https://server.com/myproject.git
+        version: test-ver-0.1
+        dest: /tmp
+    shell:
+      - chdir: /tmp
+        command: /usr/bin/restraint --host 1={{testclient01}}:8081 --job foo.xml
+    artifacts: retraint-*, test.log
+
+  - name: test_suite_02
+    description: "execute tests against test clients"
+    executor: runner
+    hosts: driver
+    git:
+      - repo: https://server.com/myproject.git
+        version: test-ver-0.1
+        dest: /tmp
+    script:
+      - chdir: /tmp
+        name: tests.sh arg1 arg2
+    artifacts: retraint-*, test.log
+
+  - name: test_suite_03
+    description: "execute tests against test clients"
+    executor: runner
+    hosts: driver
+    git:
+      - repo: https://server.com/myproject.git
+        version: test-ver-0.1
+        dest: /tmp
+    playbook:
+      - chdir: /tmp
+        name: test.yml
+    artifacts: retraint-*, test.log
+
+# report section
+# Teflo supports importing to external tools using teflo plugins. Please refer the report section
+# under Scenario Descriptor for more information on plugins
+# Below example is for importing test runs xmls to Polarion
+
+report:
+    - name: suite1_results.xml                           # pattern to match the xml file to be imported
+      description: import suite1 results to polarion     # description of the reporting task
+      executes: test_suite_01                            # execute task to look for the artifacts/xml mentioned under name
+      importer: polarion                                 # importer to be used
+      credential: polarion-creds                         # credentials to connect to the external tool(provided under teflo.cfg)
+      project_id: Teflo1                                 # Polarion project id
+      testsuite_properties:                              # test suite properties for Polarion
+        polarion-lookup-method: name
+        polarion-custom-os: RHEL 8
+        polarion-testrun-id: PolId-123
+        polarion-testrun-title: Sample Test Run
+
+# notification tasks
+# Teflo supports notification using email as default. Please refer notification section under
+# scenario descriptor to know more about notification using webhook plugins and different triggers
+# that can be set for notification
+# Below example is for notification using email on completion of provision task
+
+notifications:
+  - name: notify1                                         # task name
+    notifier: email-notifier                              # notifier to be used
+    credential: email                                     # credentials needed for notifier to be set under teflo.cfg
+    on_tasks:                                             # trigger for notification to be sent
+      - provision
+    to:                                                   # list of email addresses to send the notification to
+      - abc@redhat.com
+      - pqr@redhat.com
+      - xyz@redhat.com
+    from: team@redhat.com                                 # email the notification is from
+    subject: 'Provision task completed'                   # subject of the email

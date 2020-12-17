@@ -22,7 +22,7 @@ Where it is loaded from (using precedence low to high):
 
 Configuration example (with all options):
 
-.. literalinclude:: ../.examples/configuration/teflo/teflo.cfg
+.. literalinclude:: ../../examples/docs-usage/configuration.yml
 
 
 .. note::

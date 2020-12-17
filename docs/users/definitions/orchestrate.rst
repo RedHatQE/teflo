@@ -215,7 +215,23 @@ own ansible.cfg file. This can be used for specific connection requirements,
 logging, and other settings for the scenario.  The following is an example
 of a configuration file that can be used as a base.
 
-.. literalinclude:: ../../.examples/configuration/ansible/ansible.cfg
+.. code-block:: yaml
+
+   [defaults]
+   # disable strict SSH key host checking
+   host_key_checking = False
+
+   # filter out logs that are not ansible related
+   log_filter = paramiko,pykwalify,teflo,blaster,urllib3
+
+   # set the path to set ansible logs
+   log_path = ./ansible.log
+
+   # set specific privelege escalation if necessary for the scenario
+   [privilege_escalation]
+   become=True
+   become_method=sudo
+   become_user=test
 
 To see all of the settings that can be set see `Ansible Configuation Settings
 <https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-configuration-settings>`_.
