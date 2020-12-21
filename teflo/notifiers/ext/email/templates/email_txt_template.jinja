@@ -45,13 +45,13 @@ These are the test results of the scenario:
 
 {% if scenario.get_all_reports() %}
     {% for report in scenario.get_all_reports() %}
-        {% if report.provider == 'polarion' or report.importer == 'polarion' and report.import_results %}
+        {% if report.provider == 'polarion' or report.importer_plugin_name == 'polarion' and report.import_results %}
 The following is the result of the Polarion import:
             {% for results in report.import_results %}
 {{ results['testrun-url'] }}
             {% endfor %}
         {% endif %}
-        {% if report.provider == 'reportportal' or report.importer == 'reportportal' and report.import_results %}
+        {% if report.provider == 'reportportal' or report.importer_plugin_name == 'reportportal' and report.import_results %}
 The following is the result of the Report Portal import:
 {{ report.import_results['dashboard_url'] }}
         {% endif %}
