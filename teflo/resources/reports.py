@@ -203,6 +203,21 @@ class Report(TefloResource):
                              'class is instantiated.')
 
     @property
+    def importer_plugin_name(self):
+        """Importer plugin name property.
+
+        :return: importer plugin name
+        :rtype: object
+        """
+        return self._importer_plugin.__plugin_name__
+
+    @importer_plugin_name.setter
+    def importer_plugin_name(self, value):
+        """Set importer plugin name property."""
+        raise AttributeError('You cannot set the importer plugin name after report '
+                             'class is instantiated.')
+
+    @property
     def provider(self):
         """Provider property.
 
