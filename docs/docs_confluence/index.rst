@@ -1,6 +1,11 @@
 Welcome to Teflo!
 ==================
 
+.. important::
+             The Teflo confluence section is only present to provide
+             information about plugins and features that are internal to
+             redhat. For all other information please visit https://teflo.readthedocs.io/en/latest/
+
 What is Teflo?
 ---------------
 
@@ -13,7 +18,7 @@ manage generated artifacts and report results.
 
 
 Teflo is developed in Python.
-It was originally known as Carbon.
+**It was originally known as Carbon.**
 
 Teflo can be used for an E2E (end to end) multi-product scenario. Teflo handles coordinating the
 E2E task workflow to drive the scenario execution.
@@ -34,58 +39,14 @@ At a high level teflo executes the following tasks when processing a scenario.
    - Destroy system resources
    - Send Notifications
 
-.. important::
-             The Teflo confluence section is only present to provide
-             information about plugins and features that are supported only
-             within redhat. For all other information please visit https://teflo.readthedocs.io/en/latest/
+Teflo Tickets/Issues
+--------------------
 
-Teflo Report Task
-~~~~~~~~~~~~~~~~~
+At present users can file Teflo issues on github `issues <https://github.com/RedHatQE/teflo/issues>`_
+OR  filing a ticket on the project CCIT CARBON on JIRA
+See the list of current open `Issues on JIRA <https://projects.engineering.redhat.com/issues/?filter=40207>`_
 
-.. toctree::
-   :maxdepth: 1
+We are working on changing this so that users can file tickets using only the github issues.
+We will updtae this space once that is implemented
 
-   ./users/definitions/report.rst
-
-Teflo Compatibility Matrix for Plugins
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The table below lists out the released Teflo version and supported teflo plugin versions. This matrix will track
-n and n-2 teflo releases
-
-.. list-table:: Teflo plugin matrix for n and n-2 releases
-    :widths: auto
-    :header-rows: 1
-
-    *   - Teflo Release
-        - 1.0.0
-
-    *   - Rppreproc Plugin
-        - 1.0.0
-
-    *   - Polarion Plugin
-        - 1.0.0
-
-    *   - Linchpin Plugin
-        - 1.0.0
-
-    *   - Openstack Client Plugin
-        - 1.0.0
-
-    *   - Webhooks_Notification_Plugin
-        - 1.0.0
-
-    *   - Polar
-        - 1.2.1
-
-    *   - Rp_preproc
-        - 0.1.3
-
-    *   - Ansible
-        - >=2.5.0
-
-
-.. toctree::
-   :maxdepth: 1
-
-
+.. include:: contents.rst.inc

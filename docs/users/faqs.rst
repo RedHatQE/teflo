@@ -144,20 +144,9 @@ You can restrict the search to a particular instance by doing something like
 *test_driver/SampleTest.xml* with test_driver being a directory. Telling teflo
 to look in that particular directory for the artifact.
 
-For more information on the different patterns that can be used in the name field
-refer to some of the :ref:`examples <report_examples>` under Polarion and Report Portal
-in the Report page.report_examples
-
 
 Miscellaneous
 +++++++++++++
-
-... see the current issues logged against teflo?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-See the list of current `Issues
-<https://projects.engineering.redhat.com/issues/?filter=40207>`_
-logged against teflo.
 
 ... see the supported teflo_plugins?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

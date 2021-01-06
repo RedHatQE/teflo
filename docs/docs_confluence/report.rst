@@ -10,11 +10,13 @@ will depend on the destination system. The Reporting systems currently supported
 :ref:`Polarion<polarion_importing>` and :ref:`Report Portal<report_portal_importing>`
 
 .. attention::
-   To be able to use Polarion and Report Portal with teflo, new teflo_polarion_plugin and teflo_rppreproc_plugin will
-   have to be installed in your workspace prior to running any scenarios. Please see
-   :ref:`Teflo Importer Plugin Requirements <cbn_importer_plugin>` for installation process
+   To be able to use Polarion and Report Portal with teflo, teflo_polarion_plugin and teflo_rppreproc_plugin will
+   have to be installed in your workspace prior to running any scenarios. Please see below for installation process
 
-First, let's go over the basic structure that defines a Report resource.
+Report resource
+---------------
+
+Let us go over the basic structure that defines a Report resource.
 
 .. code-block:: yaml
 
@@ -26,7 +28,7 @@ First, let's go over the basic structure that defines a Report resource.
         importer: <importer>
 
 .. attention::
-   Also see :ref:`Teflo Matrix for Plugins <cbn_plugin_matrix>` to find the correct plugin versions supported by
+   Also see :ref:`Teflo Matrix for Plugins <cbn_plugin_matrix_1>` to find the correct plugin versions supported by
    Teflo
 
 .. list-table::
@@ -60,6 +62,7 @@ First, let's go over the basic structure that defines a Report resource.
         - The name of the importer to perform the import process.
         - String
         - True
+
 
 Executes
 --------
@@ -103,17 +106,94 @@ scope of the search. How teflo performs the search is by the following
  * If artifacts are found, the list of artifacts will be processed and imported into
    the respective reporting system.
 
+To stop finding duplicate artifacts during the import
+-----------------------------------------------------
+
+The driving factor is the name field of the report block. You can narrow and
+restrict the search based on the shell pattern specified.
+
+For example, if you specify an artifact like *SampleTest.xml* but the artifact
+has been collected numerous times before its possible a list of the same file in
+different locations within the teflo *<data_folder>* are going to be found.
+You can restrict the search to a particular instance by doing something like
+*test_driver/SampleTest.xml* with test_driver being a directory. Telling teflo
+to look in that particular directory for the artifact.
+
+For more information on the different patterns that can be used in the name field
+refer to some of the examples for importing to Polarion and Report Portal below.
+
 .. _polarion_importing:
 
 Importing artifacts into Polarion
 ---------------------------------
 
+Teflo_Polarion_Plugin
++++++++++++++++++++++
+
+This plugin allows teflo to send test results to Polarion tool. Users need to install this
+plugin separately in the workspace. You can read more about the plugin in the
+`repo link <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_polarion_plugin.git>`__
+
+
+Installation
+++++++++++++
+
+.. code-block:: bash
+
+    # for ansible modules requiring selinux, you will need to enable system site packages
+    $ virtualenv --system-site-packages polarion
+    $ source polarion/bin/activate
+    (polarion) $ pip install teflo_polarion_plugin@git+https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_polarion_plugin.git@<tagged_branch>
+
+
 Credentials
 +++++++++++
 
 To authenticate with Polarion, you will need to have your Polarion credentials
-in your teflo.cfg file, see `Polarion Credentials
-<credentials.html#polarion-credentials>`_ for more details.
+in your teflo.cfg file.
+
+The following table is a list of required keys for
+your credential section in your teflo.cfg file.
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+
+    *   - Key
+        - Description
+        - Type
+        - Required
+
+    *   - polarion_url
+        - The URL you use to log into Polarion. Do not append the xunit-queue
+          to the end of it.
+        - String
+        - True
+
+    *   - username
+        - The username that has privileges to your Polarion project. It is
+          recommended to have an automation user created with admin privileges
+        - String
+        - True
+
+    *   - password
+        - The password of your user to the Polarion project.
+        - String
+        - True
+
+.. code-block:: bash
+
+  [credentials:polarion-creds]
+  polarion_url=<polarion_url>
+  username=<username>
+  password=<password>
+
+The following is an example of a resource in the scenario descriptor file
+that references this credential:
+
+.. literalinclude:: ../../../examples/docs-usage/report.yml
+    :lines: 1-8
+
 
 Polarion Artifact
 +++++++++++++++++
@@ -353,15 +433,89 @@ id using the contents of the csv file. Then imported afterwards.
 Importing artifacts into Report Portal
 --------------------------------------
 
+Teflo_Rppreproc_Plugin
+++++++++++++++++++++++
+
+This plugin allows teflo to send test results to Report Portal tool. You can read more about the plugin in the
+`repo link <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_rppreproc_plugin.git>`__
+
+Installation
+++++++++++++
+
+.. code-block:: bash
+
+    # for ansible modules requiring selinux, you will need to enable system site packages
+    $ virtualenv --system-site-packages reportportal
+    $ source reportportal/bin/activate
+    (reportportal) $ pip install teflo_rppreproc_plugin@git+https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_rppreproc_plugin.git@<tagged_branch>
+
 Credentials
 +++++++++++
 
 To authenticate with Report Portal, you will need to have your Report Portal credentials
-in your teflo.cfg file, see `Report Portal Credentials <credentials.html#report-portal-credentials>`_
-for more details.
+in your teflo.cfg file
 
-CCIT  Report Portal Client
-++++++++++++++++++++++++++
+The following table is a list of required and optional keys for
+your credential section in your teflo.cfg file.
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+
+    *   - Key
+        - Description
+        - Type
+        - Required
+
+    *   - create_creds
+        - This is to determine if teflo should use the credentials provided in the
+          teflo.cfg file or use the ones that are given in the json config file
+          user supplies in the report portal provider parameters
+          If set to **True** teflo will make use the optional report portal credentials
+          in this table to connect to the report portal instance
+
+          If set to **False** teflo will assume these credentials are being provided by
+          users in the report portal config json file, which can be given as a report
+          portal provider parameter. For how to configure Report Portal json file refer
+          `here <https://docs.engineering.redhat.com/pages/viewpage.action?pageId=81876674#CCITReportPortalUser's
+          Guide[EADraft]-ConfigurationFileDescription>`_
+        - String
+        - True
+
+    *   - rp_url
+        - The URL to the report portal instance
+        - String
+        - False
+
+    *   - api_token
+        - api token from the  report portal instance for a user account
+        - String
+        - False
+
+    *   - service_url
+        - This param is to use the rp_preproc service for sending
+          the launch to Report Portal. It takes the value of the URL to the RP
+          PreProc REST API service OR **false** in case you do not want to use
+          the rp_preproc service option
+        - String
+        - False
+
+.. code-block:: bash
+
+  [credentials:reportportal-creds]
+  create_creds=<True/False>
+  rp_url=<report_portal_url / False>
+  api_token=<token>
+  service_url=<service_url>
+
+The following is an example of a resource in the scenario descriptor file
+that references this credential:
+
+.. literalinclude:: ../../../examples/docs-usage/report.yml
+          :lines: 85-91
+
+CCIT Report Portal Client
++++++++++++++++++++++++++
 
 Teflo uses CCIT Report Portal client to import artifacts to the Report Portal instance.
 To know more about Report Portal Client, please refer
@@ -372,7 +526,7 @@ To know more about Report Portal Client, please refer
    The report portal client is only for internal RED HAT usage and not available publicly
 
 Teflo Report Portal Configuration
-++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++
 
 The following shows all the possible keys for defining the artifact import
 for the Report Portal Importer:
