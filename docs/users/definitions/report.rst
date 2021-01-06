@@ -24,12 +24,6 @@ First, let's go over the basic structure that defines a Report resource.
         description: <description>
         executes: <execute>
         importer: <importer>
-        provider: <dict_key_values>
-
-.. attention::
-   **Starting with Teflo version 1.7.0 the use of Provider will be deprecated. All the attributes which were
-   put under provider dictionary can be set as a key under the report block. When provider key is not being used,
-   it is mandatory to use the importer key to state which importer needs to be used**
 
 .. attention::
    Also see :ref:`Teflo Matrix for Plugins <cbn_plugin_matrix>` to find the correct plugin versions supported by
@@ -132,8 +126,6 @@ Polarion Artifact
 The following shows all the possible keys for defining the artifact import
 for the Polarion xUnit Importer:
 
-Without Provider :
-
 .. code-block:: yaml
 
     ---
@@ -148,24 +140,6 @@ Without Provider :
         testcase_properties: <tc_properties>
         testcase_csv_file: <path_to_csv>
 
-With Provider :
-
-.. code-block:: yaml
-
-    ---
-    report:
-      - name: <name>
-        description: <description>
-        executes: <execute name>
-        importer: <importer>
-        provider:
-          credential: polarion-creds
-          name: polarion
-          project_id: <project_id>
-          testsuite_properties: <ts_properties>
-          testcase_properties: <tc_properties>
-          testcase_csv_file: <path_to_csv>
-
 .. list-table::
     :widths: auto
     :header-rows: 1
@@ -174,11 +148,6 @@ With Provider :
         - Description
         - Type
         - Required
-
-    *   - name
-        - The name of the provider (polarion).
-        - String
-        - True(Only when Provider is being used)
 
     *   - credential
         - The name of the credentials to use to import the artifact
@@ -444,11 +413,6 @@ Without Provider:
         - Type
         - Required
 
-    *   - name
-        - The name of the provider (reportportal).
-        - String
-        - True (Only when Provider is used)
-
     *   - credential
         - The name of the credentials to use to import the artifact
           into report portal. This is the one defined in the credentials 
@@ -490,7 +454,6 @@ Without Provider:
           dashboard url. (Default: True)
         - Boolean
         - False
-
 
     *   - simple_xml
         - bypass the pre-processor and just import the XML file directly. Attachments,
