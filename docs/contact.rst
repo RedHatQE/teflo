@@ -12,11 +12,11 @@ developing your scenarios, or how best to use teflo to fit your use case, we enc
 carbon-watchers list as we have a diverse community of users that can offer insight on some of these
 questions.
 
-Please subscribe `here <http://post-office.corp.redhat.com/mailman/listinfo/teflo-watchers>`_.
+Please subscribe `here <http://post-office.corp.redhat.com/mailman/listinfo/carbon-watchers>`__.
 
 (WIP) Logging Issues with Teflo
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Please log the issue on github `here <https://github.com/RedHatQE/teflo/issues>`_
+Please log the issue on github `here <https://github.com/RedHatQE/teflo/issues>`__
 
 .. note::
    This section is still WIP, this space will be updated with more info on what additional

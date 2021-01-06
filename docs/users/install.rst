@@ -81,7 +81,7 @@ Teflo_Linchpin_Plugin
 This plugin can be use to provision using the Linchpin tool.
 The Linchpin plugin will be available as an extra. To install Linchpin certain requirements need to be
 met so that it can be installed correctly. Please refer to the
-`pre-install section <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#before-install>`__
+`before install section <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#before-install>`__
 of the plugin documentation on how to install them.
 
 Once installed, you can install Linchpin from Teflo
@@ -148,7 +148,7 @@ Teflo_Webhooks_Notification_Plugin
 
 This plugin is used to notify based users using chat applications gchat and slack.
 Please review the `repo documentation <https://github.com/RedHatQE/teflo_webhooks_notification_plugin/blob/master/docs/user.md>`__
-and how to use the plugin.Please review `Teflo's notification triggers <./definitions/notifications.rst#notify_triggers>`__
+and how to use the plugin.Please review `Teflo's notification triggers <./definitions/notifications.html#triggers>`__
 to get more info on using Teflo`s notification feature
 
 .. _cbn_plugin_matrix:

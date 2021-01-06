@@ -271,8 +271,14 @@ This make target is actually executing the following tox environments:
 
     (teflo) $ tox -e docs
 
+.. _plugin_dev:
+
 [WIP] How to write an plugin for teflo
 --------------------------------------
+.. note::
+       This is still a work in progress. This space will be updated soon with cleaner instructions on plugin
+       development
+
 For developers who wish to put together their own plugins can follow these guidelines:
 
 1. The new plugin will need to import one of these Teflo classes based on the plugin they wish to develop

@@ -26,8 +26,7 @@ understand the key/values defined.
         - Default
 
     *   - name
-        - The name of the action you want teflo to execute OR the path of the script/playbook you want to run
-          as a part of the orchestrate action
+        - The name of the action you want teflo to execute
         - String
         - Yes
         - n/a
@@ -50,10 +49,6 @@ understand the key/values defined.
         - List
         - Yes
         - n/a
-
-.. note::
-   The name field being used as script/playbook path will be deprecated in the coming releases
-   Please refer :ref:`here<ans>` to get an idea on how to define scripts and playbooks
 
 Hosts
 -----
@@ -399,6 +394,7 @@ Teflo supports the following parameters used by ansible script and shell modules
 Please look here for more info
 
 `Ansible Script Module <https://docs.ansible.com/ansible/latest/modules/script_module.html>`_
+
 `Ansible Shell Module <https://docs.ansible.com/ansible/latest/modules/shell_module.html>`_
 
 vault-password-file

@@ -40,17 +40,11 @@ release = u'0.2.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinxcontrib.confluencebuilder', 'sphinx_automodapi.automodapi',]
-#extensions = ['sphinx_automodapi.automodapi']
 confluence_publish = True
 confluence_server_url = 'https://docs.engineering.redhat.com'
 confluence_page_hierarchy = True
 confluence_asset_override = True
 autosummary_generate = True
-#confluence_space_name = 'wiki-space'
-#confluence_server_user = 'user'
-#confluence_server_pass = 'changeme'
-#confluence_parent_page = 'wiki-doc'
-confluence_publish_dryrun = True
 
 
 # Add any paths that contain templates here, relative to this directory.

@@ -1,5 +1,5 @@
-Report
-======
+Report Task
+===========
 
 Overview
 --------
@@ -785,12 +785,7 @@ Here the user can place the payload directory created separately under teflo’s
 *artifact_locations* under the execute section to let Teflo know to look in the .results folder for this payload 
 directory. In this usecase the directory structure is as per requirement.
 
-.. NOTE::
-   Please refer :ref:`here<finding_locations>`  to know more about using artifact_locations key under execute section
-   of Teflo's SDF
-
-
-Teflo verifies that the given path has correct directory structure  and then passes that as the payload directory 
+Teflo verifies that the given path has correct directory structure  and then passes that as the payload directory
 to the Report Portal client 
 
 In the below example the payload_example_medium is a directory placed under *.results* folder and has the correct
