@@ -191,7 +191,7 @@ your credential section in your teflo.cfg file.
 The following is an example of a resource in the scenario descriptor file
 that references this credential:
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
     :lines: 1-8
 
 
@@ -366,7 +366,7 @@ Example 1
 You have an xUnit artifact that has already gone through conversion as part of 
 the test process and needs to be imported into Polarion.
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
     :lines: 1-7
 
 Example 2
@@ -375,7 +375,7 @@ Example 2
 You have an xUnit artifact that needs just some testsuite properties applied,
 where the lookup method is set to name. Then the artifact is imported afterwards.
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
     :lines: 9-21
 
 Example 3
@@ -385,7 +385,7 @@ You have an xUnit artifact that needs a full set of properties applied and
 imported afterwards. No lookup method is supplied because the id for the
 test case has been explicitly defined and an iteration.
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
     :lines: 23-40
 
 Example 4
@@ -395,7 +395,7 @@ You have an xUnit artifact that was named using Teflo's data pass-through in
 the execute phase that needs to have some testsuite properties applied to it and
 imported afterwards.
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
     :lines: 41-52
 
 Example 5
@@ -404,7 +404,7 @@ Example 5
 You have a set of xUnit files that have already gone through conversion 
 during the test process and just need to be bulk imported.
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
     :lines: 54-60
 
 Example 6
@@ -414,7 +414,7 @@ You have a set of xUnit files that have the same name
 that have already gone through conversion during the test process 
 but you only need one from a specific host in teflo's artifact directory.
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
     :lines: 62-69
 
 Example 7
@@ -424,7 +424,7 @@ You have an xUnit file that needs to be properly tagged with testsuite
 properties and the testcases should dynamically tagged with their polarion
 id using the contents of the csv file. Then imported afterwards.
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 71-83
 
 
@@ -511,7 +511,7 @@ your credential section in your teflo.cfg file.
 The following is an example of a resource in the scenario descriptor file
 that references this credential:
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
           :lines: 85-91
 
 CCIT Report Portal Client
@@ -696,7 +696,7 @@ In the following example, *json_path* parameter is not provided, Teflo uses the 
 remaining params and creates the json file **<uuid>.json** in a directory **rp_config_files** under the workspace
 directory and uses it to pass paylaod to the Report Portal Client
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 256-271
 
 **Example 2**
@@ -704,7 +704,7 @@ directory and uses it to pass paylaod to the Report Portal Client
 In the following example, json_path is provided. Here Teflo uses the user provided config file to send
 the payload to the Report Portal Client
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 273-282
 
 
@@ -713,7 +713,7 @@ the payload to the Report Portal Client
 In the following example both json_path and other params are given. Here since json_path is provided
 it will be used as the config file to send the payload, the other params are ignored
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 284-300
 
 Setting up payload directory for Report Portal Client
@@ -771,7 +771,7 @@ In the example below, the execute stage is setup to collect artifacts from locat
 structure. The report name in this case is a pattern payload/* to consider the payload_eg dir entirely as the payload
 to be sent to the Report Portal Client
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 93-117
 
 Use Case 2
@@ -796,7 +796,7 @@ to the Report Portal client
 In the below example the payload_example_medium is a directory placed under *.results* folder and has the correct
 directory structure of results and attachments folder under it. The name of the report used is payload_example/medium/*
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 119-145
 
 Use Case 3
@@ -818,7 +818,7 @@ this folder, copies all the xml files and puts them under .teflo/<data folder>/r
 
 **.teflo/<data folder>/rp_payloads/<uuid>** is the payload directory path given to the Report Portal client
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 147-171
 
 Use Case 4
@@ -839,7 +839,7 @@ directory rp_payloads if it is not already there and then create a folder with u
 .teflo/<data folder>/rp_payloads/<uuid>/results and copy all the xml files from .teflo/.results/payload_teflo/
 The payload directory sent to report portal client will be **.teflo/.results/rp_payloads/uuid**
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 173-197
 
 Use Case 5
@@ -862,7 +862,7 @@ In the below example the artifacts collected during execute phase are present un
 /home/teflo_develop/e2e-acceptance-tests/rp_examples/payload_example_medium and the other xml files not collected 
 during execute are under artifact_locations and stored under Teflo's *.results* folder
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 199-229
 
 Use Case 6
@@ -883,5 +883,5 @@ The payload directory path given to the Report Portal client is  **.teflo/<data 
 In the below example the  data folder directory and .results directory are walked and the pattern payload_example_medium/*
 is  matched with files found in there. xml files are selected from the matched paths/files and added to the payload directory.
 
-.. literalinclude:: ../../../examples/docs-usage/report.yml
+.. literalinclude:: ../../examples/docs-usage/report.yml
    :lines: 231-254
