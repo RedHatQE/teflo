@@ -73,33 +73,29 @@ required or optional:
 Provisioner
 +++++++++++
 
-As of 1.6.0, this key is will be a requirement to specify. We will still be backwards compatible
-for users who do not use this key in conjuction with the **provider** key. But at some point in
-the future will be making this a hard requirement. So it is recommended to update all scenarios
-to start explicitly using this key.
+This key is will be a requirement to specify the name of provisioner plugin being used
 
 Provider
 ++++++++
 
-As of 1.6.0, the provider key is no longer a requirement for all provisioners. Going forward this
+The provider key is no longer a requirement for all provisioners. Going forward this
 key is only required for the **bkr-client** and **openstack-libcloud** provisioners.
 
-Role/Groups
-+++++++++++
+Groups
++++++++
 
-Teflo roles are the equivalent of Ansible groups. As of 1.2.0, we've
-changed the schema from role to groups to better reflect what the purpose of this
-parameter is intended for. All scenario descriptor files written prior to 1.2.0
-using role will still be honored but it is considered deprecated and it is recommended to
-update all scenarios to use the new parameter.
+Teflo groups are the equivalent of Ansible groups.
 
-As of 1.4.0 role/groups is not a requirement for all asset types. This should only be
+Originally this key was named as *roles*. the schema was changed from role to groups to better
+reflect what the purpose of this parameter is intended for.
+
+Groups is not a requirement for all asset types. This should only be
 specified for host assets like VMs or Baremetal Systems that have an ip and will be acted
 on later on during Orchestrate or Execute. Assets like networks, storage, security key, etc.
-do not and should not be assigned a role/groups to avoid polluting the Ansible inventory file
+do not and should not be assigned a groups to avoid polluting the Ansible inventory file
 with empty groups.
 
-You can associate a number of roles or groups to a host in a couple of different ways.
+You can associate a number of groups to a host in a couple of different ways.
 First is to define your roles in a comma separated string
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
@@ -423,7 +419,7 @@ In your scenario descriptor file specify the **provisioner** key in your provisi
     provisioner: openstack-client
 
 For more information on how to install plugin and setup the scenario descriptor file for using this plugin,
-please refer `here <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_openstack_client_plugin>`__
+please refer `here <https://github.com/RedHatQE/teflo_openstack_client_plugin/blob/master/docs/user.md>`__
 
 
 .. _linchpin_provisioning:
@@ -434,11 +430,11 @@ Provisioning Assets with Linchpin
 Usera can provision assets using all Linchpin supported providers
 using the Linchpin plugin.
 
-First the plugin must be installed. Refer to the teflo `installation <install.html>`__ document on
+First the plugin must be installed. Refer to the teflo `installation <../install.html>`__ document on
 how you can install the plugin as an extra package.
 
 You can also refer to the
-`plugin <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_linchpin_plugin/blob/develop/docs/user.md#installation>`__
+`plugin <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md>`__
 documentation directly
 
 In your scenario file specify the **provisioner** key in your provision section.
@@ -449,7 +445,7 @@ In your scenario file specify the **provisioner** key in your provision section.
 
 
 Specify any of the
-`keys <https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#provisioning-assets-with-linchpin>`__
+`keys <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#provisioning-assets-with-linchpin>`__
 supported by the linchpin provisioner.
 
 
@@ -485,14 +481,14 @@ following options
    credential environmental variables supported by Linchpin/Ansible yourself.
 
 For more information refer to the plugins
-`credential <https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#provisioning-assets-with-linchpin>`__
+`credential <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#credentials>`__
 document section.
 
 Examples
 ++++++++
 
 Below we will just touch on a couple examples. You can see the rest of the
-`examples <https://github.com/RedHatQE/teflo_linchpin_plugin.git/blob/develop/docs/user.md#credentials>`__
+`examples <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#examples>`__
 in the plugin documentation.
 
 Example 1

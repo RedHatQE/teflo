@@ -69,7 +69,7 @@ Teflo External Plugin Requirements
 Teflo is able to use external tools using its plugins. These plugins need to be installed
 separately.
 
-Teflo has plugins for provisioners, orchestrators, executors , importers and notifiers
+Users can develop Teflo has plugins for provisioners, orchestrators, executors, importers and notifiers.
 Following are the plugins currently developed and supported by Teflo
 
 Provisioner Plugins
@@ -81,7 +81,7 @@ Teflo_Linchpin_Plugin
 This plugin can be use to provision using the Linchpin tool.
 The Linchpin plugin will be available as an extra. To install Linchpin certain requirements need to be
 met so that it can be installed correctly. Please refer to the
-`pre-install section <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#before-install>`__
+`before install section <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#before-install>`__
 of the plugin documentation on how to install them.
 
 Once installed, you can install Linchpin from Teflo
@@ -114,43 +114,30 @@ Importer Plugins
 Teflo_Polarion_Plugin
 ~~~~~~~~~~~~~~~~~~~~~
 
-This plugin allows teflo to send test results to Polarion tool. You can read more about the plugin in the
-`repo link <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_polarion_plugin.git>`__
+This plugin allows teflo to send test results to Polarion tool. This plugin allows teflo
+to import xunit files to Polarion by using the Polar library. Polar library helps converts the generic
+xUnit file by applying Polarion specific tags and import them to Polarion and monitor their progress
+teflo_polarion_plugin uses the parameters declared in the Teflo's Scenario Descriptor File Report section
+to send the xunit files to Polarion
 
 .. note::
 
     This plugin is meant for Internal RED HAT use and is not available publicly yet
-
-Installation
-~~~~~~~~~~~~
-
-.. code-block:: bash
-
-    # for ansible modules requiring selinux, you will need to enable system site packages
-    $ virtualenv --system-site-packages polarion
-    $ source polarion/bin/activate
-    (polarion) $ pip install teflo_polarion_plugin@git+https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_polarion_plugin.git@<tagged_branch>
 
 
 Teflo_Rppreproc_Plugin
 ~~~~~~~~~~~~~~~~~~~~~~
 
-This plugin allows teflo to send test results to Report Portal tool. You can read more about the plugin in the
-`repo link <https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_rppreproc_plugin.git>`__
+This plugin allows teflo to send test results to Report Portal tool.
+Based on the input provided by Teflo's Scenario Descriptor File (SDF),the teflo_rppreproc_plugin
+validates the config file for report portal client if provided else creates one
+using the other parameters in the SDF, creates appropriate payload (logs and attachements)for
+the report portal client and uses Teflo's helper methods to send the payload to the report portal client
+by running the rp_preproc commands
 
 .. note::
 
     This plugin is meant for Internal RED HAT use and is not available publicly yet
-
-Installation
-~~~~~~~~~~~~
-
-.. code-block:: bash
-
-    # for ansible modules requiring selinux, you will need to enable system site packages
-    $ virtualenv --system-site-packages reportportal
-    $ source reportportal/bin/activate
-    (reportportal) $ pip install teflo_rppreproc_plugin@git+https://gitlab.cee.redhat.com/ccit/teflo/plugins/teflo_rppreproc_plugin.git@<tagged_branch>
 
 
 Notification Plugins
@@ -161,7 +148,7 @@ Teflo_Webhooks_Notification_Plugin
 
 This plugin is used to notify based users using chat applications gchat and slack.
 Please review the `repo documentation <https://github.com/RedHatQE/teflo_webhooks_notification_plugin/blob/master/docs/user.md>`__
-and how to use the plugin.Please review `Teflo's notification triggers <./definitions/notification.rst#notify_triggers>`__
+and how to use the plugin.Please review `Teflo's notification triggers <./definitions/notifications.html#triggers>`__
 to get more info on using Teflo`s notification feature
 
 .. _cbn_plugin_matrix:
@@ -180,16 +167,16 @@ n and n-2 teflo releases
         - 1.0.0
 
     *   - Rppreproc Plugin
-        - 1.1.1
+        - 1.0.0
 
     *   - Polarion Plugin
-        - 1.1.0
+        - 1.0.0
 
     *   - Linchpin Plugin
-        - 1.0.2
+        - 1.0.0
 
     *   - Openstack Client Plugin
-        - 1.1.1
+        - 1.0.0
 
     *   - Webhooks_Notification_Plugin
         - 1.0.0
@@ -199,6 +186,3 @@ n and n-2 teflo releases
 
     *   - Rp_preproc
         - 0.1.3
-
-    *   - Ansible
-        - >=2.5.0

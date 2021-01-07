@@ -423,7 +423,7 @@ Artifact Locations
 The **artifact_locations** key is used to keep track of the artifacts that were collected using artifacts key during
 execute stage. It's a list which consists of the relative path of the artifacts to be considered which are placed under
 the teflo's **.results** folder.
-With release 1.4.0, the artifact_locations key is being made available to users to define locations for artifacts that
+The artifact_locations key is available to users to define locations for artifacts that
 may not have been collected as part of artifacts but they want to be tracked for later use in Report.
 The only caveat is the artifacts defined under artifact_locations must be placed in the
 teflo_data_folder/.results directory. Refer to the :ref:`Finding the right artifacts <finding_artifacts>`

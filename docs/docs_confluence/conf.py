@@ -25,9 +25,9 @@ copyright = u'2020, Red Hat Inc.'
 author = u'Red Hat Inc.'
 
 # The short X.Y version
-version = u'1.0.0'
+version = u'0.2.1'
 # The full version, including alpha/beta/rc tags
-release = u'1.0.0'
+release = u'0.2.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -39,17 +39,12 @@ release = u'1.0.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-#extensions = ['sphinxcontrib.confluencebuilder', 'sphinx_automodapi.automodapi']
-extensions = ['sphinx_automodapi.automodapi']
-#confluence_publish = True
-#confluence_server_url = 'https://docs.engineering.redhat.com'
-#confluence_page_hierarchy = True
-#confluence_asset_override = True
+extensions = ['sphinxcontrib.confluencebuilder', 'sphinx_automodapi.automodapi',]
+confluence_publish = True
+confluence_server_url = 'https://docs.engineering.redhat.com'
+confluence_page_hierarchy = True
+confluence_asset_override = True
 autosummary_generate = True
-#confluence_space_name = 'wiki-space'
-#confluence_server_user = 'user'
-#confluence_server_pass = 'changeme'
-#confluence_parent_page = 'wiki-doc'
 
 
 # Add any paths that contain templates here, relative to this directory.

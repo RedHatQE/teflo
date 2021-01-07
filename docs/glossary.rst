@@ -14,7 +14,7 @@ Glossary
         An open source status page system. `Cachet <https:cachethq.io>`_
 
     teflo
-        Interoperability Testing Framework
+        Test Execution Framework Libraries and Onjects
 
     credentials (section)
         Required credential definitions for each resource that needs to be
