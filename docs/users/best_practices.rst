@@ -25,9 +25,6 @@ product scenarios.
     It will also help with consistency in teflo's usage, making it easier
     to understand someone's scenario.
 
-Below is a tree formatted scenario structure for a multi product scenario.
-This references the scenario `template
-<https://gitlab.cee.redhat.com/qeet/teflo/mpqe-scenario-template>`_.
 
 .. code-block:: bash
 
@@ -116,12 +113,6 @@ executing teflo.
 With this scenario structure you can easily run teflo from the command line
 or from a Jenkins job.  See the following section for more details.
 
-Source
-~~~~~~
-
-The source for this template scenario structure and details on running the
-scenario can be found here: `template
-<https://gitlab.cee.redhat.com/qeet/teflo/mpqe-scenario-template>`_.
 
 Handing Off A Scenario
 ----------------------

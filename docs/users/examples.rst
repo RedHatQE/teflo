@@ -33,23 +33,23 @@ artifacts of the execution.
 Junit
 ~~~~~
 
-Please reference the example `junit repository`_ for all details on how you
+Please reference the example `junit example`_ for all details on how you
 can execute this example with teflo to run a junit example.
 
 Pytest
 ~~~~~~
 
-Please reference the example `pytest repository`_ for all details on how you
+Please reference the example `pytest example`_ for all details on how you
 can execute this example with teflo to run a pytest example.
 
 Restraint
 ~~~~~~~~~
 
-Please reference the example `restraint repository`_ for all details on how you
+Please reference the example `restraint example`_ for all details on how you
 can execute this example with teflo to run a restraint example.
 
 ----
 
-.. _junit repository: https://github.com/RedHatQE/teflo_examples/tree/master/junit-example
-.. _pytest repository: https://github.com/RedHatQE/teflo_examples/tree/master/pytest-example
-.. _restraint repository: https://github.com/RedHatQE/teflo_examples/tree/master/restraint-example
+.. _junit example: https://github.com/RedHatQE/teflo_examples/tree/master/junit-example
+.. _pytest example: https://github.com/RedHatQE/teflo_examples/tree/master/pytest-example
+.. _restraint example: https://github.com/RedHatQE/teflo_examples/tree/master/restraint-example

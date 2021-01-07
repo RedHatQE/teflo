@@ -225,7 +225,7 @@ Here is an example based on a custom provisioner module:
 
 .. note::
 
-   Please visit the CONTRIBUTE.rst to understand more about how to create a customized plugin for Teflo
+   Please visit `Developers Guide <./development.html#wip-how-to-write-an-plugin-for-teflo>`__ to understand more about how to create a customized plugin for Teflo
 
 Plugin model also applies to the other resources within the teflo object. Lets look
 at the action resource. Teflo provides a orchestrator interface

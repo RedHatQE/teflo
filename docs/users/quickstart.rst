@@ -272,12 +272,6 @@ Execute
 Please visit the following `page <https://github.com/RedHatQE/teflo_examples/tree/master/execute>`__
 for complete examples on using teflos execute task.
 
-Report
-++++++
-
-Please visit the following `page <https://github.com/RedHatQE/teflo_examples/tree/master/report>`__
-for complete examples on using teflos report task.
-
 Resource_check
 ++++++++++++++
 
