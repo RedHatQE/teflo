@@ -186,6 +186,3 @@ n and n-2 teflo releases
 
     *   - Rp_preproc
         - 0.1.3
-
-    *   - Ansible
-        - >=2.5.0
