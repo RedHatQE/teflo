@@ -52,7 +52,7 @@ supported in Python 3.
 ... install Linchpin to use the Linchpin provisioner?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Refer to the `Linchpin Requirements section <install.html#linchpin-requirements>`_
+Refer to the `Teflo_Linchpin_Plugin section <install.html#teflo-linchpin-plugin>`_
 to install Linchpin and it's dependencies.
 
 ... know if my current scenarios will work with the new Linchpin provisioner?
