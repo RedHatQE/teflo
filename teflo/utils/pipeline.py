@@ -22,7 +22,7 @@
     Module containing classes and functions for building pipelines of resources
     and tasks for teflo to run.
 
-    :copyright: (c) 2017 Red Hat, Inc.
+    :copyright: (c) 2020 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 
