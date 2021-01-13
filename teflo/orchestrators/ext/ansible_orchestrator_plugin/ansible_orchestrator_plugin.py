@@ -120,7 +120,7 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
         self.logger.info('Executing playbook:')
         results = self.ans_service.run_playbook(self.playbook)
         if results[0] != 0:
-            raise TefloOrchestratorError('Playbook %s failed to run successfully!' % self.playbook['name'])
+            raise TefloOrchestratorError('Playbook %s failed to run' % self.playbook['name'])
         else:
             self.logger.info('Successfully completed playbook : %s' % self.playbook['name'])
 

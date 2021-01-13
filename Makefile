@@ -7,10 +7,10 @@ clean-all: clean-pyc clean-tests clean
 test-all: test-functional test-scenario
 
 test-functional:
-	tox -e py27-unit,py3-unit
+	tox -e py3-unit
 
 test-scenario:
-	tox -e py27-scenario,py3-scenario
+	tox -e py3-scenario
 
 clean:
 	rm -rf *.egg
