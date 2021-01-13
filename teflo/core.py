@@ -25,7 +25,6 @@
     :license: GPLv3, see LICENSE for more details.
 """
 import errno
-import inspect
 import os
 import yaml
 import inspect
@@ -40,8 +39,6 @@ from .exceptions import TefloError, TefloResourceError, LoggerMixinError, \
 from .helpers import get_core_tasks_classes
 from traceback import format_exc
 from ._compat import RawConfigParser, string_types
-from uuid import uuid4
-from sys import exc_info
 from .constants import LOGGING_CONFIG
 import threading
 
@@ -1516,7 +1513,8 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
             # load it and keep building upon it
             if os.path.exists(self.master_inv):
                 with open(self.master_inv) as f:
-                    config.readfp(f)
+                    # config.readfp(f)
+                    config.read_file(f)
 
             # Sort the list of hosts so that if N number of hosts are getting
             # added to same host group the order is predictable.

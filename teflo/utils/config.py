@@ -21,18 +21,13 @@
     Teflos own config module for loading configuration settings defined by
     the user.
 
-    :copyright: (c) 2017 Red Hat, Inc.
+    :copyright: (c) 2020 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 import os
 
-from .._compat import RawConfigParser, VaultLib, ansible_ver, is_py2
+from .._compat import RawConfigParser
 from ..constants import DEFAULT_CONFIG, DEFAULT_CONFIG_SECTIONS, DEFAULT_TASK_CONCURRENCY, DEFAULT_TIMEOUT
-from ansible.constants import DEFAULT_VAULT_ID_MATCH
-
-from ansible.parsing.vault import VaultSecret
-import sys
-from ..exceptions import AnsibleVaultError
 from ..ansible_helpers import AnsibleCredentialManager
 
 
@@ -57,10 +52,12 @@ class Config(dict):
 
     def __set_defaults__(self):
         """Set the default configuration settings."""
-        for k, v in getattr(self.parser, '_sections')['defaults'].items():
-            if k == '__name__':
-                continue
-            self.__setitem__(k.upper(), v)
+        # A check to continue the flow if default section is not provided in teflo.cfg
+        if getattr(self.parser, '_sections').get('defaults'):
+            for k, v in getattr(self.parser, '_sections')['defaults'].items():
+                if k == '__name__':
+                    continue
+                self.__setitem__(k.upper(), v)
 
     def __set_credentials__(self, **kwargs):
         """Set the credentials configuration settings."""
