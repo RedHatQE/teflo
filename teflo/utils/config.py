@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2017 Red Hat, Inc.
+# Copyright (C) 2020 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,18 +21,13 @@
     Teflos own config module for loading configuration settings defined by
     the user.
 
-    :copyright: (c) 2017 Red Hat, Inc.
+    :copyright: (c) 2020 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 import os
 
-from .._compat import RawConfigParser, VaultLib, ansible_ver, is_py2
+from .._compat import RawConfigParser
 from ..constants import DEFAULT_CONFIG, DEFAULT_CONFIG_SECTIONS, DEFAULT_TASK_CONCURRENCY, DEFAULT_TIMEOUT
-from ansible.constants import DEFAULT_VAULT_ID_MATCH
-
-from ansible.parsing.vault import VaultSecret
-import sys
-from ..exceptions import AnsibleVaultError
 from ..ansible_helpers import AnsibleCredentialManager
 
 
