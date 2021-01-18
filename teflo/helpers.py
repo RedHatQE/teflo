@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2017 Red Hat, Inc.
+# Copyright (C) 2020 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
     Module containing classes and functions which are generic and used
     throughout the code base.
 
-    :copyright: (c) 2017 Red Hat, Inc.
+    :copyright: (c) 2020 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 import inspect
@@ -36,14 +36,11 @@ import subprocess
 import sys
 import time
 import click
-import warnings
 from logging import getLogger
 import fnmatch
 import stat
-import cachetclient.cachet as cachet
 import jinja2
 import requests
-import urllib3
 from paramiko import RSAKey
 from ruamel.yaml.comments import CommentedMap as OrderedDict
 from collections import OrderedDict
@@ -53,8 +50,7 @@ from paramiko import SSHClient, WarningPolicy
 from paramiko.ssh_exception import SSHException, BadHostKeyException, \
     AuthenticationException
 from ._compat import string_types
-from .constants import PROVISIONERS, RULE_HOST_NAMING, IMPORTER, DEFAULT_TASK_CONCURRENCY, \
-    TASKLIST, NOTIFYSTATES
+from .constants import PROVISIONERS, RULE_HOST_NAMING, TASKLIST, NOTIFYSTATES
 from .exceptions import TefloError, HelpersError
 from pykwalify.core import Core
 from pykwalify.errors import CoreError, SchemaError
