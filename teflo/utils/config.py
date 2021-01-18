@@ -52,10 +52,12 @@ class Config(dict):
 
     def __set_defaults__(self):
         """Set the default configuration settings."""
-        for k, v in getattr(self.parser, '_sections')['defaults'].items():
-            if k == '__name__':
-                continue
-            self.__setitem__(k.upper(), v)
+        # A check to continue the flow if default section is not provided in teflo.cfg
+        if getattr(self.parser, '_sections').get('defaults'):
+            for k, v in getattr(self.parser, '_sections')['defaults'].items():
+                if k == '__name__':
+                    continue
+                self.__setitem__(k.upper(), v)
 
     def __set_credentials__(self, **kwargs):
         """Set the credentials configuration settings."""
