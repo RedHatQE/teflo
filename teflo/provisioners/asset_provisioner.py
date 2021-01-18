@@ -126,9 +126,10 @@ class AssetProvisioner(LoggerMixin, TimeMixin):
                         host_profile.update(res[i])
                     self.logger.debug(json.dumps(host_profile, indent=4))
                     res_profile_list.append(host_profile)
-                self.logger.info('Successfully provisioned %s asset(s) %s :' % (len(res_profile_list),
-                                                                                [res_profile_list[i]['name']
-                                                                                 for i in range(0, len(res))]))
+                self.logger.info('Successfully provisioned %s asset(s) %s with asset_id(s) %s:'
+                                 % (len(res_profile_list), [res_profile_list[i]['name'] for i in range(0, len(res))],
+                                    [res_profile_list[i]['provider']['asset_id'] if res_profile_list[i].get('provider')
+                                     else res_profile_list[i]['asset_id'] for i in range(0, len(res))]))
                 return res_profile_list
             else:
                 # Single resource has been provisioned
@@ -141,7 +142,8 @@ class AssetProvisioner(LoggerMixin, TimeMixin):
                     host_profile.get('provider').update(res[-1])
                 else:
                     host_profile.update(res[-1])
-                self.logger.info('Successfully provisioned asset %s.' % host)
+                self.logger.info('Successfully provisioned asset %s with asset_id %s.'
+                                 % (host, res[-1].get('asset_id')))
                 return [host_profile]
 
         except Exception as ex:
@@ -158,7 +160,8 @@ class AssetProvisioner(LoggerMixin, TimeMixin):
         self.print_commonly_used_attributes()
         try:
             self.plugin.delete()
-            self.logger.info('Successfully deleted asset %s.' % host)
+            self.logger.info('Successfully deleted asset %s with asset_id %s.' %
+                             (host, getattr(getattr(self.plugin, 'asset'), 'asset_id')))
         except Exception as ex:
             self.logger.error(ex)
             raise
