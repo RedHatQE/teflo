@@ -5,6 +5,7 @@
 # teflo.
 
 # generic section
+
 # defines common information about the scenario
 
 name: demo
@@ -12,6 +13,7 @@ description: >
     Scenario to demonstration the teflo framework.
 
 # resource checking section
+
 # As part of the validation that teflo performs, it can also
 # check the status of resources that an end to end scenario
 # relies on.  The user can set a list of services
@@ -23,7 +25,8 @@ description: >
 #
 # in teflo.cfg add:
 # [defaults]
-# resource_check_endpoint=https://semaphore.cloud.upshift.engineering.redhat.com/api/v1
+# resource_check_endpoint=<endpoint url>
+# Currently only semaphore and statuspage.io is supported
 #
 # Along with services, users can run their own validation playbooks or scripts before
 # starting the teflo workflow. If the validation here fails the workflow doe snot move ahead
@@ -60,6 +63,7 @@ resource_check:
       - name: ./scripts/add_two_numbers.sh X=15 Y=15
 
 # include section
+
 # Defines any other scenario files that need to be executed
 # These scenario files have to be in the same workspace as the master/original scenario
 # During running of teflo workflow tasks from the included scenarios will be run
@@ -71,22 +75,22 @@ include:
   - py3_incl_orch.yml
 
 # provision section
+
 # defines all systems required for the scenario
 
 provision:
   # test driver
   - name: testdriver                            # machine name used for creation
     description: "test driver"                  # describes the purpose of the host
-    provider:
-      name: openstack                           # provider to create host in
-      credential: openstack                     # ref above ^^: credentials.openstack
-      image: rhel-7.5-server-x86_64-released    # image to boot instance based on
-      flavor: m1.small                          # instance size
-      networks:                                 # instance internal network
-        - <internal-network>
-      floating_ip_pool: "10.8.240.0"            # instance external network
-      keypair: <keypair>                        # instance ssh key pair
-    role: testdriver                            # host role
+    provisioner: openstack-libcloud             # provisioner being used to provision the asset
+    credential: openstack                       # credentials to authenticate the openstack instance
+    image: rhel-7.5-server-x86_64-released      # image to boot instance based on
+    flavor: m1.small                            # instance size
+    networks:                                   # instance internal network
+      - <internal-network>
+    floating_ip_pool: "10.8.240.0"              # instance external network
+    keypair: <keypair>                          # instance ssh key pair
+    groups: testdriver                          # host group
     ansible_params:                             # defines ansible parameters for connection
       ansible_user: root
       ansible_ssh_private_key_file: <private-key-filename>
@@ -94,16 +98,15 @@ provision:
   # test client 1
   - name: testclient01                          # machine name used for creation
     description: "test client 01"               # describes the purpose of the host
-    provider:
-      name: openstack                           # provider to create host in
-      credential: openstack                     # ref above ^^: credentials.openstack
-      image: rhel-7.5-server-x86_64-released    # image to boot instance based on
-      flavor: m1.small                          # instance size
-      networks:                                 # instance internal network
-        - <internal-network>
-      floating_ip_pool: "10.8.240.0"            # instance external network
+    provisioner: openstack                      # provisioner to create host using openstack
+    credential: openstack                       # credentials to authenticate the openstack instance
+    image: rhel-7.5-server-x86_64-released      # image to boot instance based on
+    flavor: m1.small                            # instance size
+    networks:                                   # instance internal network
+      - <internal-network>
+    floating_ip_pool: "10.8.240.0"              # instance external network
       keypair: <keypair>                        # instance ssh key pair
-    role: testclient                            # host role
+    groups: testclient                          # host group
     ansible_params:                             # defines ansible parameters for connection
       ansible_user: root
       ansible_ssh_private_key_file: <private-key-filename>
@@ -114,13 +117,14 @@ provision:
   - name: testclient02                          # machine name used for creation
     description: "test client 02"               # describes the purpose of the host
     ip_address: <machine_ip_address>
-    role: testclient                            # host role
+    groups: testclient                          # host group
     ansible_params:                             # defines ansible parameters for connection
       ansible_user: root
       ansible_ssh_private_key_file: <private-key-filename>
 
 
 # orchestrate section
+
 # defines all actions to be performed for the scenario. these actions will be
 # executed against the systems defined in the provision section. Each action
 # will define which system to run against.
@@ -188,6 +192,7 @@ orchestrate:
         auto: True
 
 # execute section
+
 # defines all the tests to be executed for the scenario
 # Each execute task has an option to clone a git,
 # where the tests resides if not done in orchestrate
@@ -240,6 +245,7 @@ execute:
     artifacts: retraint-*, test.log
 
 # report section
+
 # Teflo supports importing to external tools using teflo plugins. Please refer the report section
 # under Scenario Descriptor for more information on plugins
 # Below example is for importing test runs xmls to Polarion
@@ -250,14 +256,10 @@ report:
       executes: test_suite_01                            # execute task to look for the artifacts/xml mentioned under name
       importer: polarion                                 # importer to be used
       credential: polarion-creds                         # credentials to connect to the external tool(provided under teflo.cfg)
-      project_id: Teflo1                                 # Polarion project id
-      testsuite_properties:                              # test suite properties for Polarion
-        polarion-lookup-method: name
-        polarion-custom-os: RHEL 8
-        polarion-testrun-id: PolId-123
-        polarion-testrun-title: Sample Test Run
+
 
 # notification tasks
+
 # Teflo supports notification using email as default. Please refer notification section under
 # scenario descriptor to know more about notification using webhook plugins and different triggers
 # that can be set for notification

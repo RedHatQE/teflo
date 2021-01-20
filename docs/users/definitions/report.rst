@@ -25,7 +25,7 @@ First, let's go over the basic structure that defines a Report resource.
         These plugins are only available for internal RedHat use at this time. Users can put
         in tickets `here <https://github.com/RedHatQE/teflo/issues>`_ for new plugin development
         or contribute towards this effort.
-        Please refer `Developers Guide <../../developers/development.html#wip-how-to-write-an-plugin-for-teflo>`__
+        Please refer `Developers Guide <../../developers/development.html#how-to-write-an-plugin-for-teflo>`__
         on how to contribute towards the plugin.
 
 
