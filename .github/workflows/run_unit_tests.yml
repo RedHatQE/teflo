@@ -17,7 +17,7 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['centos:7', 'centos:8']
+        container: ['quay.io/junqizhang0/centos:7-testing-teflo', 'quay.io/junqizhang0/centos:8-testing-teflo']
       fail-fast: false
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -25,14 +25,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - run: cat /etc/os-release
-
-      # Runs a single command using the runners shell
-      - name: install required packages
-        run: |
-          yum install -y gcc python3 python3-devel python3-pip krb5-workstation krb5-devel
-
-      - name: install pip virtualenv and tox
-        run: pip3 install virtualenv tox
 
       # Runs a set of commands using the runners shell
       - name: Run functional unit tests

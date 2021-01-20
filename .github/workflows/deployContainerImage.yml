@@ -1,0 +1,16 @@
+name: "Publish the container image for testing"
+
+on: 
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    name: Publish the image for testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          chmod +x ./.github/deployTestingImage.sh
+          ./.github/deployTestingImage.sh "centos:8"
+          ./.github/deployTestingImage.sh "centos:7"
