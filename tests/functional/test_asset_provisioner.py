@@ -113,8 +113,8 @@ class TestAssetProvisioner(object):
     @mock.patch('copy.deepcopy')
     def test_asset_provisioner_create_multi_resources(mock_copy, plugin, host_provisioner, default_profile_params):
         mock_copy.return_value = default_profile_params
-        res1=dict(tx_id=1, name='dummy_0', ip='2.4.6.8', id='222')
-        res2=dict(tx_id=1, name='dummy_1', ip='1.3.5.7', id='223')
+        res1=dict(tx_id=1, name='dummy_0', ip='2.4.6.8', asset_id='222')
+        res2=dict(tx_id=1, name='dummy_1', ip='1.3.5.7', asset_id='223')
         plugin.create = mock.MagicMock(return_value=[res1, res2])
         host_provisioner.plugin = plugin
         host_provisioner.create()
@@ -125,8 +125,8 @@ class TestAssetProvisioner(object):
     def test_asset_provisioner_create_multi_resources_no_provider(mock_copy, plugin, host_provisioner,
                                                                   default_no_provider_profile_params):
         mock_copy.return_value = default_no_provider_profile_params
-        res1=dict(tx_id=1, name='dummy_0', ip='2.4.6.8', id='222')
-        res2=dict(tx_id=1, name='dummy_1', ip='1.3.5.7', id='223')
+        res1=dict(tx_id=1, name='dummy_0', ip='2.4.6.8', asset_id='222')
+        res2=dict(tx_id=1, name='dummy_1', ip='1.3.5.7', asset_id='223')
         plugin.create = mock.MagicMock(return_value=[res1, res2])
         host_provisioner.plugin = plugin
         host_provisioner.create()
