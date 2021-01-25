@@ -32,7 +32,7 @@ jobs:
 
       - name: change user and print
         run: |
-          chmod ./.github/chuser.sh
+          chmod +x ./.github/chuser.sh
           ./github/chuser.sh
 
       #- name: Run functional unit tests
