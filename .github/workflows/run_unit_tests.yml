@@ -30,6 +30,11 @@ jobs:
       - uses: actions/checkout@v2
       - run: cat /etc/os-release
 
+      - name: change user and print
+        run: |
+          chmod ./.github/chuser.sh
+          ./github/chuser.sh
+
       #- name: Run functional unit tests
         #env:
           #LC_ALL: en_US.utf8
@@ -50,8 +55,3 @@ jobs:
           #/bin/bash
           #whoami
           #tox -e py3-scenario
-        - name: change user and print
-          run: |
-            chmod ./.github/chuser.sh
-            ./github/chuser.sh
-
