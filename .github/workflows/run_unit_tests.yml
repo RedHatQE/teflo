@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         container: ['quay.io/junqizhang0/centos7-testing-teflo', 'quay.io/junqizhang0/centos8-testing-teflo']
-          options: --user teflo
+        options: --user teflo
       fail-fast: false
 
     # Steps represent a sequence of tasks that will be executed as part of the job
