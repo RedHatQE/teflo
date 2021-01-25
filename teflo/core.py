@@ -1191,7 +1191,6 @@ class ProvisionerPlugin(TefloPlugin):
         else:
             self.provider_params = {k: v for k, v in self.asset.profile().items()
                                     if k not in getattr(self.asset, '_fields')}
-
         self.provider_credentials = getattr(self.asset, 'credential', {})
         self.workspace = getattr(self.asset, 'workspace')
         self.config = getattr(self.asset, 'config')

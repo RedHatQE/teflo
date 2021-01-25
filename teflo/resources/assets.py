@@ -207,6 +207,7 @@ class Asset(TefloResource):
             # lets setup any feature toggles that we defined in the configuration file
             self.__set_feature_toggles_()
 
+            # TODO remove this , it is additional
             self._provisioner = get_default_provisioner_plugin()
 
             if provisioner_name is None and self.has_provider:
@@ -472,7 +473,7 @@ class Asset(TefloResource):
 
     @property
     def asset_id(self):
-        """Provisioner credential property.
+        """Provisioner asset_id property.
 
         :return: credential
         :rtype: dict
@@ -481,16 +482,38 @@ class Asset(TefloResource):
 
     @asset_id.setter
     def asset_id(self, value):
-        """Set credential property."""
+        """Set asset_id property."""
         self._asset_id = value
 
     @asset_id.deleter
     def asset_id(self):
         """
-        delete the credential property
+        delete the asset_id property
         :return:
         """
         del self._asset_id
+
+    @property
+    def hostname(self):
+        """Provisioner hostname property.
+
+        :return: hostname
+        :rtype: dict
+        """
+        return self._hostname
+
+    @hostname.setter
+    def hostname(self, value):
+        """Set hostname property."""
+        self._hostname = value
+
+    @hostname.deleter
+    def hostname(self):
+        """
+        delete the hostname property
+        :return:
+        """
+        del self._hostname
 
     def profile(self):
         """Builds a profile for the host resource.
