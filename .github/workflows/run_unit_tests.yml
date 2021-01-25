@@ -23,13 +23,19 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - run: cat /etc/os-release
+      - name: whoami
+        run: whoami
+      #- uses: actions/checkout@v2
+      #- run: cat /etc/os-release
 
       # Change to non-root
       - name: change user
         run: su teflo
       # Runs a set of commands using the runners shell
+
+      
+      - name: whoami
+        run: whoami
       - name: Run functional unit tests
         env:
           LC_ALL: en_US.utf8
