@@ -29,25 +29,33 @@ jobs:
       - run: cat /etc/os-release
 
       # Change to non-root
-      - name: Change User
-        run: |
-          su - teflo
-          /bin/bash
+      #- name: Change User
+        #run: |
+          #su - teflo
+          #/bin/bash
       # Runs a set of commands using the runners shell
 
       
-      - name: whoami
-        run: whoami
+      #- name: whoami
+        #run: whoami
 
       - name: Run functional unit tests
         env:
           LC_ALL: en_US.utf8
           LANG: en_US.utf8
-        run: tox -e py3-unit
+        run: |
+          su - teflo
+          whoami
+          /bin/bash
+          tox -e py3-unit
 
       # Runs a set of commands using the runners shell
       - name: Run local scenario unit test
         env:
           LC_ALL: en_US.utf8
           LANG: en_US.utf8
-        run: tox -e py3-scenario
+        run: |
+          su - teflo
+          /bin/bash
+          whoami
+          tox -e py3-scenario
