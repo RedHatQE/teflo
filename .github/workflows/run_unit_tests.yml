@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: ${{ matrix.container }}
-      #options: user --teflo
+      options: user --1001
     strategy:
       matrix:
         container: ['quay.io/junqizhang0/centos7-testing-teflo', 'quay.io/junqizhang0/centos8-testing-teflo']
