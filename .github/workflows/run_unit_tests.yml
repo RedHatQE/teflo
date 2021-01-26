@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: ${{ matrix.container }}
-      options: user --1001
+      #options: user --1001
     strategy:
       matrix:
         container: ['quay.io/junqizhang0/centos7-testing-teflo', 'quay.io/junqizhang0/centos8-testing-teflo']
@@ -32,8 +32,9 @@ jobs:
 
       - name: change user and print
         run: |
-          chmod +x ./.github/chuser.sh
-          ./.github/chuser.sh
+         echo ${GITHUB_HEAD_REF}
+          #chmod +x ./.github/chuser.sh
+          #./.github/chuser.sh
 
       #- name: Run functional unit tests
         #env:
