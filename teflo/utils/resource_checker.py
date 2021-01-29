@@ -34,6 +34,7 @@ import cachetclient.cachet as cachet
 from logging import getLogger
 from teflo.exceptions import TefloError
 from teflo.ansible_helpers import AnsibleService
+from .helper import StatusPageHelper
 
 LOG = getLogger(__name__)
 
@@ -55,7 +56,11 @@ class ResourceChecker(object):
         if getattr(self.scenario, 'resource_check').get('monitored_services', None) and \
                 self.config['RESOURCE_CHECK_ENDPOINT']:
             # Verify dependency check components are supported/valid
-            self.__check_service()
+            if self.config['RESOURCE_CHECK_ENDPOINT'].__contains__("statuspage,io"):
+                info = StatusPageHelper.get_info()
+                self.__check_service_statuspage(info)
+            else:
+                self.__check_service()
         if getattr(self.scenario, 'resource_check').get('playbook', None) or \
                 getattr(self.scenario, 'resource_check').get('script', None):
             self.__check_custom_resource()
@@ -101,6 +106,16 @@ class ResourceChecker(object):
                 except TefloError:
                     raise TefloError("Failed to run resource_check validation for playbook/script. ERROR: %s"
                                       % error_msg)
+
+    def __check_service_statuspage(self):
+        """
+        External Component Dependency Check
+        Throws exception if all components are not UP
+
+        :param scenario: teflo scenario object
+        :param config: teflo config object
+        """
+        pass
 
     def __check_service(self):
         """
