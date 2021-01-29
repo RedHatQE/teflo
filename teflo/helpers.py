@@ -1780,3 +1780,20 @@ def generate_default_template_vars(scenario, notification):
         temp_dict['failed_tasks'] = ','.join(failed_tasks)
 
     return temp_dict
+
+
+class StatusPageHelper(object):
+
+    def __init__(self, proxyserver_url):
+        self.proxyserver_url = proxyserver_url
+
+    def get_info(self):
+        ret = {}
+        try:
+            info = requests.get(self.proxyserver_url + "/components").json()['components']
+            for item in info:
+                if item.get("name") is not None:
+                    ret[item["name"]] = item
+        except Exception:
+            raise TefloError("The url is incorrect for resource check")
+        return ret

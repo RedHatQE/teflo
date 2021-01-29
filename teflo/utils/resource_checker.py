@@ -34,6 +34,7 @@ import cachetclient.cachet as cachet
 from logging import getLogger
 from teflo.exceptions import TefloError
 from teflo.ansible_helpers import AnsibleService
+from ..helpers import StatusPageHelper
 
 LOG = getLogger(__name__)
 
@@ -52,10 +53,15 @@ class ResourceChecker(object):
         self.config = config
 
     def validate_resources(self):
+
         if getattr(self.scenario, 'resource_check').get('monitored_services', None) and \
                 self.config['RESOURCE_CHECK_ENDPOINT']:
             # Verify dependency check components are supported/valid
-            self.__check_service()
+            # TODO Update the link after the link to the proxy server is finalized
+            if not self.config['RESOURCE_CHECK_ENDPOINT'].__contains__("https://internal.status.redhat.com/"):
+                self.__check_service_statuspage()
+            else:
+                self.__check_service()
         if getattr(self.scenario, 'resource_check').get('playbook', None) or \
                 getattr(self.scenario, 'resource_check').get('script', None):
             self.__check_custom_resource()
@@ -101,6 +107,40 @@ class ResourceChecker(object):
                 except TefloError:
                     raise TefloError("Failed to run resource_check validation for playbook/script. ERROR: %s"
                                       % error_msg)
+
+    def __check_service_statuspage(self):
+        """
+        External Component Dependency Check
+        Throws exception if all components are not UP
+        """
+        LOG.info('Running external resource validation')
+
+        component_names = getattr(self.scenario, 'resource_check').get('monitored_services', None)
+        LOG.info(' DEPENDENCY CHECK '.center(64, '-'))
+        comp_valid = True
+        all_valid = True
+        for comp in component_names:
+            comp_valid = True
+            # TODO Add the default proxy server link here for statuspage.io
+            statuspage = StatusPageHelper(proxyserver_url=self.config["RESOURCE_CHECK_ENDPOINT"])
+            for attempts in range(1, 6):
+                info = statuspage.get_info()
+                service_entry = info.get(comp)
+                if service_entry is None:
+                    LOG.info('{:>40} {:<9} - Can\'t Find Service{}'.format(
+                            comp.upper(), 'From Database', attempts))
+                    comp_valid = False
+                    all_valid = comp_valid and all_valid
+                else:
+                    LOG.info('{:>40} {:<9} - Attempts {}'.format(
+                        comp.upper(), ': UP' if service_entry.get("status") == "operational" else ': DOWN', attempts))
+                    all_valid = comp_valid and all_valid
+                    break
+
+        if not all_valid:
+            LOG.error("ERROR: Not all external resources are available or valid. Not running scenario")
+            raise TefloError('Scenario %s will not be run! Not all external resources are available or valid' %
+                                getattr(self.scenario, 'name'))
 
     def __check_service(self):
         """
