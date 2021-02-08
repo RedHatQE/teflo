@@ -53,12 +53,17 @@ class ResourceChecker(object):
         self.config = config
 
     def validate_resources(self):
+
         if getattr(self.scenario, 'resource_check').get('monitored_services', None) and \
                 self.config['RESOURCE_CHECK_ENDPOINT']:
             # Verify dependency check components are supported/valid
-            if self.config['RESOURCE_CHECK_ENDPOINT'].__contains__("statuspage,io"):
-                info = StatusPageHelper.get_info()
-                self.__check_service_statuspage(info)
+            # print(self.config['RESOURCE_CHECK_ENDPOINT'])
+            kerberos = None
+            if self.config['RESOURCE_CHECK_ENDPOINT'].__contains__("statuspage.io"):
+                for item in self.config['CREDENTIALS']:
+                    if item["name"].__contains__("kerberos"):
+                        kerberos = item
+                self.__check_service_statuspage(kerberos)
             else:
                 self.__check_service()
         if getattr(self.scenario, 'resource_check').get('playbook', None) or \
@@ -107,7 +112,7 @@ class ResourceChecker(object):
                     raise TefloError("Failed to run resource_check validation for playbook/script. ERROR: %s"
                                       % error_msg)
 
-    def __check_service_statuspage(self):
+    def __check_service_statuspage(self,kerberos):
         """
         External Component Dependency Check
         Throws exception if all components are not UP
@@ -115,7 +120,58 @@ class ResourceChecker(object):
         :param scenario: teflo scenario object
         :param config: teflo config object
         """
-        pass
+
+        """
+        External Component Dependency Check
+        Throws exception if all components are not UP
+
+        :param scenario: teflo scenario object
+        :param config: teflo config object
+        """
+
+        # External Dependency Check
+        # Available components to check ci-rhos, zabbix-sysops, brew, covscan
+        #                             polarion, rpmdiff, umb, errata, rdo-cloud
+        #                             gerrit
+
+        # Verify dependency check components are supported/valid then
+        # Check status (UP/DOWN)
+        # Only check if dependency check endpoint set and components given
+        # Else it is ignored
+
+        LOG.info('Running external resource validation')
+
+        component_names = getattr(self.scenario, 'resource_check').get('monitored_services', None)
+        LOG.info(' DEPENDENCY CHECK '.center(64, '-'))
+        comp_valid = True
+        all_valid = True
+        for comp in component_names:
+            comp_valid = True
+            for attempts in range(1,6):
+                import requests
+                r =requests.get('http://teflo-statuspageio-proxy-server-git-carbon.apps.ocp4.prod.psi.redhat.com/getinfo',headers={"username":kerberos.get("username"),"password":kerberos.get("password")})
+                info = r.json()
+                def find(name):
+                    for item in info:
+                        if item.get("name") == name:
+                            return item.get('status')
+
+                status = find(comp)
+                if status is None:
+                    LOG.info('{:>40} {:<9} - Attempts {}'.format(
+                            comp.upper(), ': INVALID', attempts))
+                    comp_valid =  False
+                    all_valid = comp_valid and all_valid
+                else:
+                    LOG.info('{:>40} {:<9} - Attempts {}'.format(
+                    comp.upper(), ': UP' if status == "operational" else ': DOWN', attempts))
+                    all_valid = comp_valid and all_valid
+                    break
+                    
+        if not all_valid:
+            LOG.error("ERROR: Not all external resources are available or valid. Not running scenario")
+            raise TefloError('Scenario %s will not be run! Not all external resources are available or valid' %
+                                getattr(self.scenario, 'name'))
 
     def __check_service(self):
         """
