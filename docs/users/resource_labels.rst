@@ -1,7 +1,7 @@
 Using Resource Labels
 =====================
 
-Teflo 1.6.0 provides users with the ability to apply labels to each of the resources in the scenario descriptor file
+Teflo provides users with the ability to apply labels to each of the resources in the scenario descriptor file
 (SDF). This can be done by adding a key **labels** to the resources (assets, actions, executes,reports) in the SDF
 This is an optional feature.
 
@@ -165,8 +165,8 @@ in the SDF
    $ teflo show -s resource_labels.yml --list-labels
 
     --------------------------------------------------
-    Teflo Framework v1.6.0
-    Copyright (C) 2017 Red Hat, Inc.
+    Teflo Framework v1.0.0
+    Copyright (C) 2020 Red Hat, Inc.
     --------------------------------------------------
     2020-05-07 01:06:37,235 WARNING Scenario workspace was not set, therefore the workspace is automatically assigned to the current working directory. You may experience problems if files needed by teflo do not exists in the scenario workspace.
     2020-05-07 01:06:37,260 INFO -------------------------------------------------------------------------------

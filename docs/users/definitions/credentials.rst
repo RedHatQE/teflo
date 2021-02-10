@@ -153,6 +153,16 @@ your credential section in your teflo.cfg file.
         - String
         - False
 
+    *   - project_id
+        - The id of your OpenStack project.
+        - String
+        - False
+
+    *   - project_domain_id
+        - The id of the project domain.
+        - String
+        - False
+
 
 .. code-block:: bash
 
@@ -163,6 +173,8 @@ your credential section in your teflo.cfg file.
   password=<password>
   region=<region>
   domain_name=<domain_name>
+  project_id=<project id>
+  project_domain_id=<project_domain_id>
 
 The following is an example of a resource in the scenario descriptor file
 that references this credential:

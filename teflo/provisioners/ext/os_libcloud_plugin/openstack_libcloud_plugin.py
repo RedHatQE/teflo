@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2017 Red Hat, Inc.
+# Copyright (C) 2020 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
     Teflo's own OpenStack provisioner. This module handles everything from
     authentication to creating/deleting resources in OpenStack.
 
-    :copyright: (c) 2017 Red Hat, Inc.
+    :copyright: (c) 2020 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 import random
@@ -120,7 +120,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
             self._driver.ex_list_networks()
         except InvalidCredsError as ex:
             raise OpenstackProviderError(
-                'Authentication failed: %s' % ex.message
+                'Authentication failed: %s' % ex
             )
 
     def unset_driver(self):
@@ -406,7 +406,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
                 self.logger.info('Successfully booted node %s.' % name)
                 return node
             except Exception as ex:
-                self.logger.error(ex.message)
+                self.logger.error(ex)
                 wait_time = random.randint(10, MAX_WAIT_TIME)
                 self.logger.info('Attempt %s of %s: retrying in %s seconds' %
                                  (attempt, MAX_ATTEMPTS, wait_time))
@@ -439,7 +439,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
                 self.logger.info('Successfully deleted node %s.' % node.name)
                 return
             except Exception as ex:
-                self.logger.error(ex.message)
+                self.logger.error(ex)
                 wait_time = random.randint(10, MAX_WAIT_TIME)
                 self.logger.info('Attempt %s of %s: retrying in %s seconds' %
                                  (attempt, MAX_ATTEMPTS, wait_time))
@@ -490,7 +490,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         try:
             self.wait_for_building_finish(node)
         except Exception as ex:
-            self.logger.error(ex.message)
+            self.logger.error(ex)
             self.logger.error('Node %s did not finish building.' % node.name)
             self.delete_node(node)
             raise OpenstackProviderError('Node did not finish building.')
@@ -499,7 +499,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         try:
             ip = self.attach_floating_ip(node, fip)
         except Exception as ex:
-            self.logger.error(ex.message)
+            self.logger.error(ex)
             self.logger.error('Failed to attach fip to node %s.' % node.name)
             self.delete_node(node)
             raise OpenstackProviderError('Failed to attach fip.')
@@ -535,7 +535,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
             # delete node
             self.delete_node(_node)
         except Exception as ex:
-            self.logger.error(ex.message)
+            self.logger.error(ex)
             raise OpenstackProviderError('Unable to delete node %s' % ex)
         finally:
             self.unset_driver()
@@ -686,8 +686,8 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         provider class handles all interactions with the provider.
         """
         self.logger.info('Tearing down machines from %s', self.__class__)
-
-        self._delete(self.provider_params.get('hostname'))
+        # using hostname attribute of the asset to perform delete operation
+        self._delete(getattr(self.asset, 'hostname', None))
 
     def validate(self):
 

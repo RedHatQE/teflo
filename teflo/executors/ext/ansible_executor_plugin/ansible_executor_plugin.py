@@ -113,17 +113,17 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
             elif validrc:
                 if result['rc'] not in validrc:
                     self.status = 1
-                    self.logger.error('Shell command %s failed. Host=%s rc=%d Error: %s'
+                    self.logger.error('Command %s failed. Host=%s rc=%d Error: %s'
                                       % (shell['command'], result['host'], result['rc'], result['err']))
 
             else:
                 if result['rc'] != 0:
                     self.status = 1
-                    self.logger.error('Shell command %s failed. Host=%s rc=%d Error: %s'
+                    self.logger.error('Command %s failed. Host=%s rc=%d Error: %s'
                                       % (shell['command'], result['host'], result['rc'], result['err']))
 
             if self.status == 1:
-                raise ArchiveArtifactsError('Script %s failed to run successfully!' % shell['name'])
+                raise ArchiveArtifactsError('Command %s failed to run ' % shell['name'])
             else:
                 self.logger.info('Successfully executed command : %s' % shell['command'])
 
@@ -156,8 +156,7 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
                     self.logger.error('Script %s failed. Host=%s rc=%d Error: %s'
                                       % (script['name'], result['host'], result['rc'], result['err']))
             if self.status == 1:
-                raise ArchiveArtifactsError('Script %s failed to run '
-                                            'successfully!' % script['name'])
+                raise ArchiveArtifactsError('Script %s failed to run' % script['name'])
             else:
                 self.logger.info('Successfully executed script : %s' % script['name'])
 
@@ -176,7 +175,7 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
                                  % playbook['name'])
             elif results[0] != 0:
                 self.status = 1
-                raise ArchiveArtifactsError('Playbook %s failed to run successfully!' % playbook['name'])
+                raise ArchiveArtifactsError('Playbook %s failed to run' % playbook['name'])
             else:
                 self.logger.info('Successfully executed playbook : %s' % playbook['name'])
 

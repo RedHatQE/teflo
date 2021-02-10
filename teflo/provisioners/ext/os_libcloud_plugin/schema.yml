@@ -43,3 +43,9 @@ mapping:
       region:
         type: str
         required: False
+      project_id:
+        type: str
+        required: False
+      project_domain_id:
+        type: str
+        required: False

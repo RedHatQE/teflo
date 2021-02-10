@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2017 Red Hat, Inc.
+# Copyright (C) 2020 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
     Module containing helper classes and methods which will be used by the classes and methods in
     orchestrate and execute modules
 
-    :copyright: (c) 2017 Red Hat, Inc.
+    :copyright: (c) 2020 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 
@@ -45,7 +45,6 @@ from .static.playbooks import GIT_CLONE_PLAYBOOK, SYNCHRONIZE_PLAYBOOK, \
     ADHOC_SHELL_PLAYBOOK, ADHOC_SCRIPT_PLAYBOOK
 from .exceptions import AnsibleServiceError
 from ansible.parsing.vault import VaultSecret
-import sys
 from .exceptions import AnsibleVaultError
 from ._compat import RawConfigParser, VaultLib, ansible_ver, is_py2
 

@@ -1,4 +1,23 @@
-Version 1.0.0 (2020-11-19)
+Version 1.0.1 (2021-02-10)
+--------------------------
+
+Enhancements
+~~~~~~~~~~~~
+* Update teflo config code to not make defaults section mandatory
+* For Openstack, display instance IDs
+* Alter error message to not contain the words "fail" and "success" simultaneously
+* The openstack lincloud schema needs two additional keys project_id and project_domain_id
+
+Bug Fixes
+~~~~~~~~~
+* asset delete fails when using native provisioner (os libcloud) without provider attribute
+
+Documentation
+~~~~~~~~~~~~~
+* Updated provision and examples docs to remove provider key and update examples
+* Updated contribution page to add plugin template info
+
+Version 1.0.0 (2021-01-07)
 --------------------------
 
 This is the first version of Teflo project (formerly known as Carbon)

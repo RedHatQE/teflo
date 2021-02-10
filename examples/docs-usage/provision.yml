@@ -1,16 +1,16 @@
 ---
 provision:
 - name: ci_test_client_b
-  role: client, vnc
-  provider: beaker
+  groups: client, vnc
+  provisioner: beaker-client
 
 ---
 provision:
 - name: ci_test_client_b
-  role:
+  groups:
     - client
     - vnc
-  provider: beaker
+  provisioner: beaker-client
 
 ---
 provision:
@@ -18,7 +18,7 @@ provision:
   groups:
   - client
   - vnc
-  provider: beaker
+  provisioner: beaker-client
 
 ---
 name: common-provision
@@ -29,7 +29,7 @@ provision:
   groups:
   - client
   - vnc
-  provider: beaker
+  provisioner: beaker-client
 
 ---
 name: common-provision
@@ -38,7 +38,7 @@ description: 'common provisioning of resources used by the rest of the scenarios
 provision:
 - name: ci_test_client_a
   description:
-  role:
+  groups:
   - client
   - test_driver
   provisioner: linchpin-wrapper
@@ -72,20 +72,19 @@ description: define a teflo host beaker resource to be provisioned
 
 provision:
   - name: beaker-node
-    role: node
-    provider:
-      name: beaker
-      credential: beaker-creds
-      arch: x86_64
-      distro: RHEL-7.5
-      variant: Server
-      whiteboard: teflo beaker resource example
-      jobgroup: '{{ jobgroup }}'
-      username: '{{ username }}'
-      password: '{{ password }}'
-      host_requires_options:
-        - "force={{ host_fqdn }}"
-      ssh_key: "keys/{{ key_name }}"
+    groups: node
+    provisioner: beaker-client
+    credential: beaker-creds
+    arch: x86_64
+    distro: RHEL-7.5
+    variant: Server
+    whiteboard: teflo beaker resource example
+    jobgroup: '{{ jobgroup }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    host_requires_options:
+      - "force={{ host_fqdn }}"
+    ssh_key: "keys/{{ key_name }}"
     ansible_params:
       ansible_user: root
       ansible_ssh_private_key_file: "keys/{{ key_name }}"
@@ -98,16 +97,15 @@ description: define a teflo host openstack resource to be provisioned
 
 provision:
   - name: openstack-node
-    role: node
-    provider:
-      name: openstack
-      credential: openstack-creds
-      image: rhel-7.5-server-x86_64-released
-      flavor: m1.small
-      networks:
-        - '{{ network }}'
-      floating_ip_pool: "10.8.240.0"
-      keypair: '{{ keypair }}'
+    groups: node
+    provisioner: openstack-libcloud
+    credential: openstack-creds
+    image: rhel-7.5-server-x86_64-released
+    flavor: m1.small
+    networks:
+      - '{{ network }}'
+    floating_ip_pool: "10.8.240.0"
+    keypair: '{{ keypair }}'
     ansible_params:
       ansible_user: cloud-user
       ansible_ssh_private_key_file: "keys/{{ keypair }}"
