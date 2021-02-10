@@ -187,18 +187,57 @@ Once you've completed the above you're good to go! All that is left is
 to submit your changes to your branch and create a new PR against the develop branch
 
 Submitting the PR
+~~~~~~~~~~~~~~~~~
 
 Once a set of commits for the feature have been completed and tested. It is time to
 submit a Pull Request. Please follow the github article, `Creating a pull request
 <https://help.github.com/articles/creating-a-pull-request/>`_.
 
-Submit the Pull Request (PR) against the ``develop`` branch.
+Submit the Pull Request (PR) against the **develop** branch.
 
 Once the PR is created, it will need to be reviewed, and CI automation testing
 must be executed. It is possible that additional commits will be needed to
 pass the tests, address issues in the PR, etc.
 
 Once the PR is approved, it can be merged.
+
+You can also install the github cli and send PRs using gh cli
+More information on how to install and where to find binaries is `here <https://github.com/cli/cli/releases>`__
+
+When using the cli first time from your terminal you may have to authenticate your device.
+If web option is used it opens up a browser to put in the given code
+
+.. code-block:: bash
+
+    $ gh auth  login --web
+    - Logging into github.com
+
+    ! First copy your one-time code: ABCD-ABCD
+    - Press Enter to open github.com in your browser...
+    This tool has been deprecated, use 'gio open' instead.
+    See 'gio help open' for more info.
+
+    ✓ Authentication complete. Press Enter to continue...
+
+    ✓ Logged in as user123
+
+Once you are authenticated you can send in the PR, using the create command, It will ask certain questions
+and then ask you to submit the PR.
+
+More information on how to use `gh cli <https://cli.github.com/manual/>`_
+
+.. code-block:: bash
+
+   $ gh pr create --title "Feature umb importer" --reviewer rujutashinde --base develop
+    Warning: 9 uncommitted changes
+    ? Where should we push the 'tkt_218' branch? Skip pushing the branch
+
+    Creating pull request for tkt_218 into develop in RedHatQE/teflo
+
+    ? Body <Received>
+    ? What's next? Submit
+    https://github.com/RedHatQE/teflo/pull/01
+
 
 .. note:: Merging is currently done only by the maintainers of the repo
           This will be opened up to contributors at a future time
@@ -273,13 +312,114 @@ This make target is actually executing the following tox environments:
 
 .. _plugin_dev:
 
-[WIP] How to write an plugin for teflo
---------------------------------------
-.. note::
-       This is still a work in progress. This space will be updated soon with cleaner instructions on plugin
-       development
+How to write an plugin for teflo
+--------------------------------
 
-For developers who wish to put together their own plugins can follow these guidelines:
+For developers who wish to put together their own plugins can use Teflo's plugin templates to do so.
+The plugin templates creates a directory with required imports from teflo project based on the
+plugin type to be created ( provisioner/orchestrator/executor/importer/notification).
+Once templates are in place developers can then go ahead with actual plugin work
+
+How to use plugin templates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To use this template to create your plugin folder:
+
+1. install cookiecutter
+
+.. code-block:: bash
+
+      pip install cookiecutter
+
+2. Clone the teflo_examples repo
+
+.. code-block:: bash
+
+      git clone git@github.com:RedHatQE/teflo_examples.git
+
+3. Go to the space where you want your plugin folder to be created then run the command
+
+.. code-block:: bash
+
+    cookiecutter <path to the cloned teflo_examples repo>/teflo_plugin_template
+
+4. When you run this you will be prompted to provide values for the variables in the
+   cookiecutter json file, Below are the variables and their description.
+   User should provide the values it needs, else the default values will be taken
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+
+    *   - Variable
+        - Description
+        - Default Value
+
+    *   - teflo_plugin_type
+        - type of teflo plugin to be created
+          (provisioner or orchestrator or executor or importer or notification)
+        - provisioner
+
+    *   - directory_name
+        - name to be give to the plugin repo directory.
+        - teflo_provisionerX_plugin
+
+    *   - plugin_name
+        - name of the python file where your actual plugin code will reside
+        - provx_plugin
+
+
+    *   - plugin_class_name
+        - the name of the class within the python file
+        - ProvXProvisionerPlugin
+
+    *   - test_class_name
+        - name to be given to the unit test file under tests folder.
+          This is auto generated if left blank
+        - test_provx_plugin
+
+
+    *   - plugin_description
+        - Plugins description that goes into the setup.py
+        - teflo provisioner plugin
+
+    *   - jenkins_ci_job_link
+        - jenkins ci job link once you have created that.
+          This gets  updated in the jenkins/Jenkinsfile
+        - your ci job link
+
+    *   - plugin_url
+        - plugin url needed to start the ci job. This gets  updated in the jenkins/Jenkinsfile
+        - plugin url on gitlab/github
+
+    *   - authors
+        - The value that gets updated in the AUTHORS file
+        - CCIT tools dev team <ci-ops-qe@redhat.com>
+
+.. note::
+
+    Here the variables **jenkins_ci_job_link** and **plugin_url** can be left default, and then these values can be updated
+    in the jenkins/Jenkinsfile once user has the CI job url and repo url ready.
+    These variables are meant to be more as a place holder for users to know where they can update
+    later
+
+.. note::
+
+    Read `here <https://cookiecutter.readthedocs.io/en/1.7.2/index.html>`__ about cookiecutter package
+
+Example
+~~~~~~~
+
+`Example <https://github.com/RedHatQE/teflo_examples/tree/master/teflo_plugin_template#example>`__ to use the plugin template
+
+
+Template Guidelines
+~~~~~~~~~~~~~~~~~~~
+.. note::
+
+    The above plugin template repo was created based on the following guidelines. These are meant for developers
+    to understand. It is recommended for developers to make use of the template while working
+    on Teflo Plugins
 
 1. The new plugin will need to import one of these Teflo classes based on the plugin they wish to develop
    Teflo Plugin classes:

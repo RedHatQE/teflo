@@ -13,4 +13,13 @@
 
     compat_matrix
 
+.. toctree::
+    :maxdepth: 1
+    :caption: CHANGELOG
+    :hidden:
+
+    changes
+
+
+
 

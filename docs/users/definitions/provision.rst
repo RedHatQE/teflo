@@ -7,9 +7,7 @@ Overview
 The input for provisioning will depend upon the type of resource you are
 trying to provision. The current support for provisioning resources are:
 :ref:`Beaker<beaker_provisioning>` and :ref:`OpenStack<openstack_provisioning>`.
-The Beaker and OpenStack resources are provisioned with Teflo's native
-provisioners but as of 1.2.0, these resources can also be provisioned using
-the :ref:`Linchpin<linchpin_provisioning>` provisioner.
+Resources can also be provisioned using the :ref:`Linchpin<linchpin_provisioning>` provisioner.
 
 Provision Resource
 ++++++++++++++++++
@@ -23,7 +21,7 @@ required or optional:
     ---
     provision:
       - name: <name>
-        role: <role>
+        groups: <groups>
         provisioner: <provisioner>
         metadata: <dict_key_values>
         ansible_params: <dict_key_values>
@@ -43,8 +41,8 @@ required or optional:
         - String
         - True
 
-    *   - role/groups
-        - The names of the roles or groups for the asset. Used to
+    *   - groups
+        - The names of the groups for the asset. Used to
           assign host assets to groups when generating the Ansible
           inventory files.
         - List
@@ -78,8 +76,10 @@ This key is will be a requirement to specify the name of provisioner plugin bein
 Provider
 ++++++++
 
-The provider key is no longer a requirement for all provisioners. Going forward this
-key is only required for the **bkr-client** and **openstack-libcloud** provisioners.
+.. attention::
+
+            The provider key is no longer a requirement for all provisioners. Going forward this
+            key is only supported for the **beaker-client** and **openstack-libcloud** provisioners.
 
 Groups
 +++++++
@@ -96,7 +96,7 @@ do not and should not be assigned a groups to avoid polluting the Ansible invent
 with empty groups.
 
 You can associate a number of groups to a host in a couple of different ways.
-First is to define your roles in a comma separated string
+First is to define your groups in a comma separated string
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 1-5
@@ -127,39 +127,37 @@ Beaker Resource
 +++++++++++++++
 
 The following shows all the possible keys for defining a
-provisioning resource for Beaker using the **bkr-client** provisioner:
+provisioning resource for Beaker using the **beaker-client** provisioner:
 
 .. code-block:: yaml
 
     ---
     provision:
       - name: <name>
-        role: <role>
-        provisioner: <provisioner>
-        provider:
-          name: beaker
-          credential: <credential>
-          arch: <arch>
-          variant: <variant>
-          family: <family>
-          distro: <os_distro>
-          whiteboard: <whiteboard>
-          jobgroup: <group_id>
-          tag: <tag>
-          host_requires_options: [<list of host options>]
-          key_values: [<list of key/value pairs defining the host>]      
-          distro_requires_options: [<list of distro options>]
-          virtual_machine: <True or False>
-          virt_capable: <True or False>
-          priority: <priority of the job>
-          retention_tag: <retention tag>
-          timeout: <timeout val for Beaker job>
-          kernel_options: [<list of kernel options>]
-          kernel_post_options: [<list of kernel post options>]
-          kickstart: < Filename of kickstart file>
-          ignore_panic: <True or False>
-          taskparam: [<list of task parameter settings>]
-          ksmeta: [<list of kick start meta OPTIONS>]
+        groups: <groups>
+        provisioner: beaker-client
+        credential: <credential>
+        arch: <arch>
+        variant: <variant>
+        family: <family>
+        distro: <os_distro>
+        whiteboard: <whiteboard>
+        jobgroup: <group_id>
+        tag: <tag>
+        host_requires_options: [<list of host options>]
+        key_values: [<list of key/value pairs defining the host>]
+        distro_requires_options: [<list of distro options>]
+        virtual_machine: <True or False>
+        virt_capable: <True or False>
+        priority: <priority of the job>
+        retention_tag: <retention tag>
+        timeout: <timeout val for Beaker job>
+        kernel_options: [<list of kernel options>]
+        kernel_post_options: [<list of kernel post options>]
+        kickstart: < Filename of kickstart file>
+        ignore_panic: <True or False>
+        taskparam: [<list of task parameter settings>]
+        ksmeta: [<list of kick start meta OPTIONS>]
         metadata: <dict_key_values>
         ansible_params: <dict_key_values>
 
@@ -172,11 +170,6 @@ provisioning resource for Beaker using the **bkr-client** provisioner:
         - Description
         - Type
         - Required
-
-    *   - name
-        - The name to identify the provider (beaker).
-        - String
-        - True
 
     *   - credential
         - The name of the credentials to use to boot node. This is the one
@@ -310,7 +303,7 @@ Example
 +++++++
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
-    :lines: 68-91
+    :lines: 68-90
 
 .. _openstack_provisioning:
 
@@ -335,18 +328,16 @@ resource for OpenStack using the **openstack-libcloud** provisioner:
     ---
     provision:
       - name: <name>
-        role: <role>
-        provisioner: <provisioner>
+        groups: <groups>
+        provisioner: openstack-libcloud
         metadata: <dict_key_values>
         ansible_params: <dict_key_values>
-        provider:
-          credential: openstack-creds
-          name: openstack
-          image: <image>
-          flavor: <flavor>
-          networks: <networks>
-          floating_ip_pool: <floating_ip_pool>
-          keypair: <keypair>
+        credential: openstack-creds
+        image: <image>
+        flavor: <flavor>
+        networks: <networks>
+        floating_ip_pool: <floating_ip_pool>
+        keypair: <keypair>
 
 .. list-table::
     :widths: auto
@@ -356,11 +347,6 @@ resource for OpenStack using the **openstack-libcloud** provisioner:
         - Description
         - Type
         - Required
-
-    *   - name
-        - The name of the provider (openstack).
-        - String
-        - True
 
     *   - credential
         - The name of the credentials to use to boot node. This is the one
@@ -397,7 +383,7 @@ Example
 +++++++
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
-    :lines: 94-113
+    :lines: 94-111
 
 Provisioning Openstack Assets using teflo_openstack_client_plugin
 ------------------------------------------------------------------
@@ -430,8 +416,13 @@ Provisioning Assets with Linchpin
 Usera can provision assets using all Linchpin supported providers
 using the Linchpin plugin.
 
-First the plugin must be installed. Refer to the teflo `installation <../install.html>`__ document on
-how you can install the plugin as an extra package.
+First the plugin must be installed.
+
+User can now install this plugin from Teflo
+
+.. code-block:: bash
+
+    $ pip install teflo[linchpin-wrapper]
 
 You can also refer to the
 `plugin <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md>`__
@@ -561,7 +552,7 @@ By default count value is 1.
    
     provision:
     - name: openstack-node
-      role: node
+      groups: node
       provisioner: linchpin-wrapper
       resource_group_type: openstack
       resource_definitions:
@@ -579,7 +570,7 @@ the output of results.yml
 
     provision:
     - name: openstack-node_0
-      role: node
+      groups: node
       provisioner: linchpin-wrapper
       resource_group_type: openstack
       resource_definitions:
@@ -592,7 +583,7 @@ the output of results.yml
            count: 2
 
     - name: openstack-node_1
-      role: node
+      groups: node
       provisioner: linchpin-wrapper
       resource_group_type: openstack
       resource_definitions:
@@ -612,7 +603,7 @@ provisioning. For those that want Teflo to continue to generate the Inventory
 file and use the Linchpin provisioner as just a pure provisioner can do so
 by specifying the following keys
 
- - roles/group
+ - groups
  - ansible_params
 
 Refer to Example 2 above in the examples section.
@@ -622,9 +613,11 @@ For those that want to use Linchpin to generate the inventory file. You must do 
  - Specify the **layout** key and either provide a dictionary of a Linchpin layout or provide
    a path to a layout file in your workspace.
 
- - Do NOT specify **roles/group** and **ansible_params** keys
+ - Do NOT specify **groups** and **ansible_params** keys
 
-Refer to examples 6 and 8 in the Linchpin plugin documents to see the two variations.
+Refer to `example 6 <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#example-6>`__
+and `example 8 <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#example-8>`__
+in the Linchpin plugin documents to see the two variations.
 
 Defining Static Machines
 ------------------------
@@ -639,7 +632,7 @@ Example
 +++++++
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
-    :lines: 116-126
+    :lines: 114-124
 
 There may also be a scenario where you want to run cmds or scripts on the
 local system instead of the provisioned resources.  Refer to the
