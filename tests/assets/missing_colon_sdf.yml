@@ -1,0 +1,20 @@
+---
+
+name: test missing colon
+description: 
+
+provision
+  - name: localhost
+    role: local
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+
+execute:
+  - name: run test
+    description: "Run test"
+    executor: runner
+    hosts: localhost
+    shell:
+      - command: "ls"
+        chdir: /tmp

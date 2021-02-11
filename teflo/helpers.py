@@ -217,7 +217,6 @@ def get_orchestrators_plugin_list():
 
 # Using entry point to get the executors defined in teflo's setup.py file
 def get_executors_plugin_classes():
-
     """Return all executor plugin classes discovered by teflo
     :return: The list of executor plugin classes
     """
@@ -369,7 +368,8 @@ def schema_validator(schema_data, schema_files, schema_creds=None, schema_ext_fi
         schema.update({k: v for k, v in schema_data.items() if k != 'credential'})
         creds = {k: v for k, v in schema_data.items() if k == 'credential'}
         if creds:
-            creds = dict(credential={x: y for k, v in creds.items() for x, y in v.items() if x != 'name'})
+            creds = dict(
+                credential={x: y for k, v in creds.items() for x, y in v.items() if x != 'name'})
             schema.update(creds)
 
     c = Core(source_data=schema,
@@ -630,8 +630,9 @@ def filter_notifications_on_trigger(state, notify_list, passed_tasks, failed_tas
         notify_list = [res for res in notify_list if not getattr(res, 'on_demand')]
 
     if state == 'on_start':
-        return [res for res in notify_list if getattr(res, 'on_start') and len(set(getattr(res, 'on_tasks', [])).
-                                                                               intersection(passed_tasks)) != 0]
+        return [res for res in notify_list if
+                getattr(res, 'on_start') and len(set(getattr(res, 'on_tasks', [])).
+                                                 intersection(passed_tasks)) != 0]
     elif state == 'on_complete':
         ocl = list()
 
@@ -639,22 +640,28 @@ def filter_notifications_on_trigger(state, notify_list, passed_tasks, failed_tas
         nl = [res for res in notify_list if not getattr(res, 'on_start')]
 
         # not executing if on_success but there are failed tasks
-        passed = [nt for nt in nl if getattr(nt, 'on_success') is True and getattr(nt, 'on_failure') is False]
-        passed = [nt for nt in passed if len(failed_tasks) == 0 and len(set(getattr(nt, 'on_tasks')).
-                                                                        intersection(passed_tasks)) != 0]
+        passed = [nt for nt in nl if
+                  getattr(nt, 'on_success') is True and getattr(nt, 'on_failure') is False]
+        passed = [nt for nt in passed if
+                  len(failed_tasks) == 0 and len(set(getattr(nt, 'on_tasks')).
+                                                 intersection(passed_tasks)) != 0]
         ocl.extend(passed)
 
         # not executing if on_failure but there are passed tasks
-        failed = [nt for nt in nl if getattr(nt, 'on_failure') is True and getattr(nt, 'on_success') is False]
-        failed = [nt for nt in failed if len(passed_tasks) == 0 and len(set(getattr(nt, 'on_tasks')).
-                                                                        intersection(failed_tasks)) != 0]
+        failed = [nt for nt in nl if
+                  getattr(nt, 'on_failure') is True and getattr(nt, 'on_success') is False]
+        failed = [nt for nt in failed if
+                  len(passed_tasks) == 0 and len(set(getattr(nt, 'on_tasks')).
+                                                 intersection(failed_tasks)) != 0]
         ocl.extend(failed)
 
         # not executing if on_failure or on_success
-        mixed = [nt for nt in nl if getattr(nt, 'on_success') is True and getattr(nt, 'on_failure') is True]
+        mixed = [nt for nt in nl if
+                 getattr(nt, 'on_success') is True and getattr(nt, 'on_failure') is True]
         mixed = [nt for nt in mixed if len(set(getattr(nt, 'on_tasks')).
-                                           intersection(failed_tasks)) != 0 or len(set(getattr(nt, 'on_tasks')).
-                                                                                   intersection(passed_tasks)) != 0]
+                                           intersection(failed_tasks)) != 0 or len(
+            set(getattr(nt, 'on_tasks')).
+            intersection(passed_tasks)) != 0]
         ocl.extend(mixed)
 
         return ocl
@@ -672,10 +679,12 @@ def filter_resources_labels(res_list, teflo_options):
     """
 
     if teflo_options and teflo_options.get('labels', ()):
-        return[res for res in res_list if set(getattr(res, 'labels')).intersection(set(teflo_options.get('labels')))]
+        return [res for res in res_list if
+                set(getattr(res, 'labels')).intersection(set(teflo_options.get('labels')))]
     elif teflo_options and teflo_options.get('skip_labels', ()):
         return [res for res in res_list
-                if not set(getattr(res, 'labels')).intersection(set(teflo_options.get('skip_labels')))]
+                if
+                not set(getattr(res, 'labels')).intersection(set(teflo_options.get('skip_labels')))]
     else:
         return res_list
 
@@ -840,7 +849,8 @@ def ssh_retry(obj):
         # put everything into a list for rather than doing repetative if else statements
         # especially now that the inventory 'groups' property can be a string list of hosts
         # in the master inventory vs what is in the unique inventory
-        host_groups = [kwargs['extra_vars']['hosts']] if kwargs['extra_vars']['hosts'].find(', ') == -1 \
+        host_groups = [kwargs['extra_vars']['hosts']] if kwargs['extra_vars']['hosts'].find(
+            ', ') == -1 \
             else kwargs['extra_vars']['hosts'].split(', ')
         inv_groups = args[0].inventory.groups
         for host_group in host_groups:
@@ -850,7 +860,8 @@ def ssh_retry(obj):
                 return result
             if host_group not in inv_groups:
                 raise HelpersError(
-                    'ERROR: Unexpected error - Group %s not found in inventory file!' % kwargs['extra_vars']['hosts']
+                    'ERROR: Unexpected error - Group %s not found in inventory file!' %
+                    kwargs['extra_vars']['hosts']
                 )
 
         def can_connect(group):
@@ -976,6 +987,7 @@ class DataInjector(object):
     and update the string with the correct information. This makes it helpful
     when orchestrate/execute tasks require data from the hosts itself.
     """
+
     def __init__(self, hosts):
         """Constructor.
 
@@ -1180,7 +1192,8 @@ def find_artifacts_on_disk(data_folder, report_name, art_location=[]):
     regquery = build_artifact_regex_query(report_name)
 
     # search the artifact location dictionary if provided
-    fnd_paths.extend(search_artifact_location_dict(art_location, report_name, data_folder, regquery))
+    fnd_paths.extend(
+        search_artifact_location_dict(art_location, report_name, data_folder, regquery))
 
     # attempt to walk the directory as well in case there was anything else the user wanted collected
     walked_list = walk_results_directory(data_folder, fnd_paths)
@@ -1233,7 +1246,8 @@ def search_artifact_location_dict(art_locations, report_name, data_folder, reg_q
         artifacts_path = [m.string for m in matches if m]
 
         for fn in artifacts_path:
-            LOG.debug('Found the following artifact, %s, that matched %s in artifact_location' % (fn, report_name))
+            LOG.debug('Found the following artifact, %s, that matched %s in artifact_location' % (
+            fn, report_name))
 
         # Check the path in data_folder
         artifacts_path = [os.path.abspath(os.path.join(data_folder, p))
@@ -1478,8 +1492,9 @@ def validate_cli_scenario_option(ctx, scenario, vars_data=None):
     try:
         scenario_stream = validate_render_scenario(scenario, vars_data)
         return scenario_stream
-    except yaml.YAMLError:
+    except yaml.YAMLError as err:
         click.echo('Error loading updated scenario data!')
+        click.echo(err.problem_mark)
         ctx.exit()
     except HelpersError:
         click.echo('Included File is invalid or Include section is empty.'
@@ -1507,7 +1522,9 @@ def create_individual_testrun_results(artifact_locations, config):
     # build the regex query to get only xml files
     regquery = build_artifact_regex_query('*.xml')
     # search the artifact location dictionary provided to search in the .results folder
-    fnd_paths.extend(search_artifact_location_dict(artifact_locations, '*.xml', config.get('RESULTS_FOLDER'), regquery))
+    fnd_paths.extend(
+        search_artifact_location_dict(artifact_locations, '*.xml', config.get('RESULTS_FOLDER'),
+                                      regquery))
     try:
         for path in fnd_paths:
             trun = dict()
@@ -1528,16 +1545,22 @@ def create_individual_testrun_results(artifact_locations, config):
                 for test in temp:
                     trun['total_tests'] = trun['total_tests'] + len(test.findall('testcase'))
                     trun['failed_tests'] = trun['failed_tests'] + len([testcase.find('failure')
-                                                                        for testcase in test.findall('testcase')
-                                                                        if testcase.findall('failure')])
+                                                                       for testcase in
+                                                                       test.findall('testcase')
+                                                                       if
+                                                                       testcase.findall('failure')])
                     trun['skipped_tests'] = trun['skipped_tests'] + len([testcase.find('skipped')
-                                                                         for testcase in test.findall('testcase')
-                                                                         if testcase.findall('skipped')])
-                    trun['passed_tests'] = trun['total_tests'] - trun['failed_tests'] - trun['skipped_tests']
+                                                                         for testcase in
+                                                                         test.findall('testcase')
+                                                                         if testcase.findall(
+                            'skipped')])
+                    trun['passed_tests'] = trun['total_tests'] - trun['failed_tests'] - trun[
+                        'skipped_tests']
                 individual_res.append({os.path.basename(path): trun})
             else:
-                LOG.warning("The xml file %s does not have the correct format (no 'testsuite' or 'testsuites'"
-                            " tags) to collect testrun results" % path)
+                LOG.warning(
+                    "The xml file %s does not have the correct format (no 'testsuite' or 'testsuites'"
+                    " tags) to collect testrun results" % path)
                 continue
     except ET.ParseError:
         raise TefloError("The xml file %s is malformed " % path)
