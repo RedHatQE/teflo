@@ -1,0 +1,259 @@
+action: GLOB, msg: packaging
+cwd: /home/shshevac/work/teflo
+cmd: /usr/local/bin/python3.7 setup.py sdist --formats=zip --dist-dir .tox/dist
+running sdist
+running egg_info
+writing teflo.egg-info/PKG-INFO
+writing dependency_links to teflo.egg-info/dependency_links.txt
+writing entry points to teflo.egg-info/entry_points.txt
+writing requirements to teflo.egg-info/requires.txt
+writing top-level names to teflo.egg-info/top_level.txt
+reading manifest file 'teflo.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+no previously-included directories found matching 'docs/_build'
+no previously-included directories found matching 'docs/.ropeproject'
+no previously-included directories found matching 'docs/.gitignore'
+no previously-included directories found matching 'tests/.cache'
+no previously-included directories found matching 'extensions'
+no previously-included directories found matching '.ropeproject'
+no previously-included directories found matching '.git'
+no previously-included directories found matching '.gitignore'
+no previously-included directories found matching '.idea'
+writing manifest file 'teflo.egg-info/SOURCES.txt'
+running check
+warning: check: missing required meta-data: url
+
+warning: check: missing meta-data: if 'author' supplied, 'author_email' must be supplied too
+
+creating teflo-1.0.1
+creating teflo-1.0.1/teflo
+creating teflo-1.0.1/teflo.egg-info
+creating teflo-1.0.1/teflo/executors
+creating teflo-1.0.1/teflo/executors/ext
+creating teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin
+creating teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files
+creating teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files/__pycache__
+creating teflo-1.0.1/teflo/files
+creating teflo-1.0.1/teflo/importers
+creating teflo-1.0.1/teflo/notifiers
+creating teflo-1.0.1/teflo/notifiers/ext
+creating teflo-1.0.1/teflo/notifiers/ext/email
+creating teflo-1.0.1/teflo/notifiers/ext/email/schema
+creating teflo-1.0.1/teflo/notifiers/ext/email/templates
+creating teflo-1.0.1/teflo/orchestrators
+creating teflo-1.0.1/teflo/orchestrators/ext
+creating teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin
+creating teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin/files
+creating teflo-1.0.1/teflo/providers
+creating teflo-1.0.1/teflo/provisioners
+creating teflo-1.0.1/teflo/provisioners/ext
+creating teflo-1.0.1/teflo/provisioners/ext/bkr_client_plugin
+creating teflo-1.0.1/teflo/provisioners/ext/os_libcloud_plugin
+creating teflo-1.0.1/teflo/resources
+creating teflo-1.0.1/teflo/static
+creating teflo-1.0.1/teflo/tasks
+creating teflo-1.0.1/teflo/utils
+copying files to teflo-1.0.1...
+copying AUTHORS -> teflo-1.0.1
+copying CHANGES -> teflo-1.0.1
+copying LICENSE -> teflo-1.0.1
+copying MANIFEST.in -> teflo-1.0.1
+copying README.rst -> teflo-1.0.1
+copying setup.py -> teflo-1.0.1
+copying teflo/__init__.py -> teflo-1.0.1/teflo
+copying teflo/_compat.py -> teflo-1.0.1/teflo
+copying teflo/ansible_helpers.py -> teflo-1.0.1/teflo
+copying teflo/cli.py -> teflo-1.0.1/teflo
+copying teflo/constants.py -> teflo-1.0.1/teflo
+copying teflo/core.py -> teflo-1.0.1/teflo
+copying teflo/exceptions.py -> teflo-1.0.1/teflo
+copying teflo/helpers.py -> teflo-1.0.1/teflo
+copying teflo/teflo.py -> teflo-1.0.1/teflo
+copying teflo.egg-info/PKG-INFO -> teflo-1.0.1/teflo.egg-info
+copying teflo.egg-info/SOURCES.txt -> teflo-1.0.1/teflo.egg-info
+copying teflo.egg-info/dependency_links.txt -> teflo-1.0.1/teflo.egg-info
+copying teflo.egg-info/entry_points.txt -> teflo-1.0.1/teflo.egg-info
+copying teflo.egg-info/not-zip-safe -> teflo-1.0.1/teflo.egg-info
+copying teflo.egg-info/requires.txt -> teflo-1.0.1/teflo.egg-info
+copying teflo.egg-info/top_level.txt -> teflo-1.0.1/teflo.egg-info
+copying teflo/executors/__init__.py -> teflo-1.0.1/teflo/executors
+copying teflo/executors/execute_manager.py -> teflo-1.0.1/teflo/executors
+copying teflo/executors/ext/__init__.py -> teflo-1.0.1/teflo/executors/ext
+copying teflo/executors/ext/ansible_executor_plugin/__init__.py -> teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin
+copying teflo/executors/ext/ansible_executor_plugin/ansible_executor_plugin.py -> teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin
+copying teflo/executors/ext/ansible_executor_plugin/files/extensions.py -> teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files
+copying teflo/executors/ext/ansible_executor_plugin/files/schema.yml -> teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files
+copying teflo/executors/ext/ansible_executor_plugin/files/__pycache__/extensions.cpython-37.pyc -> teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files/__pycache__
+copying teflo/files/extensions.py -> teflo-1.0.1/teflo/files
+copying teflo/files/schema.yml -> teflo-1.0.1/teflo/files
+copying teflo/importers/__init__.py -> teflo-1.0.1/teflo/importers
+copying teflo/importers/artifact_importer.py -> teflo-1.0.1/teflo/importers
+copying teflo/notifiers/__init__.py -> teflo-1.0.1/teflo/notifiers
+copying teflo/notifiers/notification_emitter.py -> teflo-1.0.1/teflo/notifiers
+copying teflo/notifiers/ext/__init__.py -> teflo-1.0.1/teflo/notifiers/ext
+copying teflo/notifiers/ext/email/__init__.py -> teflo-1.0.1/teflo/notifiers/ext/email
+copying teflo/notifiers/ext/email/email_notification_plugin.py -> teflo-1.0.1/teflo/notifiers/ext/email
+copying teflo/notifiers/ext/email/schema/email_extensions.py -> teflo-1.0.1/teflo/notifiers/ext/email/schema
+copying teflo/notifiers/ext/email/schema/schema.yml -> teflo-1.0.1/teflo/notifiers/ext/email/schema
+copying teflo/notifiers/ext/email/templates/email_on_start_txt_template.jinja -> teflo-1.0.1/teflo/notifiers/ext/email/templates
+copying teflo/notifiers/ext/email/templates/email_txt_template.jinja -> teflo-1.0.1/teflo/notifiers/ext/email/templates
+copying teflo/orchestrators/__init__.py -> teflo-1.0.1/teflo/orchestrators
+copying teflo/orchestrators/action_orchestrator.py -> teflo-1.0.1/teflo/orchestrators
+copying teflo/orchestrators/ext/__init__.py -> teflo-1.0.1/teflo/orchestrators/ext
+copying teflo/orchestrators/ext/ansible_orchestrator_plugin/__init__.py -> teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin
+copying teflo/orchestrators/ext/ansible_orchestrator_plugin/ansible_orchestrator_plugin.py -> teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin
+copying teflo/orchestrators/ext/ansible_orchestrator_plugin/files/extensions.py -> teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin/files
+copying teflo/orchestrators/ext/ansible_orchestrator_plugin/files/schema.yml -> teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin/files
+copying teflo/providers/__init__.py -> teflo-1.0.1/teflo/providers
+copying teflo/providers/aws.py -> teflo-1.0.1/teflo/providers
+copying teflo/providers/beaker.py -> teflo-1.0.1/teflo/providers
+copying teflo/providers/libvirt.py -> teflo-1.0.1/teflo/providers
+copying teflo/providers/openstack.py -> teflo-1.0.1/teflo/providers
+copying teflo/provisioners/__init__.py -> teflo-1.0.1/teflo/provisioners
+copying teflo/provisioners/asset_provisioner.py -> teflo-1.0.1/teflo/provisioners
+copying teflo/provisioners/ext/__init__.py -> teflo-1.0.1/teflo/provisioners/ext
+copying teflo/provisioners/ext/bkr_client_plugin/__init__.py -> teflo-1.0.1/teflo/provisioners/ext/bkr_client_plugin
+copying teflo/provisioners/ext/bkr_client_plugin/beaker_client_plugin.py -> teflo-1.0.1/teflo/provisioners/ext/bkr_client_plugin
+copying teflo/provisioners/ext/bkr_client_plugin/schema.yml -> teflo-1.0.1/teflo/provisioners/ext/bkr_client_plugin
+copying teflo/provisioners/ext/os_libcloud_plugin/__init__.py -> teflo-1.0.1/teflo/provisioners/ext/os_libcloud_plugin
+copying teflo/provisioners/ext/os_libcloud_plugin/openstack_libcloud_plugin.py -> teflo-1.0.1/teflo/provisioners/ext/os_libcloud_plugin
+copying teflo/provisioners/ext/os_libcloud_plugin/schema.yml -> teflo-1.0.1/teflo/provisioners/ext/os_libcloud_plugin
+copying teflo/resources/__init__.py -> teflo-1.0.1/teflo/resources
+copying teflo/resources/actions.py -> teflo-1.0.1/teflo/resources
+copying teflo/resources/assets.py -> teflo-1.0.1/teflo/resources
+copying teflo/resources/executes.py -> teflo-1.0.1/teflo/resources
+copying teflo/resources/notification.py -> teflo-1.0.1/teflo/resources
+copying teflo/resources/reports.py -> teflo-1.0.1/teflo/resources
+copying teflo/resources/scenario.py -> teflo-1.0.1/teflo/resources
+copying teflo/static/__init__.py -> teflo-1.0.1/teflo/static
+copying teflo/static/playbooks.py -> teflo-1.0.1/teflo/static
+copying teflo/tasks/__init__.py -> teflo-1.0.1/teflo/tasks
+copying teflo/tasks/cleanup.py -> teflo-1.0.1/teflo/tasks
+copying teflo/tasks/execute.py -> teflo-1.0.1/teflo/tasks
+copying teflo/tasks/notification.py -> teflo-1.0.1/teflo/tasks
+copying teflo/tasks/orchestrate.py -> teflo-1.0.1/teflo/tasks
+copying teflo/tasks/provision.py -> teflo-1.0.1/teflo/tasks
+copying teflo/tasks/report.py -> teflo-1.0.1/teflo/tasks
+copying teflo/tasks/validate.py -> teflo-1.0.1/teflo/tasks
+copying teflo/utils/__init__.py -> teflo-1.0.1/teflo/utils
+copying teflo/utils/config.py -> teflo-1.0.1/teflo/utils
+copying teflo/utils/pipeline.py -> teflo-1.0.1/teflo/utils
+copying teflo/utils/resource_checker.py -> teflo-1.0.1/teflo/utils
+Writing teflo-1.0.1/setup.cfg
+creating '.tox/dist/teflo-1.0.1.zip' and adding 'teflo-1.0.1' to it
+adding 'teflo-1.0.1'
+adding 'teflo-1.0.1/teflo.egg-info'
+adding 'teflo-1.0.1/teflo'
+adding 'teflo-1.0.1/CHANGES'
+adding 'teflo-1.0.1/PKG-INFO'
+adding 'teflo-1.0.1/setup.py'
+adding 'teflo-1.0.1/AUTHORS'
+adding 'teflo-1.0.1/README.rst'
+adding 'teflo-1.0.1/setup.cfg'
+adding 'teflo-1.0.1/LICENSE'
+adding 'teflo-1.0.1/MANIFEST.in'
+adding 'teflo-1.0.1/teflo.egg-info/dependency_links.txt'
+adding 'teflo-1.0.1/teflo.egg-info/entry_points.txt'
+adding 'teflo-1.0.1/teflo.egg-info/PKG-INFO'
+adding 'teflo-1.0.1/teflo.egg-info/SOURCES.txt'
+adding 'teflo-1.0.1/teflo.egg-info/requires.txt'
+adding 'teflo-1.0.1/teflo.egg-info/not-zip-safe'
+adding 'teflo-1.0.1/teflo.egg-info/top_level.txt'
+adding 'teflo-1.0.1/teflo/tasks'
+adding 'teflo-1.0.1/teflo/notifiers'
+adding 'teflo-1.0.1/teflo/resources'
+adding 'teflo-1.0.1/teflo/executors'
+adding 'teflo-1.0.1/teflo/files'
+adding 'teflo-1.0.1/teflo/importers'
+adding 'teflo-1.0.1/teflo/static'
+adding 'teflo-1.0.1/teflo/providers'
+adding 'teflo-1.0.1/teflo/orchestrators'
+adding 'teflo-1.0.1/teflo/provisioners'
+adding 'teflo-1.0.1/teflo/utils'
+adding 'teflo-1.0.1/teflo/cli.py'
+adding 'teflo-1.0.1/teflo/__init__.py'
+adding 'teflo-1.0.1/teflo/exceptions.py'
+adding 'teflo-1.0.1/teflo/teflo.py'
+adding 'teflo-1.0.1/teflo/helpers.py'
+adding 'teflo-1.0.1/teflo/constants.py'
+adding 'teflo-1.0.1/teflo/ansible_helpers.py'
+adding 'teflo-1.0.1/teflo/_compat.py'
+adding 'teflo-1.0.1/teflo/core.py'
+adding 'teflo-1.0.1/teflo/tasks/orchestrate.py'
+adding 'teflo-1.0.1/teflo/tasks/__init__.py'
+adding 'teflo-1.0.1/teflo/tasks/report.py'
+adding 'teflo-1.0.1/teflo/tasks/execute.py'
+adding 'teflo-1.0.1/teflo/tasks/cleanup.py'
+adding 'teflo-1.0.1/teflo/tasks/validate.py'
+adding 'teflo-1.0.1/teflo/tasks/provision.py'
+adding 'teflo-1.0.1/teflo/tasks/notification.py'
+adding 'teflo-1.0.1/teflo/notifiers/ext'
+adding 'teflo-1.0.1/teflo/notifiers/__init__.py'
+adding 'teflo-1.0.1/teflo/notifiers/notification_emitter.py'
+adding 'teflo-1.0.1/teflo/notifiers/ext/email'
+adding 'teflo-1.0.1/teflo/notifiers/ext/__init__.py'
+adding 'teflo-1.0.1/teflo/notifiers/ext/email/schema'
+adding 'teflo-1.0.1/teflo/notifiers/ext/email/templates'
+adding 'teflo-1.0.1/teflo/notifiers/ext/email/__init__.py'
+adding 'teflo-1.0.1/teflo/notifiers/ext/email/email_notification_plugin.py'
+adding 'teflo-1.0.1/teflo/notifiers/ext/email/schema/email_extensions.py'
+adding 'teflo-1.0.1/teflo/notifiers/ext/email/schema/schema.yml'
+adding 'teflo-1.0.1/teflo/notifiers/ext/email/templates/email_txt_template.jinja'
+adding 'teflo-1.0.1/teflo/notifiers/ext/email/templates/email_on_start_txt_template.jinja'
+adding 'teflo-1.0.1/teflo/resources/executes.py'
+adding 'teflo-1.0.1/teflo/resources/scenario.py'
+adding 'teflo-1.0.1/teflo/resources/__init__.py'
+adding 'teflo-1.0.1/teflo/resources/assets.py'
+adding 'teflo-1.0.1/teflo/resources/reports.py'
+adding 'teflo-1.0.1/teflo/resources/notification.py'
+adding 'teflo-1.0.1/teflo/resources/actions.py'
+adding 'teflo-1.0.1/teflo/executors/ext'
+adding 'teflo-1.0.1/teflo/executors/__init__.py'
+adding 'teflo-1.0.1/teflo/executors/execute_manager.py'
+adding 'teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin'
+adding 'teflo-1.0.1/teflo/executors/ext/__init__.py'
+adding 'teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files'
+adding 'teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/__init__.py'
+adding 'teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/ansible_executor_plugin.py'
+adding 'teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files/__pycache__'
+adding 'teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files/extensions.py'
+adding 'teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files/schema.yml'
+adding 'teflo-1.0.1/teflo/executors/ext/ansible_executor_plugin/files/__pycache__/extensions.cpython-37.pyc'
+adding 'teflo-1.0.1/teflo/files/extensions.py'
+adding 'teflo-1.0.1/teflo/files/schema.yml'
+adding 'teflo-1.0.1/teflo/importers/__init__.py'
+adding 'teflo-1.0.1/teflo/importers/artifact_importer.py'
+adding 'teflo-1.0.1/teflo/static/__init__.py'
+adding 'teflo-1.0.1/teflo/static/playbooks.py'
+adding 'teflo-1.0.1/teflo/providers/aws.py'
+adding 'teflo-1.0.1/teflo/providers/__init__.py'
+adding 'teflo-1.0.1/teflo/providers/openstack.py'
+adding 'teflo-1.0.1/teflo/providers/beaker.py'
+adding 'teflo-1.0.1/teflo/providers/libvirt.py'
+adding 'teflo-1.0.1/teflo/orchestrators/ext'
+adding 'teflo-1.0.1/teflo/orchestrators/__init__.py'
+adding 'teflo-1.0.1/teflo/orchestrators/action_orchestrator.py'
+adding 'teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin'
+adding 'teflo-1.0.1/teflo/orchestrators/ext/__init__.py'
+adding 'teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin/files'
+adding 'teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin/ansible_orchestrator_plugin.py'
+adding 'teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin/__init__.py'
+adding 'teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin/files/extensions.py'
+adding 'teflo-1.0.1/teflo/orchestrators/ext/ansible_orchestrator_plugin/files/schema.yml'
+adding 'teflo-1.0.1/teflo/provisioners/ext'
+adding 'teflo-1.0.1/teflo/provisioners/__init__.py'
+adding 'teflo-1.0.1/teflo/provisioners/asset_provisioner.py'
+adding 'teflo-1.0.1/teflo/provisioners/ext/os_libcloud_plugin'
+adding 'teflo-1.0.1/teflo/provisioners/ext/bkr_client_plugin'
+adding 'teflo-1.0.1/teflo/provisioners/ext/__init__.py'
+adding 'teflo-1.0.1/teflo/provisioners/ext/os_libcloud_plugin/__init__.py'
+adding 'teflo-1.0.1/teflo/provisioners/ext/os_libcloud_plugin/schema.yml'
+adding 'teflo-1.0.1/teflo/provisioners/ext/os_libcloud_plugin/openstack_libcloud_plugin.py'
+adding 'teflo-1.0.1/teflo/provisioners/ext/bkr_client_plugin/__init__.py'
+adding 'teflo-1.0.1/teflo/provisioners/ext/bkr_client_plugin/beaker_client_plugin.py'
+adding 'teflo-1.0.1/teflo/provisioners/ext/bkr_client_plugin/schema.yml'
+adding 'teflo-1.0.1/teflo/utils/__init__.py'
+adding 'teflo-1.0.1/teflo/utils/resource_checker.py'
+adding 'teflo-1.0.1/teflo/utils/config.py'
+adding 'teflo-1.0.1/teflo/utils/pipeline.py'
+removing 'teflo-1.0.1' (and everything under it)

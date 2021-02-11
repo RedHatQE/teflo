@@ -1,0 +1,16 @@
+action: py3-unit, msg: installpkg
+cwd: /home/shshevac/work/teflo
+cmd: /home/shshevac/work/teflo/.tox/py3/bin/python -m pip install --no-deps -U .tox/.tmp/package/1/teflo-1.0.1.zip
+Processing ./.tox/.tmp/package/1/teflo-1.0.1.zip
+Building wheels for collected packages: teflo
+  Building wheel for teflo (setup.py): started
+  Building wheel for teflo (setup.py): finished with status 'done'
+  Created wheel for teflo: filename=teflo-1.0.1-py3-none-any.whl size=169531 sha256=6adb2777dd1996fedacbf8f05328ac48a21bf50a0ed5e8fbc8cad2c9d7c83f00
+  Stored in directory: /tmp/.cache/pip/wheels/37/82/7b/c32f16104fb12ce663829c8ce3f74e39dfd564e678419dc840
+Successfully built teflo
+Installing collected packages: teflo
+  Attempting uninstall: teflo
+    Found existing installation: teflo 1.0.1
+    Uninstalling teflo-1.0.1:
+      Successfully uninstalled teflo-1.0.1
+Successfully installed teflo-1.0.1

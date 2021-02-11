@@ -120,6 +120,16 @@ class TestCli(object):
                'to be included.' in results.output
 
     @staticmethod
+    def test_sdf_missing_colon(runner):
+        results = runner.invoke(teflo, ['run', '-s', '../assets/missing_colon_sdf.yml'])
+        assert 'in "<unicode string>", line 7, column 9:' in results.output
+
+    @staticmethod
+    def test_sdf_wrong_sapce(runner):
+        results = runner.invoke(teflo, ['run', '-s', '../assets/wrong_space_sdf.yml'])
+        assert 'in "<unicode string>", line 13, column 2:' in results.output
+
+    @staticmethod
     @mock.patch.object(Teflo, 'run')
     def test_valid_run_var_file(mock_method, runner):
         mock_method.return_value = 0

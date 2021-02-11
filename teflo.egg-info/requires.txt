@@ -1,0 +1,17 @@
+ansible>=2.5.0
+apache-libcloud==2.2.0
+blaster>=0.3.0
+Click>=6.7
+Jinja2>=2.10
+pykwalify>=1.6.0
+python-cachetclient
+ruamel.yaml>=0.15.64
+paramiko>=2.4.2
+requests>=2.20.1
+urllib3<1.26
+
+[linchpin-wrapper]
+teflo_linchpin_plugin
+
+[openstack-client-plugin]
+teflo_openstack_client_plugin

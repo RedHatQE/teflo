@@ -1,0 +1,23 @@
+action: py3-unit, msg: installpkg
+cwd: /home/shshevac/work/teflo
+cmd: /home/shshevac/work/teflo/.tox/py3/bin/python -m pip install --exists-action w .tox/.tmp/package/1/teflo-1.0.1.zip
+Processing ./.tox/.tmp/package/1/teflo-1.0.1.zip
+Collecting ansible>=2.5.0
+  Downloading ansible-2.10.7.tar.gz (29.9 MB)
+Collecting apache-libcloud==2.2.0
+  Downloading apache_libcloud-2.2.0-py2.py3-none-any.whl (4.6 MB)
+Collecting blaster>=0.3.0
+  Downloading blaster-0.4.0.tar.gz (22 kB)
+Requirement already satisfied: Click>=6.7 in /usr/local/lib/python3.7/site-packages (from teflo==1.0.1) (7.0)
+Requirement already satisfied: Jinja2>=2.10 in /usr/local/lib/python3.7/site-packages (from teflo==1.0.1) (2.10.3)
+Collecting pykwalify>=1.6.0
+  Downloading pykwalify-1.8.0-py2.py3-none-any.whl (24 kB)
+Collecting python-cachetclient
+  Downloading python-cachetclient-0.2.5.tar.gz (10 kB)
+Requirement already satisfied: ruamel.yaml>=0.15.64 in /usr/local/lib/python3.7/site-packages (from teflo==1.0.1) (0.16.5)
+Requirement already satisfied: paramiko>=2.4.2 in /usr/local/lib/python3.7/site-packages (from teflo==1.0.1) (2.7.1)
+Requirement already satisfied: requests>=2.20.1 in /usr/local/lib/python3.7/site-packages (from teflo==1.0.1) (2.22.0)
+Requirement already satisfied: urllib3<1.26 in /usr/local/lib/python3.7/site-packages (from teflo==1.0.1) (1.25.7)
+Collecting ansible-base<2.11,>=2.10.5
+  Downloading ansible-base-2.10.5.tar.gz (5.7 MB)
+ERROR: Operation cancelled by user

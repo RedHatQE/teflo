@@ -1,0 +1,3 @@
+[console_scripts]
+git-review = git_review.cmd:main
+

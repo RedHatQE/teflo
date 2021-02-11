@@ -1,0 +1,47 @@
+# default schema for ansible orchestrator
+
+type: map
+allowempty: True
+func: valid_action_types
+mapping:
+  ansible_playbook:
+    allowempty: True
+    type: map
+    mapping:
+      name:
+        type: str
+        required: True
+  ansible_script:
+    func: valid_ansible_script_type
+    type: any
+  ansible_shell:
+    allowempty: True
+    type: seq
+    sequence:
+      - type: map
+        mapping:
+          command:
+            type: str
+            required: True
+          chdir:
+            type: str
+          creates:
+            type: str
+          decrypt:
+            type: str
+          executable:
+            type: str
+          removes:
+            type: str
+          warn:
+            type: str
+          stdin:
+            type: str
+          stdin_add_newline:
+            type: str
+  ansible_options:
+    allowempty: True
+    type: map
+  ansible_galaxy_options:
+    allowempty: True
+    type: map

@@ -1,0 +1,62 @@
+Hello All,
+
+This is a Teflo Notification.
+
+Teflo has completed executing the scenario, {{ scenario.name }}, with overall status:
+
+{% if scenario.overall_status == 0 %}
+Passed
+{% else %}
+Failed
+{% endif %}
+
+{% if not passed_tasks and not failed_tasks %}
+No tasks were executed.
+{% else %}
+The following tasks have completed:
+    {% if passed_tasks %}
+Passed: {{ passed_tasks }}
+    {% endif %}
+    {% if failed_tasks %}
+Failed: {{ failed_tasks }}
+    {% endif %}
+{% endif %}
+
+{% if scenario.get_all_executes() %}
+    {% for execute in scenario.get_all_executes() %}
+        {% if execute.artifact_locations %}
+Collected the following artifacts:
+            {% for file in execute.artifact_locations %}
+- {{ file }}
+            {% endfor %}
+        {% endif %}
+        {% if execute.testrun_results %}
+
+These are the test results of the scenario:
+- {{ execute.name }}
+  Total Tests: {{ execute.testrun_results.aggregate_testrun_results.total_tests }}
+  Passed Tests: {{ execute.testrun_results.aggregate_testrun_results.passed_tests }}
+  Failed Tests: {{ execute.testrun_results.aggregate_testrun_results.failed_tests }}
+  Skipped Tests: {{ execute.testrun_results.aggregate_testrun_results.skipped_tests }}
+
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if scenario.get_all_reports() %}
+    {% for report in scenario.get_all_reports() %}
+        {% if report.provider == 'polarion' or report.importer_plugin_name == 'polarion' and report.import_results %}
+The following is the result of the Polarion import:
+            {% for results in report.import_results %}
+{{ results['testrun-url'] }}
+            {% endfor %}
+        {% endif %}
+        {% if report.provider == 'reportportal' or report.importer_plugin_name == 'reportportal' and report.import_results %}
+The following is the result of the Report Portal import:
+{{ report.import_results['dashboard_url'] }}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+
+

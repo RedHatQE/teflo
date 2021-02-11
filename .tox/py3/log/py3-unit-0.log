@@ -1,0 +1,9 @@
+action: py3-unit, msg: getenv
+cwd: /home/shshevac/work/teflo/.tox
+cmd: /usr/local/bin/python3.7 -m virtualenv --system-site-packages --download --python /usr/local/bin/python3.7 py3
+Already using interpreter /usr/local/bin/python3.7
+Using base prefix '/usr/local'
+New python executable in /home/shshevac/work/teflo/.tox/py3/bin/python3.7
+Also creating executable in /home/shshevac/work/teflo/.tox/py3/bin/python
+Installing setuptools, pip, wheel...
+done.

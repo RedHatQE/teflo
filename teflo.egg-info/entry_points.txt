@@ -1,0 +1,22 @@
+[console_scripts]
+teflo = teflo.cli:teflo
+
+[executor_plugins]
+runner = teflo.executors.ext:AnsibleExecutorPlugin
+
+[notification_plugins]
+email-notifier = teflo.notifiers.ext:EmailNotificationPlugin
+
+[orchestrator_plugins]
+ansible = teflo.orchestrators.ext:AnsibleOrchestratorPlugin
+
+[provider_plugins]
+aws_provider = teflo.providers:AwsProvider
+beaker_provider = teflo.providers:BeakerProvider
+libvirt_provider = teflo.providers:LibvirtProvider
+openstack_provider = teflo.providers:OpenstackProvider
+
+[provisioner_plugins]
+beaker_client = teflo.provisioners.ext:BeakerClientProvisionerPlugin
+openstack_libcloud = teflo.provisioners.ext:OpenstackLibCloudProvisionerPlugin
+

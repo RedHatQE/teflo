@@ -1,0 +1,67 @@
+Metadata-Version: 2.1
+Name: teflo
+Version: 1.0.1
+Summary: Test Execution Framework Libraries and Objects. It is an orchestration software that controls the flow of a set of testing scenarios.
+Home-page: UNKNOWN
+Author: Red Hat Inc.
+License: GPLv3
+Platform: UNKNOWN
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Natural Language :: English
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.6
+Requires-Dist: ansible (>=2.5.0)
+Requires-Dist: apache-libcloud (==2.2.0)
+Requires-Dist: blaster (>=0.3.0)
+Requires-Dist: Click (>=6.7)
+Requires-Dist: Jinja2 (>=2.10)
+Requires-Dist: pykwalify (>=1.6.0)
+Requires-Dist: python-cachetclient
+Requires-Dist: ruamel.yaml (>=0.15.64)
+Requires-Dist: paramiko (>=2.4.2)
+Requires-Dist: requests (>=2.20.1)
+Requires-Dist: urllib3 (<1.26)
+Provides-Extra: linchpin-wrapper
+Requires-Dist: teflo-linchpin-plugin ; extra == 'linchpin-wrapper'
+Provides-Extra: openstack-client-plugin
+Requires-Dist: teflo-openstack-client-plugin ; extra == 'openstack-client-plugin'
+
+Welcome to Teflo!
+==================
+
+What is Teflo?
+---------------
+
+**TEFLO** stands for (**T** est **E** xecution **F** ramework **L** ibraries and **O** bjects)
+
+Teflo is an orchestration software that controls the flow of a set of testing scenarios.
+It is a standalone tool that includes all aspects of the workflow.
+It allows users to provision machines, deploy software, execute tests against them and
+manage generated artifacts and report results.
+
+Teflo is developed in Python.
+It was originally known as Carbon.
+
+Teflo can be used for an E2E (end to end) multi-product scenario. Teflo handles coordinating the
+E2E task workflow to drive the scenario execution.
+
+What does an E2E workflow consist of?
+-------------------------------------
+
+At a high level teflo executes the following tasks when processing a scenario.
+
+   - Provision system resources
+   - Perform system configuration
+   - Install products
+   - Configure products
+   - Install test frameworks
+   - Configure test frameworks
+   - Execute tests
+   - Report results
+   - Destroy system resources
+   - Send Notifications
+
+

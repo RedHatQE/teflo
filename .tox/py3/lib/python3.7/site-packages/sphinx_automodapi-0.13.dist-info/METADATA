@@ -1,0 +1,55 @@
+Metadata-Version: 2.1
+Name: sphinx-automodapi
+Version: 0.13
+Summary: Sphinx extension for auto-generating API documentation for entire modules
+Home-page: http://astropy.org
+Author: The Astropy Developers
+Author-email: astropy.team@gmail.com
+License: BSD 3-Clause License
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Classifier: License :: OSI Approved :: BSD License
+Requires-Python: >=3.6
+Requires-Dist: sphinx (>=1.7)
+Provides-Extra: test
+Requires-Dist: pytest ; extra == 'test'
+Requires-Dist: pytest-cov ; extra == 'test'
+Requires-Dist: cython ; extra == 'test'
+Requires-Dist: codecov ; extra == 'test'
+Requires-Dist: coverage (<5.0) ; extra == 'test'
+
+|Azure Status| |Coverage Status| |PyPI|
+
+About
+=====
+
+This is a Sphinx extension to automatically generate API pages for whole
+modules. It was originally developed for the Astropy project but is now
+available as a standalone package since it can be used for any other
+package. The documentation can be found on
+`ReadTheDocs <http://sphinx-automodapi.readthedocs.io/en/latest/>`_.
+
+Running tests
+-------------
+
+To run the tests, you can either do::
+
+    pytest sphinx_automodapi
+
+or if you have `tox <https://tox.readthedocs.io/en/latest/>`_ installed::
+
+    tox -e test
+
+.. |Azure Status| image:: https://dev.azure.com/astropy-project/sphinx-automodapi/_apis/build/status/astropy.sphinx-automodapi?branchName=master
+   :target: https://dev.azure.com/astropy-project/sphinx-automodapi/_build/latest?definitionId=2&branchName=master
+.. |Coverage Status| image:: https://codecov.io/gh/astropy/sphinx-automodapi/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/astropy/sphinx-automodapi
+.. |PyPI| image:: https://img.shields.io/pypi/v/sphinx-automodapi.svg
+   :target: https://pypi.python.org/pypi/sphinx-automodapi
+
+
