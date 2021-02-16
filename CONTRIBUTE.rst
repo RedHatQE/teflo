@@ -190,10 +190,17 @@ Submitting the PR
 ~~~~~~~~~~~~~~~~~
 
 Once a set of commits for the feature have been completed and tested. It is time to
-submit a Pull Request. Please follow the github article, `Creating a pull request
-<https://help.github.com/articles/creating-a-pull-request/>`_.
+submit a Pull Request. Please see the github article to get an idea about
+submitting a PR, `Creating a pull request <https://help.github.com/articles/creating-a-pull-request/>`_.
 
-Submit the Pull Request (PR) against the **develop** branch.
+Guidelines for submitting the PR
+================================
+
+1. Submit the Pull Request (PR) against the **develop** branch.
+
+2. Provide a ticket number if available in the title
+
+3. Provide a description.
 
 Once the PR is created, it will need to be reviewed, and CI automation testing
 must be executed. It is possible that additional commits will be needed to
