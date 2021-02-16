@@ -13,38 +13,38 @@ provision:
       y: '18'
 
 orchestrate:
-  - name: ansible/test_playbook_tasks.yml
-    description: "run orchestrate step w/non-template playbook"
-    orchestrator: ansible
-    hosts: localhost
-
-  - name: ansible/template_host_test_playbook_tasks.yml
+  - name: orch_task1
     description: "run orchestrate step w/template playbook"
     orchestrator: ansible
     hosts: localhost
+    ansible_playbook:
+      name: ansible/template_host_test_playbook_tasks.yml
     ansible_options:
       extra_vars:
         ip: { dummy.ip_address }
 
-  - name: scripts/add_two_numbers.sh
+  - name: script_1
     description: "run orchestrate step w/bash script using no real host"
     orchestrator: ansible
     hosts: localhost
-    ansible_script: True
+    ansible_script:
+      name: scripts/add_two_numbers.sh
     ansible_options:
       extra_args: X={ dummy.metadata.x } Y={ dummy.metadata.y }
 
-  - name: scripts/add_two_numbers.sh X=10 Y=20
+  - name: script_2
     description: "run orchestrate step with passing params to script in the name field"
     orchestrator: ansible
     hosts: localhost
-    ansible_script: True
+    ansible_script:
+      name: scripts/add_two_numbers.sh X=10 Y=20
 
-  - name: scripts/hello_world.py Teflo_user
+  - name: script_3
     description: "test orchestrate step w/python script"
     orchestrator: ansible
     hosts: localhost
-    ansible_script: True
+    ansible_script:
+      name: scripts/hello_world.py Teflo_user
     ansible_options:
       extra_args: executable=python
     cleanup:
@@ -54,11 +54,12 @@ orchestrate:
       hosts: all
       ansible_script: True
 
-  - name: scripts/hello_world.py
+  - name: script_4
     description: "test orchestrate step passing param in extra args"
     orchestrator: ansible
     hosts: localhost
-    ansible_script: True
+    ansible_script:
+      name: scripts/hello_world.py
     ansible_options:
       extra_args: Random_user executable=python
 
@@ -94,10 +95,12 @@ orchestrate:
       name: scripts/hello_world.py New_user
       executable: python
 
-  - name: ansible/template_host_test_playbook_tasks.yml
+  - name: playbook_1
     description: "run orchestrate step using file key as extra_vars"
     orchestrator: ansible
     hosts: localhost
+    ansible_playbook:
+      name: ansible/template_host_test_playbook_tasks.yml
     ansible_options:
       extra_vars:
         file: variable.yml
