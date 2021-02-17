@@ -90,6 +90,14 @@ select. Below are the available run command options.
    and task selected is provision,the provision pipeline is created with provision tasks 
    from included scenario followed by the provision tasks from main scenario.
 
+.. note::
+
+   There is no separate cleanup section within the scenario descriptor file (SDF). When the cleanup task is
+   run, Teflo looks for if any assets/resources are provisioned, and if so it will destroy them
+   Also the cleanup task will look for orchestrate tasks in the SDF with the keyword *cleanup* defined
+   and run any scripts/playbooks mentioned there as a part of cleanup process. `Example <definitions/orchestrate.html#example-7>`__ for orchestrate
+   task cleanup
+
 ----
 
 .. list-table::
