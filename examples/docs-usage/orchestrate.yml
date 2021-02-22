@@ -301,7 +301,7 @@ description: orchestrate example showing data pass through
 
 provision:
   - name: localhost
-    role: local
+    groups: local
     ip_address: 127.0.0.1
     ansible_params:
       ansible_connection: local
@@ -335,7 +335,7 @@ description: orchestrate example using local host
 
 provision:
   - name: localhost
-    role: local
+    groups: local
     ip_address: 127.0.0.1
     ansible_params:
       ansible_connection: local

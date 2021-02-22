@@ -394,7 +394,7 @@ class Teflo(LoggerMixin, TimeMixin):
                     try:
                         # create the master inventory
                         for host in self.scenario.get_all_assets():
-                            if (hasattr(host, 'role') or hasattr(host, 'groups')) and hasattr(host, 'ip_address'):
+                            if hasattr(host, 'groups') and hasattr(host, 'ip_address'):
                                 self.logger.info('Populating master inventory file with host(s) %s'
                                                  % getattr(host, 'name'))
 

@@ -55,13 +55,12 @@ execute:
       - ~/another_artificate_dir
     ansible_options:
 
-...
-    ansible_options:
-      become: True
-      become_method: sudo
-      become_user: <become_user>
-      remote_user: <remote_user>
-...
+
+  ansible_options:
+    become: True
+    become_method: sudo
+    become_user: <become_user>
+    remote_user: <remote_user>
 
 
 ---
@@ -84,7 +83,6 @@ execute:
     artifacts:
       - /home/cloud-user/pytest/tests/test-report/suite1_results.xml
       - /home/cloud-user/pytest/tests/test-report/suite2_results.xml
-...
 
 ---
 execute:
@@ -103,54 +101,47 @@ execute:
         chdir: ~/restraint-example/tests
     artifacts:
       - ~/restraint-example/tests/test_*
-...
 
 
 ---
 provision:
   - name: test_client_a
-    provisioner: openstack
-    provider:
-      name: openstack
-      credential: openstack
-      image: rhel-7.6-server-x86_64-released
-      flavor: m1.small
-      networks: [<defined_os_network>]
-      floating_ip_pool: "<defined_fip>"
-      keypair: pit-jenkins
-    role: clients
+    provisioner: openstack-libcloud
+    credential: openstack
+    image: rhel-7.6-server-x86_64-released
+    flavor: m1.small
+    networks: [<defined_os_network>]
+    floating_ip_pool: "<defined_fip>"
+    keypair: pit-jenkins
+    groups: clients
     ansible_params:
       ansible_user: cloud_user
       ansible_ssh_private_key_file: <defined_key_file>
-...
 
 
 ---
 provision:
   - name: test_client_a
-    provisioner: openstack
-    provider:
-      name: openstack
-      credential: openstack
-      image: rhel-7.6-server-x86_64-released
-      flavor: m1.small
-      networks: [<defined_os_network>]
-      floating_ip_pool: "<defined_fip>"
-      keypair: pit-jenkins
-      admin_pass: null
-      description: null
-      files: null
-      node_id: 82340e64-c7b7-4a20-a9e3-6511dbc79ded
-      security_groups: null
+    provisioner: openstack-libcloud
+    credential: openstack
+    image: rhel-7.6-server-x86_64-released
+    flavor: m1.small
+    networks: [<defined_os_network>]
+    floating_ip_pool: "<defined_fip>"
+    keypair: pit-jenkins
+    admin_pass: null
+    description: null
+    files: null
+    node_id: 82340e64-c7b7-4a20-a9e3-6511dbc79ded
+    security_groups: null
     ip_address: 10.8.250.239
-    role: clients
+    groups: clients
     ansible_params:
       ansible_user: cloud_user
       ansible_ssh_private_key_file: <defined_key_file>
     data_folder: /var/local/teflo/ljcgm7yl5d
     metadata: {}
 ...
-
 
 ---
 execute:

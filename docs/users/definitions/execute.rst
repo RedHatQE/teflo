@@ -158,7 +158,7 @@ In this case, the options should mostly be used for defining the user that is
 performing the execution. Please see the following example for more details:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 59-65
+    :lines: 59-64
 
 .. note::
    Teflo uses the ansible copy module to process the results of the requested action. The copy module requires selinux
@@ -193,7 +193,7 @@ areas.  The top level is set to False, which is the default, then it is used
 only for the 2nd pytest execution call, where there are failures:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 68-88
+    :lines: 66-85
 
 Options 2 to handle non-zero return codes is called **valid_rc**, this option
 can also be used at the top level key of execute or can be used for each
@@ -202,7 +202,7 @@ an example, where it is defined in both areas. The top level is set to one value
 and the call overides it:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 197-217
+    :lines: 187-207
 
 .. _using_shell:
 
@@ -319,7 +319,7 @@ ability to download roles using the *ansible_galaxy_option*. The following
 is an example of how run test playbooks.
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 218-232
+    :lines: 209-223
 
 
 .. note::
@@ -338,7 +338,7 @@ Let's first take a look at some example data of key/values a user may use
 for provisioning a host:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 110-126
+    :lines: 106-119
 
 After the machines are provsioned, we have more information in the host object,
 and this can be seen by the results.yml file after a provision is successful.
@@ -346,7 +346,7 @@ Some basic information that is added is the machine's actual name and ip
 address.  The following is what the data looks like after provisioning:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 129-153
+    :lines: 122-144
 
 Looking at the data presented above, there is a lot of information about the
 host, that may be useful for test execution.  You can also see the key
@@ -358,7 +358,7 @@ execution command.  From the data above, you can see the user is accessing the
 data from **test_client_a** -> **ip_address**.
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 90-107
+    :lines: 87-103
 
 
 Artifacts of the Test Execution
@@ -376,37 +376,37 @@ file.
 The following is a simple example of the data gathering (defining artifacts):
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 156-163
+    :lines: 146-153
 
 Going through the basics of artifacts, the user can archive individual files,
 as shown by the following example:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 166-170
+    :lines: 156-160
 
 The user can also artifact files using wildcards as shown in the following
 example:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 172-175
+    :lines: 162-165
 
 The user can also archive a directory using either of the following two
 examples:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 177-180
+    :lines: 167-170
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 182-185
+    :lines: 172-175
 
 Finally, the user can archive a directory using a wildcard using either
 of the following two examples:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-   :lines: 187-190
+   :lines: 177-180
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-   :lines: 192-195
+   :lines: 182-185
 
 Teflo by default will **NOT** exit if the collection of artifact task fails. In order to exit the run on an error during
 collection of artifacts user can set the **exit_on_error** field for executor in the teflo.cfg as below:
@@ -434,12 +434,12 @@ as well
 In the below example, the payload_dir is the name of the directory  which is present under the .results folder
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 235-254
+    :lines: 226-245
 
 In the below example, the payload_dir  and dir1 are placed in the artifacts folder created by teflo.
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
-    :lines: 257-276
+    :lines: 248-267
 
 Testrun Results for Artifacts collected during the Execute block:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

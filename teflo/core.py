@@ -1518,9 +1518,8 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
             for host in sorted(all_hosts, key=lambda h: h.name):
                 section = host.name
                 section_vars = '%s:vars' % section
-
-                if (hasattr(host, 'role') or hasattr(host, 'groups')) and hasattr(host, 'ip_address'):
-                    for attr in ['role', 'groups']:
+                if hasattr(host, 'groups') and hasattr(host, 'ip_address'):
+                    for attr in ['groups']:
                         for sect in getattr(host, attr, []):
                             host_section = sect + ":children"
                             if host_section in config.sections():

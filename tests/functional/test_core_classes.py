@@ -754,17 +754,15 @@ class TestInventory(object):
     @staticmethod
     def test_static_dir_create_master_inv(inv_host):
         inv_host_2 = Asset(name='dummy', parameters=dict(ip_address=['1.3.5.7', '2.4.5.6'],
-                                                         role='dummy-role'))
+                                                         groups='dummy-role'))
         inv_host_3 = Asset(name='nummy', parameters=dict(ip_address='2.4.5.6',
-                                                         role='nummy-role'))
-        #inv = Inventory(inv_host.config['RESULTS_FOLDER'], inv_host.config['INVENTORY_FOLDER'], 'm6fmviqq51')
+                                                         groups='nummy-role'))
         inv = Inventory(inv_host.config, 'm6fmviqq51')
         inv.create_master(all_hosts=[inv_host, inv_host_2, inv_host_3] )
         assert os.path.exists('/tmp/inventory/master-m6fmviqq51')
 
     @staticmethod
     def test_static_dir_delete_master_inv(inv_host):
-        #inv = Inventory(inv_host.config['RESULTS_FOLDER'], inv_host.config['INVENTORY_FOLDER'], 'm6fmviqq51')
         inv = Inventory(inv_host.config, 'm6fmviqq51')
         inv.delete_master()
         assert not os.path.exists('/tmp/inventory/master-m6fmviqq51')
@@ -772,14 +770,6 @@ class TestInventory(object):
 
     @staticmethod
     def test_create_master_inv_with_dump_layout(inv_host):
-        # inv = Inventory(inv_host.config['RESULTS_FOLDER'], inv_host.config['INVENTORY_FOLDER'], 'm6fmviqq51',
-        #                 inv_dump="""
-        #                 [example]
-        #                 10.0.154.237 hostname=10.0.154.237 ansible_ssh_private_key_file=/tmp/demo
-        #
-        #                 [all]
-        #                 10.0.154.237 hostname=10.0.154.237 ansible_ssh_private_key_file=/tmp/demo
-        #                 """)
         inv = Inventory(inv_host.config, 'm6fmviqq51',
                         inv_dump="""
                         [example]
