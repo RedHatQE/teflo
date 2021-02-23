@@ -2,6 +2,17 @@
 name: LOCAL-EXAMPLE
 description: An example scenario for local running
 
+resource_check:
+  playbook:
+    - name: ansible/list_block_devices.yml
+
+  script:
+    - name: scripts/add_two_numbers.sh X=15 Y=15
+    - name: scripts/hello_world.py
+      ansible_options:
+        extra_args: executable=python
+
+
 provision:
   - name: dummy
     groups: static-dummy
@@ -110,7 +121,7 @@ execute:
     description: "Test running command during execute"
     executor: runner
     hosts: localhost
-    shell: 
+    shell:
       - chdir: {{ WORKSPACE }}/scripts
         command: bash add_two_numbers.sh X=12 Y=12
         valid_rc: [2]
