@@ -1330,9 +1330,9 @@ def validate_render_scenario(scenario, temp_data=None):
                         try:
                             yaml.safe_load(template_render(item, temp_data))
                             include_template.append(template_render(item, temp_data))
-                        except yaml.YAMLError:
+                        except yaml.YAMLError as err:
                             # raising Teflo error to differentiate the yaml issue is with included scenario
-                            raise TefloError('Error loading updated included scenario data!')
+                            raise TefloError('Error loading included scenario data! ' + item + str(err.problem_mark))
                     else:
                         # raising HelperError if included file is invalid or included section is empty
                         raise HelpersError('Included File is invalid or Include section is empty .'
@@ -1478,15 +1478,15 @@ def validate_cli_scenario_option(ctx, scenario, vars_data=None):
     try:
         scenario_stream = validate_render_scenario(scenario, vars_data)
         return scenario_stream
-    except yaml.YAMLError:
-        click.echo('Error loading updated scenario data!')
+    except yaml.YAMLError as err:
+        click.echo('Error loading scenario data! %s' % err)
         ctx.exit()
     except HelpersError:
         click.echo('Included File is invalid or Include section is empty.'
                    'You have to provide valid scenario files to be included.')
         ctx.exit()
-    except TefloError:
-        click.echo('Error loading updated included scenario data!')
+    except TefloError as err:
+        click.echo('%s' % err.message)
         ctx.exit()
 
 
