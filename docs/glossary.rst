@@ -74,7 +74,7 @@ Glossary
          on a known file structure. Grouping content by roles allows easy sharing of
          roles with other users.
 
-    role (teflo)
+    groups (teflo)
          The function assumed or part played by a node/host. Specified in provision
          section.
 

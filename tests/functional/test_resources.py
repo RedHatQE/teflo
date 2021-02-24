@@ -666,11 +666,11 @@ class TestAssetResource(object):
         host = Asset(parameters=params, config=config)
         assert 'hst' in host.name
 
-    def test_create_host_undefined_role_or_groups(self, default_host_params, config):
+    def test_create_host_undefined_groups(self, default_host_params, config):
         params = self.__get_params_copy__(default_host_params)
-        params.pop('role')
+        params.pop('groups')
         asset = Asset(name='host01', config=config, parameters=params)
-        assert hasattr(asset, 'role') is False
+        assert hasattr(asset, 'groups') is False
 
     def test_create_host_undefined_provider(self, default_host_params, config):
         params = self.__get_params_copy__(default_host_params)
@@ -749,18 +749,8 @@ class TestAssetResource(object):
         assert 'You cannot set the asset provider after asset class is ' \
                'instantiated.' in ex.value.args
 
-    def test_role_property(self, host):
-        assert host.role[-1] == 'client'
-
-    def test_role_setter(self, host):
-        with pytest.raises(AttributeError) as ex:
-            host.role = 'null'
-        assert 'You cannot set the role after asset class is instantiated.' in \
-               ex.value.args
-
     def test_group_property(self, default_host_params, config):
         params = self.__get_params_copy__(default_host_params)
-        params.pop('role')
         params.update(dict(groups=['group1']))
         host = Asset(name='host01', parameters=params, config=config)
         assert host.groups[-1] == 'group1'

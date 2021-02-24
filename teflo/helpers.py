@@ -723,10 +723,6 @@ def fetch_assets(hosts, task, all_hosts=True):
             if host.name in task[_type].hosts or [h for h in task[_type].hosts if h in host.name]:
                 _hosts.append(host)
                 continue
-            if hasattr(host, 'role'):
-                for r in host.role:
-                    if r in task[_type].hosts:
-                        _hosts.append(host)
             elif hasattr(host, 'groups'):
                 for g in host.groups:
                     if g in task[_type].hosts:

@@ -191,16 +191,15 @@ that references this credential:
 
     provision:
       - name: openstack-node
-        role: node
-        provider:
-          name: openstack
-          credential: openstack-creds
-          image: rhel-7.5-server-x86_64-released
-          flavor: m1.small
-          networks:
-            - '{{ network }}'
-          floating_ip_pool: "10.8.240.0"
-          keypair: '{{ keypair }}'
+        groups: node
+        provisioner: openstack-libcloud
+        credential: openstack-creds
+        image: rhel-7.5-server-x86_64-released
+        flavor: m1.small
+        networks:
+          - '{{ network }}'
+        floating_ip_pool: "10.8.240.0"
+        keypair: '{{ keypair }}'
         ansible_params:
           ansible_user: cloud-user
           ansible_ssh_private_key_file: "keys/{{ keypair }}"

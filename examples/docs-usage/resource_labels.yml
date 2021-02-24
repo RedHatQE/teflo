@@ -1,7 +1,7 @@
 ---
 provision:
     - name: db2_ci_test_client_a
-      role: client
+      groups: client
       provisioner: openstack-libcloud
       provider:
         name: openstack
