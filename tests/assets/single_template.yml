@@ -1,0 +1,22 @@
+---
+name: descriptor
+description: descriptor
+
+credentials:
+  - name: provider
+
+include:
+
+provision:
+  - name: {{ asset_name | default('test') }}
+    provider:
+      name: openstack
+
+orchestrate:
+
+execute:
+
+report:
+
+notifications:
+
