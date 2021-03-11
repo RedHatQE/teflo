@@ -51,7 +51,6 @@ class Asset(TefloResource):
     _fields = [
         'name',
         'description',
-        'role',
         'groups',
         'provisioner',
         'credential',
@@ -137,27 +136,25 @@ class Asset(TefloResource):
         # set description attribute
         self._description = parameters.pop('description', None)
 
-        # preset role/groups attribute
-        self._role = None
+        # check for unsupported role param . This piece is run even before validate
+        # this can be removed in later versions when groups has become the new norm
+        # this check can then be moved to extensions.py as a part of validating schema
+        if parameters.pop('role', None):
+            raise TefloResourceError('Role is not supported as a provisioner parameter. '
+                                     'Please use groups instead and run the scenario again.'
+                                     'Visit https://teflo.readthedocs.io/en/latest/users/definitions/'
+                                     'provision.html#groups to see examples')
+
+        # preset groups attribute
         self._groups = None
         try:
             # convert the groups into list format if groups defined as str format
             self._groups = parameters.pop('groups')
             if isinstance(self._groups, string_types):
                 self._groups = self._groups.replace(' ', '').split(',')
-            del self.role
         except KeyError:
-            try:
-                # convert the roles into list format if roles defined as str format
-                self._role = parameters.pop('role')
-                if isinstance(self._role, string_types):
-                    self._role = self._role.replace(' ', '').split(',')
-                self.logger.warning('A role has been found. This parameter will be deprecated'
-                                    ' it is recommend to change over to groups.')
-                del self.groups
-            except KeyError:
-                self.logger.warning('A group or a role was not set for asset %s.' % self.name)
-                del self.role, self.groups
+            self.logger.warning('Groups parameter was not set for asset %s.' % self.name)
+            del self.groups
 
         # set metadata attribute (data pass-through)
         self._metadata = parameters.pop('metadata', {})
@@ -165,9 +162,8 @@ class Asset(TefloResource):
         # set ansible parameters
         self._ansible_params = parameters.pop('ansible_params', {})
 
-        # check if ansible_params and roles groups is empty
-        if not hasattr(self, 'role') or not hasattr(self, 'groups') \
-                and not self._ansible_params:
+        # check if ansible_params and groups is empty
+        if not hasattr(self, 'groups') and not self._ansible_params:
             self.no_inventory = True
 
         # Pop any attributes that aren't needed like data_folder and workspace
@@ -403,29 +399,6 @@ class Asset(TefloResource):
         del self._provisioner
 
     @property
-    def role(self):
-        """Role property.
-
-        :return: role of the host
-        :rtype: str
-        """
-        return self._role
-
-    @role.setter
-    def role(self, value):
-        """Set role property."""
-        raise AttributeError('You cannot set the role after asset class is '
-                             'instantiated.')
-
-    @role.deleter
-    def role(self):
-        """
-        delete the role property
-        :return:
-        """
-        del self._role
-
-    @property
     def groups(self):
         """Groups property.
 
@@ -443,7 +416,7 @@ class Asset(TefloResource):
     @groups.deleter
     def groups(self):
         """
-        delete the role property
+        delete the groups property
         :return:
         """
         del self._groups
@@ -527,11 +500,7 @@ class Asset(TefloResource):
 
         # update asset fields
         for f in self._fields:
-            if f == 'role' and hasattr(self, f):
-                if all(isinstance(item, string_types) for item in self.role):
-                    profile.update(role=[role for role in self.role])
-                continue
-            elif f == 'groups' and hasattr(self, f):
+            if f == 'groups' and hasattr(self, f):
                 if all(isinstance(item, string_types) for item in self.groups):
                     profile.update(groups=[group for group in self.groups])
                 continue
@@ -566,7 +535,6 @@ class Asset(TefloResource):
             self.logger.debug('Validation is not required for static hosts!')
             return
 
-        # TODO This will change once we get everything over to use the plugin model
         getattr(AssetProvisioner(self), 'validate')()
 
     def _construct_validate_task(self):

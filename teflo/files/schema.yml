@@ -101,7 +101,7 @@ mapping:
           credential:
             required: False
             type: str
-          regex;(role|groups):
+          regex;(groups):
             required: False
             type: any
             func: type_str_list

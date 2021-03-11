@@ -86,7 +86,7 @@ Groups
 
 Teflo groups are the equivalent of Ansible groups.
 
-Originally this key was named as *roles*. the schema was changed from role to groups to better
+Originally this key was named as *role*. the schema was changed from role to groups to better
 reflect what the purpose of this parameter is intended for.
 
 Groups is not a requirement for all asset types. This should only be
@@ -100,11 +100,6 @@ First is to define your groups in a comma separated string
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 1-5
-
-You can also define your roles as a list.
-
-.. literalinclude:: ../../../examples/docs-usage/provision.yml
-    :lines: 7-13
 
 Here we have defined a list of groups.
 

@@ -60,7 +60,7 @@ Let's take a look at a couple examples:
     ---
     provision:
       - name: host01
-        role: node
+        groups: node
         provider:
           name: openstack
           ...
@@ -152,7 +152,7 @@ below:
     ---
     provision:
       - name: driver01
-        role: driver
+        groups: driver
         provider:
           name: openstack
           ...
@@ -165,7 +165,7 @@ below:
           ...
 
       - name: host01
-        role: node
+        groups: node
         provider:
           name: openstack
           ...

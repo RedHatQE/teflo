@@ -67,7 +67,7 @@ You can also define your hosts as a list.
 It can become tedious if an orchestrate task needs to be performed on multiple
 or all hosts within the scenario and you have many hosts declared. Teflo
 provides you with the ability to run against a group of hosts or all hosts.
-To run against multiple hosts use the name defined in the **role** key for
+To run against multiple hosts use the name defined in the **groups** key for
 your hosts or use **all** to run against all hosts.  This eliminates the need
 to define every host per multiple tasks. It can be either in string or list
 format.

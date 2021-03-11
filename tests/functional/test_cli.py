@@ -96,18 +96,17 @@ class TestCli(object):
         results = runner.invoke(
             teflo, ['run', '-s', '../assets/descriptor.yml', '-d', '/tmp']
         )
-        assert 'Error loading updated scenario data!' in results.output
-        assert results.exit_code != 0
+        assert 'Error loading scenario data!' in results.output
 
     @staticmethod
     @mock.patch.object(yaml, 'safe_load')
     def test_invalid_run_malformed_include(mock_method, runner):
-        mock_method.side_effect = TefloError('Error loading updated included scenario data!')
+        mock_method.side_effect = TefloError('Error loading included scenario data!')
         results = runner.invoke(
             teflo, ['run', '-s', '../assets/descriptor.yml']
         )
-        assert 'Error loading updated included scenario data!' in results.output
         assert results.exit_code != 0
+        assert 'Error loading included scenario data!' in results.output
 
     @staticmethod
     def test_empty_include_section(runner):
@@ -122,6 +121,21 @@ class TestCli(object):
         assert 'Included File is invalid or Include section is empty.You have to provide valid scenario files ' \
                'to be included.' in results.output
         assert results.exit_code != 0
+
+    @staticmethod
+    def test_sdf_missing_colon(runner):
+        results = runner.invoke(teflo, ['run', '-s', '../assets/missing_colon_sdf.yml'])
+        assert 'in "<unicode string>", line 7, column 9:' in results.output
+
+    @staticmethod
+    def test_sdf_wrong_sapce(runner):
+        results = runner.invoke(teflo, ['run', '-s', '../assets/wrong_space_sdf.yml'])
+        assert 'in "<unicode string>", line 13, column 2:' in results.output
+
+    @staticmethod
+    def test_wrong_sdf_included(runner):
+        results = runner.invoke(teflo, ['run', '-s', '../assets/wrong_include_sdf.yml'])
+        assert 'in "<unicode string>", line 7, column 9:' in results.output
 
     @staticmethod
     @mock.patch.object(Teflo, 'run')

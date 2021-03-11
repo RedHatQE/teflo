@@ -68,7 +68,7 @@ def config():
 @pytest.fixture
 def default_host_params():
     return dict(
-        role='client',
+        groups='client',
         provider=dict(
             name='openstack',
             credential='openstack',
@@ -78,10 +78,11 @@ def default_host_params():
         )
     )
 
+
 @pytest.fixture
 def timeout_param_provision():
     return dict(
-        role='client',
+        groups='client',
         provider=dict(
             name='openstack',
             credential='openstack',
@@ -90,10 +91,12 @@ def timeout_param_provision():
             networks=['network']),
             provision_timeout=20
         )
+
+
 @pytest.fixture
 def timeout_param_execute():
-    return dict(description='description', hosts='test',\
-         executor='runner', labels='label2', execute_timeout=20)
+    return dict(description='description', hosts='test', executor='runner', labels='label2', execute_timeout=20)
+
 
 @pytest.fixture
 def timeout_param_report():
@@ -230,7 +233,7 @@ def asset1(default_host_params, config):
 @pytest.fixture
 def asset2(default_host_params, config):
     param =copy.deepcopy(default_host_params)
-    param.update(role='test')
+    param.update(groups='test')
     param.update(labels='label2')
     return Asset(
         name='host_1',
@@ -242,7 +245,7 @@ def asset2(default_host_params, config):
 @pytest.fixture
 def asset3(default_host_params, config):
     param =copy.deepcopy(default_host_params)
-    param.pop('role')
+    param.pop('groups')
     param.update(groups='group_test')
     param.update(labels='label3')
     return Asset(
