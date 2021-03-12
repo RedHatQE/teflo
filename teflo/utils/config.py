@@ -29,6 +29,7 @@ import os
 from .._compat import RawConfigParser
 from ..constants import DEFAULT_CONFIG, DEFAULT_CONFIG_SECTIONS, DEFAULT_TASK_CONCURRENCY, DEFAULT_TIMEOUT
 from ..ansible_helpers import AnsibleCredentialManager
+from ..helpers import template_render
 
 
 class Config(dict):
@@ -248,8 +249,8 @@ class Config(dict):
                 # file not found
                 continue
 
-            # read the file
-            self.parser.read(filename)
+            # read the string returned post rendering the jinja template
+            self.parser.read_string(template_render(filename, os.environ))
 
             # set user supplied configuration settings overriding defaults
             for config in DEFAULT_CONFIG_SECTIONS:
