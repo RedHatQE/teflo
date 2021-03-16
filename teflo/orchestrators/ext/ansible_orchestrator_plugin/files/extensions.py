@@ -37,27 +37,24 @@ def valid_action_types(value, rule_obj, path):
 
     if match.__len__() > 1:
         raise AssertionError(
-            'Only one action type can be set for orchestrator ~ %s.\n'
-            'Available types: %s\n'
-            'Set types: %s' % (value['orchestrator'], types, match)
+            'Only one action type can be set for orchestrator\n'
+            'Available action types: %s\n'
+            'Set types: %s' % (types, match)
+        )
+    elif match.__len__() == 0:
+        raise AssertionError(
+            'At lease one action type should be set for orchestrator \n'
+            'Available action types: %s\n' % types
         )
     return True
 
 
 def valid_ansible_script_type(value, rule_obj, path):
 
-    """ Verify if ansible_script type is either a boolean or a dictionary
-        and extra_args are from the given list and name key is required
+    """ Verify if ansible_script has appropriate keys from the given list
     """
     extra_args = ['name', 'creates', 'decrypt', 'executable', 'removes', 'warn', 'stdin', 'stdin_add_newline']
-    if isinstance(value, bool):
-        return True
-    elif isinstance(value, dict):
-        if True in [keys in extra_args and isinstance(values, str) for keys, values in value.items()] \
-                and value.get('name'):
-            return True
-        else:
-            raise AssertionError('ansible_script is missing "name" key '
-                                 'or is using a key not present in this list %s' % extra_args)
+    if False in [key in extra_args and isinstance(val, str) for key, val in value.items()]:
+        raise AssertionError('ansible_script dictionary is using a key not present in this list %s' % extra_args)
     else:
-        return False
+        return True

@@ -12,8 +12,13 @@ mapping:
         type: str
         required: True
   ansible_script:
+    allowempty: True
     func: valid_ansible_script_type
-    type: any
+    type: map
+    mapping:
+      name:
+        type: str
+        required: True
   ansible_shell:
     allowempty: True
     type: seq

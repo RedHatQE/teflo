@@ -65,11 +65,12 @@ orchestrate:
     ansible_options:
       extra_args: executable=python
     cleanup:
-      name: scripts/cleanup_artifacts.sh
+      name: orc_cleanup
       description: "cleanup the data passthrough artifact"
       orchestrator: ansible
       hosts: all
-      ansible_script: True
+      ansible_script:
+        name: scripts/cleanup_artifacts.sh
 
   - name: script_4
     description: "test orchestrate step passing param in extra args"

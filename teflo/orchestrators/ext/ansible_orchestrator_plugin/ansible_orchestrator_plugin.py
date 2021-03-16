@@ -71,31 +71,21 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
                                           concurrency=self.config['TASK_CONCURRENCY']['ORCHESTRATE'].lower())
 
     def backwards_compat_check(self):
-        """ This method does the check if name field is a script/playbook path or name of the orchestrator task by
-            checking is '/' i spresent in the string.
-            If it is a path then it checks if ansible_script field is a boolean and is True . If so
-            a new dictionary is created with key=name and the value= script path. This is then assigned to
-            ansible_script.
-            If the ansible_script is not present then it is understood that the path belongs to a playbook.
-             a new dictionary is created with key=name and the value= playbook path. This is then assigned to
-            ansible_playbook.
-            """
+        """ This method is put in place to check if any older ways of assigning ansible_playbook/script names are
+        being used, and if so then code exits"""
 
         if os.sep in self.action_name:
-            self.logger.warning('Using name field to provide ansible_script/ansible_playbook path')
-
-            self.logger.debug('Joining current workspace %s to the ansible_script/playbook path %s'
-                              % (self.workspace, self.action_name))
-            new_item = {'name': os.path.join(self.workspace, self.action_name)}
-
-            self.logger.debug('Converting ansible_script/playbook path to dictionary %s' % new_item)
-            if isinstance(self.script, bool) and self.script:
-                self.script = new_item
-            elif not self.script:
-                self.playbook = new_item
-            else:
-                raise TefloOrchestratorError('Error in defining the orchestrate name/ansible_script/ansible_playbook'
-                                              ' fields')
+            raise TefloOrchestratorError('Using name field to provide ansible_script/ansible_playbook path is '
+                                         'not supported. Please see examples at this link to understand how to'
+                                         ' use the orchestrate task parameters '
+                                         ' https://teflo.readthedocs.io/en/latest/users/'
+                                         'definitions/orchestrate.html#examples ')
+        if isinstance(self.script, bool):
+            raise TefloOrchestratorError('ansible_script as boolean is not supported any more. '
+                                         'Please see examples at this link to understand how to'
+                                         ' use the orchestrate task parameters '
+                                         ' https://teflo.readthedocs.io/en/latest/users/'
+                                         'definitions/orchestrate.html#examples ')
 
     def validate(self):
         """Validate that script/playbook path is valid and exists."""
@@ -114,7 +104,8 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
             if os.path.exists(self.playbook.get('name').split(' ', 1)[0]):
                 self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
             else:
-                raise TefloOrchestratorError('Cannot find Action resource playbook %s' % self.playbook.get('name'))
+                raise TefloOrchestratorError('Cannot find Action resource playbook %s' %
+                                             self.playbook.get('name'))
 
     def __playbook__(self):
         self.logger.info('Executing playbook:')
