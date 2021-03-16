@@ -106,8 +106,8 @@ class TestCli(object):
         results = runner.invoke(
             teflo, ['run', '-s', '../assets/descriptor.yml']
         )
-        assert 'Error loading updated included scenario data!' in results.output
         assert results.exit_code != 0
+        assert 'Error loading included scenario data!' in results.output
 
     @staticmethod
     def test_empty_include_section(runner):
