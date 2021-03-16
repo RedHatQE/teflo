@@ -104,7 +104,7 @@ def show(ctx, scenario, list_labels):
               default=None,
               help="Select logging level. (default=info)")
 @click.option("--vars-data",
-              default=None,
+              multiple=True,
               metavar="",
               help="Pass in variable data to template the scenario. Can be a file or raw json.")
 @click.option("-l", "--labels",
@@ -186,7 +186,7 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
               default=None,
               help="Select logging level. (default=info)")
 @click.option("--vars-data",
-              default=None,
+              multiple=True,
               metavar="",
               help="Pass in variable data to template the scenario. Can be a file or raw json.")
 @click.option("-l", "--labels",
@@ -271,7 +271,7 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
               default=None,
               help="Select logging level. (default=info)")
 @click.option("--vars-data",
-              default=None,
+              multiple=True,
               metavar="",
               help="Pass in variable data to template the scenario. Can be a file or raw json.")
 @click.option("-sn", "--skip-notify",

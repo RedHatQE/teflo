@@ -97,6 +97,7 @@ class TestCli(object):
             teflo, ['run', '-s', '../assets/descriptor.yml', '-d', '/tmp']
         )
         assert 'Error loading scenario data!' in results.output
+        assert results.exit_code != 0
 
     @staticmethod
     @mock.patch.object(yaml, 'safe_load')
@@ -158,6 +159,19 @@ class TestCli(object):
         )
         assert results.exit_code == 0
         assert 'unit_test' in results.output
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
+    def test_valid_run_multiple_vars(mock_method, runner):
+        mock_method.return_value = 0
+        results = runner.invoke(
+                teflo, ['run', '-t', 'validate', '-s', '../assets/multiple_template.yml',
+                        '-d', '/tmp', '--vars-data', '../assets/vars_data.yml',
+                        '--vars-data', json.dumps(dict(other_name='another_test'))]
+        )
+        assert 'unit_test' in results.output
+        assert 'another_test' in results.output
+        assert results.exit_code == 0
 
     @staticmethod
     def test_run_mutually_exclusive_label_skiplabel_option(runner):

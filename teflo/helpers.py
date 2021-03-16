@@ -55,6 +55,7 @@ from .exceptions import TefloError, HelpersError
 from pykwalify.core import Core
 from pykwalify.errors import CoreError, SchemaError
 from xml.etree import cElementTree as ET
+from functools import reduce
 
 import pkg_resources
 
@@ -1284,7 +1285,7 @@ def build_artifact_regex_query(name):
     return regquery
 
 
-def validate_render_scenario(scenario, temp_data=None):
+def validate_render_scenario(scenario, temp_data_raw=[]):
     """
     This method takes the absolute path of the scenario descriptor file and returns back a list of
     data streams of scenario(s) after doing the following checks:
@@ -1294,23 +1295,24 @@ def validate_render_scenario(scenario, temp_data=None):
     (4) Checks there is no yaml.safe_load error for scenario file in the include section
     :param scenario: scenario file path
     :type scenario: str
-    :param temp_data: the file path to jinja template vars data or a json dictionary of vars data
+    :param temp_data: a list of the file path to jinja template vars data or a json dictionary of vars data
     :type temp_data: dict or str
     :return: scenario data stream(s)
     :rtype: list of data streams
     """
     scenario_stream_list = list()
 
-    if temp_data:
-        if os.path.isfile(temp_data):
-            temp_data = file_mgmt('r', temp_data)
-        else:
-            temp_data = json.loads(temp_data)
-        # Updating th eos.environ to the variable data
-        temp_data.update(os.environ)
-    else:
-        # if temp_data isNone, sending only the os.environment
-        temp_data = os.environ
+    # Click gives us a tuple, by default
+    if temp_data_raw is None:
+        temp_data_raw = []
+    if isinstance(temp_data_raw, tuple):
+        temp_data_raw = list(temp_data_raw)
+    # Convert each item to an object, then reduce them all back to one
+    temp_data_objs = [file_mgmt('r', t) if os.path.isfile(t) else json.loads(t) for t in temp_data_raw]
+    # Reduce it down to a single object we can work with
+    temp_data = {}
+    [temp_data.update(t) for t in temp_data_objs]
+    temp_data.update(os.environ)
     try:
         data = yaml.safe_load(template_render(scenario, temp_data))
         # adding master scenario as the first scenario data stream
