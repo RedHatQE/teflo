@@ -96,7 +96,7 @@ class TestCli(object):
         results = runner.invoke(
             teflo, ['run', '-s', '../assets/descriptor.yml', '-d', '/tmp']
         )
-        assert 'Error loading updated scenario data!' in results.output
+        assert 'Error loading scenario data!' in results.output
         assert results.exit_code != 0
 
     @staticmethod
