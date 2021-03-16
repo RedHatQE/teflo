@@ -1468,7 +1468,7 @@ def validate_cli_scenario_option(ctx, scenario, vars_data=None):
         scenario = os.path.abspath(scenario)
     else:
         click.echo('You have to provide a valid scenario file.')
-        ctx.exit()
+        ctx.exit(1)
 
     # Checking if include section is present and getting validated scenario stream/s
     try:
@@ -1476,14 +1476,14 @@ def validate_cli_scenario_option(ctx, scenario, vars_data=None):
         return scenario_stream
     except yaml.YAMLError as err:
         click.echo('Error loading scenario data! %s' % err)
-        ctx.exit()
+        ctx.exit(1)
     except HelpersError:
         click.echo('Included File is invalid or Include section is empty.'
                    'You have to provide valid scenario files to be included.')
-        ctx.exit()
+        ctx.exit(1)
     except TefloError as err:
         click.echo('%s' % err.message)
-        ctx.exit()
+        ctx.exit(1)
 
 
 def create_individual_testrun_results(artifact_locations, config):

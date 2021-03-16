@@ -6,13 +6,8 @@ credentials:
   - name: provider
 
 include:
-  - ' '
-  - malformed_included_file.yml
 
 provision:
-  - name: {{ asset_name | default('test') }}
-    provider:
-      name: openstack
 
 orchestrate:
 
