@@ -81,7 +81,7 @@ Teflo_Linchpin_Plugin
 This plugin can be use to provision using the Linchpin tool.
 The Linchpin plugin will be available as an extra. To install Linchpin certain requirements need to be
 met so that it can be installed correctly. Please refer to the
-`before install section <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#before-install>`__
+`before install section <https://redhatqe.github.io/teflo_linchpin_plugin/docs/user.html#before-install>`__
 of the plugin documentation on how to install them.
 
 Once installed, you can install Linchpin from Teflo
@@ -92,14 +92,14 @@ Once installed, you can install Linchpin from Teflo
 
 Once Linchpin_Plugin is installed, you will get support for all providers that linchpin supports. Although there are
 some providers that require a few more dependencies to be installed. Refer to the
-`post-install section <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#post-install>`__
+`post-install section <https://redhatqe.github.io/teflo_linchpin_plugin/docs/user.html#post-install>`__
 of the plugin document for methods on how to install those dependencies.
 
 Openstack_Client_Plugin
 ~~~~~~~~~~~~~~~~~~~~~~~
 This plugin is used to Provision openstack assets using openstack-client tool
 This plugin is also available as extra. To install this  plugin do the following
-Refer `here <https://github.com/RedHatQE/teflo_openstack_client_plugin/blob/master/docs/user.md>`__ to get more
+Refer `here <https://redhatqe.github.io/teflo_openstack_client_plugin/docs/user.html>`__ to get more
 information on how to use the plugin
 
 .. code-block:: bash
@@ -147,7 +147,7 @@ Teflo_Webhooks_Notification_Plugin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This plugin is used to notify based users using chat applications gchat and slack.
-Please review the `repo documentation <https://github.com/RedHatQE/teflo_webhooks_notification_plugin/blob/master/docs/user.md>`__
+Please review the `repo documentation <https://redhatqe.github.io/teflo_webhooks_notification_plugin/user.html>`__
 and how to use the plugin.Please review `Teflo's notification triggers <./definitions/notifications.html#triggers>`__
 to get more info on using Teflo`s notification feature
 
