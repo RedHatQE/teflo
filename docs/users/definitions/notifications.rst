@@ -352,4 +352,4 @@ Sending Chat Notifications
 Teflo_webhooks_notification_plugin allows users to send chat notification
 during and/or post teflo run. To get more information about this plugin ,on how to install and use it
 please visit `teflo_webhooks_notification_plugin
-<https://github.com/RedHatQE/teflo_webhooks_notification_plugin.git>`_
+<https://redhatqe.github.io/teflo_webhooks_notification_plugin/index.html>`_
