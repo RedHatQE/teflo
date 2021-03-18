@@ -30,6 +30,40 @@ Configuration example (with all options):
     Many of the configuration options can be overridden by passing cli options when running
     teflo. See the options in the running teflo `example. <quickstart.html#run>`__
 
+Using Jinja Variable Data
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Teflo uses Jinja2 template engine to be able to template variables
+within the teflo.cfg file. Teflo allows template variable data to be
+set as environmental variables
+
+Here is an example teflo.cfg file using Jinja to template some variable data:
+
+.. code-block:: bash
+
+    [credentials:openstack]
+    auth_url=<auth_url>
+    username={{ OS_USER }}
+    password={{ OS_PASSWORD }}
+    tenant_name={{ OS_TENANT }}
+    domain_name=redhat.com
+
+    [task_concurrency]
+    provision=True
+    report=False
+    orchestrate={{ ORC_TASK_CONCURRENCY }}
+
+Prior to running teflo, the templated variables will have to be exported
+
+.. code-block:: bash
+
+    export OS_USER=user1
+    export OS_PASSWORD=password
+    export OS_TENANT=project1
+    export ORC_TASK_CONCURRENCY=True
+
+
+
 inventory_folder
 ~~~~~~~~~~~~~~~~
 

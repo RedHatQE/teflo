@@ -27,6 +27,7 @@
 
 import copy
 import os
+import mock
 
 import pytest
 
@@ -54,3 +55,11 @@ class TestConfig(object):
     def test_load_config_by_env_var(config):
         os.environ['TEFLO_SETTINGS'] = '../assets/teflo.cfg'
         config.load()
+
+    @staticmethod
+    def test_load_config_jinja_template(config):
+        os.environ['TEFLO_SETTINGS'] = '../assets/teflo.cfg'
+        os.environ['TEFLO_EMAIL_SERVER'] = 'smtp.teflo.server.com'
+        config.load()
+        assert 'smtp.teflo.server.com' in config.parser.get('credentials:email', 'smtp_host')
+

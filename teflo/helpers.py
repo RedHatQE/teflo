@@ -1417,7 +1417,7 @@ def set_task_class_concurrency(task, resource):
     :return: TefloTask class
     """
     val = getattr(resource, 'config')['TASK_CONCURRENCY'].get(task['task'].__task_name__.upper())
-    if val == 'True':
+    if val.lower() == 'true':
         val = True
     else:
         val = False
