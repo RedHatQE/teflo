@@ -58,6 +58,7 @@ setup(
         'python-cachetclient',
         'ruamel.yaml>=0.15.64',
         'paramiko>=2.4.2',
+        'ssh-python==0.9.0',
         'requests>=2.20.1',
         'urllib3<1.26'
     ],
