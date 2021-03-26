@@ -166,31 +166,39 @@ n and n-2 teflo releases
     *   - Teflo Release
         - 1.0.0
         - 1.0.1
+        - 1.1.0
 
     *   - Rppreproc Plugin
+        - 1.0.0
         - 1.0.0
         - 1.0.0
 
     *   - Polarion Plugin
         - 1.0.0
         - 1.0.0
+        - 1.0.0
 
     *   - Linchpin Plugin
         - 1.0.0
         - 1.0.1
+        - 1.0.2
 
     *   - Openstack Client Plugin
         - 1.0.0
         - 1.0.0
+        - 1.0.1
 
     *   - Webhooks_Notification_Plugin
         - 1.0.0
         - 1.0.0
+        - 1.1.0
 
     *   - Polar
+        - 1.2.1
         - 1.2.1
         - 1.2.1
 
     *   - Rp_preproc
         - 0.1.3
-        - 0.1.3
+        - 0.1.4
+        - 0.1.4

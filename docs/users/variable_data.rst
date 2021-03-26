@@ -25,7 +25,7 @@ Here is an example scenario file using Jinja to template some variable data:
             role: os_server
             flavor: {{ flavor | default('m1.small') }}
             image:  rhel-7.5-server-x86_64-released
-            count: 1
+            count: {{ count | default('1') }}
             keypair: test-keypair
             networks:
               - {{ networks | default('provider_net_ipv6_only') }}
@@ -42,12 +42,18 @@ You can pass in the data raw as a JSON dictionary
 
     teflo run -s scenario.yml -t provision --vars-data '{"flavor": "m2.small", "name": "test"}'
 
+
+.. code-block:: bash
+
+    teflo run -s scenario.yml -t provision --vars-data '{"flavor": "m2.small", "name": "test"}'
+    --vars-data '{ "count": "2" }'
+
 Variable File
 -------------
 
-You can pass in a variable file defining the variable data you need. The variable file
+You can pass in a variable file  in yaml format defining the variable data you need. The variable file
 needs to be placed in the teflo workspace. Below is an example of the contents of a
-variable file.
+variable file template_file.yaml.
 
 .. code-block:: yaml
 
@@ -60,4 +66,4 @@ You can pass in the variable file directly
 
 .. code-block:: bash
 
-    teflo run -s scenario.yml -t provision --vars-data template_file.yml
+    teflo run -s scenario.yml -t provision --vars-data template_file.yml --vars-data '{ "count": "2" }'
