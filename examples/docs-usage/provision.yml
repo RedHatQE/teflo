@@ -117,7 +117,7 @@ description: define a static resource to be used throughout teflo
 
 provision:
   - name: static-node
-    role: node
+    groups: node
     ip_address: 1.1.1.1
     ansible_params:
       ansible_user: root

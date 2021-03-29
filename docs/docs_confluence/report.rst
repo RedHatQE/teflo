@@ -76,7 +76,6 @@ for two reasons:
    templating if a data-passthru string is being used in the name key
    as search criteria.
 
-.. _finding_artifacts:
 
 Finding the right artifacts
 ---------------------------

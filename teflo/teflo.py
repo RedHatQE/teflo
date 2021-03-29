@@ -29,9 +29,8 @@ import sys
 
 import blaster
 import yaml
-from glob import glob
 from . import __name__ as __teflo_name__
-from .constants import TASKLIST, RESULTS_FILE, DATA_FOLDER, DEFAULT_INVENTORY, DEFAULT_ARTIFACT
+from .constants import TASKLIST, RESULTS_FILE, DATA_FOLDER, DEFAULT_INVENTORY
 from .core import TefloError, LoggerMixin, TimeMixin, Inventory
 from .helpers import file_mgmt, gen_random_str, sort_tasklist
 from .resources import Scenario, Asset, Action, Report, Execute, Notification
@@ -394,7 +393,7 @@ class Teflo(LoggerMixin, TimeMixin):
                     try:
                         # create the master inventory
                         for host in self.scenario.get_all_assets():
-                            if (hasattr(host, 'role') or hasattr(host, 'groups')) and hasattr(host, 'ip_address'):
+                            if hasattr(host, 'groups') or hasattr(host, 'ip_address'):
                                 self.logger.info('Populating master inventory file with host(s) %s'
                                                  % getattr(host, 'name'))
 

@@ -1,0 +1,17 @@
+---
+name: descriptor
+description: descriptor
+
+credentials:
+  - name: provider
+
+include:
+  - ../assets/missing_colon_sdf.yml
+
+provision:
+
+orchestrate:
+
+execute:
+
+report:

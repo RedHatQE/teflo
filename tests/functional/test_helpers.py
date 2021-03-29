@@ -268,7 +268,7 @@ def test_validate_render_scenario_wrong_include():
 
 def test_validate_render_scenario_empty_include():
     with pytest.raises(HelpersError) as e:
-        validate_render_scenario('../assets/descriptor.yml')
+        validate_render_scenario('../assets/empty_include.yml')
 
 
 def test_set_task_concurrency_provision_is_false(host):

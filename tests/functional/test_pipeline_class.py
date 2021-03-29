@@ -43,6 +43,7 @@ def pipe_builder():
 def invalid_pipe_builder():
     return PipelineBuilder(name='null')
 
+
 @pytest.fixture(scope='class')
 def notify_pipe_builder():
     return NotificationPipelineBuilder(trigger='on_start')
@@ -177,17 +178,6 @@ class TestPipelineBuilder(object):
         assert isinstance(getattr(tasks[0].get('package'), 'hosts')[-1], Asset)
         assert len(getattr(tasks[0].get('package'), 'hosts')) == 1
         assert getattr(getattr(tasks[0].get('package'), 'hosts')[-1], 'name') == 'host_0'
-
-
-    @staticmethod
-    def test_pipeline_with_asset_count_using_role_for_execute(scenario1, asset2):
-        scenario1.add_assets(asset2)
-        builder = PipelineBuilder(name='execute')
-        pipeline = builder.build(scenario1, teflo_options={})
-        tasks = getattr(pipeline, 'tasks')
-        assert isinstance(getattr(tasks[-1].get('package'), 'hosts')[-1], Asset)
-        assert len(getattr(tasks[-1].get('package'), 'hosts')) == 1
-        assert getattr(getattr(tasks[-1].get('package'), 'hosts')[-1], 'name') == 'host_1'
 
     @staticmethod
     def test_pipeline_with_asset_count_using_groups_for_execute(scenario1, asset3, execute2):

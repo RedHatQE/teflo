@@ -86,7 +86,7 @@ Groups
 
 Teflo groups are the equivalent of Ansible groups.
 
-Originally this key was named as *roles*. the schema was changed from role to groups to better
+Originally this key was named as *role*. the schema was changed from role to groups to better
 reflect what the purpose of this parameter is intended for.
 
 Groups is not a requirement for all asset types. This should only be
@@ -100,11 +100,6 @@ First is to define your groups in a comma separated string
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 1-5
-
-You can also define your roles as a list.
-
-.. literalinclude:: ../../../examples/docs-usage/provision.yml
-    :lines: 7-13
 
 Here we have defined a list of groups.
 
@@ -405,7 +400,7 @@ In your scenario descriptor file specify the **provisioner** key in your provisi
     provisioner: openstack-client
 
 For more information on how to install plugin and setup the scenario descriptor file for using this plugin,
-please refer `here <https://github.com/RedHatQE/teflo_openstack_client_plugin/blob/master/docs/user.md>`__
+please refer `here <here <https://redhatqe.github.io/teflo_openstack_client_plugin/docs/user.html>`__
 
 
 .. _linchpin_provisioning:
@@ -425,7 +420,7 @@ User can now install this plugin from Teflo
     $ pip install teflo[linchpin-wrapper]
 
 You can also refer to the
-`plugin <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md>`__
+`plugin <https://redhatqe.github.io/teflo_linchpin_plugin/docs/user.html>`__
 documentation directly
 
 In your scenario file specify the **provisioner** key in your provision section.
@@ -436,7 +431,7 @@ In your scenario file specify the **provisioner** key in your provision section.
 
 
 Specify any of the
-`keys <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#provisioning-assets-with-linchpin>`__
+`keys <https://redhatqe.github.io/teflo_linchpin_plugin/docs/user.html#provisioning-assets-with-linchpin>`__
 supported by the linchpin provisioner.
 
 
@@ -472,14 +467,14 @@ following options
    credential environmental variables supported by Linchpin/Ansible yourself.
 
 For more information refer to the plugins
-`credential <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#credentials>`__
+`credential <https://redhatqe.github.io/teflo_linchpin_plugin/docs/user.html#credentials>`__
 document section.
 
 Examples
 ++++++++
 
 Below we will just touch on a couple examples. You can see the rest of the
-`examples <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#examples>`__
+`examples <https://redhatqe.github.io/teflo_linchpin_plugin/docs/user.html#examples>`__
 in the plugin documentation.
 
 Example 1
@@ -615,8 +610,8 @@ For those that want to use Linchpin to generate the inventory file. You must do 
 
  - Do NOT specify **groups** and **ansible_params** keys
 
-Refer to `example 6 <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#example-6>`__
-and `example 8 <https://github.com/RedHatQE/teflo_linchpin_plugin/blob/master/docs/user.md#example-8>`__
+Refer to `example 6 <https://redhatqe.github.io/teflo_linchpin_plugin/docs/user.html#example-6>`__
+and `example 8 <https://redhatqe.github.io/teflo_linchpin_plugin/docs/user.html#example-8>`__
 in the Linchpin plugin documents to see the two variations.
 
 Defining Static Machines

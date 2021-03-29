@@ -212,16 +212,14 @@ Here is an example based on a custom provisioner module:
     provision:
         - name: machine1
           provisioner: provisioner_xyz        # provisioner name
-          provider:
-            name: openstack
-            credential: openstack-creds
-            image: image1
-            flavor: flavor
-            networks:
-              - network
-            floating_ip_pool: 0.0.0.0
-            keypair: keypair
-          role: role
+          credential: openstack-creds
+          image: image1
+          flavor: flavor
+          networks:
+            - network
+          floating_ip_pool: 0.0.0.0
+          keypair: keypair
+          groups: group1
 
 .. note::
 

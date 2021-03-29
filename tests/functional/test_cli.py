@@ -60,7 +60,7 @@ class TestCli(object):
     def test_valid_validate(mock_method, runner):
         mock_method.return_value = 0
         results = runner.invoke(
-            teflo, ['validate', '-s', '../assets/descriptor.yml',
+            teflo, ['validate', '-s', '../assets/common.yml',
                      '-d', '/tmp']
         )
         assert results.exit_code == 0
@@ -75,7 +75,7 @@ class TestCli(object):
     def test_valid_run(mock_method, runner):
         mock_method.return_value = 0
         results = runner.invoke(
-            teflo, ['run', '-s', '../assets/descriptor.yml', '-d', '/tmp']
+            teflo, ['run', '-s', '../assets/common.yml', '-d', '/tmp']
         )
         assert results.exit_code == 0
 
@@ -84,7 +84,7 @@ class TestCli(object):
     def test_valid_run_set_task(mock_method, runner):
         mock_method.return_value = 0
         results = runner.invoke(
-            teflo, ['run', '-t', 'validate', '-s', '../assets/descriptor.yml',
+            teflo, ['run', '-t', 'validate', '-s', '../assets/common.yml',
                      '-d', '/tmp']
         )
         assert results.exit_code == 0
@@ -96,47 +96,81 @@ class TestCli(object):
         results = runner.invoke(
             teflo, ['run', '-s', '../assets/descriptor.yml', '-d', '/tmp']
         )
-        assert 'Error loading updated scenario data!' in results.output
+        assert 'Error loading scenario data!' in results.output
+        assert results.exit_code != 0
 
     @staticmethod
     @mock.patch.object(yaml, 'safe_load')
     def test_invalid_run_malformed_include(mock_method, runner):
-        mock_method.side_effect = TefloError('Error loading updated included scenario data!')
+        mock_method.side_effect = TefloError('Error loading included scenario data!')
         results = runner.invoke(
             teflo, ['run', '-s', '../assets/descriptor.yml']
         )
-        assert 'Error loading updated included scenario data!' in results.output
+        assert results.exit_code != 0
+        assert 'Error loading included scenario data!' in results.output
 
     @staticmethod
     def test_empty_include_section(runner):
-        results = runner.invoke(teflo, ['run', '-s', '../assets/descriptor.yml'])
+        results = runner.invoke(teflo, ['run', '-s', '../assets/empty_include.yml'])
         assert 'Included File is invalid or Include section is empty.You have to provide valid scenario files ' \
                'to be included.' in results.output
+        assert results.exit_code != 0
 
     @staticmethod
     def test_invalid_include_section(runner):
         results = runner.invoke(teflo, ['run', '-s', '../assets/wrong_include_descriptor.yml'])
         assert 'Included File is invalid or Include section is empty.You have to provide valid scenario files ' \
                'to be included.' in results.output
+        assert results.exit_code != 0
+
+    @staticmethod
+    def test_sdf_missing_colon(runner):
+        results = runner.invoke(teflo, ['run', '-s', '../assets/missing_colon_sdf.yml'])
+        assert 'in "<unicode string>", line 7, column 9:' in results.output
+
+    @staticmethod
+    def test_sdf_wrong_sapce(runner):
+        results = runner.invoke(teflo, ['run', '-s', '../assets/wrong_space_sdf.yml'])
+        assert 'in "<unicode string>", line 13, column 2:' in results.output
+
+    @staticmethod
+    def test_wrong_sdf_included(runner):
+        results = runner.invoke(teflo, ['run', '-s', '../assets/wrong_include_sdf.yml'])
+        assert 'in "<unicode string>", line 7, column 9:' in results.output
 
     @staticmethod
     @mock.patch.object(Teflo, 'run')
     def test_valid_run_var_file(mock_method, runner):
         mock_method.return_value = 0
         results = runner.invoke(
-            teflo, ['run', '-t', 'validate', '-s', '../assets/descriptor.yml',
+            teflo, ['run', '-t', 'validate', '-s', '../assets/single_template.yml',
                      '-d', '/tmp', '--vars-data', '../assets/vars_data.yml']
         )
         assert results.exit_code == 0
+        assert 'unit_test' in results.output
 
     @staticmethod
     @mock.patch.object(Teflo, 'run')
     def test_valid_run_var_raw_json(mock_method, runner):
         mock_method.return_value = 0
         results = runner.invoke(
-            teflo, ['run', '-t', 'validate', '-s', '../assets/descriptor.yml',
+            teflo, ['run', '-t', 'validate', '-s', '../assets/single_template.yml',
                      '-d', '/tmp', '--vars-data', json.dumps(dict(asset_name='unit_test'))]
         )
+        assert results.exit_code == 0
+        assert 'unit_test' in results.output
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
+    def test_valid_run_multiple_vars(mock_method, runner):
+        mock_method.return_value = 0
+        results = runner.invoke(
+                teflo, ['run', '-t', 'validate', '-s', '../assets/multiple_template.yml',
+                        '-d', '/tmp', '--vars-data', '../assets/vars_data.yml',
+                        '--vars-data', json.dumps(dict(other_name='another_test'))]
+        )
+        assert 'unit_test' in results.output
+        assert 'another_test' in results.output
         assert results.exit_code == 0
 
     @staticmethod
@@ -159,7 +193,9 @@ class TestCli(object):
         results = runner.invoke(
             teflo, ['run', '-s', '../assets/descriptor.yml', '-t', 'validate', '-l', 'label1', '-d', '/tmp']
         )
-        assert results.exit_code == 0
+        assert results.exit_code == 1
+        assert isinstance(results.exception, TefloError)
+        assert 'No resources were found corresponding to' in results.exception.message
 
     @staticmethod
     @mock.patch.object(Teflo, 'run')
@@ -169,7 +205,9 @@ class TestCli(object):
         results = runner.invoke(
             teflo, ['run', '-s', '../assets/descriptor.yml', '-t', 'validate', '-sl', 'label1', '-d', '/tmp']
         )
-        assert results.exit_code == 0
+        assert results.exit_code == 1
+        assert isinstance(results.exception, TefloError)
+        assert 'No resources were found corresponding to' in results.exception.message
 
     @staticmethod
     @mock.patch.object(Teflo, 'run')
@@ -200,7 +238,9 @@ class TestCli(object):
         results = runner.invoke(
             teflo, ['validate', '-s', '../assets/descriptor.yml', '-l', 'label1', '-d', '/tmp']
         )
-        assert results.exit_code == 0
+        assert results.exit_code == 1
+        assert isinstance(results.exception, TefloError)
+        assert 'No resources were found corresponding to' in results.exception.message
 
     @staticmethod
     @mock.patch.object(Teflo, 'run')
@@ -210,7 +250,9 @@ class TestCli(object):
         results = runner.invoke(
             teflo, ['validate', '-s', '../assets/descriptor.yml', '-sl', 'label1', '-d', '/tmp']
         )
-        assert results.exit_code == 0
+        assert results.exit_code == 1
+        assert isinstance(results.exception, TefloError)
+        assert 'No resources were found corresponding to' in results.exception.message
 
     @staticmethod
 

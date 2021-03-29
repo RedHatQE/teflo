@@ -2,72 +2,85 @@
 name: LOCAL-EXAMPLE
 description: An example scenario for local running
 
+resource_check:
+  playbook:
+    - name: ansible/list_block_devices.yml
+
+  script:
+    - name: scripts/add_two_numbers.sh X=15 Y=15
+    - name: scripts/hello_world.py
+      ansible_options:
+        extra_args: executable=python
+
+
 provision:
   - name: dummy
     groups: static-dummy
-    ip_address: 127.0.1.1
+    ip_address: 127.0.0.1
     ansible_params:
       ansible_connection: local
     metadata:
       x: '12'
       y: '18'
 
-orchestrate:
-  - name: ansible/test_playbook_tasks.yml
-    description: "run orchestrate step w/non-template playbook"
-    orchestrator: ansible
-    hosts: localhost
+  # static host without groups
+  - name: static_host
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
 
-  - name: ansible/template_host_test_playbook_tasks.yml
+orchestrate:
+  - name: orch_task1
     description: "run orchestrate step w/template playbook"
     orchestrator: ansible
     hosts: localhost
+    ansible_playbook:
+      name: ansible/template_host_test_playbook_tasks.yml
     ansible_options:
       extra_vars:
-        ip: { dummy.ip_address }
+        ip: '{ dummy.ip_address }'
 
-  - name: scripts/add_two_numbers.sh
+  - name: script_1
     description: "run orchestrate step w/bash script using no real host"
     orchestrator: ansible
     hosts: localhost
-    ansible_script: True
+    ansible_script:
+      name: scripts/add_two_numbers.sh
     ansible_options:
       extra_args: X={ dummy.metadata.x } Y={ dummy.metadata.y }
 
-  - name: scripts/add_two_numbers.sh X=10 Y=20
+  - name: script_2
     description: "run orchestrate step with passing params to script in the name field"
     orchestrator: ansible
     hosts: localhost
-    ansible_script: True
+    ansible_script:
+      name: scripts/add_two_numbers.sh X=10 Y=20
 
-  - name: scripts/hello_world.py Teflo_user
+  - name: script_3
     description: "test orchestrate step w/python script"
     orchestrator: ansible
-    hosts: localhost
-    ansible_script: True
+    hosts: static_host
+    ansible_script:
+      name: scripts/hello_world.py Teflo_user
     ansible_options:
       extra_args: executable=python
     cleanup:
-      name: scripts/cleanup_artifacts.sh
+      name: orc_cleanup
       description: "cleanup the data passthrough artifact"
       orchestrator: ansible
       hosts: all
-      ansible_script: True
+      ansible_script:
+        name: scripts/cleanup_artifacts.sh
 
-  - name: scripts/hello_world.py
+  - name: script_4
     description: "test orchestrate step passing param in extra args"
     orchestrator: ansible
-    hosts: localhost
-    ansible_script: True
+    hosts: static_host
+    ansible_script:
+      name: scripts/hello_world.py
     ansible_options:
       extra_args: Random_user executable=python
 
-  - name: orch_name_test
-    ansible_playbook:
-      name: ansible/test_playbook_tasks.yml
-    description: "run orchestrate with a name field not as playbook/script"
-    orchestrator: ansible
-    hosts: localhost
 
   - name: orch_shell
     orchestrator: ansible
@@ -80,7 +93,7 @@ orchestrate:
   - name: orch_shell_1
     orchestrator: ansible
     description: "orch task to run shell commands with ansible_options"
-    hosts: localhost
+    hosts: static-dummy
     ansible_shell:
       - command: bash add_two_numbers.sh X=15 Y=15
     ansible_options:
@@ -94,10 +107,12 @@ orchestrate:
       name: scripts/hello_world.py New_user
       executable: python
 
-  - name: ansible/template_host_test_playbook_tasks.yml
+  - name: playbook_1
     description: "run orchestrate step using file key as extra_vars"
     orchestrator: ansible
     hosts: localhost
+    ansible_playbook:
+      name: ansible/template_host_test_playbook_tasks.yml
     ansible_options:
       extra_vars:
         file: variable.yml
@@ -107,7 +122,7 @@ execute:
     description: "Test running command during execute"
     executor: runner
     hosts: localhost
-    shell: 
+    shell:
       - chdir: {{ WORKSPACE }}/scripts
         command: bash add_two_numbers.sh X=12 Y=12
         valid_rc: [2]
@@ -115,7 +130,7 @@ execute:
   - name: Test running script
     description: "Test running script during execute"
     executor: runner
-    hosts: localhost
+    hosts: static_host
     script:
       - name: {{ WORKSPACE }}/scripts/add_two_numbers.sh X=12 Y=12
         ignore_rc: true
@@ -123,7 +138,7 @@ execute:
   - name: Test running playbook
     description: "Test running playbook during execute"
     executor: runner
-    hosts: localhost
+    hosts: dummy
     playbook:
       - name: ansible/tests/test_execute_playbook.yml
     ansible_options:
@@ -135,7 +150,7 @@ execute:
   - name: Test collecting artifacts
     description: "Test collecting artifacts"
     executor: runner
-    hosts: localhost
+    hosts: static-dummy
     shell:
       - chdir: {{ WORKSPACE }}/sample_artifacts
         command: ls -lrta
