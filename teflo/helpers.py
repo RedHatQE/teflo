@@ -30,6 +30,7 @@ import os
 import pkgutil
 import random
 import re
+import socket
 import string
 import subprocess
 import sys
@@ -55,11 +56,6 @@ from pykwalify.core import Core
 from pykwalify.errors import CoreError, SchemaError
 from xml.etree import cElementTree as ET
 from functools import reduce
-import socket
-from ssh.session import Session
-from ssh.key import import_privkey_file
-from ssh import options
-
 
 import pkg_resources
 
@@ -872,23 +868,19 @@ def ssh_retry(obj):
             attempt = 1
             while attempt <= MAX_ATTEMPTS:
                 try:
-                    pkey = import_privkey_file(server_key_file)
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.connect((server_ip, server_ssh_port))
-
-                    session = Session()
-                    session.options_set(options.USER, server_user)
-                    session.options_set(options.HOST, server_ip)
-                    session.options_set_port(server_ssh_port)
-                    session.options_set(options.TIMEOUT, 5)
+                    ssh = SSHClient()
+                    ssh.set_missing_host_key_policy(WarningPolicy())
 
                     # Test ssh connection
-                    session.connect()
-                    rc = session.userauth_publickey(pkey)
+                    ssh.connect(server_ip,
+                                port=server_ssh_port,
+                                username=server_user,
+                                key_filename=server_key_file,
+                                timeout=5)
                     LOG.debug("Server %s - IP: %s is reachable." %
                               (group, server_ip))
+                    ssh.close()
                     break
-
                 except (BadHostKeyException, AuthenticationException,
                         SSHException, socket.error) as ex:
                     attempt = attempt + 1
