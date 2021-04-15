@@ -46,17 +46,18 @@ from ruamel.yaml.comments import CommentedMap as OrderedDict
 from collections import OrderedDict
 from ruamel.yaml import YAML
 import yaml
-from paramiko import SSHClient, WarningPolicy
-from paramiko.ssh_exception import SSHException, BadHostKeyException, \
-    AuthenticationException
+from paramiko.ssh_exception import SSHException
 from ._compat import string_types
 from .constants import PROVISIONERS, RULE_HOST_NAMING, TASKLIST, NOTIFYSTATES
 from .exceptions import TefloError, HelpersError
 from pykwalify.core import Core
 from pykwalify.errors import CoreError, SchemaError
 from xml.etree import cElementTree as ET
-from functools import reduce
-
+import socket
+from ssh.session import Session
+from ssh.key import import_privkey_file
+from ssh import options
+from ssh.exceptions import SSHError, HostKeyNotVerifiable, AuthenticationError, ConnectFailed, ConnectionLost
 import pkg_resources
 
 LOG = getLogger(__name__)
@@ -868,21 +869,26 @@ def ssh_retry(obj):
             attempt = 1
             while attempt <= MAX_ATTEMPTS:
                 try:
-                    ssh = SSHClient()
-                    ssh.set_missing_host_key_policy(WarningPolicy())
+                    # Test ssh connection
+                    pkey = import_privkey_file(server_key_file)
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.connect((server_ip, server_ssh_port))
+
+                    session = Session()
+                    session.options_set(options.USER, server_user)
+                    session.options_set(options.HOST, server_ip)
+                    session.options_set_port(server_ssh_port)
+                    session.options_set(options.TIMEOUT, '5')
 
                     # Test ssh connection
-                    ssh.connect(server_ip,
-                                port=server_ssh_port,
-                                username=server_user,
-                                key_filename=server_key_file,
-                                timeout=5)
+                    session.connect()
+                    rc = session.userauth_publickey(pkey)
                     LOG.debug("Server %s - IP: %s is reachable." %
                               (group, server_ip))
-                    ssh.close()
                     break
-                except (BadHostKeyException, AuthenticationException,
-                        SSHException, socket.error) as ex:
+
+                except (SSHError, HostKeyNotVerifiable, AuthenticationError, socket.error, ConnectFailed,
+                        ConnectionLost) as ex:
                     attempt = attempt + 1
                     LOG.error(ex)
                     LOG.error("Server %s - IP: %s is unreachable." % (group,
