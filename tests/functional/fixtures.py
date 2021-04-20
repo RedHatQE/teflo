@@ -262,7 +262,7 @@ def action1(config):
         config=config,
         parameters=dict(
             description='description',
-            hosts=['host'],
+            hosts=['client'],
             orchestrator='ansible',
             labels='label2'
         )
