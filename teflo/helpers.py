@@ -722,7 +722,7 @@ def fetch_assets(hosts, task, all_hosts=True):
             if 'all' in task[_type].hosts:
                 _hosts.append(host)
                 continue
-            if host.name in task[_type].hosts or [h for h in task[_type].hosts if h in host.name]:
+            if host.name in task[_type].hosts or [h for h in task[_type].hosts if h == host.name]:
                 _hosts.append(host)
                 continue
             elif hasattr(host, 'groups'):
