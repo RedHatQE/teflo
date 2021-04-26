@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 Red Hat, Inc.
+# Copyright (C) 2021 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
     This module contains the code which creates teflo's command line
     interface structure.
 
-    :copyright: (c) 2020 Red Hat, Inc.
+    :copyright: (c) 2021 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 
@@ -35,7 +35,7 @@ from .helpers import validate_cli_scenario_option
 def print_header():
     click.echo("-" * 50)
     click.echo("Teflo Framework v%s" % __version__)
-    click.echo("Copyright (C) 2020, Red Hat, Inc.")
+    click.echo("Copyright (C) 2021, Red Hat, Inc.")
     click.echo("-" * 50)
 
 
