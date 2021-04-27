@@ -18,7 +18,7 @@
 
     Unit tests for testing resource_checker class
 
-    :copyright: (c) 2017 Red Hat, Inc.
+    :copyright: (c) 2020 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 
@@ -27,6 +27,7 @@ import mock
 import json
 from teflo.utils.resource_checker import ResourceChecker
 from teflo.ansible_helpers import AnsibleService
+from teflo.helpers import StatusPageHelper
 from teflo.exceptions import TefloError
 import cachetclient.cachet as cachet
 
@@ -60,6 +61,25 @@ def resource_checker3(config, scenario):
     res_check.ans_service = AnsibleService(config, hosts=[], all_hosts=[], ansible_options=None)
     return res_check
 
+@pytest.fixture()
+def resource_checker4(config, scenario):
+    config['RESOURCE_CHECK_ENDPOINT'] = 'https://semaphore-status.statuspage.io/'
+    # scenario.resource_check['service'] = ['umb']
+    scenario.resource_check['monitored_services'] = ['psi-registry']
+    res_check = ResourceChecker(scenario, config)
+    res_check.ans_service = AnsibleService(config, hosts=[], all_hosts=[], ansible_options=None)
+    return res_check
+
+
+@pytest.fixture()
+def resource_checker5(config, scenario):
+    config['RESOURCE_CHECK_ENDPOINT'] = 'https://semaphore-status.statuspage.io/'
+    # scenario.resource_check['service'] = ['umb']
+    scenario.resource_check['monitored_services'] = ['umb']
+    res_check = ResourceChecker(scenario, config)
+    res_check.ans_service = AnsibleService(config, hosts=[], all_hosts=[], ansible_options=None)
+    return res_check
+
 
 class TestResourceChecker(object):
 
@@ -70,6 +90,26 @@ class TestResourceChecker(object):
     @staticmethod
     def run_playbook(*args, **kwargs):
         return [1, '']
+
+    @staticmethod
+    def get_info(*args,**kwargs):
+        return {
+            "psi-registry": {
+            "created_at": "2021-01-14T14:07:17.527Z",
+            "description": "Container registry provided by PSI.",
+            "group": False,
+            "group_id": None,
+            "id": "8sjpsjffpr4p",
+            "name": "psi-registry",
+            "only_show_if_degraded": False,
+            "page_id": "h4lkfpbd49vk",
+            "position": 22,
+            "showcase": False,
+            "start_date": "2021-01-14",
+            "status": "operational",
+            "updated_at": "2021-02-04T20:07:28.764Z"
+        }
+        }
 
     @staticmethod
     def my_get(*args, **kwargs):
@@ -113,7 +153,17 @@ class TestResourceChecker(object):
         assert 'will not be run! Not all external resources are available or valid' in ex.value.args[0]
 
 
+    @staticmethod
+    @mock.patch.object(StatusPageHelper,"get_info",get_info)
+    def test_check_custom_resource_service1(resource_checker4):
+        with pytest.raises(TefloError) as ex:
+            resource_checker4.validate_resources()
+        assert not 'will not be run! Not all external resources are available or valid' in ex.value.args[0]
 
 
-
-
+    @staticmethod
+    @mock.patch.object(StatusPageHelper,"get_info",get_info)
+    def test_check_custom_resource_service1(resource_checker5):
+        with pytest.raises(TefloError) as ex:
+            resource_checker5.validate_resources()
+        assert 'will not be run! Not all external resources are available or valid' in ex.value.args[0]
