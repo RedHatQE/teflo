@@ -563,7 +563,8 @@ def exec_local_cmd_pipe(cmd, logger, env_var=None):
             logger.info(output.strip())
     rc = proc.poll()
     if rc != 0:
-        error = proc.stderr.readline().decode('utf-8')
+        for line in proc.stderr:
+            error = error + line.decode('utf-8')
     return rc, error
 
 
@@ -979,6 +980,7 @@ class DataInjector(object):
     and update the string with the correct information. This makes it helpful
     when orchestrate/execute tasks require data from the hosts itself.
     """
+
     def __init__(self, hosts):
         """Constructor.
 
