@@ -384,7 +384,7 @@ as shown by the following example:
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
     :lines: 156-160
 
-The user can also artifact files using wildcards as shown in the following
+The user can also collect artifact files using wildcards as shown in the following
 example:
 
 .. literalinclude:: ../../../examples/docs-usage/execute.yml
