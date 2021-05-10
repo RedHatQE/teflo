@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 Red Hat, Inc.
+# Copyright (C) 2021 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ setup(
         'python-cachetclient',
         'ruamel.yaml>=0.15.64',
         'paramiko>=2.4.2',
+        'ssh-python==0.9.0',
         'requests>=2.20.1',
         'urllib3<1.26'
     ],

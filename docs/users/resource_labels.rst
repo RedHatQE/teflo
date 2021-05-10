@@ -166,7 +166,7 @@ in the SDF
 
     --------------------------------------------------
     Teflo Framework v1.0.0
-    Copyright (C) 2020 Red Hat, Inc.
+    Copyright (C) 2021 Red Hat, Inc.
     --------------------------------------------------
     2020-05-07 01:06:37,235 WARNING Scenario workspace was not set, therefore the workspace is automatically assigned to the current working directory. You may experience problems if files needed by teflo do not exists in the scenario workspace.
     2020-05-07 01:06:37,260 INFO -------------------------------------------------------------------------------

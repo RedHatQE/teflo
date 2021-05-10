@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 Red Hat, Inc.
+# Copyright (C) 2021 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
     methods to process ansible actions defined within the scenario descriptor
     file.
 
-    :copyright: (c) 2020 Red Hat, Inc.
+    :copyright: (c) 2021 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 
@@ -111,7 +111,8 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
         self.logger.info('Executing playbook:')
         results = self.ans_service.run_playbook(self.playbook)
         if results[0] != 0:
-            raise TefloOrchestratorError('Playbook %s failed to run' % self.playbook['name'])
+            raise TefloOrchestratorError('Playbook %s failed to run\nThe error is:\n%s' %
+                                         (self.playbook['name'], results[1]))
         else:
             self.logger.info('Successfully completed playbook : %s' % self.playbook['name'])
 
