@@ -1,3 +1,26 @@
+Version 1.2.0 (2021-05-10)
+--------------------------
+
+Features
+~~~~~~~~~~~~
+* Introduced teflo_terraform_plugin, users can use terraform during provision phase now
+
+Enhancements
+~~~~~~~~~~~~
+* Use pyssh over paramiko library
+
+Bug Fixes
+~~~~~~~~~
+* Hosts are not correctly resolved when groups are mentioned in the orchestrate task 
+* Change the copyright license to 2021
+* Fix the ansible stderr issue
+
+Documentation
+~~~~~~~~~~~~~
+* Modified compatibility matrix
+* removed jenkins folder
+* Added example in execute.rst
+
 Version 1.1.0 (2021-03-29)
 --------------------------
 
