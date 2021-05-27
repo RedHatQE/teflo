@@ -59,6 +59,7 @@ from ssh.key import import_privkey_file
 from ssh import options
 from ssh.exceptions import SSHError, HostKeyNotVerifiable, AuthenticationError, ConnectFailed, ConnectionLost
 import pkg_resources
+import glob
 
 LOG = getLogger(__name__)
 
@@ -1293,7 +1294,63 @@ def build_artifact_regex_query(name):
     return regquery
 
 
-def validate_render_scenario(scenario, temp_data_raw=[]):
+def check_for_var_file(config):
+    """ This method  is for checking if variable file/directory is provided by the user in teflo.cfg under var_file key,
+     var_file.yml under the workspace , vars folder in the workspace and
+     It looks for yaml/yml files and then returns a list of file paths
+
+     Var files set every where (teflo.cfg, var_file.yml. vars folder) are collected, but the following
+     precedence is followed:
+     1. values passed over cli will override the ones set by the below options
+     2. values set in teflo.cfg will override the ones set by the below options
+     3. values set in var_file.yml will override the ones set by below options
+     4. values set in vars folder in current workspace
+
+    :param config: config object for teflo
+    :type config: config obj
+    :return: var_file_list
+    :rtype: list of variable file paths
+    """
+
+    var_file_list = list()
+    var_dir = os.path.join(config.get('WORKSPACE'), 'vars')
+    workspace_var_file = os.path.join(config.get('WORKSPACE'), 'var_file.yml')
+    if config.get('VAR_FILE'):
+        default_var_file = os.path.abspath(os.path.expandvars(os.path.expanduser(config.get('VAR_FILE'))))
+    else:
+        default_var_file = ''
+
+    if os.path.exists(var_dir) and os.path.isdir(var_dir):
+        LOG.debug("Looking for .yml files as variable file under vars folder in the current workspace")
+
+        for subdir, dirs, files in os.walk(var_dir):
+            for filename in files:
+                filepath = subdir + os.sep + filename
+                if filepath.endswith(".yml"):
+                    var_file_list.append(filepath)
+
+    if os.path.exists(workspace_var_file):
+        LOG.debug("var_file.yml in current workspace added as a varaible file")
+        var_file_list.append(workspace_var_file)
+
+    if default_var_file and os.path.exists(default_var_file):
+        if os.path.isdir(default_var_file):
+            LOG.debug("Default variable file path in teflo.cfg is a directory. "
+                      "Looking for .yml files to be used as variable files")
+
+            for subdir, dirs, files in os.walk(default_var_file):
+                for filename in files:
+                    filepath = subdir + os.sep + filename
+                    if filepath.endswith(".yml"):
+                        var_file_list.append(filepath)
+        else:
+            LOG.debug("Default variable file found in teflo.cfg")
+            var_file_list.append(default_var_file)
+
+    return var_file_list
+
+
+def validate_render_scenario(scenario, config, temp_data_raw=()):
     """
     This method takes the absolute path of the scenario descriptor file and returns back a list of
     data streams of scenario(s) after doing the following checks:
@@ -1303,20 +1360,20 @@ def validate_render_scenario(scenario, temp_data_raw=[]):
     (4) Checks there is no yaml.safe_load error for scenario file in the include section
     :param scenario: scenario file path
     :type scenario: str
-    :param temp_data: a list of the file path to jinja template vars data or a json dictionary of vars data
-    :type temp_data: dict or str
+    :param config: config object for teflo
+    :type config: config obj
+    :param temp_data_raw: a list of the file path to jinja template vars data or a json dictionary of vars data
+    :type temp_data_raw: dict or str
     :return: scenario data stream(s)
     :rtype: list of data streams
     """
     scenario_stream_list = list()
-
     # Click gives us a tuple, by default
-    if temp_data_raw is None:
-        temp_data_raw = []
+    var_file_list = check_for_var_file(config)
     if isinstance(temp_data_raw, tuple):
-        temp_data_raw = list(temp_data_raw)
+        var_file_list.extend(list(temp_data_raw))
     # Convert each item to an object, then reduce them all back to one
-    temp_data_objs = [file_mgmt('r', t) if os.path.isfile(t) else json.loads(t) for t in temp_data_raw]
+    temp_data_objs = [file_mgmt('r', t) if os.path.isfile(t) else json.loads(t) for t in var_file_list]
     # Reduce it down to a single object we can work with
     temp_data = {}
     [temp_data.update(t) for t in temp_data_objs]
@@ -1472,7 +1529,7 @@ def sort_tasklist(user_tasks):
         return sorted(user_tasks, key=NOTIFYSTATES.index)
 
 
-def validate_cli_scenario_option(ctx, scenario, vars_data=None):
+def validate_cli_scenario_option(ctx, scenario, config, vars_data=None):
     # Make sure the file exists and gets its absolute path
     if scenario is not None and os.path.isfile(scenario):
         scenario = os.path.abspath(scenario)
@@ -1482,7 +1539,7 @@ def validate_cli_scenario_option(ctx, scenario, vars_data=None):
 
     # Checking if include section is present and getting validated scenario stream/s
     try:
-        scenario_stream = validate_render_scenario(scenario, vars_data)
+        scenario_stream = validate_render_scenario(scenario, config, vars_data)
         return scenario_stream
     except yaml.YAMLError as err:
         click.echo('Error loading scenario data! %s' % err)

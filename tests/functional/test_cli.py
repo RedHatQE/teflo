@@ -163,14 +163,28 @@ class TestCli(object):
     @staticmethod
     @mock.patch.object(Teflo, 'run')
     def test_valid_run_multiple_vars(mock_method, runner):
+        """This test will chekc if multiple vars can be provided on cli and the take precedence over other variable
+           files"""
         mock_method.return_value = 0
         results = runner.invoke(
                 teflo, ['run', '-t', 'validate', '-s', '../assets/multiple_template.yml',
-                        '-d', '/tmp', '--vars-data', '../assets/vars_data.yml',
+                        '-d', '/tmp', '--vars-data', '../assets/test_var_file.yml',
                         '--vars-data', json.dumps(dict(other_name='another_test'))]
         )
-        assert 'unit_test' in results.output
+        assert 'teflo_test' in results.output
         assert 'another_test' in results.output
+        assert results.exit_code == 0
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
+    def test_valid_run_var_location_teflo_cfg(mock_method, runner):
+        """This test will check if variable file provided in the teflo.cfg is used """
+        mock_method.return_value = 0
+        results = runner.invoke(
+                teflo, ['run', '-t', 'validate', '-s', '../assets/single_template.yml',
+                        '-d', '/tmp']
+        )
+        assert 'unit_test' in results.output
         assert results.exit_code == 0
 
     @staticmethod
