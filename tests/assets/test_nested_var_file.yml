@@ -1,0 +1,3 @@
+---
+asset_name: {{ nested_var }}
+nested_var: "teflo_test"

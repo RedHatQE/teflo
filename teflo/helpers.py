@@ -60,7 +60,7 @@ from ssh import options
 from ssh.exceptions import SSHError, HostKeyNotVerifiable, AuthenticationError, ConnectFailed, ConnectionLost
 import pkg_resources
 import glob
-
+from ruamel.yaml import comments
 LOG = getLogger(__name__)
 
 # sentinel
@@ -220,7 +220,6 @@ def get_orchestrators_plugin_list():
 
 # Using entry point to get the executors defined in teflo's setup.py file
 def get_executors_plugin_classes():
-
     """Return all executor plugin classes discovered by teflo
     :return: The list of executor plugin classes
     """
@@ -1350,6 +1349,104 @@ def check_for_var_file(config):
     return var_file_list
 
 
+def validate_brackets(input):
+    """
+    Helper funcion that validates if the input
+    is a validate string that has paired brackets
+    param input: raw variable string, something like this -> "hello {{ var }}"
+    :param type: str
+    e.x. :
+    "hello {{ var }}" is valid
+    "hello {{ var }" is invalid
+    :type config: config obj
+    :rtype: bool
+
+    """
+    left = []
+    for char in input:
+        if char == "{":
+            left.append(char)
+        if char == "}":
+            if len(left) == 0:
+                return False
+            left.pop()
+    return len(left) == 0
+
+
+def replace_brackets(input, temp_data):
+    """
+    This function replace the the refered variable by it's true value recursively
+    e.x.:
+    input_yaml:
+        a = "Hello, world!!"
+        b = "{{ hello }}" -> this is the input for this function
+    b will be conveted to "hello world" after running replace_brackerts(b, input_yaml)
+    :param input: the raw string in yaml input
+    :param type: str
+    :return new string with variables' values
+    """
+    if validate_brackets(input) and input.__contains__("{{") and input.__contains__("}}"):
+        left = []
+        key_start, key_end = 0, 0
+        replace_start, replace_end = 0, 0
+        for i in range(len(input)):
+            if input[i] == "{":
+                left.append(i)
+            elif input[i] == "}":
+                key_start, key_end = left.pop() + 1, i
+                replace_start, replace_end = left.pop(), i + 2
+                break
+
+        key = input[key_start:key_end].strip()
+        if not isinstance(temp_data[key], str):
+            temp_data.update({key: preprocyaml(temp_data[key], temp_data)})
+        ret = input.replace(input[replace_start:replace_end], temp_data[key], 1)
+
+        return replace_brackets(ret, temp_data)
+    else:
+        return input
+
+
+def preprocyaml_str(input, temp_data):
+    """
+    This function is a wrapper function for replace_brackets
+    Just make it look more intuitive from its name
+    """
+    return replace_brackets(input, temp_data)
+
+
+def preprocyaml(input, temp_data):
+    """
+    This function will add the variable value to the raw string,
+    it handles all kinds of input including: string, list, dict
+    this function will add varible value to the input recursively
+    :param input: input from the yaml file
+    :param type: str, list, or dict
+    :return new value with the nested variable value added to the field in the yaml file
+    """
+    if isinstance(input, str):
+        return preprocyaml_str(input, temp_data)
+    elif isinstance(input, list):
+        new_list = []
+        for val in input:
+            new_list.append(preprocyaml(val, temp_data))
+        return new_list
+    elif isinstance(input, comments.CommentedMap):
+        new_dict = {}
+        for item in input._items():
+            if not isinstance(item[0], str):
+                result = ""
+                for key in item[0].keys():
+                    if not isinstance(temp_data[key], str):
+                        temp_data.update({key: preprocyaml(temp_data[key], temp_data)})
+                    result = result + temp_data[key]
+                return result
+            new_dict.update({item[0]: item[1]})
+        for item in new_dict.items():
+            new_dict.update({item[0]: preprocyaml(item[1], temp_data)})
+        return new_dict
+
+
 def validate_render_scenario(scenario, config, temp_data_raw=()):
     """
     This method takes the absolute path of the scenario descriptor file and returns back a list of
@@ -1377,6 +1474,10 @@ def validate_render_scenario(scenario, config, temp_data_raw=()):
     # Reduce it down to a single object we can work with
     temp_data = {}
     [temp_data.update(t) for t in temp_data_objs]
+
+    for item in temp_data.items():
+        temp_data.update({item[0]: preprocyaml(item[1], temp_data)})
+
     temp_data.update(os.environ)
     try:
         data = yaml.safe_load(template_render(scenario, temp_data))
