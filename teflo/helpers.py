@@ -1349,6 +1349,20 @@ def check_for_var_file(config):
 
     return var_file_list
 
+def preprocyaml(input,temp_data):
+
+    if input.__contains__("{{") and input.__contains__("}}"):
+
+        start= input.rindex("{")+1
+        end = input.index("}")
+
+        replace_start = input.index("{")
+        replace_end = input.rindex("}")+1
+
+        key = input[start:end].strip()
+        ret = input.replace(input[replace_start:replace_end],temp_data[key])
+        return ret
+
 
 def validate_render_scenario(scenario, config, temp_data_raw=()):
     """
@@ -1378,9 +1392,23 @@ def validate_render_scenario(scenario, config, temp_data_raw=()):
     temp_data = {}
     [temp_data.update(t) for t in temp_data_objs]
     temp_data.update(os.environ)
+    
+    
+    for item in temp_data.items():
+        if type(item[1]) is not str:
+            # import pdb; pdb.set_trace()
+            for val in item[1]._items():
+                for key in val[0].keys():
+                    temp_data.update({item[0]:temp_data[key]})
+        elif item[1].__contains__('{{') and item[1].__contains__('}}'):
+            import pdb; pdb.set_trace()
+            output = preprocyaml(item[1],temp_data)
+            temp_data.update({item[0]:output})
+
     try:
         data = yaml.safe_load(template_render(scenario, temp_data))
         # adding master scenario as the first scenario data stream
+        # import pdb;pdb.set_trace()
         scenario_stream_list.append(template_render(scenario, temp_data))
         if 'include' in data.keys():
             include_item = data['include']
@@ -1404,6 +1432,7 @@ def validate_render_scenario(scenario, config, temp_data_raw=()):
     except yaml.YAMLError as e:
         # here raising yaml error to differentiate yaml issue is with main scenario
         raise e
+    # import pdb;pdb.set_trace()
     return scenario_stream_list
 
 
