@@ -177,12 +177,17 @@ class AnsibleController(object):
                         (self.ansible_inventory, playbook)
         if extra_vars is not None:
             for key in extra_vars:
-                if not isinstance(extra_vars[key], string_types):
+                if not isinstance(extra_vars[key], string_types) and key != 'file':
                     extra_var_dict = dict()
                     extra_var_dict[key] = extra_vars[key]
                     playbook_call += ' -e "%s" ' % extra_var_dict
                 elif key == "file":
-                    playbook_call += ' -e "@%s" ' % extra_vars[key]
+                    # check to see if file is a list
+                    if isinstance(extra_vars[key], list):
+                        for item in extra_vars[key]:
+                            playbook_call += ' -e "@%s" ' % item
+                    else:
+                        playbook_call += ' -e "@%s" ' % extra_vars[key]
                 else:
                     playbook_call += " -e %s=\"'%s'\"" % (key, extra_vars[key])
 
