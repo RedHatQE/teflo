@@ -465,12 +465,22 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         ssh_con = paramiko.SSHClient()
         ssh_con.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
+        ssh_dir = "/root/.ssh"
+
         try:
             ssh_con.connect(hostname=ip,
                             username=username,
                             password=password)
             sftp = ssh_con.open_sftp()
-            sftp.put(public_key, '/root/.ssh/authorized_keys')
+
+            try:
+                sftp.stat(ssh_dir)
+            except FileNotFoundError:
+                self.logger.warning(f"Directory {ssh_dir} does not exist on {ip}. Creating directory "
+                                    f"before sending key.")
+                sftp.mkdir(ssh_dir, mode=0o755)
+
+            sftp.put(public_key, f"{ssh_dir}/authorized_keys")
         except paramiko.SSHException as ex:
             raise BeakerProvisionerError(
                 'Failed to connect to remote system: %s' % ex
