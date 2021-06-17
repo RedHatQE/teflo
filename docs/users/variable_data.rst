@@ -102,3 +102,56 @@ The above example will look like
 .. code-block:: bash
 
     teflo run -s scenario.yml -t provision
+
+
+Nested Variable Usage
+----------------------
+Currently teflo supports nested variable using any of above methods
+
+**Note**:
+The nested variable can only be string after parsing
+
+For example:
+
+A nested variable can look like below:
+
+#. nested_var: "hello"
+#. nested_var: {{ hey }}
+#. nested_var: "hello{{ hey }}"
+
+
+
+You can
+
+#. Use multiple layer nested vars
+    .. code-block:: yaml
+
+        name: {{ hello }}
+        hello: {{ world }}
+        world: {{ Hey }}
+        Hey: "I'm a developer"
+
+#. Use multiple nested variables inside one filed
+    .. code-block:: yaml
+
+        name: "{{ hello }} {{ world }}"
+        hello: "asd"
+        world: {{ Hey }}
+        Hey: "I'm a developer"
+
+#. Use nested variable in a list or dict
+    .. code-block:: yaml
+
+        name: 
+            Tom: {{ TomName }}
+            Jack: {{ JackName }}
+        TomName: "Tom Biden"
+        JackName: "Jack Chen"
+        adress:
+            - {{ street }}
+            - {{ city }}
+            - {{ state }}
+        street: "Boston Street"
+        city: "Boston"
+        state: "Massachusetts"
+        
