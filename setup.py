@@ -63,7 +63,9 @@ setup(
     ],
     extras_require={
                     'linchpin-wrapper': ['teflo_linchpin_plugin'],
-                    'openstack-client-plugin': ['teflo_openstack_client_plugin']
+                    'openstack-client-plugin': ['teflo_openstack_client_plugin'],
+                    'terraform-plugin': ['teflo-terraform-plugin'],
+                    'webhook-notification-plugin':['teflo-webhooks-notification-plugin']
 
                     },
     classifiers=[
