@@ -117,6 +117,18 @@ orchestrate:
       extra_vars:
         file: variable.yml
 
+  - name: playbook_2
+    description: "run orchestrate step using file key (list) as extra_vars"
+    orchestrator: ansible
+    hosts: localhost
+    ansible_playbook:
+      name: ansible/variable_test_playbook.yml
+    ansible_options:
+      extra_vars:
+        file:
+        - variable.yml
+        - variable_1.yml
+
 execute:
   - name: Test running command
     description: "Test running command during execute"
