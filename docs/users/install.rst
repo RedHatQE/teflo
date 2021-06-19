@@ -35,7 +35,7 @@ Install teflo from source:
     # for ansible modules requiring selinux, you will need to enable system site packages
     $ virtualenv --system-site-packages teflo
     $ source teflo/bin/activate
-    (teflo) $ pip install git+https://github.com/RedHatQE/teflo.git
+    (teflo) $ pip install teflo
 
 Post Install
 ++++++++++++
@@ -140,6 +140,20 @@ by running the rp_preproc commands
     This plugin is meant for Internal RED HAT use and is not available publicly yet
 
 
+
+Teflo_Terraform_Plugin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This plugin is used to call terraform as a provisioner
+Please review the `repo documentation <https://github.com/RedHatQE/teflo_terraform_plugin/blob/master/docs/user.md>`__
+
+.. code-block:: bash
+
+    $ pip install teflo[terraform-plugin]
+
+
+
+
 Notification Plugins
 --------------------
 
@@ -150,6 +164,12 @@ This plugin is used to notify based users using chat applications gchat and slac
 Please review the `repo documentation <https://redhatqe.github.io/teflo_webhooks_notification_plugin/user.html>`__
 and how to use the plugin.Please review `Teflo's notification triggers <./definitions/notifications.html#triggers>`__
 to get more info on using Teflo`s notification feature
+
+.. code-block:: bash
+
+    $ pip install teflo[webhook-notification-plugin]
+
+
 
 .. _cbn_plugin_matrix:
 
