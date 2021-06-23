@@ -32,6 +32,7 @@ def get_version():
     init = open(os.path.join(ROOT, 'teflo', '__init__.py')).read()
     return VERSION_RE.search(init).group(1)
 
+
 # reading description from README.rst
 with io.open(os.path.join(ROOT, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
@@ -66,7 +67,8 @@ setup(
                     'linchpin-wrapper': ['teflo_linchpin_plugin'],
                     'openstack-client-plugin': ['teflo_openstack_client_plugin'],
                     'terraform-plugin': ['teflo-terraform-plugin'],
-                    'webhook-notification-plugin':['teflo-webhooks-notification-plugin']
+                    'webhook-notification-plugin': ['teflo-webhooks-notification-plugin'],
+                    'notify-service-plugin': ['teflo-notify-service-plugin']
 
                     },
     classifiers=[
