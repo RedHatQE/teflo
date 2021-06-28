@@ -41,6 +41,7 @@ Once teflo is installed, you can run the teflo command to view its options:
       --help         Show this message and exit.
 
     Commands:
+      init      Initializes a teflo project in your workspace.
       notify    Trigger notifications for a scenario configuration on demand.
       run       Run a scenario configuration.
       validate  Validate a scenario configuration.
@@ -253,6 +254,64 @@ completes and the triggering of the notification.
 .. code-block:: bash
 
     teflo notify -s data_folder/.results/results.yml -w .
+
+Init
+++++
+
+Initializes a teflo project under a directory
+called teflo_workspace, unless the user provides
+a dir name using the -d/--dirname flag.
+
+Creates the necessary files, includes teflo.cfg,
+ansible.cfg, ansible playbooks, and some scenario
+files to do provision, orchestrate and execute jobs.
+
+.. code-block:: bash
+
+    teflo init --help
+    Usage: teflo init [OPTIONS]
+
+        Initializes a teflo project in your workspace.
+
+    Options:
+        -d, --dirname             Directory name to create teflo initial files in it. By
+                                  default, the name is teflo_workspace.
+        --help                    Show this message and exit.
+
+
+.. code-block:: bash
+
+    teflo init
+
+.. code-block:: bash
+
+    teflo init --dirname new_project
+
+After you run *teflo init* command the project file tree will look like this:
+
+.. code-block:: bash
+
+    .
+    ├── execute
+    │   ├── add_two_numbers.sh
+    │   ├── README.rst
+    │   ├── SampleTest.xml
+    │   ├── scenario.yml
+    │   └── teflo.cfg
+    ├── orchestrate
+    │   ├── ansible
+    │   │   ├── mock_kernel_update.yml
+    │   │   └── system_info.yml
+    │   ├── ansible.cfg
+    │   ├── README.rst
+    │   ├── scenario.yml
+    │   └── teflo.cfg
+    └── provision
+        ├── README.rst
+        ├── scenario.yml
+        └── teflo.cfg
+
+You can use the examples using the README.rst files in the same folder.
 
 Getting Started Examples
 ~~~~~~~~~~~~~~~~~~~~~~~~
