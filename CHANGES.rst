@@ -1,3 +1,28 @@
+Version 1.2.1 (2021-06-28)
+--------------------------
+
+Features
+~~~~~~~~~~~~
+* Introduced teflo_notify_service_plugin, users can use this plugin to send out messages to many platforms now
+
+Enhancements
+~~~~~~~~~~~~
+* Added new default location for the usage of variables, you can now put varfile in default locations without specifying the with --vars-data
+* Added nested recursive variable support, now the users can use variable inside a variable in your variable file
+* Added ability to pass multiple files to the extra_vars module
+* Create root users ssh directory for beaker provisioner when non existing
+* Added teflo_notify_service_plugin, terraform-plugin and webhook-notification-plugin to setup.py extra require, users can do something like 'pip install teflo[teflo_notify_service_plugin]' now
+
+Bug Fixes
+~~~~~~~~~
+* Fixed Ansible version bug
+
+Documentation
+~~~~~~~~~~~~~
+* Updated compatibility matrix
+* Updated some installation guide for some plugins
+* Update teflos package classifiers
+
 Version 1.2.0 (2021-05-10)
 --------------------------
 
