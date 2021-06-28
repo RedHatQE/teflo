@@ -41,7 +41,8 @@ from teflo.provisioners.ext import BeakerClientProvisionerPlugin
 from teflo.helpers import DataInjector, validate_render_scenario, set_task_class_concurrency, \
     mask_credentials_password, sort_tasklist, find_artifacts_on_disk, \
     get_default_provisioner_plugin, get_ans_verbosity, schema_validator, filter_resources_labels,\
-    create_individual_testrun_results, create_aggregate_testrun_results, filter_notifications_to_skip
+    create_individual_testrun_results, create_aggregate_testrun_results, filter_notifications_to_skip, \
+    check_for_var_file
 
 
 @pytest.fixture(scope='class')
@@ -251,24 +252,24 @@ class TestDataInjector(object):
         assert cmd[1] == ['world', 'v1']
 
 
-def test_validate_render_scenario_no_include():
-    result = validate_render_scenario(os.path.abspath('../assets/no_include.yml'))
+def test_validate_render_scenario_no_include(task_concurrency_config):
+    result = validate_render_scenario(os.path.abspath('../assets/no_include.yml'), task_concurrency_config)
     assert len(result) == 1
 
 
-def test_validate_render_scenario_correct_include():
-    result = validate_render_scenario('../assets/correct_include_descriptor.yml')
+def test_validate_render_scenario_correct_include(task_concurrency_config):
+    result = validate_render_scenario('../assets/correct_include_descriptor.yml', task_concurrency_config)
     assert len(result) == 2
 
 
-def test_validate_render_scenario_wrong_include():
+def test_validate_render_scenario_wrong_include(task_concurrency_config):
     with pytest.raises(HelpersError) as e:
-        validate_render_scenario('../assets/wrong_include_descriptor.yml')
+        validate_render_scenario('../assets/wrong_include_descriptor.yml', task_concurrency_config)
 
 
-def test_validate_render_scenario_empty_include():
+def test_validate_render_scenario_empty_include(task_concurrency_config):
     with pytest.raises(HelpersError) as e:
-        validate_render_scenario('../assets/empty_include.yml')
+        validate_render_scenario('../assets/empty_include.yml', task_concurrency_config)
 
 
 def test_set_task_concurrency_provision_is_false(host):
@@ -539,11 +540,13 @@ def test_create_aggregate_testrun_results():
     assert res['aggregate_testrun_results']['total_tests'] == 6
     assert res['aggregate_testrun_results']['failed_tests'] == 2
 
+
 def test_filter_notifications_to_skip_01(teflo1, notification_on_start_resource, notification_default_resource):
     """ this test verifies resources which match skip-notify list are not included"""
     notify_list = [notification_on_start_resource, notification_default_resource]
     res = filter_notifications_to_skip(notify_list, teflo1.teflo_options)
     assert res[0] == notification_default_resource
+
 
 def test_filter_notifications_to_skip_02(teflo1, notification_on_start_resource, notification_default_resource):
     """ this test verifies skip-notify is not present original  list of notification resources are returned"""
@@ -551,3 +554,51 @@ def test_filter_notifications_to_skip_02(teflo1, notification_on_start_resource,
     teflo1.teflo_options.update(skip_notify=())
     res = filter_notifications_to_skip(notify_list, teflo1.teflo_options)
     assert res == notify_list
+
+
+def test_check_for_var_file_in_ws(teflo1):
+    """This test is used to test method check_for_var_file when variable file is present in the
+       workspace as var_file.yml"""
+    os.system("cp ../assets/vars_data.yml /tmp/var_file.yml")
+    res = check_for_var_file(teflo1.config)
+    assert res[0] == '/tmp/var_file.yml'
+    assert res[1] == os.path.abspath('../assets/vars_data.yml')
+    os.system("rm /tmp/var_file.yml")
+
+
+def test_check_for_var_file_in_ws_under_vars(teflo1):
+    """This test is used to test method check_for_var_file when variable file is present in the
+       workspace under vars folder as well as a var_file.yml is present """
+    os.system("mkdir /tmp/vars")
+    os.system("mkdir /tmp/vars/dir1")
+    os.system("cp ../assets/vars_data.yml /tmp/vars/var1.yml")
+    os.system("cp ../assets/vars_data.yml /tmp/vars/dir1/var2.yml")
+    os.system("touch /tmp/vars/dir1/test.cfg")
+    os.system("cp ../assets/vars_data.yml /tmp/var_file.yml")
+
+    res = check_for_var_file(teflo1.config)
+    assert '/tmp/vars/var1.yml' in res
+    assert '/tmp/vars/dir1/var2.yml' in res
+    assert res[-1] == os.path.abspath('../assets/vars_data.yml')
+    assert res[-2] == '/tmp/var_file.yml'
+    assert '/tmp/vars/dir1/test.cfg' not in res
+    os.system("rm -r /tmp/vars")
+    os.system("rm /tmp/var_file.yml")
+
+
+def test_check_for_var_file_with_default_path_as_dir(teflo1):
+    """This test is used to test method check_for_var_file when defaulr variable file path in teflo.cfg
+    is a directory"""
+    os.system("mkdir /tmp/teflo_var_file")
+
+    os.system("mkdir /tmp/teflo_var_file/dir1")
+    os.system("cp ../assets/vars_data.yml /tmp/teflo_var_file/var1.yml")
+    os.system("cp ../assets/vars_data.yml /tmp/teflo_var_file/dir1/var2.yml")
+
+    teflo1.config['VAR_FILE'] = '/tmp/teflo_var_file'
+
+    res = check_for_var_file(teflo1.config)
+    assert '/tmp/teflo_var_file/dir1/var2.yml' in res
+    assert '/tmp/teflo_var_file/var1.yml' in res
+    assert len(res) == 2
+    os.system("rm -r /tmp/teflo_var_file")

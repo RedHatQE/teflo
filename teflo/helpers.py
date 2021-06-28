@@ -59,7 +59,8 @@ from ssh.key import import_privkey_file
 from ssh import options
 from ssh.exceptions import SSHError, HostKeyNotVerifiable, AuthenticationError, ConnectFailed, ConnectionLost
 import pkg_resources
-
+import glob
+from ruamel.yaml import comments
 LOG = getLogger(__name__)
 
 # sentinel
@@ -219,7 +220,6 @@ def get_orchestrators_plugin_list():
 
 # Using entry point to get the executors defined in teflo's setup.py file
 def get_executors_plugin_classes():
-
     """Return all executor plugin classes discovered by teflo
     :return: The list of executor plugin classes
     """
@@ -1293,7 +1293,161 @@ def build_artifact_regex_query(name):
     return regquery
 
 
-def validate_render_scenario(scenario, temp_data_raw=[]):
+def check_for_var_file(config):
+    """ This method  is for checking if variable file/directory is provided by the user in teflo.cfg under var_file key,
+     var_file.yml under the workspace , vars folder in the workspace and
+     It looks for yaml/yml files and then returns a list of file paths
+
+     Var files set every where (teflo.cfg, var_file.yml. vars folder) are collected, but the following
+     precedence is followed:
+     1. values passed over cli will override the ones set by the below options
+     2. values set in teflo.cfg will override the ones set by the below options
+     3. values set in var_file.yml will override the ones set by below options
+     4. values set in vars folder in current workspace
+
+    :param config: config object for teflo
+    :type config: config obj
+    :return: var_file_list
+    :rtype: list of variable file paths
+    """
+
+    var_file_list = list()
+    var_dir = os.path.join(config.get('WORKSPACE'), 'vars')
+    workspace_var_file = os.path.join(config.get('WORKSPACE'), 'var_file.yml')
+    if config.get('VAR_FILE'):
+        default_var_file = os.path.abspath(os.path.expandvars(os.path.expanduser(config.get('VAR_FILE'))))
+    else:
+        default_var_file = ''
+
+    if os.path.exists(var_dir) and os.path.isdir(var_dir):
+        LOG.debug("Looking for .yml files as variable file under vars folder in the current workspace")
+
+        for subdir, dirs, files in os.walk(var_dir):
+            for filename in files:
+                filepath = subdir + os.sep + filename
+                if filepath.endswith(".yml"):
+                    var_file_list.append(filepath)
+
+    if os.path.exists(workspace_var_file):
+        LOG.debug("var_file.yml in current workspace added as a varaible file")
+        var_file_list.append(workspace_var_file)
+
+    if default_var_file and os.path.exists(default_var_file):
+        if os.path.isdir(default_var_file):
+            LOG.debug("Default variable file path in teflo.cfg is a directory. "
+                      "Looking for .yml files to be used as variable files")
+
+            for subdir, dirs, files in os.walk(default_var_file):
+                for filename in files:
+                    filepath = subdir + os.sep + filename
+                    if filepath.endswith(".yml"):
+                        var_file_list.append(filepath)
+        else:
+            LOG.debug("Default variable file found in teflo.cfg")
+            var_file_list.append(default_var_file)
+
+    return var_file_list
+
+
+def validate_brackets(input):
+    """
+    Helper funcion that validates if the input
+    is a validate string that has paired brackets
+    param input: raw variable string, something like this -> "hello {{ var }}"
+    :param type: str
+    e.x. :
+    "hello {{ var }}" is valid
+    "hello {{ var }" is invalid
+    :type config: config obj
+    :rtype: bool
+
+    """
+    left = []
+    for char in input:
+        if char == "{":
+            left.append(char)
+        if char == "}":
+            if len(left) == 0:
+                return False
+            left.pop()
+    return len(left) == 0
+
+
+def replace_brackets(input, temp_data):
+    """
+    This function replace the the refered variable by it's true value recursively
+    e.x.:
+    input_yaml:
+        a = "Hello, world!!"
+        b = "{{ hello }}" -> this is the input for this function
+    b will be conveted to "hello world" after running replace_brackerts(b, input_yaml)
+    :param input: the raw string in yaml input
+    :param type: str
+    :return new string with variables' values
+    """
+    if validate_brackets(input) and input.__contains__("{{") and input.__contains__("}}"):
+        left = []
+        key_start, key_end = 0, 0
+        replace_start, replace_end = 0, 0
+        for i in range(len(input)):
+            if input[i] == "{":
+                left.append(i)
+            elif input[i] == "}":
+                key_start, key_end = left.pop() + 1, i
+                replace_start, replace_end = left.pop(), i + 2
+                break
+
+        key = input[key_start:key_end].strip()
+        if not isinstance(temp_data[key], str):
+            temp_data.update({key: preprocyaml(temp_data[key], temp_data)})
+        ret = input.replace(input[replace_start:replace_end], temp_data[key], 1)
+
+        return replace_brackets(ret, temp_data)
+    else:
+        return input
+
+
+def preprocyaml_str(input, temp_data):
+    """
+    This function is a wrapper function for replace_brackets
+    Just make it look more intuitive from its name
+    """
+    return replace_brackets(input, temp_data)
+
+
+def preprocyaml(input, temp_data):
+    """
+    This function will add the variable value to the raw string,
+    it handles all kinds of input including: string, list, dict
+    this function will add varible value to the input recursively
+    :param input: input from the yaml file
+    :param type: str, list, or dict
+    :return new value with the nested variable value added to the field in the yaml file
+    """
+    if isinstance(input, str):
+        return preprocyaml_str(input, temp_data)
+    elif isinstance(input, list):
+        new_list = []
+        for val in input:
+            new_list.append(preprocyaml(val, temp_data))
+        return new_list
+    elif isinstance(input, comments.CommentedMap):
+        new_dict = {}
+        for item in input._items():
+            if not isinstance(item[0], str):
+                result = ""
+                for key in item[0].keys():
+                    if not isinstance(temp_data[key], str):
+                        temp_data.update({key: preprocyaml(temp_data[key], temp_data)})
+                    result = result + temp_data[key]
+                return result
+            new_dict.update({item[0]: item[1]})
+        for item in new_dict.items():
+            new_dict.update({item[0]: preprocyaml(item[1], temp_data)})
+        return new_dict
+
+
+def validate_render_scenario(scenario, config, temp_data_raw=()):
     """
     This method takes the absolute path of the scenario descriptor file and returns back a list of
     data streams of scenario(s) after doing the following checks:
@@ -1303,23 +1457,27 @@ def validate_render_scenario(scenario, temp_data_raw=[]):
     (4) Checks there is no yaml.safe_load error for scenario file in the include section
     :param scenario: scenario file path
     :type scenario: str
-    :param temp_data: a list of the file path to jinja template vars data or a json dictionary of vars data
-    :type temp_data: dict or str
+    :param config: config object for teflo
+    :type config: config obj
+    :param temp_data_raw: a list of the file path to jinja template vars data or a json dictionary of vars data
+    :type temp_data_raw: dict or str
     :return: scenario data stream(s)
     :rtype: list of data streams
     """
     scenario_stream_list = list()
-
     # Click gives us a tuple, by default
-    if temp_data_raw is None:
-        temp_data_raw = []
+    var_file_list = check_for_var_file(config)
     if isinstance(temp_data_raw, tuple):
-        temp_data_raw = list(temp_data_raw)
+        var_file_list.extend(list(temp_data_raw))
     # Convert each item to an object, then reduce them all back to one
-    temp_data_objs = [file_mgmt('r', t) if os.path.isfile(t) else json.loads(t) for t in temp_data_raw]
+    temp_data_objs = [file_mgmt('r', t) if os.path.isfile(t) else json.loads(t) for t in var_file_list]
     # Reduce it down to a single object we can work with
     temp_data = {}
     [temp_data.update(t) for t in temp_data_objs]
+
+    for item in temp_data.items():
+        temp_data.update({item[0]: preprocyaml(item[1], temp_data)})
+
     temp_data.update(os.environ)
     try:
         data = yaml.safe_load(template_render(scenario, temp_data))
@@ -1472,7 +1630,7 @@ def sort_tasklist(user_tasks):
         return sorted(user_tasks, key=NOTIFYSTATES.index)
 
 
-def validate_cli_scenario_option(ctx, scenario, vars_data=None):
+def validate_cli_scenario_option(ctx, scenario, config, vars_data=None):
     # Make sure the file exists and gets its absolute path
     if scenario is not None and os.path.isfile(scenario):
         scenario = os.path.abspath(scenario)
@@ -1482,7 +1640,7 @@ def validate_cli_scenario_option(ctx, scenario, vars_data=None):
 
     # Checking if include section is present and getting validated scenario stream/s
     try:
-        scenario_stream = validate_render_scenario(scenario, vars_data)
+        scenario_stream = validate_render_scenario(scenario, config, vars_data)
         return scenario_stream
     except yaml.YAMLError as err:
         click.echo('Error loading scenario data! %s' % err)

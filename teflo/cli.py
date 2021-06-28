@@ -72,10 +72,10 @@ def create():
 def show(ctx, scenario, list_labels):
     """Show information about the scenario."""
     print_header()
-    scenario_stream = validate_cli_scenario_option(ctx, scenario)
     # Create a new teflo compound
     cbn = Teflo(__name__)
 
+    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config)
     # Sending the list of scenario streams to the teflo object
     cbn.load_from_yaml(scenario_stream)
 
@@ -137,8 +137,6 @@ def show(ctx, scenario, list_labels):
 def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels, skip_labels, skip_notify, no_notify):
     """Validate a scenario configuration."""
 
-    scenario_stream = validate_cli_scenario_option(ctx, scenario, vars_data)
-
     # checking if labels or skip_labels both are set
     if labels and skip_labels:
         click.echo('Labels and skip_labels are mutually exclusive. Only one of them can be used')
@@ -154,6 +152,8 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
         skip_notify=skip_notify,
         no_notify=no_notify
     )
+
+    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
 
     # This is the easiest way to configure a full scenario.
     cbn.load_from_yaml(scenario_stream)
@@ -220,8 +220,6 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
     """Run a scenario configuration."""
     print_header()
 
-    scenario_stream = validate_cli_scenario_option(ctx, scenario, vars_data)
-
     # checking if labels or skip_labels both are set
     if labels and skip_labels:
         click.echo('Labels and skip_labels are mutually exclusive. Only one of them can be used')
@@ -238,6 +236,8 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
         skip_notify=skip_notify,
         no_notify=no_notify
     )
+
+    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
 
     # Sending the list of scenario streams to the teflo object
     cbn.load_from_yaml(scenario_stream)
@@ -291,8 +291,6 @@ def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_not
     """Trigger notifications marked on demand for a scenario configuration."""
     print_header()
 
-    scenario_stream = validate_cli_scenario_option(ctx, scenario, vars_data)
-
     # Create a new teflo compound
     cbn = Teflo(
         __name__,
@@ -302,6 +300,8 @@ def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_not
         skip_notify=skip_notify,
         no_notify=no_notify
     )
+
+    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
 
     # Sending the list of scenario streams to the teflo object
     cbn.load_from_yaml(scenario_stream)

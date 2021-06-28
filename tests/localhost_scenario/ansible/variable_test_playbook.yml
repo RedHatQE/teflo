@@ -1,0 +1,13 @@
+---
+- name: run playbook to list out local devices
+  hosts: '{{ hosts }}'
+
+  tasks:
+  - name: list out the local blk devices
+    shell: lsblk
+
+  - name: print dummy host ip address
+    shell: "echo {{ ip }}"
+
+  - name: print user name
+    shell: "echo {{ name }}"

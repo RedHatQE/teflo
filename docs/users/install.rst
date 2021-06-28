@@ -35,7 +35,7 @@ Install teflo from source:
     # for ansible modules requiring selinux, you will need to enable system site packages
     $ virtualenv --system-site-packages teflo
     $ source teflo/bin/activate
-    (teflo) $ pip install git+https://github.com/RedHatQE/teflo.git
+    (teflo) $ pip install teflo
 
 Post Install
 ++++++++++++
@@ -140,6 +140,17 @@ by running the rp_preproc commands
     This plugin is meant for Internal RED HAT use and is not available publicly yet
 
 
+Teflo_Terraform_Plugin
+~~~~~~~~~~~~~~~~~~~~~~
+
+This plugin is used to call terraform as a provisioner
+Please review the `repo documentation <https://github.com/RedHatQE/teflo_terraform_plugin/blob/master/docs/user.md>`__
+
+.. code-block:: bash
+
+    $ pip install teflo[terraform-plugin]
+
+
 Notification Plugins
 --------------------
 
@@ -150,6 +161,23 @@ This plugin is used to notify based users using chat applications gchat and slac
 Please review the `repo documentation <https://redhatqe.github.io/teflo_webhooks_notification_plugin/user.html>`__
 and how to use the plugin.Please review `Teflo's notification triggers <./definitions/notifications.html#triggers>`__
 to get more info on using Teflo`s notification feature
+
+.. code-block:: bash
+
+    $ pip install teflo[webhook-notification-plugin]
+
+
+Teflo_Notify_Service_Plugin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This plugin is used to notify based users using chat applications gchat and slack.
+Please review the `repo documentation <https://redhatqe.github.io/teflo_notify_service_plugin/index.html>`__
+and how to use the plugin.Please review `Teflo's notification triggers <./definitions/notifications.html#triggers>`__
+to get more info on using Teflo`s notification feature
+
+.. code-block:: bash
+
+    $ pip install teflo[notify-service-plugin]
 
 .. _cbn_plugin_matrix:
 
@@ -164,9 +192,9 @@ n and n-2 teflo releases
     :header-rows: 1
 
     *   - Teflo Release
-        - 1.0.1
         - 1.1.0
         - 1.2.0
+        - 1.2.1
 
     *   - Rppreproc Plugin
         - 1.0.0
@@ -179,24 +207,29 @@ n and n-2 teflo releases
         - 1.0.0
 
     *   - Linchpin Plugin
-        - 1.0.1
+        - 1.0.2
         - 1.0.2
         - 1.0.2
 
     *   - Openstack Client Plugin
-        - 1.0.0
+        - 1.0.1
         - 1.0.1
         - 1.0.1
 
     *   - Webhooks Notification Plugin
-        - 1.0.0
         - 1.1.0
         - 1.1.0
+        - 1.1.1
 
     *   - Terraform Plugin
         - -
-        - -
         - 0.0.1
+        - 1.0.0
+
+    *   - Notify Service Plugin
+        - -
+        - -
+        - 1.0.0
 
     *   - Polar
         - 1.2.1

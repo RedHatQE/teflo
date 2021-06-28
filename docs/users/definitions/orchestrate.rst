@@ -435,6 +435,8 @@ the **ansible_options** section
             auto_attach: true
 
 Use the **file** key to pass a variable file to the playbook. This file needs to present in teflo's workspace
+**file** key can be a single file give as string or a list of variable files present in teflo's workspace
+
 
 .. code-block:: yaml
 
@@ -447,6 +449,21 @@ Use the **file** key to pass a variable file to the playbook. This file needs to
         ansible_options:
           extra_vars:
             file: variable_file.yml
+
+
+.. code-block:: yaml
+
+    ---
+    orchestrate:
+      - name: rhsm_register.yml
+        description: "register systems under test against rhsm"
+        orchestrator: ansible
+        hosts: all
+        ansible_options:
+          extra_vars:
+            file:
+            - variable_file.yml
+            - variable_1_file.yml
 
 
 Ansible Galaxy Options

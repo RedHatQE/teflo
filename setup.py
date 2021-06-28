@@ -32,6 +32,7 @@ def get_version():
     init = open(os.path.join(ROOT, 'teflo', '__init__.py')).read()
     return VERSION_RE.search(init).group(1)
 
+
 # reading description from README.rst
 with io.open(os.path.join(ROOT, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
@@ -47,9 +48,9 @@ setup(
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     zip_safe=False,
+    python_requires=">=3.6",
     install_requires=[
         'ansible>=2.5.0',
-        'ansible-base != 2.10.6',
         'apache-libcloud==2.2.0',
         "blaster>=0.3.0",
         'Click>=6.7',
@@ -64,16 +65,19 @@ setup(
     ],
     extras_require={
                     'linchpin-wrapper': ['teflo_linchpin_plugin'],
-                    'openstack-client-plugin': ['teflo_openstack_client_plugin']
+                    'openstack-client-plugin': ['teflo_openstack_client_plugin'],
+                    'terraform-plugin': ['teflo-terraform-plugin'],
+                    'webhook-notification-plugin': ['teflo-webhooks-notification-plugin'],
+                    'notify-service-plugin': ['teflo-notify-service-plugin']
 
                     },
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'Natural Language :: English',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
+        'Natural Language :: English',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
     ],
     entry_points={
