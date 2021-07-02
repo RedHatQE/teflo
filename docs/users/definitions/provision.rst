@@ -333,6 +333,7 @@ resource for OpenStack using the **openstack-libcloud** provisioner:
         networks: <networks>
         floating_ip_pool: <floating_ip_pool>
         keypair: <keypair>
+        server_metadata: <dict_key_values>
 
 .. list-table::
     :widths: auto
@@ -373,6 +374,11 @@ resource for OpenStack using the **openstack-libcloud** provisioner:
         - The name of the keypair to associate the node with.
         - String
         - True
+
+    *   - server_metadata
+        - Metadata to associate with the node.
+        - Dict
+        - False
 
 Example
 +++++++
