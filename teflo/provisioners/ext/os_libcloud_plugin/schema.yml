@@ -21,6 +21,14 @@ mapping:
   keypair:
     required: False
     type: str
+  server_metadata:
+    required: False
+    type: map
+    allowempty: True
+    mapping:
+      regex;(.*):
+        required: False
+        type: any
   credential:
     required: False
     type: map
