@@ -327,6 +327,9 @@ is an example of how run test playbooks.
     from where teflo is running. Which means the test playbook must be in
     the workspace.
 
+.. note::
+    extra_vars are set same as the orchestrate stage. Please refer :ref:`Extra Vars <extra_vars>`
+
 
 Data Substitution Required for Test Execution
 ---------------------------------------------
