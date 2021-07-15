@@ -356,7 +356,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
 
         raise OpenstackProviderError('Unable to get FIP for node!')
 
-    def create_node(self, name, image, size, network, key_pair):
+    def create_node(self, name, image, size, network, key_pair, metadata):
         """Create node.
 
         This method will create a new node in openstack. The node will be
@@ -374,6 +374,8 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         :type network: str
         :param key_pair: Key pair to inject into node.
         :type key_pair: str
+        :param metadata: Metadata for the node.
+        :type metadata: Dict[str, str]
         :return: Node object.
         :rtype: object
         """
@@ -381,8 +383,8 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
 
         self.logger.debug('Creating node %s.' % name)
         self.logger.debug('Node details:\n * keypair=%s\n * image=%s\n '
-                          '* flavor=%s\n * networks=%s' %
-                          (key_pair, image, size, network))
+                          '* flavor=%s\n * networks=%s\n * metadata=%s' %
+                          (key_pair, image, size, network, metadata))
 
         # cache image object
         _image = self.image_lookup(image)
@@ -401,7 +403,8 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
                     image=_image,
                     size=_size,
                     networks=_network,
-                    ex_keyname=key_pair
+                    ex_keyname=key_pair,
+                    ex_metadata=metadata
                 )
                 self.logger.info('Successfully booted node %s.' % name)
                 return node
@@ -453,7 +456,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
             'Maximum attempts reached to delete node %s.' % node.name
         )
 
-    def _create(self, name, image, size, network, key_pair, fip):
+    def _create(self, name, image, size, network, key_pair, fip, metadata):
         """Create.
 
         This method will create a resource (node) in openstack. It will
@@ -474,6 +477,8 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         :type key_pair: str
         :param fip: Floating ip pool.
         :type fip: str
+        :param metadata: Metadata for the node.
+        :type metadata: Dict[str, str]
         :return: Node fip. id.
         :rtype: str(s)
         """
@@ -481,7 +486,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
 
         # create node
         try:
-            node = self.create_node(name, image, size, network, key_pair)
+            node = self.create_node(name, image, size, network, key_pair, metadata)
         except Exception:
             self.logger.error("Failed to create node %s " % name)
             raise
@@ -674,7 +679,8 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
             self.provider_params.get('flavor'),
             self.provider_params.get('networks'),
             self.provider_params.get('keypair'),
-            self.provider_params.get('floating_ip_pool', None)
+            self.provider_params.get('floating_ip_pool', None),
+            self.provider_params.get('server_metadata', {})
         )
 
         return [dict(hostname=hostname, asset_id=_id, ip=_ip)]

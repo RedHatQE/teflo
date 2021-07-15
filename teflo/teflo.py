@@ -26,9 +26,12 @@
 import errno
 import os
 import sys
-
 import blaster
 import yaml
+import click
+import shutil
+from distutils.dir_util import copy_tree
+from teflo.helpers import exec_local_cmd
 from . import __name__ as __teflo_name__
 from .constants import TASKLIST, RESULTS_FILE, DATA_FOLDER, DEFAULT_INVENTORY
 from .core import TefloError, LoggerMixin, TimeMixin, Inventory
@@ -617,3 +620,19 @@ class Teflo(LoggerMixin, TimeMixin):
             if os.listdir(self.config['INVENTORY_FOLDER']):
                 inv_results_dir = os.path.join(self.config['RESULTS_FOLDER'], 'inventory')
                 os.system('cp -r %s/* %s' % (self.config['INVENTORY_FOLDER'], inv_results_dir))
+
+    def create_teflo_workspace(self, ctx, dirname):
+        """Clones the teflo examples git repo and copy the workspace files."""
+
+        # Download the teflo examples repo to cache folder
+        url = 'https://github.com/redhatqe/teflo_examples.git'
+        cmd = 'git clone ' + url + ' .teflo_cache'
+        result = exec_local_cmd(cmd)
+
+        if result[0] != 0:
+            click.echo("A problem occurred while cloning the teflo_examples project")
+            ctx.exit()
+
+        # Copy the files to the new directory and clean cache
+        copy_tree('./.teflo_cache/teflo_init/', dirname)
+        shutil.rmtree('.teflo_cache')

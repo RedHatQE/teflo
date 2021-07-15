@@ -25,6 +25,8 @@
     :license: GPLv3, see LICENSE for more details.
 """
 
+import os
+import shutil
 import click
 from . import __version__
 from .teflo import Teflo
@@ -309,3 +311,31 @@ def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_not
     # The scenario will start the main pipeline and run through the task
     # pipelines declared. See :function:`~teflo.Teflo.run` for more details.
     cbn.notify('on_demand')
+
+
+@teflo.command()
+@click.option("-d", "--dirname",
+              default=None,
+              metavar="",
+              help="Directory name to create teflo initial files in it. By default, the name is"
+                   " teflo_workspace")
+@click.pass_context
+def init(ctx, dirname):
+    """Initializes a teflo project in your workspace."""
+    print_header()
+
+    if not dirname:
+        dirname = 'teflo_workspace'
+
+    if os.path.exists(dirname):
+        if not click.confirm('{0} already exists,overwrite it?'.format(dirname),
+                                 default=False):
+            ctx.exit()
+        else:
+            shutil.rmtree(dirname)
+
+    os.mkdir(dirname)
+
+    Teflo.create_teflo_workspace(Teflo, ctx, dirname)
+
+    click.echo("The teflo workspace created successfully")

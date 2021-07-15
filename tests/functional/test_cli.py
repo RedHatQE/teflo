@@ -29,6 +29,7 @@ import mock
 import pytest
 import yaml
 import json
+import shutil
 from teflo import Teflo
 from teflo.cli import print_header, teflo
 from click.testing import CliRunner
@@ -334,3 +335,25 @@ class TestCli(object):
             teflo, ['notify', '-s', '../assets/descriptor.yml', '-d', '/tmp', '-sn', 'test_note_02']
         )
         assert results.exit_code == 0
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'create_teflo_workspace')
+    def test_init(mock_method, runner):
+        """This is for testing use of teflo init command"""
+        mock_method.return_value = 0
+        results = runner.invoke(
+            teflo, ['init']
+        )
+        assert results.exit_code == 0
+        shutil.rmtree('teflo_workspace')
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'create_teflo_workspace')
+    def test_init_dirname(mock_method, runner):
+        """This is for testing use of teflo init command"""
+        mock_method.return_value = 0
+        results = runner.invoke(
+            teflo, ['init', '-d', 'init_project']
+        )
+        assert results.exit_code == 0
+        shutil.rmtree('init_project')
