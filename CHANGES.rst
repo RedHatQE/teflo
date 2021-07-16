@@ -1,3 +1,11 @@
+Version 1.2.2 (2021-07-16)
+--------------------------
+
+Features
+~~~~~~~~~~~~
+* Added teflo init command (It will generate a genralized teflo workspace for you with examples)
+* Added openstack instance metadata field for os_libcloud_plugin
+
 Version 1.2.1 (2021-06-28)
 --------------------------
 
