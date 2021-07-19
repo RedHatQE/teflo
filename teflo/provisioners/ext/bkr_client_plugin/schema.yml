@@ -97,6 +97,11 @@ mapping:
     type: seq
     sequence:
       - type: str
+  ksappends:
+    required: False
+    type: seq
+    sequence:
+      - type: str
   job_url:
     required: False
     type: str
