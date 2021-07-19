@@ -577,6 +577,7 @@ class BeakerXML(object):
         self._kernel_options_post = ""
         self._kickstart = ""
         self._ksmeta = ""
+        self._ksappends = []
         self._remove_task = False
         self._virtmachine = False
         self._virtcapable = False
@@ -684,6 +685,11 @@ class BeakerXML(object):
         # Set kick start meta options
         if self.ksmeta != "":
             self.cmd += " --ks-meta '" + " ".join(self.ksmeta) + "'"
+
+        # Set kickstart append script
+        if self.ksappends != []:
+            for ksappend in self.ksappends:
+                self.cmd += " --ks-append '" + ksappend + "'"
 
         # Set debug and dryrun
         self.cmd += " --debug --dryrun"
@@ -861,6 +867,17 @@ class BeakerXML(object):
         """Set kick start meta data.
         :param meta: meta data"""
         self._ksmeta = meta
+
+    @property
+    def ksappends(self):
+        """Return the kick start append scripts."""
+        return self._ksappends
+
+    @ksappends.setter
+    def ksappends(self, scripts):
+        """Set kick start append scripts.
+        :param scripts: ksappend scripts"""
+        self._ksappends = scripts
 
     @property
     def arch(self):
