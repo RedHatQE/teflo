@@ -1400,7 +1400,11 @@ def replace_brackets(input, temp_data):
         key = input[key_start:key_end].strip()
         if not isinstance(temp_data[key], str):
             temp_data.update({key: preprocyaml(temp_data[key], temp_data)})
-        ret = input.replace(input[replace_start:replace_end], temp_data[key], 1)
+
+        if isinstance(temp_data[key], str):
+            ret = input.replace(input[replace_start:replace_end], temp_data[key], 1)
+        elif isinstance(temp_data[key], list) or isinstance(temp_data[key], dict):
+            ret = temp_data[key]
 
         return replace_brackets(ret, temp_data)
     else:
@@ -1445,6 +1449,8 @@ def preprocyaml(input, temp_data):
         for item in new_dict.items():
             new_dict.update({item[0]: preprocyaml(item[1], temp_data)})
         return new_dict
+    else:
+        return input
 
 
 def validate_render_scenario(scenario, config, temp_data_raw=()):
