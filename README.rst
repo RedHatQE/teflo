@@ -60,5 +60,6 @@ Below is a diagram that gives you a quick overview of the Teflo workflow
 
 .. image:: /docs/_static/teflo_workflow.png
 
-To learn more about how to set up and use Teflo please check out https://teflo.readthedocs.io/en/latest/
-To know how to create a custom plugin check out https://teflo.readthedocs.io/en/latest/developers/development.html#how-to-write-an-plugin-for-teflo
+* To learn more about how to set up and use Teflo please check out https://teflo.readthedocs.io/en/latest/
+* To know how to create a custom plugin check out https://teflo.readthedocs.io/en/latest/developers/development.html#how-to-write-an-plugin-for-teflo
+* To know about our release cadence and contribution policy check out https://teflo.readthedocs.io/en/latest/developers/development.html#release-cadence

@@ -58,8 +58,9 @@ Below is a diagram that gives you a quick overview of Teflo workflow
 
 .. image:: _static/teflo_workflow.png
 
-To learn more about how to set up and use Teflo please check out the `Users Guide <users/quickstart.html>`__
-To know how to create a custom plugin checkout `Developers Guide <developers/development.html#how-to-write-an-plugin-for-teflo>`__
+* To learn more about how to set up and use Teflo please check out the `Users Guide <users/quickstart.html>`__
+* To know how to create a custom plugin checkout `Developers Guide <developers/development.html#how-to-write-an-plugin-for-teflo>`__
+* To know about our release cadence and contribution policy check out `Release Cadence <developers/development.html#release-cadence>`__
 
 .. include:: contents.rst.inc
 

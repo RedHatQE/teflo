@@ -8,12 +8,34 @@ model and best practices before submitting changes.
 Any questions regarding this guide, or in general? Please feel free to
 file an `issue <https://github.com/RedHatQE/teflo/issues>`_
 
+Release Cadence
+---------------
+The release cadence of the project follows the rules below,
+all contributions are welcome and please be aware of the cadence.
+For general usage users/contributors can fork the develop branch in order to use the latest changes
+
+#. **Develop** is the branch contributions are made on
+#. **Master** branch is the stable branch
+#. Release a new version in every 5 weeks
+    #. Changes will be evaluated and merged into master ,if suitable ,from develop branch and then released to the PyPi server
+#. The release will be major/minor/patch based on :
+    #. Major changes, e.g. major refactor or backward compatibility break, etc. (major release)
+    #. Other changes like new features or code refactoring that are not major (minor)
+    #. Bug fixes (patch)
+#. Labels are recommended for issues and PRs in the following manner
+    #. **Critical** : For any urgent blocking issues
+    #. **Bug** : For any bugs
+    #. **New_feature** : For any new feature request
+#. Hotfix release may be available before usual release cycle based on issue severity. A hotfix release is considered if:
+    #. It is blocking user automation and no workaround is available
+    #. Develop branch installation does not unblock the user.
+
 Branch Model
 ------------
 
 Teflo has two branches
- - develop - all work is done here
- - master - stable tagged release that users can use
+ - **develop** - all work is done here
+ - **master** - stable tagged release that users can use
 
 The master branch is a protected branch. We do not allow commits directly to
 it. Master branch contains the latest stable release. The develop branch is
