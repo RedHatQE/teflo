@@ -41,10 +41,9 @@ docs:
 	tox -e docs
 
 docs-wiki:
-	tox -e docs-wiki -- -D confluence_space_name='${CONF_SPACE_NAME}' -D confluence_parent_page='${CONF_PARENT_PAGE}' -D confluence_server_user='${CONF_SERVER_USER}' -D confluence_server_pass='${CONF_SERVER_PASS}'	
+	./shell_tox.sh
 
-bump-major:
-	bumpversion major --commit
+bump-major: bumpversion major --commit
 
 bump-minor:
 	bumpversion minor --commit
