@@ -1652,6 +1652,14 @@ def validate_cli_scenario_option(ctx, scenario, config, vars_data=None):
     except TefloError as err:
         click.echo('%s' % err.message)
         ctx.exit(1)
+    except jinja2.exceptions.UndefinedError as err:
+        curframe = inspect.currentframe()
+        calframe = inspect.getouterframes(curframe, 2)
+        if calframe[1][3] is 'show':
+            click.echo("\n\nYou need to use --vars-data to fill your variables for show command")
+            ctx.exit(1)
+        else:
+            raise TefloError("You need to fill your variable with --vars-data label")
 
 
 def create_individual_testrun_results(artifact_locations, config):

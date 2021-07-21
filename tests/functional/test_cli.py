@@ -298,6 +298,21 @@ class TestCli(object):
         assert "An option needs to be given. See help" in results.output
 
     @staticmethod
+    def test_valid_show_with_varsdata(runner):
+        results = runner.invoke(
+            teflo, ['show', '-s', '../assets/show_vars_data.yml', '--list-labels','--vars-data', '../assets/show_test_var.yml']
+        )
+        assert results.exit_code == 0
+
+    @staticmethod
+    def test_invalid_show_with_varsdata(runner):
+        results = runner.invoke(
+            teflo, ['show', '-s', '../assets/show_vars_data.yml', '--list-labels']
+        )
+        print(results.output)
+        assert "You need to use --vars-data to fill your variables for show command" in results.output
+
+    @staticmethod
     @mock.patch.object(Teflo, 'list_labels')
     def test_valid_show_list_labels(mock_method, runner):
         """This test when --list-labels option is used correct method is called"""
