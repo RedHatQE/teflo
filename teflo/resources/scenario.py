@@ -183,22 +183,120 @@ class Scenario(TefloResource):
             return all_notifications
         return getattr(self, 'notifications')
 
-    def add_resource(self, item):
+    def get_resource_idx(self, item):
+        """
+        Get the idx of the resource in its corresponding list.
+        :param item:
+        :return:
+        """
+        if isinstance(item, Asset):
+            return self._assets.index(item)
+        elif isinstance(item, Action):
+            return self._actions.index(item)
+        elif isinstance(item, Execute):
+            return self._executes.index(item)
+        elif isinstance(item, Report):
+            return self._reports.index(item)
+        elif isinstance(item, Notification):
+            return self._notifications.index(item)
+        else:
+            raise ValueError('Resource must be of a valid Resource type.'
+                             'Check the type of the given item: %s' % item)
+
+    def replace_resource(self, item, idx):
+        if isinstance(item, Asset):
+            print(f"replace {item.name} at idx {idx}")
+            self._assets[idx] = item
+        elif isinstance(item, Action):
+            self._actions[idx] = item
+        elif isinstance(item, Execute):
+            self._executes[idx] = item
+        elif isinstance(item, Report):
+            self._reports[idx] = item
+        elif isinstance(item, Notification):
+            self._notifications[idx] = item
+        else:
+            raise ValueError('Resource must be of a valid Resource type.'
+                             'Check the type of the given item: %s' % item)
+
+    def add_resource(self, item, idx=None):
         """Add a scenario resource to its corresponding list.
 
         :param item: resource data
         :type item: object
         """
         if isinstance(item, Asset):
-            self._assets.append(item)
+            print(f"loaded {item.name} at idx {idx}")
+            if idx is not None:
+                try:
+                    cur_idx = self.get_resource_idx(item)
+                except ValueError:
+                    cur_idx = None
+                if cur_idx is not None:
+                    if idx != cur_idx:
+                        idx = cur_idx
+                    self.replace_resource(item=item, idx=idx)
+                else:
+                    self._assets.insert(idx, item)
+            else:
+                print(f"add {item.name}")
+                self._assets.append(item)
         elif isinstance(item, Action):
-            self._actions.append(item)
+            if idx is not None:
+                try:
+                    cur_idx = self.get_resource_idx(item)
+                except ValueError:
+                    cur_idx = None
+                if cur_idx is not None:
+                    if idx != cur_idx:
+                        idx = cur_idx
+                    self.replace_resource(item=item, idx=idx)
+                else:
+                    self._actions.insert(idx, item)
+            else:
+                self._actions.append(item)
         elif isinstance(item, Execute):
-            self._executes.append(item)
+            if idx is not None:
+                try:
+                    cur_idx = self.get_resource_idx(item)
+                except ValueError:
+                    cur_idx = None
+                if cur_idx is not None:
+                    if idx != cur_idx:
+                        idx = cur_idx
+                    self.replace_resource(item=item, idx=idx)
+                else:
+                    self._executes.insert(idx, item)
+            else:
+                self._executes.append(item)
         elif isinstance(item, Report):
-            self._reports.append(item)
+            if idx is not None:
+                try:
+                    cur_idx = self.get_resource_idx(item)
+                except ValueError:
+                    cur_idx = None
+                if cur_idx is not None:
+                    if idx != cur_idx:
+                        idx = cur_idx
+                    self.replace_resource(item=item, idx=idx)
+                else:
+                    self._reports.insert(idx, item)
+            else:
+                self._reports.append(item)
         elif isinstance(item, Notification):
-            self._notifications.append(item)
+            if idx is not None:
+                try:
+                    cur_idx = self.get_resource_idx(item)
+                except ValueError:
+                    cur_idx = None
+                if cur_idx is not None:
+                    if idx != cur_idx:
+                        idx = cur_idx
+                    self.replace_resource(item=item, idx=idx)
+                else:
+                    self._notifications.insert(idx, item)
+            else:
+                self._notifications.append(item)
         else:
             raise ValueError('Resource must be of a valid Resource type.'
                              'Check the type of the given item: %s' % item)
@@ -233,100 +331,77 @@ class Scenario(TefloResource):
 
     def reload_resources(self, tasks):
         """Reload scenario resources.
+
         This method is used to reload all resources after they have been processed (provisioned/orchestrate actions/
         execute tests/imported. Prior to adding the resource to the scenario, it filters the list by
         checking if the resource belongs to that scenario by comparing the names.
 
-        Then it filters the task list even more extracting the resource and the data in rvalue.
-        If rvalue is present then linchpin count feature was used and that more new host resources will be
-        created. If rvalue is not present then assume it is either a report resource or from a provisioning perspective
-        linchpin count was either not used (which is equivalent of count==1), or using old provisioners.
+        When filtering we extract the resource, the data in rvalue, and the index the reource is at
+        in the current resource list. If rvalue is present, then a provisioner with count
+        feature was used so more new host resources will be created dynamically as part of this reload.
+        If rvalue is not present then assume it is either a non-Asset resource or from a provisioning perspective
+        count was either not used (which is equivalent of count==1), or using old provisioners so the original
+        resource will be replaced with the updated resource in the task results lists.
 
         :param tasks: task data returned by blaster
         :type tasks: list
         """
-        count = 0
+        # count = 0
         filtered_task_list = list()
         non_task_assets = list()
         non_task_package = list()
 
-        # Filtering the resources based on labels. Separate steps for each resources, to make sure same name
-        # collisions dont happen between two different types of resources
+        # This a brute force way of resolving the out of order of resources when using labels.
+        # Prior to this change we would
+        # 1. filter task list for resource type the scenarios has ownership
+        # 2. filter existing resource list for the other resources of the same type that were filtered out by label
+        # 3. re-init the resource list for the resource type with an empty array
+        # 4. Append the resources that were updated from step 1
+        # 5. Then append the rest of the resources from step 2
+        # This lead to the resources being out of order in the results.yml
+        #
+        # Now we keep track of the index of the original resource so that we know where to replace/insert
+        # the new resources or updated resource in the list. This will support when the resource list is
+        # filtered using labels or status so we can retain proper ordering within the resource list during reload.
+        #
+        # New way
+        # 1. filter task list for scenario resource ownership and it's index location in resource list
+        # 2. if rvalue, then the first new resource will replace the original resource at the original index
+        # 3. if rvalue, for each 1+N rvalue will have the index incremented by 1 and inserted at the new index
+        #    pushing any resource that was at the index down the stack.
+        # 4. if not rvalue, the updated resource will check to see if the original resource is at the previous index
+        #    or at a new index (becaue it's been pushed down the stack) and replace the original resource accordingly.
 
         filtered_task_list.extend(
-            [task for task in tasks if task.get('asset') and getattr(task.get('asset'), 'name')
+            [(task, self.get_resource_idx(task.get('asset')))
+             for task in tasks if task.get('asset') and getattr(task.get('asset'), 'name')
              in [h.name for h in self.assets]]
         )
         filtered_task_list.extend(
-            [task for task in tasks if isinstance(task.get('package'), Report) and (getattr(task.get('package'), 'name')
-             in [r.name for r in self.reports])]
+            [(task, self.get_resource_idx(task.get('package')))
+             for task in tasks if isinstance(task.get('package'), Report) and (getattr(task.get('package'), 'name')
+                                                                               in [r.name for r in self.reports])]
         )
 
         filtered_task_list.extend(
-            [task for task in tasks if
+            [(task, self.get_resource_idx(task.get('package'))) for task in tasks if
              isinstance(task.get('package'), Execute) and (getattr(task.get('package'), 'name')
                                                            in [r.name for r in self.executes])]
         )
 
         filtered_task_list.extend(
-            [task for task in tasks if isinstance(task.get('package'), Action) and (getattr(task.get('package'), 'name')
-             in [r.name for r in self.actions])]
+            [(task, self.get_resource_idx(task.get('package')))
+             for task in tasks if isinstance(task.get('package'), Action) and (getattr(task.get('package'), 'name')
+                                                                               in [r.name for r in self.actions])]
         )
 
-        # using labels in SDF will have only specific resources selected. So collecting the non task related
-        # assets and report resources to be added back to the scenario resources. This is being done in order to
-        # put the non provisioned asset and non imported report resources into results.yml
-        non_task_assets.extend([asset for asset in self.assets if asset.name not in
-                                [getattr(task.get('asset'), 'name') for task in filtered_task_list
-                                 if task.get('asset')]])
-
-        non_task_package.extend([report for report in self.reports if report.name not in
-                                 [getattr(task.get('package'), 'name') for task in filtered_task_list if
-                                  isinstance(task.get('package'), Report) and (getattr(task.get('package'), 'name'))]])
-
-        non_task_package.extend([execute for execute in self.executes if execute.name not in
-                                 [getattr(task.get('package'), 'name') for task in filtered_task_list if
-                                  isinstance(task.get('package'), Execute) and (getattr(task.get('package'), 'name'))]])
-
-        non_task_package.extend([action for action in self.actions if action.name not in
-                                 [getattr(task.get('package'), 'name') for task in filtered_task_list if
-                                  isinstance(task.get('package'), Action) and (getattr(task.get('package'), 'name'))]])
-
-        for res, rvalue in [(res, item['rvalue']) for task in filtered_task_list
-                            for res in [task.get(r) for r in ['asset', 'package'] if r in task.keys()]
-                            for item in task.get('methods')]:
-            if count == 0:
-                if rvalue is not None:
-                    # initialize the host resource list to remove any previous host resources
-                    self.initialize_resource(res)
-                    # load the new host resources using the parameters from item['rvalue']
-                    self.load_resources(Asset, rvalue)
-                    count += 1
-                else:
-                    self.initialize_resource(res)
-                    self.add_resource(res)
-                    count += 1
+        for res, rvalue, idx in [(res, item['rvalue'], idx) for task, idx in filtered_task_list
+                                 for res in [task.get(r) for r in ['asset', 'package'] if r in task.keys()]
+                                 for item in task.get('methods')]:
+            if rvalue is not None:
+                self.load_resources(Asset, rvalue, idx)
             else:
-                if rvalue is not None:
-                    self.load_resources(Asset, rvalue)
-                else:
-                    self.add_resource(res)
-
-        if count > 0:
-            task_keys = list()
-            task_keys.extend([k for task in tasks for k in task.keys()])
-            if 'asset' in task_keys:
-                # Adding assets which were not part of the labels used
-                for res in non_task_assets:
-                    self.add_resource(res)
-            elif 'package' in task_keys:
-                # Adding other resources except asset which were not part of the labels used
-                # getting the type of resource is the tasks list and comparing it with the non_task_resources
-                # if they are of same type then add the resource else pass
-                pkg_type = type(tasks[0].get('package'))
-                for res in non_task_package:
-                    if isinstance(res, pkg_type):
-                        self.add_resource(res)
+                self.add_resource(res, idx)
 
         return
 
@@ -581,7 +656,7 @@ class Scenario(TefloResource):
         }
         return task
 
-    def load_resources(self, res_type, res_list):
+    def load_resources(self, res_type, res_list, idx=None):
         """
         Load the resource in the scenario list of `res_type`.
 
@@ -604,7 +679,12 @@ class Scenario(TefloResource):
         if not res_list:
             return
 
+        increment = False
         for item in res_list:
-            self.add_resource(
-                res_type(config=self.config,
-                         parameters=item))
+            if idx is not None and not increment:
+                self.replace_resource(item=res_type(config=self.config, parameters=item), idx=idx)
+                increment = True
+                continue
+            if idx is not None and increment:
+                idx += 1
+            self.add_resource(item=res_type(config=self.config, parameters=item), idx=idx)
