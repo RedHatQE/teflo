@@ -25,6 +25,7 @@
     :license: GPLv3, see LICENSE for more details.
 """
 
+from teflo.resources import scenario
 import pytest
 import os
 import mock
@@ -46,6 +47,20 @@ from teflo.helpers import DataInjector, validate_render_scenario, set_task_class
 
 
 @pytest.fixture(scope='class')
+def task_concurrency_config():
+    config_file = '../assets/teflo.cfg'
+    cfgp = ConfigParser()
+    cfgp.read(config_file)
+    cfgp.set('task_concurrency', 'provision', 'True')
+    cfgp.set('task_concurrency', 'report', 'True')
+    with open(config_file, 'w') as cf:
+        cfgp.write(cf)
+    os.environ['TEFLO_SETTINGS'] = config_file
+    config = Config()
+    config.load()
+    return config
+
+@pytest.fixture(scope='class')
 def data_injector():
     class Host(object):
         def __init__(self):
@@ -61,22 +76,6 @@ def data_injector():
             }
 
     return DataInjector([Host()])
-
-
-@pytest.fixture(scope='class')
-def task_concurrency_config():
-    config_file = '../assets/teflo.cfg'
-    cfgp = ConfigParser()
-    cfgp.read(config_file)
-    cfgp.set('task_concurrency','provision','True')
-    cfgp.set('task_concurrency','report','True')
-    with open(config_file, 'w') as cf:
-        cfgp.write(cf)
-    os.environ['TEFLO_SETTINGS'] = config_file
-    config = Config()
-    config.load()
-    return config
-
 
 @pytest.fixture(scope='class')
 def task_host(task_concurrency_config):
@@ -253,13 +252,13 @@ class TestDataInjector(object):
 
 
 def test_validate_render_scenario_no_include(task_concurrency_config):
-    result = validate_render_scenario(os.path.abspath('../assets/no_include.yml'), task_concurrency_config)
-    assert len(result) == 1
+    scenario_graph = validate_render_scenario(os.path.abspath('../assets/no_include.yml'), task_concurrency_config)
+    assert len(scenario_graph) == 1
 
 
 def test_validate_render_scenario_correct_include(task_concurrency_config):
-    result = validate_render_scenario('../assets/correct_include_descriptor.yml', task_concurrency_config)
-    assert len(result) == 2
+    scenario_graph = validate_render_scenario('../assets/correct_include_descriptor.yml', task_concurrency_config)
+    assert len(scenario_graph) == 2
 
 
 def test_validate_render_scenario_wrong_include(task_concurrency_config):

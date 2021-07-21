@@ -365,7 +365,7 @@ class TestActionResource(object):
         with pytest.raises(TefloActionError) as ex:
             Action(parameters=params)
         assert 'Unable to associate hosts to action: action.No hosts ' \
-               'defined!' in ex.value.args
+               'defined!' in ex.value.args[0]
 
     @staticmethod
     def test_create_action_with_hosts_as_str():
@@ -451,7 +451,7 @@ class TestReportResource(object):
         with pytest.raises(TefloReportError) as ex:
             Report()
         assert 'Unable to build report object. Name field missing!' in \
-               ex.value.args
+               ex.value.args[0]
 
 
     @staticmethod
@@ -527,7 +527,7 @@ class TestExecuteResource(object):
         with pytest.raises(TefloExecuteError) as ex:
             Execute()
         assert 'Unable to build execute object. Name field missing!' in \
-               ex.value.args
+               ex.value.args[0]
     @staticmethod
     def test_timeout_from_scenario(timeout_param_execute):
         execute = Execute(name='action', parameters=timeout_param_execute)
@@ -544,7 +544,7 @@ class TestExecuteResource(object):
         params = dict(hosts=['host01'], key='value', executor='abc')
         with pytest.raises(TefloExecuteError) as ex:
             Execute(name='execute', parameters=params)
-        assert 'Executor: abc is not supported!' in ex.value.args
+        assert 'Executor: abc is not supported!' in ex.value.args[0]
 
     @staticmethod
     def test_create_execute_without_hosts():
@@ -552,7 +552,7 @@ class TestExecuteResource(object):
         with pytest.raises(TefloExecuteError) as ex:
             Execute(name='execute', parameters=params)
         assert 'Unable to associate hosts to executor:execute. No hosts ' \
-               'defined!' in ex.value.args
+               'defined!' in ex.value.args[0]
 
     @staticmethod
     def test_create_execute_with_hosts_as_str():
@@ -942,7 +942,7 @@ class TestAssetResource(object):
         with pytest.raises(AttributeError) as ex:
             host.provider = 'null'
         assert 'You cannot set the asset provider after asset class is ' \
-               'instantiated.' in ex.value.args
+               'instantiated.' in ex.value.args[0]
 
     def test_group_property(self, default_host_params, config):
         params = self.__get_params_copy__(default_host_params)
@@ -954,7 +954,7 @@ class TestAssetResource(object):
         with pytest.raises(AttributeError) as ex:
             host.groups = 'test'
         assert 'You cannot set the groups after asset class is instantiated.' in \
-               ex.value.args
+               ex.value.args[0]
 
     def test_build_profile_uc01(self, host):
         assert isinstance(host.profile(), dict)
@@ -978,15 +978,14 @@ class TestAssetResource(object):
         with pytest.raises(AttributeError) as ex:
             host.provisioner = 'null'
         assert 'You cannot set the asset provisioner plugin after asset class ' \
-               'is instantiated.' in ex.value.args
+               'is instantiated.' in ex.value.args[0]
 
     @staticmethod
     def test_same_groups_name_host_name_error(default_host_params, config):
         params = default_host_params
         with pytest.raises(TefloResourceError) as ex:
             asset = Asset(name='client', config=config, parameters=params)
-        print(ex.value.args)
-        assert "Asset name client cannot be same as groups name ['client']" in ex.value.args
+        assert "Asset name client cannot be same as groups name ['client']" in ex.value.args[0]
 
 
 class TestNotificationResource(object):

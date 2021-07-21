@@ -76,7 +76,7 @@ class TestExecuteManager(object):
         execute_manager.plugin = plugin
         with pytest.raises(TefloExecuteError) as ex:
             execute_manager.run()
-        assert "Execute stage failed : Failed to perform execute1" in ex.value.args
+        assert "Execute stage failed : Failed to perform execute1" in ex.value.args[0]
 
 
 

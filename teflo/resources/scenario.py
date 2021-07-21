@@ -28,7 +28,6 @@ import errno
 import os
 import yaml
 from collections import OrderedDict
-from pykwalify.core import Core
 from pykwalify.errors import CoreError, SchemaError
 
 from .actions import Action
@@ -38,7 +37,7 @@ from .reports import Report
 from .notification import Notification
 from ..constants import SCENARIO_SCHEMA, SCHEMA_EXT, \
     SET_CREDENTIALS_OPTIONS
-from ..core import TefloResource
+from ..core import Inventory, TefloResource
 from ..exceptions import ScenarioError
 
 from ..helpers import gen_random_str, schema_validator
@@ -68,6 +67,8 @@ class Scenario(TefloResource):
                  name=None,
                  parameters={},
                  validate_task_cls=ValidateTask,
+                 path: str = "",
+                 inventory_object: Inventory = Inventory,
                  **kwargs):
         """Constructor.
 
@@ -81,9 +82,12 @@ class Scenario(TefloResource):
         :type validate_task_cls: object
         :param kwargs: additional key:value(s)
         :type kwargs: dict
+        :param path: scenario file path
+        :type name: str
         """
         super(Scenario, self).__init__(config=config, name=name, **kwargs)
-
+        self._path = path
+        self._inventory: Inventory = inventory_object
         # set the scenario name attribute
         if not name:
             self._name = gen_random_str(15)
@@ -105,7 +109,7 @@ class Scenario(TefloResource):
         self._yaml_data = dict()
         # Properties to take care of included scenarios
         self._child_scenarios = list()
-        self._included_scenario_names = list()
+        self._included_scenario_path = list()
 
         # set the teflo task classes for the scenario
         self._validate_task_cls = validate_task_cls
@@ -130,57 +134,34 @@ class Scenario(TefloResource):
         if parameters:
             self.load(parameters)
 
+    def __str__(self) -> str:
+        return "Scenario(\"%s\")" % self.name
+
     def get_all_resources(self):
         all_resources = list()
-        all_resources.extend([item for item in self.get_all_assets()])
-        all_resources.extend([item for item in self.get_all_actions()])
-        all_resources.extend([item for item in self.get_all_executes()])
-        all_resources.extend([item for item in self.get_all_reports()])
+
+        # The order is like below so we always execute resources in below order for a single scenario node
+
+        all_resources.extend([item for item in self.get_assets()])
+        all_resources.extend([item for item in self.get_actions()])
+        all_resources.extend([item for item in self.get_executes()])
+        all_resources.extend([item for item in self.get_reports()])
+        all_resources.extend([item for item in self.get_notifications()])
         return all_resources
 
-    def get_all_assets(self):
-        if self.child_scenarios:
-            all_assets = list()
-            for sc in self.child_scenarios:
-                all_assets.extend([item for item in getattr(sc, 'assets')])
-            all_assets.extend([item for item in getattr(self, 'assets')])
-            return all_assets
+    def get_assets(self):
         return getattr(self, 'assets')
 
-    def get_all_actions(self):
-        if self.child_scenarios:
-            all_actions = list()
-            for sc in self.child_scenarios:
-                all_actions.extend([item for item in getattr(sc, 'actions')])
-            all_actions.extend([item for item in getattr(self, 'actions')])
-            return all_actions
+    def get_actions(self):
         return getattr(self, 'actions')
 
-    def get_all_executes(self):
-        if self.child_scenarios:
-            all_executes = list()
-            for sc in self.child_scenarios:
-                all_executes.extend([item for item in getattr(sc, 'executes')])
-            all_executes.extend([item for item in getattr(self, 'executes')])
-            return all_executes
+    def get_executes(self):
         return getattr(self, 'executes')
 
-    def get_all_reports(self):
-        if self.child_scenarios:
-            all_reports = list()
-            for sc in self.child_scenarios:
-                all_reports.extend([item for item in getattr(sc, 'reports')])
-            all_reports.extend([item for item in getattr(self, 'reports')])
-            return all_reports
+    def get_reports(self):
         return getattr(self, 'reports')
 
-    def get_all_notifications(self):
-        if self.child_scenarios:
-            all_notifications = list()
-            for sc in self.child_scenarios:
-                all_notifications.extend([item for item in getattr(sc, 'notifications')])
-            all_notifications.extend([item for item in getattr(self, 'notifications')])
-            return all_notifications
+    def get_notifications(self):
         return getattr(self, 'notifications')
 
     def get_resource_idx(self, item):
@@ -588,6 +569,20 @@ class Scenario(TefloResource):
         self._executes.append(execute)
 
     @property
+    def included_scenario_path(self):
+        """Reports property.
+
+        :return: report resources associated to the scenario
+        :rtype: list
+        """
+        return self._included_scenario_path
+
+    @included_scenario_path.setter
+    def included_scenario_path(self, included_scenario_path):
+        """Set report property."""
+        self._included_scenario_path.append(included_scenario_path)
+
+    @property
     def reports(self):
         """Reports property.
 
@@ -601,6 +596,22 @@ class Scenario(TefloResource):
         """Set report property."""
         raise ValueError('You can not set reports directly.'
                          'Use function ~Scenario.add_reports')
+
+    @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, path):
+        self._path = path
+
+    @property
+    def inventory(self):
+        return self._inventory
+
+    @inventory.setter
+    def inventory(self, inventory: Inventory):
+        self._inventory = inventory
 
     @property
     def child_scenarios(self):
@@ -624,27 +635,6 @@ class Scenario(TefloResource):
         if not isinstance(scenario, Scenario):
             raise ValueError('scenario must be of type %s ' % type(Scenario))
         self._child_scenarios.append(scenario)
-
-    @property
-    def included_scenario_names(self):
-        """
-        List of files which are put in the include section of the scenario
-        :return: list of files
-        :rtype: list
-        """
-        return self._included_scenario_names
-
-    @included_scenario_names.setter
-    def included_scenario_names(self, inc_name_list):
-        """Add included file names as list
-        :param inc_name_list: list of names
-        :type inc_name_list: list
-        """
-        if inc_name_list:
-            for item in inc_name_list:
-                self.included_scenario_names.append(item)
-        else:
-            raise ValueError("Included scenario list cannot be empty")
 
     def add_reports(self, report):
         """Add report resources to the scenario.
@@ -711,7 +701,7 @@ class Scenario(TefloResource):
         profile['name'] = self.name
         profile['description'] = self.description
         if self.child_scenarios:
-            profile['include'] = self.included_scenario_names
+            profile['include'] = self.included_scenario_path
         profile['resource_check'] = self.resource_check
         profile['provision'] = [asset.profile() for asset in self.assets]
         profile['orchestrate'] = [action.profile() for action in self.actions]
@@ -769,3 +759,10 @@ class Scenario(TefloResource):
             if idx is not None and increment:
                 idx += 1
             self.add_resource(item=res_type(config=self.config, parameters=item), idx=idx)
+
+    def graph_str(self, level=0):
+        ret = "   " * level + "->" + self.path + "\n"
+        child: Scenario
+        for child in self.child_scenarios:
+            ret += child.graph_str(level + 1)
+        return ret

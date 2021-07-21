@@ -35,7 +35,7 @@ class TefloError(Exception):
         :type message: str
         """
         super(TefloError, self).__init__(message)
-        self.message = message
+        self.message = '\033[91m' + message
 
 
 class TefloTaskError(TefloError):
@@ -119,7 +119,7 @@ class HelpersError(Exception):
         :param message: error message
         :type message: str
         """
-        super(HelpersError, self).__init__(message)
+        super(HelpersError, self).__init__('\033[91m' + message)
 
 
 class LoggerMixinError(TefloError):

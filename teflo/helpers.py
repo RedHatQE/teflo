@@ -34,6 +34,7 @@ import socket
 import string
 import subprocess
 import sys
+
 import time
 import click
 from logging import getLogger
@@ -59,7 +60,6 @@ from ssh.key import import_privkey_file
 from ssh import options
 from ssh.exceptions import SSHError, HostKeyNotVerifiable, AuthenticationError, ConnectFailed, ConnectionLost
 import pkg_resources
-import glob
 from ruamel.yaml import comments
 LOG = getLogger(__name__)
 
@@ -1456,7 +1456,7 @@ def preprocyaml(input, temp_data):
         return input
 
 
-def validate_render_scenario(scenario, config, temp_data_raw=()):
+def validate_render_scenario(scenario_path, config, temp_data_raw=()):
     """
     This method takes the absolute path of the scenario descriptor file and returns back a list of
     data streams of scenario(s) after doing the following checks:
@@ -1470,10 +1470,10 @@ def validate_render_scenario(scenario, config, temp_data_raw=()):
     :type config: config obj
     :param temp_data_raw: a list of the file path to jinja template vars data or a json dictionary of vars data
     :type temp_data_raw: dict or str
-    :return: scenario data stream(s)
-    :rtype: list of data streams
+    :return scenario_graph
+    :rtype: ScenarioGraph
     """
-    scenario_stream_list = list()
+
     # Click gives us a tuple, by default
     var_file_list = check_for_var_file(config)
     if isinstance(temp_data_raw, tuple):
@@ -1488,33 +1488,109 @@ def validate_render_scenario(scenario, config, temp_data_raw=()):
         temp_data.update({item[0]: preprocyaml(item[1], temp_data)})
 
     temp_data.update(os.environ)
+
     try:
-        data = yaml.safe_load(template_render(scenario, temp_data))
-        # adding master scenario as the first scenario data stream
-        scenario_stream_list.append(template_render(scenario, temp_data))
-        if 'include' in data.keys():
-            include_item = data['include']
-            include_template = list()
-            if include_item is not None:
-                for item in include_item:
-                    if os.path.isfile(item):
-                        item = os.path.abspath(item)
-                        # check to verify the data in included scenario is valid
-                        try:
-                            yaml.safe_load(template_render(item, temp_data))
-                            include_template.append(template_render(item, temp_data))
-                        except yaml.YAMLError as err:
-                            # raising Teflo error to differentiate the yaml issue is with included scenario
-                            raise TefloError('Error loading included scenario data! ' + item + str(err.problem_mark))
-                    else:
-                        # raising HelperError if included file is invalid or included section is empty
-                        raise HelpersError('Included File is invalid or Include section is empty .'
-                                           'You have to provide valid scenario files to be included.')
-                scenario_stream_list.extend(include_template)
+        # Build a scenario graph
+        scenario_graph = build_scenario_graph(root_scenario_path=scenario_path,
+                                              root_scenario_temp_data=temp_data, config=config)
+
     except yaml.YAMLError as e:
         # here raising yaml error to differentiate yaml issue is with main scenario
         raise e
-    return scenario_stream_list
+    return scenario_graph
+
+
+def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_data):
+    '''
+    This method builds a scenario graph with the root_sceanrio_path and root_scenario_temp_data
+    We utilized the iterative way to implement this, so it will not cause stackoverflow even
+    with over 1000 linked included sdfs
+
+    :param root_scenario_path: the root sdf path
+    :type root_scenario_path: str
+    :param root_scenario_temp_data: the temp data that all sdf need to render with
+    :type root_scenario_temp_data: dict
+    '''
+    # Must import these two libs here to avoid circular import for Python intepreter
+    from .resources import Scenario
+    from .utils.scenario_graph import ScenarioGraph
+    yaml.safe_load(template_render(root_scenario_path, root_scenario_temp_data))
+    root_scenario_yaml_data = template_render(root_scenario_path, root_scenario_temp_data)
+    root_scenario = Scenario(config=config, path=os.path.basename(root_scenario_path))
+    root_scenario.yaml_data = root_scenario_yaml_data
+
+    def addAllIncludes(parent_scenario: Scenario, checked_list: dict):
+        '''
+        This method add all included child sdfs to the parent_scenario
+        as its child_scenarios
+
+        :param parent_scenario: the parent scenario object
+        :type root_scenario_path: Scenario
+        :param checked_list: the checked list for all visited Scenarios
+        :type checked_list: dict
+        '''
+        if parent_scenario is None:
+            return
+
+        data = yaml.safe_load(parent_scenario.yaml_data)
+        if 'include' in data.keys() and data['include'] is not None:
+            include_item = data['include']
+            for item in include_item:
+                if checked_list.get(item) is not None:
+                    raise TefloError(
+                        "Your scenario has an import cycle. \
+                            %s is already a node in the scenario graph, It cannot be added again. "
+                        % item)
+                if os.path.isfile(os.path.join(config['WORKSPACE'], item)) or os.path.isfile(item):
+                    path = os.path.basename(item)
+                    if os.path.isfile(os.path.join(config['WORKSPACE'], item)):
+                        item = os.path.join(config['WORKSPACE'], item)
+                    # check to verify the data in included scenario is valid
+                    try:
+                        yaml.safe_load(template_render(item, root_scenario_temp_data))
+                        child_sc = Scenario(config=config, path=path)
+                        child_sc.yaml_data = template_render(item, root_scenario_temp_data)
+                        parent_scenario.add_child_scenario(child_sc)
+                        # use filename because the scenario name could
+                        # contain some special characters, which is not good for
+                        # file generation
+                        parent_scenario.included_scenario_path = os.path.join(
+                            config['RESULTS_FOLDER'], child_sc.path.split(".")[0] + "_results.yml")
+                    except yaml.YAMLError as err:
+                        # raising Teflo error to differentiate the yaml issue is with included scenario
+                        raise TefloError('Error loading included '
+                                                'scenario data! ' + item + str(err.problem_mark))
+                else:
+                    raise HelpersError('Included File is invalid or Include section is empty .'
+                                           'You have to provide valid scenario files to be included.')
+
+    def include(unchecked_list: list, checked_list: dict):
+        '''
+        This method will build a scenario linked graph
+        It reads from the unckecked_list for unread sceanrios
+        and add all its child to it, then add all it's children
+        to the unchecked list for next iteration
+
+        :param unchecked_list: the unchecked list of sceanrios
+        :type unchecked_list: list
+        :param checked_list: the checked list for all visited Scenarios
+        :type checked_list: dict
+        '''
+        # unchecked_list is a queue-liked list, we keep this as channel
+        # to maintain all unchecked scenarios
+        while len(unchecked_list) != 0:
+            sc: Scenario = unchecked_list.pop(0)
+            checked_list[sc.path] = sc.path
+            addAllIncludes(sc, checked_list)
+            # We need to remove the checked scenario from the unchecked_list
+            # after we addAllIncludes for it
+            if sc.child_scenarios != []:
+                for sc in sc.child_scenarios:
+                    unchecked_list.append(sc)
+
+    include([root_scenario], {})
+    scenario_graph = ScenarioGraph(root_scenario, iterate_method=config.get("INCLUDED_SDF_ITERATE_METHOD", "by_level"))
+    return scenario_graph
 
 
 def ssh_key_file_generator(workspace, ssh_key_param):
@@ -1649,8 +1725,8 @@ def validate_cli_scenario_option(ctx, scenario, config, vars_data=None):
 
     # Checking if include section is present and getting validated scenario stream/s
     try:
-        scenario_stream = validate_render_scenario(scenario, config, vars_data)
-        return scenario_stream
+        scenario_graph = validate_render_scenario(scenario, config, vars_data)
+        return scenario_graph
     except yaml.YAMLError as err:
         click.echo('Error loading scenario data! %s' % err)
         ctx.exit(1)

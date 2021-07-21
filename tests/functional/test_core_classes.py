@@ -164,7 +164,7 @@ def cleanup_unique_inv(request):
 @pytest.fixture(scope='function')
 def cleanup_master(request):
     def cleanup_master():
-        os.remove('/tmp/.results/inventory/master-xyz')
+        os.system('rm /tmp/.results/inventory/ -rf')
     request.addfinalizer(cleanup_master)
 
 
@@ -211,7 +211,6 @@ class TestFileLockMixin(object):
     def test_setting_lock_file(lock_mixin):
         setattr(lock_mixin, 'lock_file', '/tmp/cbn_test.lock')
         assert getattr(lock_mixin, 'lock_file') == '/tmp/cbn_test.lock'
-
 
     @staticmethod
     def test_setting_lock_timeout(lock_mixin):
@@ -431,7 +430,7 @@ class TestTefloResource(object):
     @staticmethod
     def test_set_labels_single_string(teflo_resource):
         """To test if single string values get set as an array"""
-        setattr(teflo_resource, 'labels',' label1')
+        setattr(teflo_resource, 'labels', ' label1')
         assert teflo_resource.labels == ['label1']
 
     @staticmethod
@@ -459,7 +458,7 @@ class TestTefloProvider(object):
     def test_name_setter(teflo_provider):
         with pytest.raises(AttributeError) as ex:
             teflo_provider.name = 'null'
-        assert 'You cannot set provider name.' in ex.value.args
+        assert 'You cannot set provider name.' in ex.value.args[0]
 
     @staticmethod
     def test_credentials_property(teflo_provider):
@@ -470,7 +469,7 @@ class TestTefloProvider(object):
         with pytest.raises(ValueError) as ex:
             teflo_provider.credentials = 'null'
         assert 'You cannot set provider credentials directly. Use ' \
-               'function ~TefloProvider.set_credentials' in ex.value.args
+               'function ~TefloProvider.set_credentials' in ex.value.args[0]
 
     @staticmethod
     def test_set_credentials(teflo_provider):
@@ -530,7 +529,7 @@ class TestTefloOrchestrator(object):
         with pytest.raises(AttributeError) as ex:
             teflo_orchestrator.action = 'null'
         assert 'You cannot set the action the orchestrator will perform.' in \
-            ex.value.args
+            ex.value.args[0]
 
     @staticmethod
     def test_hosts_property(teflo_orchestrator):
@@ -541,7 +540,7 @@ class TestTefloOrchestrator(object):
         with pytest.raises(AttributeError) as ex:
             teflo_orchestrator.hosts = 'null'
         assert 'Hosts cannot be set once the object is created.' in \
-               ex.value.args
+               ex.value.args[0]
 
     @staticmethod
     def test_get_mandatory_parameters(teflo_orchestrator):
@@ -590,7 +589,7 @@ class TestTefloExecutor(object):
     def test_name_setter(teflo_executor):
         with pytest.raises(AttributeError) as ex:
             teflo_executor.name = 'null'
-        assert 'You cannot set name for the executor.' in ex.value.args
+        assert 'You cannot set name for the executor.' in ex.value.args[0]
 
     @staticmethod
     def test_execute_property(teflo_executor):
@@ -600,7 +599,7 @@ class TestTefloExecutor(object):
     def tests_execute_setter(teflo_executor):
         with pytest.raises(AttributeError) as ex:
             teflo_executor.execute = 'null'
-        assert 'You cannot set the execute to run.' in ex.value.args
+        assert 'You cannot set the execute to run.' in ex.value.args[0]
 
     @staticmethod
     def test_hosts_property(teflo_executor):
@@ -611,7 +610,7 @@ class TestTefloExecutor(object):
         with pytest.raises(AttributeError) as ex:
             teflo_executor.hosts = 'null'
         assert 'Hosts cannot be set once the object is created.' in \
-               ex.value.args
+               ex.value.args[0]
 
     @staticmethod
     def test_get_mandatory_parameters(teflo_executor):
@@ -730,46 +729,32 @@ class TestInventory(object):
         assert isinstance(inventory, Inventory)
 
     @staticmethod
-    def test_create_master_inv(inventory, inv_host):
+    def test_create_inventory(inventory: Inventory, inv_host, cleanup_master):
         # using inventory folder as the default created by teflo
-        inventory.create_master(all_hosts=[inv_host])
-        assert os.path.exists('/tmp/.results/inventory/master-xyz')
-
-    @staticmethod
-    def test_delete_master_inv(inventory):
-        inventory.delete_master()
-        assert not os.path.exists('/tmp/.results/inventory/master-xyz')
-
-    @staticmethod
-    def test_create_master_inv_err(inventory, inv_host, cleanup_master):
-        inventory.create_master(all_hosts=[inv_host])
-        with pytest.raises(Exception):
-            inventory.create_master(all_hosts=[inv_host])
+        inventory.create_inventory(all_hosts=[inv_host])
+        assert os.path.exists('/tmp/.results/inventory/inventory-xyz')
         cleanup_master
 
     @staticmethod
-    def test_create_master_inv_warn(inventory):
-        inventory.delete_master()
+    def test_create_inventory_inv_err(inventory: Inventory, inv_host, cleanup_master):
+        inventory.create_inventory(all_hosts=[inv_host])
+        with pytest.raises(Exception):
+            inventory.create_inventory(all_hosts=[inv_host])
+        cleanup_master
 
     @staticmethod
-    def test_static_dir_create_master_inv(inv_host):
+    def test_static_dir_create_master_inv(inv_host, cleanup_master):
         inv_host_2 = Asset(name='dummy', parameters=dict(ip_address=['1.3.5.7', '2.4.5.6'],
                                                          groups='dummy-role'))
         inv_host_3 = Asset(name='nummy', parameters=dict(ip_address='2.4.5.6',
                                                          groups='nummy-role'))
         inv = Inventory(inv_host.config, 'm6fmviqq51')
-        inv.create_master(all_hosts=[inv_host, inv_host_2, inv_host_3] )
-        assert os.path.exists('/tmp/inventory/master-m6fmviqq51')
+        inv.create_inventory(all_hosts=[inv_host, inv_host_2, inv_host_3])
+        assert os.path.exists('/tmp/inventory/inventory-m6fmviqq51')
+        cleanup_master
 
     @staticmethod
-    def test_static_dir_delete_master_inv(inv_host):
-        inv = Inventory(inv_host.config, 'm6fmviqq51')
-        inv.delete_master()
-        assert not os.path.exists('/tmp/inventory/master-m6fmviqq51')
-
-
-    @staticmethod
-    def test_create_master_inv_with_dump_layout(inv_host):
+    def test_create_master_inv_with_dump_layout(inv_host, cleanup_master):
         inv = Inventory(inv_host.config, 'm6fmviqq51',
                         inv_dump="""
                         [example]
@@ -778,13 +763,9 @@ class TestInventory(object):
                         [all]
                         10.0.154.237 hostname=10.0.154.237 ansible_ssh_private_key_file=/tmp/demo
                         """)
-        inv.create_master(all_hosts=[])
-        for i in glob.glob('/tmp/inventory/master-*'):
+        inv.create_inventory(all_hosts=[])
+        for i in glob.glob('/tmp/inventory/inventory-*'):
             with open(i) as f:
                 data = f.read()
         assert data.find('example') != -1
-        inv.delete_master()
-
-
-
-
+        cleanup_master

@@ -761,6 +761,7 @@ class TefloProvider(LoggerMixin, TimeMixin):
 
 class CloudProvider(TefloProvider):
     """Cloud provider class."""
+
     def __init__(self):
         super(CloudProvider, self).__init__()
         """Constructor."""
@@ -777,6 +778,7 @@ class CloudProvider(TefloProvider):
 
 class PhysicalProvider(TefloProvider):
     """Physical provider class."""
+
     def __init__(self):
         super(PhysicalProvider, self).__init__()
         """Constructor."""
@@ -785,6 +787,7 @@ class PhysicalProvider(TefloProvider):
 
 class ReportProvider(TefloProvider):
     """Report provider class."""
+
     def __init__(self):
         super(ReportProvider, self).__init__()
         """Constructor."""
@@ -1145,7 +1148,6 @@ class ProvisionerPlugin(TefloPlugin):
     """
 
     def __init__(self, asset):
-
         """Constructor.
 
         Each asset resource is linked to a provisioner that knows how to
@@ -1475,9 +1477,9 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
         self.config['INVENTORY_FOLDER'] = self.inv_dir
 
         # set the master inventory
-        self.master_inv = os.path.join(self.inv_dir, 'master-%s' % self.uid)
+        self.master_inv = os.path.join(self.inv_dir, 'inventory-%s' % self.uid)
 
-    def create_master(self, all_hosts):
+    def create_inventory(self, all_hosts):
         """Create the master ansible inventory.
         This method will create a master inventory which contains all the
         hosts in the given scenario. Each host will have a group/group:vars.
@@ -1486,12 +1488,11 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
 
             # get the lock
             self.acquire()
-
             # check for any old master inventories and delete them.
             # Check both the static inv folder as well as the .results/inventory folder for old master inventories
 
-            inv_results_dir = os.path.join(self.results_folder, 'inventory/master*')
-            stat_inv_dir = os.path.join(self.inv_dir, 'master*')
+            inv_results_dir = os.path.join(self.results_folder, 'inventory/inventory*')
+            stat_inv_dir = os.path.join(self.inv_dir, 'inventory*')
             for path in [stat_inv_dir, inv_results_dir]:
                 if glob(path):
                     for f in glob(path):
@@ -1515,7 +1516,7 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
 
             # Sort the list of hosts so that if N number of hosts are getting
             # added to same host group the order is predictable.
-            for host in sorted(all_hosts, key=lambda h: h.name):
+            for host in all_hosts:
                 section = host.name
                 section_vars = '%s:vars' % section
                 if hasattr(host, 'groups') or hasattr(host, 'ip_address'):
@@ -1548,8 +1549,8 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
                             v = str(v)
                         config.set(section_vars, k, v)
 
-                    # write the inventory
-                    self.write_inventory(config)
+            # write the inventory
+            self.write_inventory(config)
 
         except Exception as ex:
             raise ex
@@ -1558,13 +1559,6 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
 
         self.logger.debug("Master inventory content")
         self.log_inventory_content(config)
-
-    def delete_master(self):
-        """Delete the master inventory file generated."""
-        try:
-            os.remove(self.master_inv)
-        except OSError as ex:
-            self.logger.warning(ex)
 
     def log_inventory_content(self, parser):
         # log the inventory file content
