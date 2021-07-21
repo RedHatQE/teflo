@@ -31,8 +31,9 @@ input one) just with additional information from the run. For example: the
 provision task finishes and has additional data about the host machines created.
 The results file would include this additional data returned back from the
 provision task. This file is stored in the data folder *.results* directory
-named *results.yml*. This allows users to continue executing teflo tasks if
-run individually. It eliminates the need for restarting the entire scenario
+named *{scenario descriptor file name without file extension}_results.yml*. 
+This allows users to continue executing teflo tasks if run individually.
+It eliminates the need for restarting the entire scenario
 from the beginning.
 
 Below is an example emphasizing on the additional data added back to the
@@ -62,11 +63,11 @@ Included Scenario Results File
 
 If *include* section is present in the scenario file and it has a valid scenario descriptor
 file, then on a teflo run there will be an additional results file for this included 
-scenario with its name in the prefix. e.g. common_results.yml will be the name of the results
-file for included scenario with name common. This allows the users to use this common_results.yml 
-file and include it in other scenarios as needed, reducing the execution time and code
-duplication. The included scenario results file is also located in the .results folder where 
-results.yml is stored
+scenario with its filename(without file extension) in the prefix. e.g. common_results.yml
+will be the name of the results file for included scenario with file name common.yml. This allows
+the users to use this common_results.yml file and include it in other scenarios as needed,
+reducing the execution time and code duplication. The included scenario results file is
+also located in the .results folder where results.yml is stored
 
 Results Folder
 --------------
@@ -101,8 +102,7 @@ Lets go over some of the common ones you will see.
   │   │   └── ansible.log
   │   └── ansible_orchestrator
   │       └── ansible.log
-  ├── <included_scenario_name>_results.yml
-  └── results.yml
+  └── <scenaio_filename_without_file_extension>_results.yml
 
 
 
@@ -140,17 +140,10 @@ Lets go over some of the common ones you will see.
           execute tasks are stored
         - Directory
 
-    *   - results.yml
-        - The updated scenario descriptor file (created by teflo). This file
+    *   - <scenaio_filename_without_file_extension>_results.yml
+        - The updated scenario descriptor file(s) (created by teflo). This file
           can be used to pick up where you left off with teflo. You can easily
           run another task with this given file. It removes the need from
           starting a whole run over from the beginning.
         - File
 
-    *   - <included_scenario_name>_results.yml
-        - The updated scenario descriptor file for included scenario (created by teflo)
-          This allows the users to use this file to include it in other scenarios as needed
-          to eliminate common provisioning,orchestration,execute steps
-          [NOTE : This file is generated only when a scenario is present in the *include* section]
-        - File
-   

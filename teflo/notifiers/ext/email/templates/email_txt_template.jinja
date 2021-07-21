@@ -22,8 +22,8 @@ Failed: {{ failed_tasks }}
     {% endif %}
 {% endif %}
 
-{% if scenario.get_all_executes() %}
-    {% for execute in scenario.get_all_executes() %}
+{% if scenario.get_executes() %}
+    {% for execute in scenario.get_executes() %}
         {% if execute.artifact_locations %}
 Collected the following artifacts:
             {% for file in execute.artifact_locations %}
@@ -43,8 +43,8 @@ These are the test results of the scenario:
     {% endfor %}
 {% endif %}
 
-{% if scenario.get_all_reports() %}
-    {% for report in scenario.get_all_reports() %}
+{% if scenario.get_reports() %}
+    {% for report in scenario.get_reports() %}
         {% if report.provider == 'polarion' or report.importer_plugin_name == 'polarion' and report.import_results %}
 The following is the result of the Polarion import:
             {% for results in report.import_results %}
