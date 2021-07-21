@@ -62,30 +62,36 @@ def feature_toggle_config():
 @pytest.fixture
 def default_report_params():
     params = dict(
-                  description='description',
-                  executes='execute',
-                  provider=dict(name='polarion',
-                                credential='polarion'
-                                )
-                  )
+        description='description',
+        executes='execute',
+        provider=dict(name='polarion',
+                      credential='polarion'
+                      )
+    )
     return params
 
 
 @pytest.fixture
 def report_params_np():
     params = dict(
-                  description='description',
-                  executes='execute',
-                  importer='polarion',
-                  credential='polarion'
-                  )
+        description='description',
+        executes='execute',
+        importer='polarion',
+        credential='polarion'
+    )
     return params
 
 
 @pytest.fixture
-def host1(default_host_params, config):
-    host1 = Asset(name='host_count', config=config, parameters=copy.deepcopy(default_host_params))
-    return host1
+def host2(default_host_params, config):
+    host2 = Asset(name='host_count', config=config, parameters=copy.deepcopy(default_host_params))
+    return host2
+
+
+@pytest.fixture
+def host3(default_host_params, config):
+    host3 = Asset(name='host_number_3', config=config, parameters=copy.deepcopy(default_host_params))
+    return host3
 
 
 @pytest.fixture
@@ -94,33 +100,63 @@ def host1(default_host_params, config):
 def report1(mock_plugin_class, mock_plugin_list, default_report_params, config):
     mock_plugin_list.return_value = ['polarion']
     mock_plugin_class.return_value = ImporterPlugin
-    return Report(name='SampleTest.xml', parameters=default_report_params, config=config)
+    return Report(name='SampleTest.xml', parameters=copy.deepcopy(default_report_params), config=config)
 
 
 @pytest.fixture
-def scenario_res1(config, host1, host, report1):
+@mock.patch('teflo.resources.reports.get_importers_plugin_list')
+@mock.patch('teflo.resources.reports.get_importer_plugin_class')
+def report2(mock_plugin_class, mock_plugin_list, default_report_params, config):
+    mock_plugin_list.return_value = ['polarion']
+    mock_plugin_class.return_value = ImporterPlugin
+    return Report(name='SampleTest2.xml', parameters=copy.deepcopy(default_report_params), config=config)
+
+
+@pytest.fixture
+@mock.patch('teflo.resources.reports.get_importers_plugin_list')
+@mock.patch('teflo.resources.reports.get_importer_plugin_class')
+def report3(mock_plugin_class, mock_plugin_list, default_report_params, config):
+    mock_plugin_list.return_value = ['polarion']
+    mock_plugin_class.return_value = ImporterPlugin
+    return Report(name='SampleTest3.xml', parameters=copy.deepcopy(default_report_params), config=config)
+
+
+@pytest.fixture
+def scenario_res1(config, host2, host, report1):
     scenario1 = Scenario(config=config, parameters={'k': 'v'})
-    scenario1.add_assets(host1)
+    scenario1.add_assets(host2)
     scenario1.add_assets(host)
     scenario1.add_reports(report1)
     return scenario1
 
 
 @pytest.fixture
-def scenario_res2(config, host1, host, report1):
+def scenario_res2(config, host2, host, report1):
     scenario1 = Scenario(config=config, parameters={'k': 'v'})
-    scenario1.add_assets(host1)
+    scenario1.add_assets(host2)
     scenario1.add_assets(host)
     scenario1.add_reports(report1)
     return scenario1
 
 
 @pytest.fixture
-def task_list_host(host1, host):
+def scenario_res3(config, host2, host, host3, report1, report2, report3):
+    scenario1 = Scenario(config=config, parameters={'k': 'v'})
+    scenario1.add_assets(host3)
+    scenario1.add_assets(host2)
+    scenario1.add_assets(host)
+    scenario1.add_reports(report1)
+    scenario1.add_reports(report2)
+    scenario1.add_reports(report3)
+    return scenario1
 
-    param1 = copy.deepcopy(host1.profile())
+
+@pytest.fixture
+def task_list_host(host2, host):
+
+    param1 = copy.deepcopy(host2.profile())
     param1.update(name='host_count_0')
-    param2 = copy.deepcopy(host1.profile())
+    param2 = copy.deepcopy(host2.profile())
     param2.update(name='host_count_1')
 
     task_result_list = [
@@ -128,7 +164,7 @@ def task_list_host(host1, host):
          'task': 'teflotaskobj1',
          'methods': [{'status': 0, 'rvalue': [param1, param2], 'name':'run'}],
          'bid': 123,
-         'asset': host1,
+         'asset': host2,
          'msg': 'hostcreation1'
          },
         {'status': 0,
@@ -144,11 +180,11 @@ def task_list_host(host1, host):
 
 
 @pytest.fixture
-def task_list_host_1(host1):
+def task_list_host_1(host2):
 
-    param1 = copy.deepcopy(host1.profile())
+    param1 = copy.deepcopy(host2.profile())
     param1.update(name='host_count_0')
-    param2 = copy.deepcopy(host1.profile())
+    param2 = copy.deepcopy(host2.profile())
     param2.update(name='host_count_1')
 
     task_result_list = [
@@ -156,8 +192,74 @@ def task_list_host_1(host1):
          'task': 'teflotaskobj1',
          'methods': [{'status': 0, 'rvalue': [param1, param2], 'name':'run'}],
          'bid': 123,
-         'asset': host1,
+         'asset': host2,
          'msg': 'hostcreation1'
+         }
+
+    ]
+
+    return task_result_list
+
+@pytest.fixture
+def task_list_host_with_3(host2, host, host3):
+
+    param1 = copy.deepcopy(host2.profile())
+    param1.update(name='host_count_0')
+    param2 = copy.deepcopy(host2.profile())
+    param2.update(name='host_count_1')
+
+    task_result_list = [
+        {'status': 0,
+         'task': 'teflotaskobj3',
+         'methods': [{'status': 0, 'rvalue': None, 'name':'run'}],
+         'bid': 789,
+         'asset': host3,
+         'msg': 'hostcreation3'
+         },
+        {'status': 0,
+         'task': 'teflotaskobj1',
+         'methods': [{'status': 0, 'rvalue': [param1, param2], 'name':'run'}],
+         'bid': 123,
+         'asset': host2,
+         'msg': 'hostcreation1'
+         },
+        {'status': 0,
+         'task': 'teflotaskobj2',
+         'methods': [{'status': 0, 'rvalue': None, 'name':'run'}],
+         'bid': 456,
+         'asset': host,
+         'msg': 'hostcreation2'
+         }
+
+    ]
+
+    return task_result_list
+
+
+@pytest.fixture
+def task_list_host_with_3_no_count(host2, host, host3):
+
+    task_result_list = [
+        {'status': 0,
+         'task': 'teflotaskobj3',
+         'methods': [{'status': 0, 'rvalue': None, 'name':'run'}],
+         'bid': 789,
+         'asset': host3,
+         'msg': 'hostcreation3'
+         },
+        {'status': 0,
+         'task': 'teflotaskobj1',
+         'methods': [{'status': 0, 'rvalue': None, 'name':'run'}],
+         'bid': 123,
+         'asset': host2,
+         'msg': 'hostcreation1'
+         },
+        {'status': 0,
+         'task': 'teflotaskobj2',
+         'methods': [{'status': 0, 'rvalue': None, 'name':'run'}],
+         'bid': 456,
+         'asset': host,
+         'msg': 'hostcreation2'
          }
 
     ]
@@ -169,16 +271,44 @@ def task_list_host_1(host1):
 def task_list_report(report1):
 
     task_result_list = [
-                         {'status': 0,
-                          'task': 'ReportTask',
-                          'methods': [{'status': 0, 'rvalue': None, 'name': 'run'}],
-                          'package': report1,
-                          'bid': 234,
-                          'msg': 'reporting SampleTest.xml', 'name': 'SampleTest.xml'
-                         }
-                        ]
+        {'status': 0,
+         'task': 'ReportTask',
+         'methods': [{'status': 0, 'rvalue': None, 'name': 'run'}],
+         'package': report1,
+         'bid': 234,
+         'msg': 'reporting SampleTest.xml', 'name': 'SampleTest.xml'
+         }
+    ]
     return task_result_list
 
+
+@pytest.fixture
+def task_list_report_2(report1, report2, report3):
+
+    task_result_list = [
+        {'status': 0,
+         'task': 'ReportTask',
+         'methods': [{'status': 0, 'rvalue': None, 'name': 'run'}],
+         'package': report1,
+         'bid': 234,
+         'msg': 'reporting SampleTest.xml', 'name': 'SampleTest.xml'
+         },
+        {'status': 0,
+         'task': 'ReportTask',
+         'methods': [{'status': 0, 'rvalue': None, 'name': 'run'}],
+         'package': report2,
+         'bid': 101,
+         'msg': 'reporting SampleTest2.xml', 'name': 'SampleTest2.xml'
+         },
+        {'status': 0,
+         'task': 'ReportTask',
+         'methods': [{'status': 0, 'rvalue': None, 'name': 'run'}],
+         'package': report3,
+         'bid': 222,
+         'msg': 'reporting SampleTest3.xml', 'name': 'SampleTest3.xml'
+         }
+    ]
+    return task_result_list
 
 class TestActionResource(object):
     @staticmethod
@@ -194,7 +324,7 @@ class TestActionResource(object):
     def test_timeout_from_scenario(timeout_param_orchestrate):
         action = Action(name='action', parameters=timeout_param_orchestrate)
         assert action._orchestrate_timeout is 20
-    
+
     @staticmethod
     def test_timeout_from_cfg(config):
         params = dict(
@@ -397,12 +527,12 @@ class TestExecuteResource(object):
         with pytest.raises(TefloExecuteError) as ex:
             Execute()
         assert 'Unable to build execute object. Name field missing!' in \
-            ex.value.args
+               ex.value.args
     @staticmethod
     def test_timeout_from_scenario(timeout_param_execute):
         execute = Execute(name='action', parameters=timeout_param_execute)
         assert execute._execute_timeout is 20
-    
+
     @staticmethod
     def test_timeout_from_cfg(config, default_host_params):
         params = dict(hosts=['host01'], key='value')
@@ -619,12 +749,45 @@ class TestScenarioResource(object):
     def test_reload_method_assets_mixed_tasks(task_list_host, scenario_res1):
         scenario_res1.reload_resources(task_list_host)
         assert len(scenario_res1.assets) == 3
+        assert scenario_res1.assets[0].name == 'host_count_0'
+        assert scenario_res1.assets[1].name == 'host_count_1'
+        assert scenario_res1.assets[2].name == 'host01'
+
+    @staticmethod
+    def test_reload_method_default(task_list_host_with_3_no_count, scenario_res3):
+        scenario_res3.reload_resources(task_list_host_with_3_no_count)
+        assert len(scenario_res3.assets) == 3
+        assert scenario_res3.assets[0].name == 'host_number_3'
+        assert scenario_res3.assets[1].name == 'host_count'
+        assert scenario_res3.assets[2].name == 'host01'
 
     @staticmethod
     def test_reload_method_assets_reversed_mixed_tasks(task_list_host, scenario_res2):
         task_list_host.reverse()
         scenario_res2.reload_resources(task_list_host)
         assert len(scenario_res2.assets) == 3
+        assert scenario_res2.assets[0].name == 'host_count_0'
+        assert scenario_res2.assets[1].name == 'host_count_1'
+        assert scenario_res2.assets[2].name == 'host01'
+
+    @staticmethod
+    def test_reload_method_assets_count_from_middle_tasks(task_list_host_with_3, scenario_res3):
+        scenario_res3.reload_resources(task_list_host_with_3)
+        assert len(scenario_res3.assets) == 4
+        assert scenario_res3.assets[0].name == 'host_number_3'
+        assert scenario_res3.assets[1].name == 'host_count_0'
+        assert scenario_res3.assets[2].name == 'host_count_1'
+        assert scenario_res3.assets[3].name == 'host01'
+
+    @staticmethod
+    def test_reload_method_assets_count_reversed_from_middle_tasks(task_list_host_with_3, scenario_res3):
+        task_list_host_with_3.reverse()
+        scenario_res3.reload_resources(task_list_host_with_3)
+        assert len(scenario_res3.assets) == 4
+        assert scenario_res3.assets[0].name == 'host_number_3'
+        assert scenario_res3.assets[1].name == 'host_count_0'
+        assert scenario_res3.assets[2].name == 'host_count_1'
+        assert scenario_res3.assets[3].name == 'host01'
 
     @staticmethod
     def test_reload_method_reports_tasks(task_list_report, scenario_res1):
@@ -632,12 +795,44 @@ class TestScenarioResource(object):
         assert len(scenario_res1.reports) == 1
 
     @staticmethod
+    def test_reload_method_reports_reversed_tasks(task_list_report_2, scenario_res3):
+        task_list_report_2.reverse()
+        scenario_res3.reload_resources(task_list_report_2)
+        assert len(scenario_res3.reports) == 3
+        assert scenario_res3.reports[0].name == 'SampleTest.xml'
+        assert scenario_res3.reports[1].name == 'SampleTest2.xml'
+        assert scenario_res3.reports[2].name == 'SampleTest3.xml'
+
+    @staticmethod
     def test_reload_method_assets_tasks_using_labels(task_list_host_1, scenario_res1):
         """This is to test if assets which are not picked up for a task still get added to the scenario to populate
          the results.yml"""
         scenario_res1.reload_resources(task_list_host_1)
         assert len(scenario_res1.assets) == 3
+        assert scenario_res1.assets[0].name == 'host_count_0'
+        assert scenario_res1.assets[1].name == 'host_count_1'
+        assert scenario_res1.assets[2].name == 'host01'
 
+    @staticmethod
+    def test_reload_method_assets_tasks_using_labels_and_asset_count(task_list_host_1, scenario_res3):
+        """This is to test if assets which are not picked up for a task still get added to the scenario to populate
+         the results.yml"""
+        scenario_res3.reload_resources(task_list_host_1)
+        assert len(scenario_res3.assets) == 4
+        assert scenario_res3.assets[0].name == 'host_number_3'
+        assert scenario_res3.assets[1].name == 'host_count_0'
+        assert scenario_res3.assets[2].name == 'host_count_1'
+        assert scenario_res3.assets[3].name == 'host01'
+
+    @staticmethod
+    def test_reload_method_reports_tasks_using_labels(task_list_report_2, scenario_res3):
+        """This is to test if assets which are not picked up for a task still get added to the scenario to populate
+         the results.yml"""
+        scenario_res3.reload_resources(task_list_report_2[1:2])
+        assert len(scenario_res3.reports) == 3
+        assert scenario_res3.reports[0].name == 'SampleTest.xml'
+        assert scenario_res3.reports[1].name == 'SampleTest2.xml'
+        assert scenario_res3.reports[2].name == 'SampleTest3.xml'
 
 class TestAssetResource(object):
     @staticmethod
@@ -648,7 +843,7 @@ class TestAssetResource(object):
     def test_timeout_from_scenario(timeout_param_provision, config):
         asset = Asset(name='Asset', parameters=timeout_param_provision, config=config)
         assert asset._provision_timeout is 20
-    
+
     @staticmethod
     def test_timeout_from_cfg(default_host_params, config):
         params = default_host_params
