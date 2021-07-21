@@ -1,0 +1,15 @@
+---
+include:
+  - sdf4.yml
+  - sdf9.yml
+  - sdf6.yml
+name: sdf2
+description: "Included scenario for py3 environment using linchpin"
+
+provision:
+  - name: sdf2host
+    groups: local
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+    labels: ['hello1','hello2']

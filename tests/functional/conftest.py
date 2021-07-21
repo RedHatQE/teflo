@@ -33,9 +33,11 @@ from fixtures import action_resource, action_resource_cleanup, scenario, \
     notification_on_failure_resource, default_note_params,\
     scenario_resource1, execute1, execute2, asset2, action2, scenario_labels,\
     timeout_param_provision, timeout_param_execute,\
-    timeout_param_report, timeout_param_orchestrate
+    timeout_param_report, timeout_param_orchestrate, \
+    basic_scenario_graph_with_provision_only
 
 __all__ = [
+    basic_scenario_graph_with_provision_only,
     action_resource,
     action_resource_cleanup,
     config,

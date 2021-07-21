@@ -71,7 +71,7 @@ class TestActionOrchestrator(object):
         action_orchestrator.plugin = plugin
         with pytest.raises(TefloOrchestratorError) as ex:
             action_orchestrator.run()
-        assert "Orchestration failed : Failed to perform  action1" in ex.value.args
+        assert "Orchestration failed : Failed to perform  action1" in ex.value.args[0]
 
 
 

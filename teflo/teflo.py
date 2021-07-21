@@ -24,7 +24,9 @@
     :license: GPLv3, see LICENSE for more details.
 """
 import errno
+from logging import root
 import os
+from re import L
 import sys
 import blaster
 import yaml
@@ -38,6 +40,7 @@ from .core import TefloError, LoggerMixin, TimeMixin, Inventory
 from .helpers import file_mgmt, gen_random_str, sort_tasklist
 from .resources import Scenario, Asset, Action, Report, Execute, Notification
 from .utils.config import Config
+from .utils.scenario_graph import ScenarioGraph
 from .utils.pipeline import PipelineFactory
 
 
@@ -193,9 +196,12 @@ class Teflo(LoggerMixin, TimeMixin):
         self.config['WORKSPACE'] = self.workspace
 
         # creating one time inventory object
-        self.cbn_inventory = Inventory.get_instance(self.config, self._uid)
+        self.cbn_inventory: Inventory = Inventory.get_instance(self.config, self._uid)
+        # self.cbn_inventory = Inventory(self.config, self._uid)
+        # self.cbn_inventory: list[Inventory]
+        # self.cbn_inventory = []
 
-        self.scenario = Scenario(config=self.config)
+        self.scenario_graph = ScenarioGraph()
 
     @property
     def name(self):
@@ -228,14 +234,13 @@ class Teflo(LoggerMixin, TimeMixin):
     def teflo_options(self):
         return self._teflo_options
 
-    def _populate_scenario_resources(self, scenario_obj, scenario_stream):
+    def _populate_scenario_resources(self, scenario_obj: Scenario, scenario_stream):
 
         scenario_data = yaml.safe_load(scenario_stream)
         pro_items = scenario_data.pop('provision', None)
         orc_items = scenario_data.pop('orchestrate', None)
         exe_items = scenario_data.pop('execute', None)
         rpt_items = scenario_data.pop('report', None)
-        inc_items = scenario_data.pop('include', None)
         notify_items = scenario_data.pop('notifications', None)
 
         scenario_obj.load(scenario_data)
@@ -246,7 +251,7 @@ class Teflo(LoggerMixin, TimeMixin):
         scenario_obj.load_resources(Report, rpt_items)
         scenario_obj.load_resources(Notification, notify_items)
 
-    def load_from_yaml(self, filedata):
+    def load_from_yaml(self, scenario_graph: ScenarioGraph):
         """
         Given the YAML filename with the scenario description, this
         function will load all resources described in the file with
@@ -269,20 +274,17 @@ class Teflo(LoggerMixin, TimeMixin):
         then be be loaded in each respective lists within the
         ~self.scenario object.
 
-        :param filedata: list of full data object for the YAML file descriptor
-        :return:
+        :param scenario_graph: a sceanrio graph
+        :type scenario_graph: ScenarioGraph
         """
         # setting up master scenario
-        self.scenario.yaml_data = filedata[0]
-        self._populate_scenario_resources(self.scenario, filedata[0])
+        self.scenario_graph = scenario_graph
 
-        # creating child scenario objects
-        if len(filedata) > 1:
-            for scenario_stream in filedata[1:]:
-                ch_scenario = Scenario(config=self.config)
-                ch_scenario.yaml_data = scenario_stream
-                self._populate_scenario_resources(ch_scenario, scenario_stream)
-                self.scenario.add_child_scenario(ch_scenario)
+        # Iterate using certain iterator, this is post-order traversal for a tree-liked graph
+        sc: Scenario
+        for sc in self.scenario_graph:
+            # Add resources to sc objects
+            self._populate_scenario_resources(sc, sc.yaml_data)
 
         self._validate_labels()
 
@@ -290,9 +292,10 @@ class Teflo(LoggerMixin, TimeMixin):
         """This method displays all the labels in the scenario"""
         res_label_dict = dict()
         # getting all labels from all resources in the scenario
-        for res in self.scenario.get_all_resources():
-            res_label_dict[res] = dict(name=getattr(res, 'name'),
-                                       labels=[lab for lab in getattr(res, 'labels')])
+        for sc in self.scenario_graph:
+            for res in sc.get_all_resources():
+                res_label_dict[res] = dict(name=getattr(res, 'name'),
+                                           labels=[lab for lab in getattr(res, 'labels')])
         self.logger.info('-' * 79)
         self.logger.info('SCENARIO LABELS'.center(79))
         self.logger.info('-' * 79)
@@ -336,7 +339,8 @@ class Teflo(LoggerMixin, TimeMixin):
             res_label_list = list()
             user_labels = list()
             # labels present in all res
-            res_label_list.extend([lab for res in self.scenario.get_all_resources() for lab in getattr(res, 'labels')])
+            res_label_list.extend(
+                [lab for sc in self.scenario_graph for res in sc.get_all_resources() for lab in getattr(res, 'labels')])
             # labels provided by user at cli
             user_labels.extend([lab for lab in
                                 self.teflo_options.get('labels', []) or self.teflo_options.get('skip_labels', [])])
@@ -349,7 +353,7 @@ class Teflo(LoggerMixin, TimeMixin):
                                       "scenario descriptor file" % label)
         return
 
-    def run(self, tasklist=TASKLIST):
+    def run(self, tasklist: list = TASKLIST):
         """
         This function assumes there are zero or more tasks to be
         loaded within the list of pipelines: ~self.pipelines.
@@ -386,23 +390,22 @@ class Teflo(LoggerMixin, TimeMixin):
                 data = self._run_pipeline(task)
 
                 # reload resource objects
-                self.scenario.reload_resources(data)
-
-                if self.scenario.child_scenarios:
-                    [sc.reload_resources(data) for sc in self.scenario.child_scenarios]
-
+                sc: Scenario
+                for sc in self.scenario_graph:
+                    sc.reload_resources(data)
                 # Creating inventory only when task is provision
                 if task == 'provision':
-                    try:
-                        # create the master inventory
-                        for host in self.scenario.get_all_assets():
-                            if hasattr(host, 'groups') or hasattr(host, 'ip_address'):
-                                self.logger.info('Populating master inventory file with host(s) %s'
-                                                 % getattr(host, 'name'))
+                    all_hosts = [host for hosts in [sc.get_assets() for sc in self.scenario_graph] for host in hosts]
 
-                        self.cbn_inventory.create_master(all_hosts=self.scenario.get_all_assets())
+                    for host in all_hosts:
+                        if hasattr(host, 'groups') or hasattr(host, 'ip_address'):
+                            self.logger.info('Populating inventory file with host(s) %s'
+                                                % getattr(host, 'name'))
+                    try:
+                        self.cbn_inventory.create_inventory(all_hosts=all_hosts)
+
                     except Exception as ex:
-                        raise TefloError("Error while creating the master inventory %s" % ex)
+                        raise TefloError("Error while creating the inventory for scenario %s: %s" % (sc.path, ex))
 
                 self.logger.info("." * 50)
         except Exception as ex:
@@ -418,10 +421,8 @@ class Teflo(LoggerMixin, TimeMixin):
             self.logger.error(ex)
 
             # reload resource objects
-            self.scenario.reload_resources(ex.results)
-
-            if self.scenario.child_scenarios:
-                [sc.reload_resources(ex.results) for sc in self.scenario.child_scenarios]
+            for sc in self.scenario_graph:
+                sc.reload_resources(ex.results)
 
             # roll back by cleaning up any resources that might have been provisioned
             if 'cleanup' in tasklist and [item for item in failed_tasks if item != 'cleanup']:
@@ -437,9 +438,8 @@ class Teflo(LoggerMixin, TimeMixin):
                         data = self._run_pipeline(task)
 
                         # reload resource objects
-                        self.scenario.reload_resources(data)
-                        if self.scenario.child_scenarios:
-                            [sc.reload_resources(data) for sc in self.scenario.child_scenarios]
+                        for sc in self.scenario_graph:
+                            sc.reload_resources(data)
                         passed_tasks.append(task)
                     except Exception as ex:
                         self.logger.error(ex)
@@ -466,43 +466,37 @@ class Teflo(LoggerMixin, TimeMixin):
             sys.exit(status)
 
     def notify(self, task, status=0, passed_tasks=None, failed_tasks=None):
+        scenario: Scenario
 
-        setattr(self.scenario, 'overall_status', status)
-        setattr(self.scenario, 'passed_tasks', [])
-        setattr(self.scenario, 'failed_tasks', [])
+        self.logger.info('Sending out any notifications that are registered.')
+        for scenario in self.scenario_graph:
+            setattr(scenario, 'overall_status', status)
+            setattr(scenario, 'passed_tasks', [])
+            setattr(scenario, 'failed_tasks', [])
 
-        if passed_tasks:
-            setattr(self.scenario, 'passed_tasks', passed_tasks)
+            if passed_tasks:
+                setattr(scenario, 'passed_tasks', passed_tasks)
 
-        if failed_tasks:
-            setattr(self.scenario, 'failed_tasks', failed_tasks)
+            if failed_tasks:
+                setattr(scenario, 'failed_tasks', failed_tasks)
 
-        if task == 'on_demand':
-            self.start()
-            self._print_header(['notify'])
-            self.logger.info(' * Task    : notify')
+            if task == 'on_demand':
+                self.start()
+                self._print_header(['notify'])
+                self.logger.info(' * Task    : notify')
 
         # blast off the pipeline list of tasks
         try:
-
-            self.logger.info('Sending out any notifications that are registered.')
             data = self._run_pipeline(task)
-
-            # reload resource objects
-            self.scenario.reload_resources(data)
-
-            if self.scenario.child_scenarios:
-                [sc.reload_resources(data) for sc in self.scenario.child_scenarios]
+            for scenario in self.scenario_graph:
+                scenario.reload_resources(data)
         except Exception as ex:
             status = 1
             self.logger.error(ex)
             self.logger.error('One or more notifications failed. Refer to the scenario.log')
+            for scenario in self.scenario_graph:
+                scenario.reload_resources(ex.results)
 
-            # reload resource objects
-            self.scenario.reload_resources(ex.results)
-
-            if self.scenario.child_scenarios:
-                [sc.reload_resources(ex.results) for sc in self.scenario.child_scenarios]
         finally:
             if task == 'on_demand':
                 # save end time
@@ -511,17 +505,16 @@ class Teflo(LoggerMixin, TimeMixin):
                 state = 'FAILED' if status else 'PASSED'
 
                 self._write_out_results()
-
-                self._print_footer(getattr(self.scenario, 'passed_tasks'),
-                                   getattr(self.scenario, 'failed_tasks'),
-                                   state)
+                for scenario in self.scenario_graph:
+                    self._print_footer(getattr(scenario, 'passed_tasks'),
+                                       getattr(scenario, 'failed_tasks'),
+                                       state)
 
                 self._archive_results()
 
                 sys.exit(status)
 
     def _run_pipeline(self, task):
-
         data = {}
 
         # create a pipeline builder object
@@ -532,12 +525,11 @@ class Teflo(LoggerMixin, TimeMixin):
             self.logger.warning('Task %s is not valid by teflo.', task)
             return data
 
-        pipeline = pipe_builder.build(self.scenario, self.teflo_options)
+        pipeline = pipe_builder.build(self.scenario_graph, self.teflo_options)
 
         self.logger.info('.' * 50)
         self.logger.info('Starting tasks on pipeline: %s',
                          pipeline.name)
-
         # check if pipeline has tasks to be run
         if not pipeline.tasks:
             self.logger.warning('... no tasks to be executed ...')
@@ -545,7 +537,6 @@ class Teflo(LoggerMixin, TimeMixin):
 
         # create blaster object with pipeline to run
         blast = blaster.Blaster(pipeline.tasks)
-
         # blast off the pipeline list of tasks reload_resources
         data = blast.blastoff(
             serial=not pipeline.type.__concurrent__,
@@ -553,6 +544,29 @@ class Teflo(LoggerMixin, TimeMixin):
         )
 
         return data
+
+    @property
+    def data_folder_results_yml_path(self):
+        return os.path.join(self.data_folder, RESULTS_FILE)
+
+    @property
+    def final_results_yml_path(self):
+        return os.path.join(self.config["RESULTS_FOLDER"], RESULTS_FILE)
+
+    def _data_folder_resultsyml_exist(self):
+        return os.path.exists(self.data_folder_results_yml_path)
+
+    def _final_results_yml_exists(self):
+        return os.path.exists(self.final_results_yml_path)
+
+    def _create_final_result_yml(self):
+        if self._data_folder_resultsyml_exist():
+            os.remove(self.data_folder_results_yml_path)
+        if self._final_results_yml_exists():
+            os.remove(self.final_results_yml_path)
+        root_scenario_results_path = os.path.join(
+            self.data_folder, self.scenario_graph.root.path.split(".")[0] + "_results.yml")
+        os.system("cp %s %s" % (root_scenario_results_path, self.data_folder_results_yml_path))
 
     def _print_header(self, tasklist):
 
@@ -563,29 +577,23 @@ class Teflo(LoggerMixin, TimeMixin):
         self.logger.info(' * Workspace             : %s' % self.workspace)
         self.logger.info(' * Log Level             : %s' % self.config['LOG_LEVEL'])
         self.logger.info(' * Tasks                 : %s' % tasklist)
-        self.logger.info(' * Scenario              : %s' % getattr(self.scenario, 'name'))
-        if self.scenario.child_scenarios:
-            self.logger.info(' * Included Scenario(s)  : %s' % [getattr(sc, 'name') for sc in
-                                                                self.scenario.child_scenarios])
+        for sc in self.scenario_graph:
+            self.logger.info(' * Scenario              : %s' % getattr(sc, 'name'))
         self.logger.info('-' * 79 + '\n')
 
     def _write_out_results(self):
-
-        # check if child scenario exist, update the new child_result and append to ch_result_list.
-        if self.scenario.child_scenarios:
-            child_result_list = []
-            for sc in self.scenario.child_scenarios:
-                ch_result_file_name = sc.name + '_results.yml'
-                ch_result_abs_name = os.path.join(self.data_folder, sc.name + '_results.yml')
-                file_mgmt('w', ch_result_abs_name, sc.profile())
-                # Adding child_result_list with results file in the RESULTS_FOLDER instead of absolute path
-                child_result_list.append(os.path.join(self.config['RESULTS_FOLDER'], ch_result_file_name))
-
-            # Add the child_result_list to the included_scenario_names property
-            self.scenario.__setattr__('included_scenario_names', child_result_list)
-
-        # Write the main scenario results
-        file_mgmt('w', self.results_file, self.scenario.profile())
+        """
+        write all results to sc.path_results.yml
+        """
+        sc: Scenario
+        for sc in self.scenario_graph:
+            # use filename because the scenario name could
+            # contain some special characters, which is not good for
+            # file generation
+            ch_result_abs_name = os.path.join(self.data_folder, sc.path.split(".")[0] + '_results.yml')
+            file_mgmt('w', ch_result_abs_name, sc.profile())
+            # Adding child_result_list with results file in the RESULTS_FOLDER instead of absolute path
+        self._create_final_result_yml()
 
     def _print_footer(self, passed_tasks, failed_tasks, state):
 
@@ -603,9 +611,9 @@ class Teflo(LoggerMixin, TimeMixin):
         self.logger.info(' * Results Folder                 : %s' %
                          self.config['RESULTS_FOLDER'])
 
-        self.logger.info(' * Included Scenario Definition   : %s' % self.scenario.included_scenario_names)
-        self.logger.info(' * Final Scenario Definition      : %s' % os.path.join(self.config['RESULTS_FOLDER'],
-                                                                                 RESULTS_FILE))
+        for sc in self.scenario_graph:
+            self.logger.info(' * Scenario Definition            : %s' % sc.name)
+        self.logger.info(' * Final Scenario Definition      : %s' % self.final_results_yml_path)
         self.logger.info('-' * 79)
         self.logger.info('TEFLO RUN (RESULT=%s)' % state)
 
@@ -636,3 +644,9 @@ class Teflo(LoggerMixin, TimeMixin):
         # Copy the files to the new directory and clean cache
         copy_tree('./.teflo_cache/teflo_init/', dirname)
         shutil.rmtree('.teflo_cache')
+
+    def showgraph(self, ctx, scenario_graph: ScenarioGraph):
+        """Show scenario graph includes structure"""
+        click.echo('\033[92m' + "Below is the structure of the Scenario Definition Files")
+        print('\n\n\n')
+        print(scenario_graph)
