@@ -413,6 +413,8 @@ The vault-password-file can be passed using **vault-password-file** under **ansi
           vault-password-file:
             - "./vaultpass"
 
+.. _extra_vars:
+
 Extra_vars
 ~~~~~~~~~~
 
@@ -464,6 +466,61 @@ Use the **file** key to pass a variable file to the playbook. This file needs to
             file:
             - variable_file.yml
             - variable_1_file.yml
+
+.. note::
+
+    Teflo can make the variable files declared in the default locations below, to be passed
+    as extra_vars to the ansible playbook in the orchestrate and execute stage
+
+    #. defaults section of teflo.cfg
+    #. var_file.yml under the teflo workspace
+    #. yml files under the directory vars under teflo workspace
+
+    This can be done by setting the following property to True in the defaults section of the teflo.cfg
+
+    .. code-block:: yaml
+
+        [defaults]
+        ansible_extra_vars_files=true
+
+    Example:
+        Here the default variable file my_default_variable_file.yml is made available as a variable file to
+        be passed as extra_vars to the ansible playbooks being run in the execute and orchestrate
+        stages.
+        If variable file(s) are already being passed to the ansible playbook as a part of ansible_options,
+        this setting will append the default variable files to that list. In the below example for orchestrate
+        stage the file my_default_variable_file.yml is passed along with variable.yml as extra_vars
+
+
+        .. code-block:: yaml
+
+            [defaults]
+            var_file=./my_default_variable_file.yml
+            ansible_extra_vars_files=true
+
+        .. code-block:: yaml
+
+
+            orchestrate:
+              - name: playbook_2
+                description: "run orchestrate step using file key as extra_vars"
+                orchestrator: ansible
+                hosts: localhost
+                ansible_playbook:
+                  name: ansible/var_test1.yml
+                ansible_options:
+                  extra_vars:
+                    file: variable.yml
+
+            execute:
+              - name: playbook_3
+                description: "run orchestrate step using file key as extra_vars"
+                executor: runner
+                hosts: localhost
+                playbook:
+                - name: ansible/template_host_test_playbook_tasks.yml
+
+
 
 
 Ansible Galaxy Options
