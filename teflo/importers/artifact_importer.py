@@ -75,10 +75,14 @@ class ArtifactImporter(LoggerMixin, TimeMixin):
         self.plugin.artifacts = self.artifact_paths
         try:
             results = self.plugin.import_artifacts()
-            setattr(self.report, 'import_results', results)
+            if results:
+                setattr(self.report, 'import_results', results)
         except Exception as ex:
             self.logger.error(ex)
-            setattr(self.report, 'import_results', getattr(self.plugin, 'import_results'))
+            if getattr(self.plugin, 'import_results') == [None]:
+                setattr(self.report, 'import_results', [])
+            else:
+                setattr(self.report, 'import_results', getattr(self.plugin, 'import_results'))
             raise TefloImporterError('Failed to import artifact %s' % self.report.name)
 
     def validate(self):
