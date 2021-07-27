@@ -898,6 +898,9 @@ def ssh_retry(obj):
                         LOG.info('Attempt %s of %s: retrying in %s seconds' %
                                  (attempt, MAX_ATTEMPTS, MAX_WAIT_TIME))
                         time.sleep(MAX_WAIT_TIME)
+                except Exception:
+                    LOG.error("Error occured while attempting to ssh to the host. Please verify ssh keys")
+                    return True
 
             # Check Max SSH Retries performed
             if attempt > MAX_ATTEMPTS:
