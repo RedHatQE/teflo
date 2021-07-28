@@ -9,8 +9,13 @@ include:
 
 provision:
   - name: {{ asset_name  }}-{{ other_name }}
-    provider:
-      name: openstack
+    provisioner: openstack
+
+  - name: {{ list_var  }}
+    provisioner: openstack
+
+  - name: {{ dict_var  }}
+    provisioner: openstack
 
 orchestrate:
 
