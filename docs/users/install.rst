@@ -192,14 +192,14 @@ n and n-2 teflo releases
     :header-rows: 1
 
     *   - Teflo Release
-        - 1.1.0
-        - 1.2.0
         - 1.2.1
+        - 1.2.2
+        - 1.2.3
 
     *   - Rppreproc Plugin
         - 1.0.0
         - 1.0.0
-        - 1.0.0
+        - 2.0.0
 
     *   - Polarion Plugin
         - 1.0.0
@@ -217,26 +217,28 @@ n and n-2 teflo releases
         - 1.0.1
 
     *   - Webhooks Notification Plugin
-        - 1.1.0
-        - 1.1.0
+        - 1.1.1
+        - 1.1.1
         - 1.1.1
 
     *   - Terraform Plugin
-        - -
-        - 0.0.1
+        - 1.0.0
+        - 1.0.0
         - 1.0.0
 
     *   - Notify Service Plugin
-        - -
-        - -
         - 1.0.0
+        - 1.0.0
+        - 1.0.0
+
 
     *   - Polar
         - 1.2.1
         - 1.2.1
         - 1.2.1
 
+
     *   - Rp_preproc
         - 0.1.4
         - 0.1.4
-        - 0.1.4
+        - 0.1.11

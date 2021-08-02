@@ -513,10 +513,10 @@ that references this credential:
 .. literalinclude:: ../../examples/docs-usage/report.yml
           :lines: 85-91
 
-CCIT Report Portal Client
-+++++++++++++++++++++++++
+Report Portal Client
+++++++++++++++++++++
 
-Teflo uses CCIT Report Portal client to import artifacts to the Report Portal instance.
+Teflo uses Data and Operations team's (DOT) Report Portal client to import artifacts to the Report Portal instance.
 To know more about Report Portal Client, please refer
 `here <https://docs.engineering.redhat.com/pages/viewpage.action?pageId=81876674>`__
 
@@ -547,7 +547,7 @@ Without Provider:
         simple_xml: <to just import XML file directly>
         auto_dashboard: <create dashboard>
         merge_launches: <merge multiple launches into single true/false>
-        tags:
+        attributes:
         - <tag1>
         - <tag2>
         json_path: <relative path for report portal config file>
@@ -583,7 +583,7 @@ Without Provider:
         - String
         - False
 
-    *   - tags
+    *   - attributes
         - Tags set for each launch
         - list
         - False
@@ -629,8 +629,7 @@ section of the report section in the SDF.
 
 Please refer report portal config section in the Report Portal client documentation to understand
 more about the config json file
-`here <https://docs.engineering.redhat.com/pages/viewpage.action?
-pageId=81876674#CCITReportPortalUser'sGuide-rp_preproc>`__
+`here <https://gitlab.cee.redhat.com/ccit/reportportal/rp_preproc/-/blob/rpv5/README.md>`__
 
 Example for json config:
 
@@ -652,7 +651,7 @@ Example for json config:
         "launch": {
             "name": "teflo1",
             "description": "teflo_launch_desc",
-            "tags":[
+            "attributes":[
                 "tag1",
                 "tag2"
             ]
