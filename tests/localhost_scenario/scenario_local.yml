@@ -113,9 +113,6 @@ orchestrate:
     hosts: localhost
     ansible_playbook:
       name: ansible/template_host_test_playbook_tasks.yml
-    ansible_options:
-      extra_vars:
-        file: variable.yml
 
   - name: playbook_2
     description: "run orchestrate step using file key (list) as extra_vars"
@@ -126,7 +123,6 @@ orchestrate:
     ansible_options:
       extra_vars:
         file:
-        - variable.yml
         - variable_1.yml
 
 execute:

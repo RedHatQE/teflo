@@ -1,3 +1,12 @@
+# nested var file with str, list, dict
 ---
 asset_name: {{ nested_var }}
 nested_var: "teflo_test"
+devices:
+  - /dev/vdc
+list_var: "{{ devices }}"
+languages:
+  perl: Elite
+  python: Elite
+  pascal: Lame
+dict_var: "{{ languages }}"

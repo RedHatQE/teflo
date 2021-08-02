@@ -111,7 +111,7 @@ report:
     rp_project: teflo_1
     launch_name: teflo_launch
     launch_description: teflo_launch_desc
-    tags:
+    attributes:
     - tag1
     - tag2
     merge_launches: True
@@ -139,7 +139,7 @@ report:
     rp_project: teflo_1
     launch_name: teflo_launch
     launch_description: teflo_launch_desc
-    tags:
+    attributes:
     - tag1
     - tag2
     merge_launches: False
@@ -165,7 +165,7 @@ report:
     rp_project: teflo_1
     launch_name: teflo_launch
     launch_description: teflo_launch_desc
-    tags:
+    attributes:
     - tag1
     - tag2
     merge_launches: False
@@ -223,7 +223,7 @@ report:
       rp_project: teflo_rujuta
       launch_name: teflo_launch
       launch_description: teflo_launch_desc
-      tags:
+      attributes:
       - tag1
       - tag2
       merge_launches: True
@@ -248,7 +248,7 @@ report:
       rp_project: teflo_1
       launch_name: teflo_launch
       launch_description: teflo_launch_desc
-      tags:
+      attributes:
       - tag1
       - tag2
       merge_launches: False
@@ -263,7 +263,7 @@ report:
     rp_project: teflo_1
     launch_name: teflo_launch
     launch_description: teflo_launch_desc
-    tags:
+    attributes:
     - tag1
     - tag2
     merge_launches: False
@@ -292,7 +292,7 @@ report:
       rp_project: teflo_1
       launch_name: teflo_launch
       launch_description: teflo_launch_desc
-      tags:
+      attributes:
       - tag1
       - tag2
       merge_launches: False

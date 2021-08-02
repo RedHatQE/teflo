@@ -898,6 +898,9 @@ def ssh_retry(obj):
                         LOG.info('Attempt %s of %s: retrying in %s seconds' %
                                  (attempt, MAX_ATTEMPTS, MAX_WAIT_TIME))
                         time.sleep(MAX_WAIT_TIME)
+                except Exception:
+                    LOG.error("Error occured while attempting to ssh to the host. Please verify ssh keys")
+                    return True
 
             # Check Max SSH Retries performed
             if attempt > MAX_ATTEMPTS:
@@ -1400,7 +1403,11 @@ def replace_brackets(input, temp_data):
         key = input[key_start:key_end].strip()
         if not isinstance(temp_data[key], str):
             temp_data.update({key: preprocyaml(temp_data[key], temp_data)})
-        ret = input.replace(input[replace_start:replace_end], temp_data[key], 1)
+
+        if isinstance(temp_data[key], str):
+            ret = input.replace(input[replace_start:replace_end], temp_data[key], 1)
+        elif isinstance(temp_data[key], list) or isinstance(temp_data[key], dict):
+            ret = temp_data[key]
 
         return replace_brackets(ret, temp_data)
     else:
@@ -1445,6 +1452,8 @@ def preprocyaml(input, temp_data):
         for item in new_dict.items():
             new_dict.update({item[0]: preprocyaml(item[1], temp_data)})
         return new_dict
+    else:
+        return input
 
 
 def validate_render_scenario(scenario, config, temp_data_raw=()):
@@ -1652,6 +1661,14 @@ def validate_cli_scenario_option(ctx, scenario, config, vars_data=None):
     except TefloError as err:
         click.echo('%s' % err.message)
         ctx.exit(1)
+    except jinja2.exceptions.UndefinedError as err:
+        curframe = inspect.currentframe()
+        calframe = inspect.getouterframes(curframe, 2)
+        if calframe[1][3] is 'show':
+            click.echo("\n\nYou need to use --vars-data to fill your variables for show command")
+            ctx.exit(1)
+        else:
+            raise TefloError("You need to fill your variable with --vars-data label")
 
 
 def create_individual_testrun_results(artifact_locations, config):
@@ -1780,3 +1797,20 @@ def generate_default_template_vars(scenario, notification):
         temp_dict['failed_tasks'] = ','.join(failed_tasks)
 
     return temp_dict
+
+
+class StatusPageHelper(object):
+
+    def __init__(self, proxyserver_url):
+        self.proxyserver_url = proxyserver_url
+
+    def get_info(self):
+        ret = {}
+        try:
+            info = requests.get(self.proxyserver_url + "/components").json()['components']
+            for item in info:
+                if item.get("name") is not None:
+                    ret[item["name"]] = item
+        except Exception:
+            raise TefloError("The url is incorrect for resource check")
+        return ret

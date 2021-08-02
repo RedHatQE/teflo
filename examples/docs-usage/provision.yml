@@ -84,6 +84,11 @@ provision:
     password: '{{ password }}'
     host_requires_options:
       - "force={{ host_fqdn }}"
+    ksappends:
+      - |
+        %post
+        echo "This is my extra %post script"
+        %end
     ssh_key: "keys/{{ key_name }}"
     ansible_params:
       ansible_user: root

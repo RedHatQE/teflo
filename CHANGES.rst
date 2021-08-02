@@ -1,3 +1,29 @@
+Version 1.2.3 (2021-08-02)
+--------------------------
+
+Features
+~~~~~~~~~~~~
+* Add the var-file declared by user as an extra_vars in the ansible orchestrate and execute task
+* teflo_rppreproc_plugin to support RPV5 instances
+
+Enhancements
+~~~~~~~~~~~~
+* support --vars-data w/show command
+* Added support bkr's ks-append(s) option in beaker-client plugin
+
+Bug Fixes
+~~~~~~~~~
+* Added a generic exception handling during ssh to hosts
+* Added fix for resource ordering issue in results.yml
+* update import_results list when is not None
+* Using variable files with variables as list/dict causes an exception
+
+Documentation
+~~~~~~~~~~~~~
+* Correction in documentation to point to fixed gh_pages
+* Added release cadence to Contribution.rst
+* Added workaround(use of shell script) to allow make docs-wiki work correctly using makefile
+
 Version 1.2.2 (2021-07-16)
 --------------------------
 

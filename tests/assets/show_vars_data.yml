@@ -1,0 +1,10 @@
+---
+name: Test -vars-data for show command
+description: "Test -vars-data for show command"
+provision:
+  - name: "{{ var + '-hello' }}"
+    groups: local
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+    labels: ['hello1','hello2']

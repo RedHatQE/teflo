@@ -70,14 +70,18 @@ def create():
               metavar="",
               is_flag=True,
               help="List all the labels and associated resources in the SDF")
+@click.option("--vars-data",
+              multiple=True,
+              metavar="",
+              help="Pass in variable data to template the scenario. Can be a file or raw json.")
 @click.pass_context
-def show(ctx, scenario, list_labels):
+def show(ctx, scenario, list_labels, vars_data):
     """Show information about the scenario."""
     print_header()
     # Create a new teflo compound
     cbn = Teflo(__name__)
 
-    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config)
+    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
     # Sending the list of scenario streams to the teflo object
     cbn.load_from_yaml(scenario_stream)
 

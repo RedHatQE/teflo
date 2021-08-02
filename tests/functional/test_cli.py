@@ -174,6 +174,7 @@ class TestCli(object):
         )
         assert 'teflo_test' in results.output
         assert 'another_test' in results.output
+
         assert results.exit_code == 0
 
     @staticmethod
@@ -184,11 +185,13 @@ class TestCli(object):
         mock_method.return_value = 0
         results = runner.invoke(
                 teflo, ['run', '-t', 'validate', '-s', '../assets/multiple_template.yml',
-                        '-d', '/tmp', '--vars-data', '../assets/test_var_file.yml',
+                        '-d', '/tmp', '--vars-data', '../assets/test_nested_var_file.yml',
                         '--vars-data', json.dumps(dict(other_name='another_test'))]
         )
         assert 'teflo_test' in results.output
         assert 'another_test' in results.output
+        assert "['/dev/vdc']" in results.output
+        assert "{'perl': 'Elite', 'python': 'Elite', 'pascal': 'Lame'}" in results.output
         assert results.exit_code == 0
 
     @staticmethod
@@ -296,6 +299,21 @@ class TestCli(object):
             teflo, ['show', '-s', '../assets/no_include.yml']
         )
         assert "An option needs to be given. See help" in results.output
+
+    @staticmethod
+    def test_valid_show_with_varsdata(runner):
+        results = runner.invoke(
+            teflo, ['show', '-s', '../assets/show_vars_data.yml', '--list-labels','--vars-data', '../assets/show_test_var.yml']
+        )
+        assert results.exit_code == 0
+
+    @staticmethod
+    def test_invalid_show_with_varsdata(runner):
+        results = runner.invoke(
+            teflo, ['show', '-s', '../assets/show_vars_data.yml', '--list-labels']
+        )
+        print(results.output)
+        assert "You need to use --vars-data to fill your variables for show command" in results.output
 
     @staticmethod
     @mock.patch.object(Teflo, 'list_labels')

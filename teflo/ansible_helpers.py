@@ -40,7 +40,7 @@ from shutil import copyfile
 from ansible.config.manager import ConfigManager
 from ._compat import string_types
 from .helpers import ssh_retry, exec_local_cmd_pipe, DataInjector, get_ans_verbosity, is_host_localhost, file_mgmt, \
-    gen_random_str
+    gen_random_str, check_for_var_file
 from .static.playbooks import GIT_CLONE_PLAYBOOK, SYNCHRONIZE_PLAYBOOK, \
     ADHOC_SHELL_PLAYBOOK, ADHOC_SCRIPT_PLAYBOOK
 from .exceptions import AnsibleServiceError
@@ -405,6 +405,19 @@ class AnsibleService(object):
                         extra_vars['localhost'] = True
                 elif isinstance(h, string_types) and h == 'localhost':
                     extra_vars['localhost'] = True
+        # Looking for all the variable files that teflo finds and add them as extra_vars for the ansible playbooks
+        if self.config.get('ANSIBLE_EXTRA_VARS_FILES') and \
+                self.config.get('ANSIBLE_EXTRA_VARS_FILES').lower() == 'true':
+            var_files_list = check_for_var_file(self.config)
+            file = extra_vars.get('file')
+            if file:
+                if not isinstance(file, str):
+                    extra_vars['file'].extend(var_files_list)
+                else:
+                    var_files_list.append(file)
+                    extra_vars['file'] = var_files_list
+            else:
+                extra_vars['file'] = var_files_list
 
         return extra_vars
 

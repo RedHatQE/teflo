@@ -153,6 +153,7 @@ provisioning resource for Beaker using the **beaker-client** provisioner:
         ignore_panic: <True or False>
         taskparam: [<list of task parameter settings>]
         ksmeta: [<list of kick start meta OPTIONS>]
+        ksappends: [<list of kickstart append scripts>]
         metadata: <dict_key_values>
         ansible_params: <dict_key_values>
 
@@ -294,11 +295,16 @@ provisioning resource for Beaker using the **beaker-client** provisioner:
         - List
         - False
 
+    *   - ksappends
+        - partial kickstart scripts to append to the main kickstart file
+        - List
+        - False
+
 Example
 +++++++
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
-    :lines: 68-90
+    :lines: 68-95
 
 .. _openstack_provisioning:
 
@@ -384,7 +390,7 @@ Example
 +++++++
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
-    :lines: 94-111
+    :lines: 98-119
 
 Provisioning Openstack Assets using teflo_openstack_client_plugin
 ------------------------------------------------------------------
@@ -633,7 +639,7 @@ Example
 +++++++
 
 .. literalinclude:: ../../../examples/docs-usage/provision.yml
-    :lines: 114-124
+    :lines: 122-132
 
 There may also be a scenario where you want to run cmds or scripts on the
 local system instead of the provisioned resources.  Refer to the
