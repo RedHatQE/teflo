@@ -980,6 +980,14 @@ class TestAssetResource(object):
         assert 'You cannot set the asset provisioner plugin after asset class ' \
                'is instantiated.' in ex.value.args
 
+    @staticmethod
+    def test_same_groups_name_host_name_error(default_host_params, config):
+        params = default_host_params
+        with pytest.raises(TefloResourceError) as ex:
+            asset = Asset(name='client', config=config, parameters=params)
+        print(ex.value.args)
+        assert "Asset name client cannot be same as groups name ['client']" in ex.value.args
+
 
 class TestNotificationResource(object):
 
