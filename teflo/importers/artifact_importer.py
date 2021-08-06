@@ -32,8 +32,9 @@ class ArtifactImporter(LoggerMixin, TimeMixin):
         self.plugin = getattr(self.report, 'importer_plugin')(report)
 
         # check if user specified data pass-through injection
-        host_list = [host for execute in self.report.executes for host in execute.all_hosts]
-        if host_list:
+        if self.report.executes:
+            # report.executes exist then look for host_list
+            host_list = [host for execute in self.report.executes for host in execute.all_hosts]
             self.injector = DataInjector(host_list)
         else:
             # Assume no executes is assigned, so the helper
