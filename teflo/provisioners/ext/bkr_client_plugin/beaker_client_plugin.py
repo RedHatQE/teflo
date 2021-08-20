@@ -224,7 +224,7 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         self.logger.debug('Beaker timeout limit: %s.' % wait)
 
         # check Beaker status every 60 seconds
-        total_attempts = wait / 60
+        total_attempts = int(wait / 60)
 
         attempt = 0
         while wait > 0:
