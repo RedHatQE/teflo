@@ -151,7 +151,7 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         )
 
         if 'force' in self.bkr_xml.hrname:
-            self.logger.warning('Force was specified as a host_require_option.'
+            self.logger.warning('Force was specified as a host_require_option. '
                                 'Any other host_require_options will be ignored since '
                                 'force is a mutually exclusive option in beaker.')
         # format beaker client command to run
