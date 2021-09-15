@@ -61,7 +61,8 @@ setup(
         'paramiko>=2.4.2',
         'ssh-python==0.9.0',
         'requests>=2.20.1',
-        'urllib3<1.26'
+        'urllib3<1.26',
+        'termcolor>=1.1.0'
     ],
     extras_require={
                     'linchpin-wrapper': ['teflo_linchpin_plugin'],
