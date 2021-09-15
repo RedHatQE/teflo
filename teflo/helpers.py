@@ -1561,7 +1561,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                         raise TefloError('Error loading included '
                                                 'scenario data! ' + item + str(err.problem_mark))
                 else:
-                    raise HelpersError('Included File is invalid or Include section is empty .'
+                    raise TefloError('Included File is invalid or Include section is empty .'
                                            'You have to provide valid scenario files to be included.')
 
     def include(unchecked_list: list, checked_list: dict):

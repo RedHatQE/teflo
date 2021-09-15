@@ -23,6 +23,7 @@
     :copyright: (c) 2021 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+from copy import deepcopy
 import errno
 from logging import root
 import os
@@ -378,30 +379,107 @@ class Teflo(LoggerMixin, TimeMixin):
         self.start()
 
         self._print_header(tasklist)
+        # for sc in self.scenario_graph:
+        #     if not self.teflo_options.get('no_notify', False):
+        #         self.notify('on_start', status, passed_tasks, failed_tasks, scenario=sc)
 
+        if "cleanup" in tasklist:
+            tasklist_run = deepcopy(tasklist)
+            tasklist_run.remove("cleanup")
+        else:
+            tasklist_run = deepcopy(tasklist)
+
+        sc: Scenario
+        for sc in self.scenario_graph:
+            self.run_helper(sc=sc, tasklist=tasklist_run)
+
+        final_passed_tasks = []
+        final_failed_tasks = []
+        for sc in self.scenario_graph:
+            if getattr(sc, "passed_tasks") != None:
+                for task in sc.passed_tasks:
+                    if not task in final_passed_tasks:
+                        final_passed_tasks.append(task)
+        
+        for sc in self.scenario_graph:
+            if getattr(sc, "failed_tasks") != None:
+                for task in sc.failed_tasks:
+                    if not task in final_failed_tasks:
+                        final_failed_tasks.append(task)
+
+        if "cleanup" in tasklist:
+            cleanup_sc = []
+            for sc in self.scenario_graph:
+                cleanup_sc.append(sc)
+            cleanup_sc.reverse()
+            for sc in cleanup_sc:
+                self.run_helper(sc=sc, tasklist=["cleanup"])
+
+        for sc in self.scenario_graph:
+            if getattr(sc, "passed_tasks") != None:
+                for task in sc.passed_tasks:
+                    if not task in final_passed_tasks:
+                        final_passed_tasks.append(task)
+        
+        for sc in self.scenario_graph:
+            if getattr(sc, "failed_tasks") != None:
+                for task in sc.failed_tasks:
+                    if not task in final_failed_tasks:
+                        final_failed_tasks.append(task)
+
+        self.end()
+        # determine state
+        state = 'FAILED' if status else 'PASSED'
+
+        # # finally send out any notifications
+        # for sc in self.scenario_graph:
+        #     if not self.teflo_options.get('no_notify', False):
+        #         self.notify('on_complete', status, passed_tasks, failed_tasks, sc)
+
+
+
+        self._write_out_results()
+
+        self._print_footer(final_passed_tasks, final_failed_tasks, state)
+
+        self._archive_results()
+
+        sys.exit(status)
+
+    def run_helper(self, sc: Scenario = None, tasklist: list = TASKLIST):
+
+        passed_tasks = list()
+        failed_tasks = list()
+
+        # initialize overall status
+        status = 0
+        if not self.teflo_options.get('no_notify', False):
+            self.notify('on_start', status, passed_tasks, failed_tasks, scenario=sc)
         try:
             for task in sort_tasklist(tasklist):
                 self.logger.info(' * Task    : %s' % task)
 
                 # initially update list of passed tasks
                 passed_tasks.append(task)
-                if not self.teflo_options.get('no_notify', False):
-                    self.notify('on_start', status, passed_tasks, failed_tasks)
-                data = self._run_pipeline(task)
+                # TODO: MAKE THIS ONE TIME RUN
+
+                data = self._run_pipeline(task, sc)
 
                 # reload resource objects
                 sc: Scenario
-                for sc in self.scenario_graph:
-                    sc.reload_resources(data)
+                # for sc in self.scenario_graph:
+                sc.reload_resources(data)
                 # Creating inventory only when task is provision
                 if task == 'provision':
-                    all_hosts = [host for hosts in [sc.get_assets() for sc in self.scenario_graph] for host in hosts]
+                    # all_hosts = [host for hosts in [sc.get_assets() for sc in self.scenario_graph] for host in hosts]
+                    all_hosts = sc.get_assets()
 
                     for host in all_hosts:
                         if hasattr(host, 'groups') or hasattr(host, 'ip_address'):
                             self.logger.info('Populating inventory file with host(s) %s'
                                                 % getattr(host, 'name'))
                     try:
+
                         self.cbn_inventory.create_inventory(all_hosts=all_hosts)
 
                     except Exception as ex:
@@ -421,25 +499,25 @@ class Teflo(LoggerMixin, TimeMixin):
             self.logger.error(ex)
 
             # reload resource objects
-            for sc in self.scenario_graph:
-                sc.reload_resources(ex.results)
+            # for sc in self.scenario_graph:
+            sc.reload_resources(ex.results)
 
             # roll back by cleaning up any resources that might have been provisioned
-            if 'cleanup' in tasklist and [item for item in failed_tasks if item != 'cleanup']:
+            if "cleanup" in tasklist and [item for item in failed_tasks if item != 'cleanup']:
                 if [item for item in passed_tasks if item == 'provision'] \
                         or [item for item in failed_tasks if item == 'provision']:
                     self.logger.info("\n\n")
                     self.logger.warning("A failure occurred before running the cleanup task. "
                                         "Attempting to run the cleanup task to roll back all provisioned resources.")
-                    task = tasklist[tasklist.index('cleanup')]
+                    # task = tasklist[tasklist.index('cleanup')]
 
                     try:
 
-                        data = self._run_pipeline(task)
+                        data = self._run_pipeline("cleanup", sc)
 
                         # reload resource objects
-                        for sc in self.scenario_graph:
-                            sc.reload_resources(data)
+                        # for sc in self.scenario_graph:
+                        sc.reload_resources(data)
                         passed_tasks.append(task)
                     except Exception as ex:
                         self.logger.error(ex)
@@ -448,54 +526,40 @@ class Teflo(LoggerMixin, TimeMixin):
                         failed_tasks.append(task)
                         raise
         finally:
-            # save end time
-            self.end()
-            # determine state
-            state = 'FAILED' if status else 'PASSED'
-
-            # finally send out any notifications
             if not self.teflo_options.get('no_notify', False):
-                self.notify('on_complete', status, passed_tasks, failed_tasks)
+                self.notify('on_complete', status, passed_tasks, failed_tasks, sc)
 
-            self._write_out_results()
-
-            self._print_footer(passed_tasks, failed_tasks, state)
-
-            self._archive_results()
-
-            sys.exit(status)
-
-    def notify(self, task, status=0, passed_tasks=None, failed_tasks=None):
+    def notify(self, task, status=0, passed_tasks=None, failed_tasks=None, scenario: Scenario = None):
         scenario: Scenario
 
         self.logger.info('Sending out any notifications that are registered.')
-        for scenario in self.scenario_graph:
-            setattr(scenario, 'overall_status', status)
-            setattr(scenario, 'passed_tasks', [])
-            setattr(scenario, 'failed_tasks', [])
 
-            if passed_tasks:
-                setattr(scenario, 'passed_tasks', passed_tasks)
+        setattr(scenario, 'overall_status', status)
+        setattr(scenario, 'passed_tasks', [])
+        setattr(scenario, 'failed_tasks', [])
 
-            if failed_tasks:
-                setattr(scenario, 'failed_tasks', failed_tasks)
+        if passed_tasks:
+            setattr(scenario, 'passed_tasks', passed_tasks)
 
-            if task == 'on_demand':
-                self.start()
-                self._print_header(['notify'])
-                self.logger.info(' * Task    : notify')
+        if failed_tasks:
+            setattr(scenario, 'failed_tasks', failed_tasks)
+
+        if task == 'on_demand':
+            self.start()
+            self._print_header(['notify'])
+            self.logger.info(' * Task    : notify')
 
         # blast off the pipeline list of tasks
         try:
-            data = self._run_pipeline(task)
-            for scenario in self.scenario_graph:
-                scenario.reload_resources(data)
+            data = self._run_pipeline(task, scenario)
+            # for scenario in self.scenario_graph:
+            scenario.reload_resources(data)
         except Exception as ex:
             status = 1
             self.logger.error(ex)
             self.logger.error('One or more notifications failed. Refer to the scenario.log')
-            for scenario in self.scenario_graph:
-                scenario.reload_resources(ex.results)
+            # for scenario in self.scenario_graph:
+            scenario.reload_resources(ex.results)
 
         finally:
             if task == 'on_demand':
@@ -505,8 +569,8 @@ class Teflo(LoggerMixin, TimeMixin):
                 state = 'FAILED' if status else 'PASSED'
 
                 self._write_out_results()
-                for scenario in self.scenario_graph:
-                    self._print_footer(getattr(scenario, 'passed_tasks'),
+                # for scenario in self.scenario_graph:
+                self._print_footer(getattr(scenario, 'passed_tasks'),
                                        getattr(scenario, 'failed_tasks'),
                                        state)
 
@@ -514,7 +578,7 @@ class Teflo(LoggerMixin, TimeMixin):
 
                 sys.exit(status)
 
-    def _run_pipeline(self, task):
+    def _run_pipeline(self, task, scenario: Scenario):
         data = {}
 
         # create a pipeline builder object
@@ -525,7 +589,7 @@ class Teflo(LoggerMixin, TimeMixin):
             self.logger.warning('Task %s is not valid by teflo.', task)
             return data
 
-        pipeline = pipe_builder.build(self.scenario_graph, self.teflo_options)
+        pipeline = pipe_builder.build(scenario, self.teflo_options)
 
         self.logger.info('.' * 50)
         self.logger.info('Starting tasks on pipeline: %s',
