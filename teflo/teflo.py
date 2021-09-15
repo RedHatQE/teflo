@@ -368,9 +368,6 @@ class Teflo(LoggerMixin, TimeMixin):
         pipeline and then each pipeline is sent to blaster blastoff.
         For every pipeline within ~self.pipelines,
         """
-        # lists to control which tasks passed or failed
-        passed_tasks = list()
-        failed_tasks = list()
 
         # initialize overall status
         status = 0
@@ -379,9 +376,6 @@ class Teflo(LoggerMixin, TimeMixin):
         self.start()
 
         self._print_header(tasklist)
-        # for sc in self.scenario_graph:
-        #     if not self.teflo_options.get('no_notify', False):
-        #         self.notify('on_start', status, passed_tasks, failed_tasks, scenario=sc)
 
         if "cleanup" in tasklist:
             tasklist_run = deepcopy(tasklist)
@@ -395,17 +389,7 @@ class Teflo(LoggerMixin, TimeMixin):
 
         final_passed_tasks = []
         final_failed_tasks = []
-        for sc in self.scenario_graph:
-            if getattr(sc, "passed_tasks") is not None:
-                for task in sc.passed_tasks:
-                    if task not in final_passed_tasks:
-                        final_passed_tasks.append(task)
-
-        for sc in self.scenario_graph:
-            if getattr(sc, "failed_tasks") is not None:
-                for task in sc.failed_tasks:
-                    if task not in final_failed_tasks:
-                        final_failed_tasks.append(task)
+        self.collect_final_passed_failed_tasks_status(final_passed_tasks, final_failed_tasks, status)
 
         if "cleanup" in tasklist:
             cleanup_sc = []
@@ -415,26 +399,11 @@ class Teflo(LoggerMixin, TimeMixin):
             for sc in cleanup_sc:
                 self.run_helper(sc=sc, tasklist=["cleanup"])
 
-        for sc in self.scenario_graph:
-            if getattr(sc, "passed_tasks") is not None:
-                for task in sc.passed_tasks:
-                    if task not in final_passed_tasks:
-                        final_passed_tasks.append(task)
-
-        for sc in self.scenario_graph:
-            if getattr(sc, "failed_tasks") is not None:
-                for task in sc.failed_tasks:
-                    if task not in final_failed_tasks:
-                        final_failed_tasks.append(task)
+        self.collect_final_passed_failed_tasks_status(final_passed_tasks, final_failed_tasks, status)
 
         self.end()
         # determine state
         state = 'FAILED' if status else 'PASSED'
-
-        # # finally send out any notifications
-        # for sc in self.scenario_graph:
-        #     if not self.teflo_options.get('no_notify', False):
-        #         self.notify('on_complete', status, passed_tasks, failed_tasks, sc)
 
         self._write_out_results()
 
@@ -443,6 +412,24 @@ class Teflo(LoggerMixin, TimeMixin):
         self._archive_results()
 
         sys.exit(status)
+
+    def collect_final_passed_failed_tasks_status(self, final_passed_tasks: list, final_failed_tasks: list, status: int):
+        """
+        This method collects all tests from all scenarios from
+        the self.scenario_graph
+        """
+
+        for sc in self.scenario_graph:
+            if getattr(sc, "passed_tasks") is not None:
+                for task in sc.passed_tasks:
+                    if task not in final_passed_tasks:
+                        final_passed_tasks.append(task)
+            if getattr(sc, "failed_tasks") is not None:
+                for task in sc.failed_tasks:
+                    if task not in final_failed_tasks:
+                        final_failed_tasks.append(task)
+            if getattr(sc, "overall_status") is not None:
+                status = status and sc.overall_status
 
     def run_helper(self, sc: Scenario = None, tasklist: list = TASKLIST):
 
@@ -709,6 +696,7 @@ class Teflo(LoggerMixin, TimeMixin):
 
     def showgraph(self, ctx, scenario_graph: ScenarioGraph):
         """Show scenario graph includes structure"""
-        click.echo('\033[92m' + "Below is the structure of the Scenario Definition Files")
+        from termcolor import colored
+        click.echo(colored("Below is the structure of the Scenario Definition Files", "green"))
         print('\n\n\n')
-        print(scenario_graph)
+        print(colored(scenario_graph, "green"))

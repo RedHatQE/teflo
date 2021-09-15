@@ -23,6 +23,7 @@
     :copyright: (c) 2021 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+from termcolor import colored
 
 
 class TefloError(Exception):
@@ -35,7 +36,7 @@ class TefloError(Exception):
         :type message: str
         """
         super(TefloError, self).__init__(message)
-        self.message = '\033[91m' + message
+        self.message = colored(message, "red")
 
 
 class TefloTaskError(TefloError):
@@ -119,7 +120,7 @@ class HelpersError(Exception):
         :param message: error message
         :type message: str
         """
-        super(HelpersError, self).__init__('\033[91m' + message)
+        super(HelpersError, self).__init__(colored(message, "red"))
 
 
 class LoggerMixinError(TefloError):
