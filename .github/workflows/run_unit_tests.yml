@@ -37,13 +37,13 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run functional unit tests
         env:
-          LC_ALL: en_US.utf8
+          # LC_ALL: en_US.utf8
           LANG: en_US.utf8
         run: tox -e py3-unit
 
       # Runs a set of commands using the runners shell
       - name: Run local scenario unit test
         env:
-          LC_ALL: en_US.utf8
+          # LC_ALL: en_US.utf8
           LANG: en_US.utf8
         run: tox -e py3-scenario

@@ -192,7 +192,7 @@ class ScenarioGraph():
             def addChildren(sc_list):
                 size = len(sc_list)
                 for i in range(size - 1, -1, -1):
-                    sc = sc_list[i]
+                    sc: Scenario = sc_list[i]
                     child = sc.child_scenarios
                     if len(child) != 0:
                         self.stack.append(child)

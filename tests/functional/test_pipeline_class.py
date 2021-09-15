@@ -99,49 +99,49 @@ class TestPipelineBuilder(object):
                in ex.value.args[0]
 
     @staticmethod
-    def test_build_validate_task_pipeline(basic_scenario_graph_with_provision_only: ScenarioGraph):
+    def test_build_validate_task_pipeline(scenario):
         builder = PipelineBuilder(name='validate')
-        pipeline = builder.build(basic_scenario_graph_with_provision_only, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'validate'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is ValidateTask
 
     @staticmethod
-    def test_build_provision_task_pipeline(basic_scenario_graph_with_provision_only: ScenarioGraph):
+    def test_build_provision_task_pipeline(scenario):
         builder = PipelineBuilder(name='provision')
-        pipeline = builder.build(basic_scenario_graph_with_provision_only, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'provision'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is ProvisionTask
 
     @staticmethod
-    def test_build_orchestrate_task_pipeline(basic_scenario_graph_with_provision_only: ScenarioGraph):
+    def test_build_orchestrate_task_pipeline(scenario):
         builder = PipelineBuilder(name='orchestrate')
-        pipeline = builder.build(basic_scenario_graph_with_provision_only, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'orchestrate'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is OrchestrateTask
 
     @staticmethod
-    def test_build_execute_task_pipeline(basic_scenario_graph_with_provision_only: ScenarioGraph):
+    def test_build_execute_task_pipeline(scenario):
         builder = PipelineBuilder(name='execute')
-        pipeline = builder.build(basic_scenario_graph_with_provision_only, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'execute'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is ExecuteTask
 
     @staticmethod
-    def test_build_report_task_pipeline(basic_scenario_graph_with_provision_only: ScenarioGraph):
+    def test_build_report_task_pipeline(scenario):
         builder = PipelineBuilder(name='report')
-        pipeline = builder.build(basic_scenario_graph_with_provision_only, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'report'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is ReportTask
 
     @staticmethod
-    def test_build_cleanup_task_pipeline(basic_scenario_graph_with_provision_only: ScenarioGraph):
+    def test_build_cleanup_task_pipeline(scenario):
         builder = PipelineBuilder(name='cleanup')
-        pipeline = builder.build(basic_scenario_graph_with_provision_only, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'cleanup'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is CleanupTask
@@ -231,8 +231,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         builder = NotificationPipelineBuilder(trigger='on_start')
-        scenario_graph = ScenarioGraph(root_scenario=scenario)
-        pipeline = builder.build(scenario_graph, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert len(getattr(pipeline, 'tasks')) == 1
@@ -244,8 +243,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         builder = NotificationPipelineBuilder(trigger='on_complete')
-        scenario_graph = ScenarioGraph(root_scenario=scenario)
-        pipeline = builder.build(scenario_graph, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert len(getattr(pipeline, 'tasks')) == 1
@@ -257,8 +255,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'passed_tasks', [])
         setattr(scenario, 'failed_tasks', ['validate'])
         builder = NotificationPipelineBuilder(trigger='on_complete')
-        scenario_graph = ScenarioGraph(root_scenario=scenario)
-        pipeline = builder.build(scenario_graph, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert len(getattr(pipeline, 'tasks')) == 1
@@ -270,8 +267,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'passed_tasks', ['provision'])
         setattr(scenario, 'failed_tasks', [])
         builder = NotificationPipelineBuilder(trigger='on_complete')
-        scenario_graph = ScenarioGraph(root_scenario=scenario)
-        pipeline = builder.build(scenario_graph, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert len(getattr(pipeline, 'tasks')) == 1
@@ -283,8 +279,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'passed_tasks', ['validate', 'provision'])
         setattr(scenario, 'failed_tasks', [])
         builder = NotificationPipelineBuilder(trigger='on_complete')
-        scenario_graph = ScenarioGraph(root_scenario=scenario)
-        pipeline = builder.build(scenario_graph, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert len(getattr(pipeline, 'tasks')) == 2
@@ -296,8 +291,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'passed_tasks', [])
         setattr(scenario, 'failed_tasks', ['report'])
         builder = NotificationPipelineBuilder(trigger='on_complete')
-        scenario_graph = ScenarioGraph(root_scenario=scenario)
-        pipeline = builder.build(scenario_graph, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert len(getattr(pipeline, 'tasks')) == 1
@@ -309,8 +303,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'passed_tasks', [])
         setattr(scenario, 'failed_tasks', ['validate', 'report'])
         builder = NotificationPipelineBuilder(trigger='on_complete')
-        scenario_graph = ScenarioGraph(root_scenario=scenario)
-        pipeline = builder.build(scenario_graph, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert len(getattr(pipeline, 'tasks')) == 2
@@ -322,8 +315,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         builder = NotificationPipelineBuilder(trigger='on_demand')
-        scenario_graph = ScenarioGraph(root_scenario=scenario)
-        pipeline = builder.build(scenario_graph, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert len(getattr(pipeline, 'tasks')) == 1
