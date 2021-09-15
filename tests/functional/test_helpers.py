@@ -60,6 +60,7 @@ def task_concurrency_config():
     config.load()
     return config
 
+
 @pytest.fixture(scope='class')
 def data_injector():
     class Host(object):
@@ -77,13 +78,14 @@ def data_injector():
 
     return DataInjector([Host()])
 
+
 @pytest.fixture(scope='class')
 def task_host(task_concurrency_config):
-    params=dict(groups='test_group',
-                ip_address='1.2.3.4')
+    params = dict(groups='test_group',
+                  ip_address='1.2.3.4')
     host = Asset(name='Host01',
-         config=task_concurrency_config,
-         parameters=params)
+                 config=task_concurrency_config,
+                 parameters=params)
     return host
 
 
@@ -262,13 +264,17 @@ def test_validate_render_scenario_correct_include(task_concurrency_config):
 
 
 def test_validate_render_scenario_wrong_include(task_concurrency_config):
-    with pytest.raises(HelpersError) as e:
+    with pytest.raises(TefloError) as ex:
         validate_render_scenario('../assets/wrong_include_descriptor.yml', task_concurrency_config)
+    assert "Included File is invalid or Include section is empty. You have to provide valid scenario files to be included." in ex.value.args[
+        0]
 
 
 def test_validate_render_scenario_empty_include(task_concurrency_config):
-    with pytest.raises(HelpersError) as e:
+    with pytest.raises(TefloError) as ex:
         validate_render_scenario('../assets/empty_include.yml', task_concurrency_config)
+    assert "Included File is invalid or Include section is empty. You have to provide valid scenario files to be included." in ex.value.args[
+        0]
 
 
 def test_set_task_concurrency_provision_is_false(host):
@@ -430,14 +436,14 @@ def test_ansible_verbosity_1(config):
 def test_ansible_verbosity_2(config):
     """This test verifies if incorrect values for ansible_verbosity is set in teflo.cfg, then verbosity is
      'vvvv' if teflo's logging level is debug.  For this test logging_level debug is set in ../assets/teflo.cfg"""
-    config["ANSIBLE_VERBOSITY"] ='aavv'
+    config["ANSIBLE_VERBOSITY"] = 'aavv'
     assert get_ans_verbosity(config) == 'vvvv'
 
 
 def test_ansible_verbosity_3(config):
     """This test verifies if incorrect values for ansible_verbosity is set in teflo.cfg, verbosity is
      None if teflo's logging level is info"""
-    config["ANSIBLE_VERBOSITY"] ='aavv'
+    config["ANSIBLE_VERBOSITY"] = 'aavv'
     config["LOG_LEVEL"] = 'info'
     assert get_ans_verbosity(config) is None
 
@@ -505,10 +511,11 @@ def test_create_individual_testrun_results(mock_method):
     res = create_individual_testrun_results({}, {})
     assert res[0]['sample.xml'] == {'total_tests': 4, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 4}
 
+
 @mock.patch('teflo.helpers.search_artifact_location_dict')
 def test_create_individual_testrun_results_1(mock_method):
     """this test verifies xmls with tag testsuite and testsuites work correctly"""
-    mock_method.return_value = ['../assets/artifacts/host03/sample1.xml', '../assets/artifacts/host03/sample.xml' ]
+    mock_method.return_value = ['../assets/artifacts/host03/sample1.xml', '../assets/artifacts/host03/sample.xml']
     res = create_individual_testrun_results({}, {})
     assert res[0]['sample1.xml'] == {'total_tests': 2, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 2}
     assert res[1]['sample.xml'] == {'total_tests': 4, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 4}

@@ -396,15 +396,15 @@ class Teflo(LoggerMixin, TimeMixin):
         final_passed_tasks = []
         final_failed_tasks = []
         for sc in self.scenario_graph:
-            if getattr(sc, "passed_tasks") != None:
+            if getattr(sc, "passed_tasks") is not None:
                 for task in sc.passed_tasks:
-                    if not task in final_passed_tasks:
+                    if task not in final_passed_tasks:
                         final_passed_tasks.append(task)
-        
+
         for sc in self.scenario_graph:
-            if getattr(sc, "failed_tasks") != None:
+            if getattr(sc, "failed_tasks") is not None:
                 for task in sc.failed_tasks:
-                    if not task in final_failed_tasks:
+                    if task not in final_failed_tasks:
                         final_failed_tasks.append(task)
 
         if "cleanup" in tasklist:
@@ -416,15 +416,15 @@ class Teflo(LoggerMixin, TimeMixin):
                 self.run_helper(sc=sc, tasklist=["cleanup"])
 
         for sc in self.scenario_graph:
-            if getattr(sc, "passed_tasks") != None:
+            if getattr(sc, "passed_tasks") is not None:
                 for task in sc.passed_tasks:
-                    if not task in final_passed_tasks:
+                    if task not in final_passed_tasks:
                         final_passed_tasks.append(task)
-        
+
         for sc in self.scenario_graph:
-            if getattr(sc, "failed_tasks") != None:
+            if getattr(sc, "failed_tasks") is not None:
                 for task in sc.failed_tasks:
-                    if not task in final_failed_tasks:
+                    if task not in final_failed_tasks:
                         final_failed_tasks.append(task)
 
         self.end()
@@ -435,8 +435,6 @@ class Teflo(LoggerMixin, TimeMixin):
         # for sc in self.scenario_graph:
         #     if not self.teflo_options.get('no_notify', False):
         #         self.notify('on_complete', status, passed_tasks, failed_tasks, sc)
-
-
 
         self._write_out_results()
 

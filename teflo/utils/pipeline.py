@@ -250,9 +250,9 @@ class NotificationPipelineBuilder(PipelineBuilder):
                                         filter_notifications_on_trigger(self.trigger, scenario_notifications,
                                                                         getattr(scenario, 'passed_tasks'),
                                                                         getattr(scenario, 'failed_tasks'))
-                                        ]
+                                      ]
 
-                # notification resource
+            # notification resource
 
         for notification in scenario_notifications:
             for task in notification.get_tasks():
