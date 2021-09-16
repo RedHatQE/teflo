@@ -153,7 +153,7 @@ class TestDataInjector(object):
         with pytest.raises(TefloError) as ex:
             data_injector.host_exist('null')
 
-        assert 'Node null not found!' in ex.value.args
+        assert 'Node null not found!' in ex.value.args[0]
 
     def test_inject_uc01(self, data_injector):
         cmd = data_injector.inject('cmd { node01.random }')

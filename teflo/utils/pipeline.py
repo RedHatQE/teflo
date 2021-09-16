@@ -96,7 +96,7 @@ class PipelineBuilder(object):
                 return cls
         raise TefloError('Unable to lookup task %s class.' % self.name)
 
-    def build(self, scenario: Scenario, teflo_options):
+    def build(self, scenario: Scenario, teflo_options, scenario_graph: ScenarioGraph = None):
         """Build teflo pipeline.
 
         This method first collects scenario tasks and resources for each scenario(child and master). It filters out
@@ -151,7 +151,7 @@ class PipelineBuilder(object):
                 for task in action.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         # fetch & set hosts for the given action task
-                        task = fetch_assets(scenario.get_assets(), task)
+                        task = fetch_assets(scenario_graph.get_assets(), task)
                         pipeline.tasks.append(set_task_class_concurrency(task, action))
 
         if self.name.lower() in ['validate', 'execute']:
@@ -160,7 +160,7 @@ class PipelineBuilder(object):
                 for task in execute.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         # fetch & set hosts for the given executes task
-                        task = fetch_assets(scenario.get_assets(), task)
+                        task = fetch_assets(scenario_graph.get_assets(), task)
                         pipeline.tasks.append(set_task_class_concurrency(task, execute))
 
         if self.name.lower() in ['validate', 'report']:
@@ -169,7 +169,7 @@ class PipelineBuilder(object):
                 for task in report.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         # fetch & set hosts and executes for the given reports task
-                        task = fetch_executes(scenario.get_executes(), scenario.get_assets(), task)
+                        task = fetch_executes(scenario_graph.get_executes(), scenario_graph.get_assets(), task)
                         pipeline.tasks.append(set_task_class_concurrency(task, report))
 
         if self.name.lower() in ['validate']:
@@ -210,7 +210,7 @@ class NotificationPipelineBuilder(PipelineBuilder):
             return False
         return True
 
-    def build(self, scenario: Scenario, teflo_options):
+    def build(self, scenario: Scenario, teflo_options, scenario_graph: ScenarioGraph = None):
         """Build teflo notification pipeline.
 
         This method first collects scenario tasks and resources for each scenario(child and master). It filters out
@@ -235,6 +235,12 @@ class NotificationPipelineBuilder(PipelineBuilder):
             self.task_cls_lookup(),
             list()
         )
+
+        # TODO: Scenario Graph related
+        # We should allow customer to configure wheather they want to send notification with the information
+        # from the whole scenario graph or just the current scenario, we only allow the current scenario for
+        # this moment, for notification with failed/passed task information from whole scenario graph to be
+        # Added
 
         # get notifications
         scenario_notifications = []

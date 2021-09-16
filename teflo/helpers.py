@@ -1471,6 +1471,24 @@ def preprocyaml(input, temp_data):
         return input
 
 
+def preproc_path(data_folder: str) -> str:
+    """
+    This method takes a path and remove
+    the "." and the uuid at the end of it
+    For example:
+    ./data_folder/sjf8f2vc
+    will become /data_folder
+    """
+
+    ret = ""
+    if data_folder[0] == ".":
+        ret = data_folder[1:]
+    else:
+        ret = data_folder
+    ret = ret[:ret.rindex("/")]
+    return ret
+
+
 def validate_render_scenario(scenario_path, config, temp_data_raw=()):
     """
     This method takes the absolute path of the scenario descriptor file and returns back a list of
@@ -1532,6 +1550,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
     yaml.safe_load(template_render(root_scenario_path, root_scenario_temp_data))
     root_scenario_yaml_data = template_render(root_scenario_path, root_scenario_temp_data)
     root_scenario = Scenario(config=config, path=os.path.basename(root_scenario_path))
+    root_scenario.fullpath = root_scenario_path
     root_scenario.yaml_data = root_scenario_yaml_data
 
     def addAllIncludes(parent_scenario: Scenario, checked_list: dict):
@@ -1556,7 +1575,9 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                         "Your scenario has an import cycle. \
                             %s is already a node in the scenario graph, It cannot be added again. "
                         % item)
-                if os.path.isfile(os.path.join(config['WORKSPACE'], item)) or os.path.isfile(item):
+                sc_fullpath = os.path.join(config['WORKSPACE'], item)
+                sc_abspath = item
+                if os.path.isfile(sc_fullpath) or os.path.isfile(sc_abspath):
                     path = os.path.basename(item)
                     if os.path.isfile(os.path.join(config['WORKSPACE'], item)):
                         item = os.path.join(config['WORKSPACE'], item)
@@ -1564,13 +1585,19 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                     try:
                         yaml.safe_load(template_render(item, root_scenario_temp_data))
                         child_sc = Scenario(config=config, path=path)
+                        child_sc.fullpath = sc_fullpath if os.path.isfile(sc_fullpath) else sc_abspath
                         child_sc.yaml_data = template_render(item, root_scenario_temp_data)
                         parent_scenario.add_child_scenario(child_sc)
                         # use filename because the scenario name could
                         # contain some special characters, which is not good for
                         # file generation
-                        parent_scenario.included_scenario_path = os.path.join(
-                            config['RESULTS_FOLDER'], child_sc.path.split(".")[0] + "_results.yml")
+                        if preproc_path(config['RESULTS_FOLDER']) in child_sc.fullpath or \
+                                preproc_path(config["DATA_FOLDER"]) in child_sc.fullpath:
+                            parent_scenario.included_scenario_path = os.path.join(
+                                config['RESULTS_FOLDER'], child_sc.path)
+                        else:
+                            parent_scenario.included_scenario_path = os.path.join(
+                                config['RESULTS_FOLDER'], child_sc.path.split(".")[0] + "_results.yml")
                     except yaml.YAMLError as err:
                         # raising Teflo error to differentiate the yaml issue is with included scenario
                         raise TefloError('Error loading included '

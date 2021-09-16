@@ -386,7 +386,7 @@ class TestActionResource(object):
         )
         with pytest.raises(TefloActionError) as ex:
             Action(name='action', parameters=params)
-        assert 'Orchestrator: abc is not supported!' in ex.value.args
+        assert 'Orchestrator: abc is not supported!' in ex.value.args[0]
 
     @staticmethod
     def test_orchestrator_property(action_resource):

@@ -17,7 +17,7 @@ Also see `Teflo Output <../output.html>`_
 
 .. note::
 
-        For any given task the included scenario is checked and executed first followed by the main
+        For any given task the included scenario is checked and executed first followed by the parent
         scenario. For example, for Orchestrate task, if you have an orchestrate section in both the included
         and main scenario, then the orchestrate tasks in included scenario will be performed first followed
         by the orchestrate tasks in the main scenario.
@@ -70,21 +70,32 @@ scenarios but with this particular scenario you want to also a run a non-common 
     :lines: 62-92
 
 
-More Complex Examples
-======================
+Scenario Graph Explanation
+==========================
 
 
-There are two ways of executing these scenarios, which are __by_level__ and __by_depth__, 
-you can modify this by adding *INCLUDED_SDF_ITERATE_METHOD* like below:
+There are two ways of executing teflo scenarios, which are __by_level and by__depth.
+User can modify how the scenarios are executed by changing the setting __included_sdf_iterate_method__
+in the teflo.cfg , as shown below, by_level is set by default if you don't specify this
+parameter
 
 .. code-block:: bash
 
     [defaults]
     log_level=info
     workspace=.
-    included_sdf_iterate_method = by_level
+    included_sdf_iterate_method = by_depth
 
-All blocks(provision, orchestrate, execute, report) in a senario descriptor file will be executed together
+All blocks(provision, orchestrate, execute, report) in a senario descriptor file will be executed together for each scenario,
+in case there are included scenarios
+
+.. note::
+
+        Scenarios should be designed such that the dependent(which you want it to run first) scenario should be
+        at the child level. In the below example if sdf13 has the provisioning information and the orchestrate block
+        which uses these provisioned assets can be in scenario which is at a higher level, but not the other way
+        round
+
 
 Example
 -------
@@ -104,7 +115,8 @@ Example
 
             sdf12 sdf13              
 
-The above is an complex *include* usage
+The above is an complex include usage. Consider sdf1-sdf13 are different included scenarios
+and sdf is the main scenario
 
 
 by_level

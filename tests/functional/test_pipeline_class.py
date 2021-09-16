@@ -99,49 +99,49 @@ class TestPipelineBuilder(object):
                in ex.value.args[0]
 
     @staticmethod
-    def test_build_validate_task_pipeline(scenario):
+    def test_build_validate_task_pipeline(scenario, basic_scenario_graph_with_provision_only):
         builder = PipelineBuilder(name='validate')
-        pipeline = builder.build(scenario, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={}, scenario_graph=basic_scenario_graph_with_provision_only)
         assert getattr(pipeline, 'name') == 'validate'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is ValidateTask
 
     @staticmethod
-    def test_build_provision_task_pipeline(scenario):
+    def test_build_provision_task_pipeline(scenario, basic_scenario_graph_with_provision_only):
         builder = PipelineBuilder(name='provision')
-        pipeline = builder.build(scenario, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={}, scenario_graph=basic_scenario_graph_with_provision_only)
         assert getattr(pipeline, 'name') == 'provision'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is ProvisionTask
 
     @staticmethod
-    def test_build_orchestrate_task_pipeline(scenario):
+    def test_build_orchestrate_task_pipeline(scenario, basic_scenario_graph_with_provision_only):
         builder = PipelineBuilder(name='orchestrate')
-        pipeline = builder.build(scenario, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={}, scenario_graph=basic_scenario_graph_with_provision_only)
         assert getattr(pipeline, 'name') == 'orchestrate'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is OrchestrateTask
 
     @staticmethod
-    def test_build_execute_task_pipeline(scenario):
+    def test_build_execute_task_pipeline(scenario, basic_scenario_graph_with_provision_only):
         builder = PipelineBuilder(name='execute')
-        pipeline = builder.build(scenario, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={}, scenario_graph=basic_scenario_graph_with_provision_only)
         assert getattr(pipeline, 'name') == 'execute'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is ExecuteTask
 
     @staticmethod
-    def test_build_report_task_pipeline(scenario):
+    def test_build_report_task_pipeline(scenario, basic_scenario_graph_with_provision_only):
         builder = PipelineBuilder(name='report')
-        pipeline = builder.build(scenario, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={}, scenario_graph=basic_scenario_graph_with_provision_only)
         assert getattr(pipeline, 'name') == 'report'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is ReportTask
 
     @staticmethod
-    def test_build_cleanup_task_pipeline(scenario):
+    def test_build_cleanup_task_pipeline(scenario, basic_scenario_graph_with_provision_only):
         builder = PipelineBuilder(name='cleanup')
-        pipeline = builder.build(scenario, teflo_options={})
+        pipeline = builder.build(scenario, teflo_options={}, scenario_graph=basic_scenario_graph_with_provision_only)
         assert getattr(pipeline, 'name') == 'cleanup'
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is CleanupTask
