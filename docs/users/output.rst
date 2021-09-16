@@ -96,13 +96,14 @@ Lets go over some of the common ones you will see.
   │       ├── suite1_results.xml
   │       └── suite2_results.xml
   ├── inventory
-  │   └── master
+  │   └── inventory_uuid
   ├── logs
   │   ├── ansible_executor
   │   │   └── ansible.log
   │   └── ansible_orchestrator
   │       └── ansible.log
-  └── <scenaio_filename_without_file_extension>_results.yml
+  ├──  <scenaio_filename_without_file_extension>_results.yml
+  └──  results.yml
 
 
 
@@ -147,3 +148,5 @@ Lets go over some of the common ones you will see.
           starting a whole run over from the beginning.
         - File
 
+    *   - results.yml
+        - The updated scenario descriptor file (created by teflo). 

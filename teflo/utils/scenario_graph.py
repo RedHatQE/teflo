@@ -1,9 +1,17 @@
+from teflo.resources.actions import Action
+from teflo.resources import Notification
+from teflo.resources.reports import Report
+from teflo.resources.executes import Execute
+from teflo.resources.assets import Asset
 from teflo.resources.scenario import Scenario
 
 
 class ScenarioGraph():
 
-    def __init__(self, root_scenario: Scenario = None, iterate_method: str = "by_level"):
+    def __init__(self, root_scenario: Scenario = None, iterate_method: str = "by_level",
+                 assets: list = [], executes: list = [],
+                 reports: list = [], notifications: list = [], actions: list = [],
+                 passed_tasks: list = [], failed_tasks: list = []):
         '''
         Initialization of a Sceanario Graph
         :param root_scenario: root teflo scenario object containing
@@ -26,7 +34,14 @@ class ScenarioGraph():
         # 1. by_depth
         # 2. by_level
         self._iterate_method = iterate_method
-        # TODO: This should be reading from root.config["included_sdf_iterate_method"]
+
+        self._assets = assets
+        self._executes = executes
+        self._reports = reports
+        self._notifications = notifications
+        self._actions = actions
+        self._passed_tasks = passed_tasks
+        self._failed_tasks = failed_tasks
 
 # root
     @property
@@ -96,7 +111,8 @@ class ScenarioGraph():
                 return sc
         return None
 
-# TODO: Make this to static attribute
+# TODO: Scenario Graph related
+# Make this to static attribute
 # size
     @property
     def size(self):
@@ -184,7 +200,7 @@ class ScenarioGraph():
                     return self.current
                 self.prev = self.current
 
-            self.__init__(self.root, self.iterate_method)
+            self.reinit()
             raise StopIteration
 
         elif self.iterate_method == "by_level":
@@ -222,7 +238,7 @@ class ScenarioGraph():
 
                 self.prev = self.current
 
-            self.__init__(self.root, self.iterate_method)
+            self.reinit()
             raise StopIteration
 
     def __str__(self):
@@ -230,3 +246,186 @@ class ScenarioGraph():
         This will return a string containing the structure of the scenario graph
         '''
         return self.root.graph_str()
+
+    def get_assets(self):
+        """
+        This method returns all assests
+        the current scenario graph holds
+        """
+
+        return self._assets
+
+    def get_actions(self):
+        """
+        This method returns all actions
+        the current scenario graph holds
+        """
+
+        return self._actions
+
+    def get_executes(self):
+        """
+        This method returns all executes
+        the current scenario graph holds
+        """
+
+        return self._executes
+
+    def get_reports(self):
+        """
+        This method returns all reports
+        the current scenario graph holds
+        """
+
+        return self._reports
+
+    def get_passed_tasks(self):
+        """
+        This method returns all passed tasks
+        the current scenario graph holds
+        """
+
+        return self._passed_tasks
+
+    def get_failed_tasks(self):
+        """
+        This method returns all failed tasks
+        the current scenario graph holds
+        """
+
+        return self._failed_tasks
+
+    def get_notifications(self):
+        """
+        This method returns all notifications
+        the current scenario graph holds
+        """
+
+        return self._notifications
+
+    def add_assets(self, asset: Asset):
+        """
+        This method add the assest resource
+        to this scenario graph
+        """
+
+        if asset not in self.get_assets():
+            self._assets.append(asset)
+
+    def add_actions(self, action: Action):
+        """
+        This method add the action resource
+        to this scenario graph
+        """
+
+        if action not in self.get_actions():
+            self._actions.append(action)
+
+    def add_executes(self, execute: Execute):
+        """
+        This method add the input execute resource
+        to this scenario graph
+        """
+
+        if execute not in self.get_executes():
+            self._executes.append(execute)
+
+    def add_reports(self, report: Report):
+        """
+        This method add all the input report
+        to this scenario graph
+        """
+
+        if report not in self.get_reports():
+            self._reports.append(report)
+
+    def add_notifications(self, notification: Notification):
+        """
+        This method add the notification to this scenario graph
+        """
+
+        if notification not in self.get_notifications():
+            self._notifications.append(notification)
+
+    def add_tasks(self, scenario: Scenario):
+        """
+        This method add all tasks (failed & passed)
+        to this scenario graph
+        """
+
+        if getattr(scenario, "passed_tasks", None) is not None:
+            for task in scenario.passed_tasks:
+                if task not in self.get_passed_tasks():
+                    self._passed_tasks.append(task)
+        if getattr(scenario, "failed_tasks", None) is not None:
+            for task in scenario.failed_tasks:
+                if task not in self.get_failed_tasks():
+                    self._failed_tasks.append(task)
+
+    def remove_resources_from_scenario(self, sc: Scenario):
+        """
+        This method remove all resources that the input sc has
+        from the current scenario graph, it should be called right
+        before the scenario will be reloaded, should be used in pair
+        with `reload_resources_from_scenario`
+        """
+
+        for asset in sc.get_assets():
+            self._assets.remove(asset)
+        for execute in sc.get_executes():
+            self._executes.remove(execute)
+        for action in sc.get_actions():
+            self._actions.remove(action)
+        for notification in sc.get_notifications():
+            self._notifications.remove(notification)
+        for report in sc.get_reports():
+            self._reports.remove(report)
+
+    def reload_resources_from_scenario(self, scenario: Scenario):
+        """
+        This method reload the scenario graph with the input
+        scenario, it should be called right after the pipeline
+        run finished and scenario get reloaded, the input should
+        be the reloaded scenario
+        """
+
+        self.add_tasks(scenario)
+        for action in scenario.get_actions():
+            self.add_actions(action)
+        for asset in scenario.get_assets():
+            self.add_assets(asset)
+        for notification in scenario.get_notifications():
+            self.add_notifications(notification)
+        for report in scenario.get_reports():
+            self.add_reports(report)
+        for execute in scenario.get_executes():
+            self.add_executes(execute)
+
+    def get_all_resources(self):
+        """
+        Thie method returns all resources
+        from the current scenario graph -> list
+        """
+
+        all_resources = list()
+
+        # The order is like below so we always execute resources in below order for a single scenario node
+
+        all_resources.extend([item for item in self.get_assets()])
+        all_resources.extend([item for item in self.get_actions()])
+        all_resources.extend([item for item in self.get_executes()])
+        all_resources.extend([item for item in self.get_reports()])
+        all_resources.extend([item for item in self.get_notifications()])
+        return all_resources
+
+    def reinit(self):
+        """
+        Thie method re init the whole scenario graph
+        with all information the current scenario graph
+        holds
+        """
+
+        self.__init__(self.root, self.iterate_method, assets=self.get_assets(), executes=self.get_executes(
+        ), notifications=self.get_notifications(), reports=self.get_reports(), actions=self.get_actions(),
+                failed_tasks=self.get_failed_tasks(),
+                passed_tasks=self.get_passed_tasks())

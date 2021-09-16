@@ -35,7 +35,7 @@ class TefloError(Exception):
         :param message: error message
         :type message: str
         """
-        super(TefloError, self).__init__(message)
+        super(TefloError, self).__init__(colored(message, "red"))
         self.message = colored(message, "red")
 
 
@@ -49,6 +49,18 @@ class TefloTaskError(TefloError):
         :type message: str
         """
         super(TefloTaskError, self).__init__(message)
+
+
+class TefloScenarioFailure(TefloError):
+    """Teflo's scenario failure Error."""
+
+    def __init__(self, message):
+        """Constructor.
+
+        :param message: error message
+        :type message: str
+        """
+        super(TefloScenarioFailure, self).__init__(message)
 
 
 class TefloResourceError(TefloError):

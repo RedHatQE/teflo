@@ -1516,7 +1516,7 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
 
             # Sort the list of hosts so that if N number of hosts are getting
             # added to same host group the order is predictable.
-            for host in all_hosts:
+            for host in sorted(all_hosts, key=lambda h: h.name):
                 section = host.name
                 section_vars = '%s:vars' % section
                 if hasattr(host, 'groups') or hasattr(host, 'ip_address'):

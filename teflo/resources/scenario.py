@@ -87,6 +87,7 @@ class Scenario(TefloResource):
         """
         super(Scenario, self).__init__(config=config, name=name, **kwargs)
         self._path = path
+        self._fullpath = ""
         self._inventory: Inventory = inventory_object
         # set the scenario name attribute
         if not name:
@@ -604,6 +605,14 @@ class Scenario(TefloResource):
     @path.setter
     def path(self, path):
         self._path = path
+
+    @property
+    def fullpath(self):
+        return self._fullpath
+
+    @fullpath.setter
+    def fullpath(self, fullpath):
+        self._fullpath = fullpath
 
     @property
     def inventory(self):
