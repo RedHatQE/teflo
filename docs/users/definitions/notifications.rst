@@ -96,7 +96,7 @@ when to trigger notifications in your workflow, you can set the **on_demand** fl
 If you would like to filter so that only certain tasks trigger notifications, you can set **on_tasks**
 to a list of any combination of supported teflo tasks. This does not apply to **on_demand**.
 
-There are further capabilities to controling the triggering of any notifications from the command line.
+There are further capabilities to controlling the triggering of any notifications from the command line.
 
 For example, if you have defined different notifications in your scenario with different triggers but
 are interested in triggering certain ones for a particular run, you can specify which ones to skip
@@ -204,7 +204,7 @@ Below is the list of data being rendered into the message
  * The list of artifacts that were collected after test execution if any
  * The import result urls of any test artifacts that were imported into a reporting system
 
-Teflo makes its scenario object avaialble along with the environmental variables to user when
+Teflo makes its scenario object available along with the environmental variables to user when
 designing their own messaging template. The key for teflo's scenario object is **scenario**
 
 Examples
