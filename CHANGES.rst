@@ -1,3 +1,17 @@
+Version 1.2.4 (2021-09-23)
+--------------------------
+
+Enhancements
+~~~~~~~~~~~~
+* beaker provisioner total attempts to an integer data type 
+* add space to beaker warning 
+* Allow users to set ansible verbosity using ansible environment variable 
+
+Bug Fixes
+~~~~~~~~~
+* invalid inventory generated when groups contains the machine name \
+* Report task fails when executes attribute is used and No asset is present 
+
 Version 1.2.3 (2021-08-02)
 --------------------------
 
