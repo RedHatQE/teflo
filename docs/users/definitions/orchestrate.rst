@@ -199,8 +199,11 @@ teflo.cfg file.  The following are the settings.
           verbosity is 'vvvv'.
 
 .. note::
-        If incorrect value for verbosity is set in teflo.cfg, Teflo changes the verbosity based on
-        teflo's logging level
+        Teflo can consume the Ansible verbosity level using Ansible's built-in environment variable
+        `ANSIBLE_VERBOSITY <https://docs.ansible.com/ansible/latest/reference_appendices/config.html#default-verbosity>`_
+        in addition to consuming it from being defined within teflo.cfg file. If
+        the verbosity value is incorrect within teflo.cfg, teflo will default to the verbosity based
+        on teflo's logging level.
 
 Ansible Configuration
 ~~~~~~~~~~~~~~~~~~~~~

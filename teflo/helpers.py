@@ -939,10 +939,14 @@ def ssh_retry(obj):
 
 
 def get_ans_verbosity(config):
-    """Setting ansible verbosity
-    If the verbosity is not set in teflo.cfg, then the teflo log_level is checked.
-    If it is debug then verbotity is vvvv else it is None """
+    """Gets the Ansible verbosity level to be used by ansible or ansible-playbook commands.
 
+    Below are the options for how Ansible verbosity can be set (in order):
+        1. Ansible verbosity set within teflo.cfg
+        2. Ansible verbosity set as environment variable
+        3. Ansible verbosity is taken from teflo's log level option (debug == -vvvv)
+        4. Ansible verbosity is disabled
+    """
     if "ANSIBLE_VERBOSITY" in config and \
             config["ANSIBLE_VERBOSITY"]:
         ver = config["ANSIBLE_VERBOSITY"]
@@ -952,6 +956,17 @@ def get_ans_verbosity(config):
             LOG.warning("Ansible logging set to %s" % ans_verbosity)
         else:
             ans_verbosity = ver
+    elif os.getenv("ANSIBLE_VERBOSITY"):
+        try:
+            verbosity = os.getenv("ANSIBLE_VERBOSITY")
+            verbosity = int(verbosity)
+            if verbosity not in [0, 1, 2, 3, 4]:
+                LOG.warning(f"Ansible verbosity level: {verbosity} is invalid. Defaulting to verbosity 0.")
+                raise ValueError
+            verbosity = "v" * verbosity
+        except ValueError:
+            verbosity = None
+        ans_verbosity = verbosity
     elif config['LOG_LEVEL'] == 'debug':
         ans_verbosity = 'vvvv'
     else:

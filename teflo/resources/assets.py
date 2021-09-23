@@ -152,6 +152,8 @@ class Asset(TefloResource):
             self._groups = parameters.pop('groups')
             if isinstance(self._groups, string_types):
                 self._groups = self._groups.replace(' ', '').split(',')
+            if self._name in self._groups:
+                raise TefloResourceError('Asset name %s cannot be same as groups name %s' % (self._name, self._groups))
         except KeyError:
             self.logger.warning('Groups parameter was not set for asset %s.' % self.name)
             del self.groups

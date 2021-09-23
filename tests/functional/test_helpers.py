@@ -458,6 +458,20 @@ def test_ansible_verbosity_5(config):
     assert get_ans_verbosity(config) == 'vvvv'
 
 
+def test_ansible_verbosity_6(config):
+    """This test verifies the get_ans_verbosity func can lookup ansible verbosity by environment variable."""
+    del config["ANSIBLE_VERBOSITY"]
+
+    with mock.patch.dict(os.environ, {"ANSIBLE_VERBOSITY": "2"}):
+        assert get_ans_verbosity(config) == "vv"
+
+    with mock.patch.dict(os.environ, {"ANSIBLE_VERBOSITY": "5"}):
+        assert get_ans_verbosity(config) is None
+
+    with mock.patch.dict(os.environ, {"ANSIBLE_VERBOSITY": "vvvv"}):
+        assert get_ans_verbosity(config) is None
+
+
 def test_schema_validator_no_creds():
     params = dict(key1='val1', key2=['val2', 'val3'])
     schema_validator(schema_data=params, schema_files=[os.path.abspath('../assets/schemas/schema_test.yml')])
