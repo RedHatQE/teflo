@@ -56,13 +56,13 @@ def note_config_params():
 
 
 class TestEmailNotifier(object):
-
+    from teflo.resources import Scenario
     @staticmethod
     def send_message():
         return
 
     @staticmethod
-    def test_notify_no_config(scenario, note_params):
+    def test_notify_no_config(scenario:Scenario, note_params):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         setattr(scenario, 'overall_status', 0)
@@ -75,11 +75,11 @@ class TestEmailNotifier(object):
 
     @staticmethod
     @mock.patch.object(EmailNotificationPlugin, 'send_message', send_message)
-    def test_default_on_success_notify(scenario):
+    def test_default_on_success_notify(scenario:Scenario):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         setattr(scenario, 'overall_status', 0)
-        note = [note for note in scenario.get_all_notifications() if note.name == 'note02']
+        note = [note for note in scenario.get_notifications() if note.name == 'note02']
         for n in note:
             setattr(n, 'scenario', scenario)
             emailer = EmailNotificationPlugin(n)
@@ -87,11 +87,11 @@ class TestEmailNotifier(object):
 
     @staticmethod
     @mock.patch.object(EmailNotificationPlugin, 'send_message', send_message)
-    def test_default_on_failure_notify(scenario):
+    def test_default_on_failure_notify(scenario:Scenario):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', ['provision'])
         setattr(scenario, 'overall_status', 1)
-        note = [note for note in scenario.get_all_notifications() if note.name == 'note02']
+        note = [note for note in scenario.get_notifications() if note.name == 'note02']
         for n in note:
             setattr(n, 'scenario', scenario)
             emailer = EmailNotificationPlugin(n)
@@ -99,11 +99,11 @@ class TestEmailNotifier(object):
 
     @staticmethod
     @mock.patch.object(EmailNotificationPlugin, 'send_message', send_message)
-    def test_default_on_start_notify(scenario):
+    def test_default_on_start_notify(scenario:Scenario):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         setattr(scenario, 'overall_status', 0)
-        note = [note for note in scenario.get_all_notifications() if note.name == 'note01']
+        note = [note for note in scenario.get_notifications() if note.name == 'note01']
         for n in note:
             setattr(n, 'scenario', scenario)
             emailer = EmailNotificationPlugin(n)
@@ -113,11 +113,11 @@ class TestEmailNotifier(object):
     @mock.patch.object(Notification, 'workspace', os.path.abspath(os.path.join(os.path.dirname(
         os.path.dirname(__file__)), 'assets')))
     @mock.patch.object(EmailNotificationPlugin, 'send_message', send_message)
-    def test_custom_message_template_notify(scenario):
+    def test_custom_message_template_notify(scenario:Scenario):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         setattr(scenario, 'overall_status', 0)
-        note = [note for note in scenario.get_all_notifications() if note.name == 'note01']
+        note = [note for note in scenario.get_notifications() if note.name == 'note01']
 
         for n in note:
             setattr(n, 'scenario', scenario)
@@ -127,12 +127,12 @@ class TestEmailNotifier(object):
 
     @staticmethod
     @mock.patch('smtplib.SMTP')
-    def test_send_email_notify(mock_smtp, scenario):
+    def test_send_email_notify(mock_smtp, scenario:Scenario):
 
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         setattr(scenario, 'overall_status', 0)
-        note = [note for note in scenario.get_all_notifications() if note.name == 'note01']
+        note = [note for note in scenario.get_notifications() if note.name == 'note01']
 
         for n in note:
             setattr(n, 'scenario', scenario)

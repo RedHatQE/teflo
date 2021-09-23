@@ -3,20 +3,21 @@ Including Scenarios
 
 Overview
 --------
-The *Include* section is introduced to provide a way to include common steps of
-provisioning, orchestration, execute or reports under one common scenario file.
-This reduces the redundancy of putting the same set of steps in every scenario file.
+The __*Include*__ section is introduced to provide a way to include common steps of
+provisioning, orchestration, execute or reports under one or more common scenario files.
+This reduces the redundancy of putting the same set of steps in every scenario file. Each
+scenario file is a single node of the whole __*Scenario Graph*__
 
-When running a scenario that is using the include option, two results files will be generated.
-One for the main scenario which will still be results.yml and one for the included scenario which
-will use the scenario's name as a prefix. e.g. common_scenario_results.yml where common_scenario
-is the name of the included scenario file. This file will be stored in the same location as the result.yml file.
-This allows users to run the common.yml once and its result can be included in other 
-scenario files saving time on test executions. Also see `Teflo Output <../output.html>`_
+When running a scenario that is using the include option, several results files will be generated.
+One for each of the scenarios. the included scenario will use the scenario's name as a prefix. 
+e.g. common_scenario_results.yml where common_scenario is the name of the included scenario file. 
+All these files will be stored in the same location. This allows users to run common.yml(s) once 
+and their result(s) can be included in other scenario files saving time on test executions.
+Also see `Teflo Output <../output.html>`_
 
 .. note::
 
-        For any given task the included scenario is checked and executed first followed by the main
+        For any given task the included scenario is checked and executed first followed by the parent
         scenario. For example, for Orchestrate task, if you have an orchestrate section in both the included
         and main scenario, then the orchestrate tasks in included scenario will be performed first followed
         by the orchestrate tasks in the main scenario.
@@ -68,3 +69,62 @@ scenarios but with this particular scenario you want to also a run a non-common 
 .. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 62-92
 
+
+Scenario Graph Explanation
+==========================
+
+
+There are two ways of executing teflo scenarios, which are __by_level and by__depth.
+User can modify how the scenarios are executed by changing the setting __included_sdf_iterate_method__
+in the teflo.cfg , as shown below, by_level is set by default if you don't specify this
+parameter
+
+.. code-block:: bash
+
+    [defaults]
+    log_level=info
+    workspace=.
+    included_sdf_iterate_method = by_depth
+
+All blocks(provision, orchestrate, execute, report) in a senario descriptor file will be executed together for each scenario,
+in case there are included scenarios
+
+.. note::
+
+        Scenarios should be designed such that the dependent(which you want it to run first) scenario should be
+        at the child level. In the below example if sdf13 has the provisioning information and the orchestrate block
+        which uses these provisioned assets can be in scenario which is at a higher level, but not the other way
+        round
+
+
+Example
+-------
+::
+
+                                        sdf
+
+                  /                      |                     \
+
+                sdf1                    sdf7                     sdf
+
+          /       |       \             /   \                 /    |    \
+
+        sdf3    sdf8      sdf5       sdf10 sdf11          sdf4   sdf9  sdf6
+
+                /    \
+
+            sdf12 sdf13              
+
+The above is an complex include usage. Consider sdf1-sdf13 are different included scenarios
+and sdf is the main scenario
+
+
+by_level
++++++++++
+The execution order will be
+12,13,3,8,5,10,11,4,9,6,1,7,2,0
+
+by_depth
++++++++++
+The execution order will be
+12,13,3,8,5,1,10,11,7,4,9,6,2,0
