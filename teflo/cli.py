@@ -27,6 +27,8 @@
 
 import os
 import shutil
+from teflo.utils.scenario_graph import ScenarioGraph
+from teflo.exceptions import TefloActionError, TefloError
 import click
 from . import __version__
 from .teflo import Teflo
@@ -74,19 +76,28 @@ def create():
               multiple=True,
               metavar="",
               help="Pass in variable data to template the scenario. Can be a file or raw json.")
+@click.option("--show-graph",
+              default=None,
+              metavar="",
+              is_flag=True,
+              help="Display the scenario structure in case of included scenarios.")
 @click.pass_context
-def show(ctx, scenario, list_labels, vars_data):
+def show(ctx, scenario, list_labels, vars_data, show_graph):
     """Show information about the scenario."""
+    #  TODO: allow modify iterate_method from cli
     print_header()
     # Create a new teflo compound
     cbn = Teflo(__name__)
 
-    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
-    # Sending the list of scenario streams to the teflo object
-    cbn.load_from_yaml(scenario_stream)
-
+    scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
+    # Sending the list of scenario graph to the teflo object
+    cbn.load_from_yaml(scenario_graph)
+    if list_labels and show_graph:
+        raise TefloError("You cannot use list-labels and show-graph together")
     if list_labels:
         cbn.list_labels()
+    elif show_graph:
+        cbn.showgraph(ctx, scenario_graph)
     else:
         click.echo('An option needs to be given. See help')
         ctx.exit()
@@ -147,7 +158,7 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
     if labels and skip_labels:
         click.echo('Labels and skip_labels are mutually exclusive. Only one of them can be used')
         ctx.exit()
-
+    #  TODO: allow modify iterate_method from cli
     cbn = Teflo(
         __name__,
         log_level=log_level,
@@ -159,10 +170,10 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
         no_notify=no_notify
     )
 
-    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
+    scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
 
     # This is the easiest way to configure a full scenario.
-    cbn.load_from_yaml(scenario_stream)
+    cbn.load_from_yaml(scenario_graph)
 
     # The scenario will start the main pipeline and run through the ordered
     # list of pipelines. See :function:`~teflo.Teflo.run` for more details.
@@ -242,11 +253,11 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
         skip_notify=skip_notify,
         no_notify=no_notify
     )
+    #  TODO: allow modify iterate_method from cli
+    scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
 
-    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
-
-    # Sending the list of scenario streams to the teflo object
-    cbn.load_from_yaml(scenario_stream)
+    # Sending the scenario graph to the teflo object
+    cbn.load_from_yaml(scenario_graph)
 
     # Setup the list of tasks to run
     if not task:
@@ -297,6 +308,7 @@ def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_not
     """Trigger notifications marked on demand for a scenario configuration."""
     print_header()
 
+    #  TODO: allow modify iterate_method from cli
     # Create a new teflo compound
     cbn = Teflo(
         __name__,
@@ -307,10 +319,10 @@ def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_not
         no_notify=no_notify
     )
 
-    scenario_stream = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
+    scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
 
-    # Sending the list of scenario streams to the teflo object
-    cbn.load_from_yaml(scenario_stream)
+    # Sending the scenario graph to the teflo object
+    cbn.load_from_yaml(scenario_graph)
 
     # The scenario will start the main pipeline and run through the task
     # pipelines declared. See :function:`~teflo.Teflo.run` for more details.

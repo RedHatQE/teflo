@@ -27,6 +27,8 @@
 """
 
 from collections import namedtuple
+from teflo.resources.scenario import Scenario
+from teflo.utils.scenario_graph import ScenarioGraph
 
 from ..constants import TASKLIST, NOTIFYSTATES
 from ..exceptions import TefloError
@@ -94,7 +96,7 @@ class PipelineBuilder(object):
                 return cls
         raise TefloError('Unable to lookup task %s class.' % self.name)
 
-    def build(self, scenario, teflo_options):
+    def build(self, scenario: Scenario, teflo_options, scenario_graph: ScenarioGraph = None):
         """Build teflo pipeline.
 
         This method first collects scenario tasks and resources for each scenario(child and master). It filters out
@@ -121,11 +123,6 @@ class PipelineBuilder(object):
         )
 
         scenario_get_tasks = list()
-        # Get all tasks for the scenario and its included scenarios
-        if scenario.child_scenarios:
-            for sc in scenario.child_scenarios:
-                scenario_get_tasks.extend([item for item in getattr(sc, 'get_tasks')()])
-        # only master scenario no child scenarios
         scenario_get_tasks.extend([item for item in getattr(scenario, 'get_tasks')()])
 
         # Collecting resources based on task type
@@ -136,7 +133,7 @@ class PipelineBuilder(object):
                     pipeline.tasks.append(set_task_class_concurrency(task, task['resource']))
 
             # asset resource filtered based on labels
-            for asset in filter_resources_labels(scenario.get_all_assets(), teflo_options):
+            for asset in filter_resources_labels(scenario.get_assets(), teflo_options):
                 for task in asset.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         pipeline.tasks.append(set_task_class_concurrency(task, asset))
@@ -146,38 +143,38 @@ class PipelineBuilder(object):
             # get action resource based on if its status
             # check if cleanup task do NOT filter by status
             if self.name != 'cleanup':
-                scenario_actions = filter_actions_on_failed_status(scenario.get_all_actions())
+                scenario_actions = filter_actions_on_failed_status(scenario.get_actions())
             else:
-                scenario_actions = scenario.get_all_actions()
+                scenario_actions = scenario.get_actions()
             # action resource filtered  based on labels
             for action in filter_resources_labels(scenario_actions, teflo_options):
                 for task in action.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         # fetch & set hosts for the given action task
-                        task = fetch_assets(scenario.get_all_assets(), task)
+                        task = fetch_assets(scenario_graph.get_assets(), task)
                         pipeline.tasks.append(set_task_class_concurrency(task, action))
 
         if self.name.lower() in ['validate', 'execute']:
             # execute resource filtered  based on labels
-            for execute in filter_resources_labels(scenario.get_all_executes(), teflo_options):
+            for execute in filter_resources_labels(scenario.get_executes(), teflo_options):
                 for task in execute.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         # fetch & set hosts for the given executes task
-                        task = fetch_assets(scenario.get_all_assets(), task)
+                        task = fetch_assets(scenario_graph.get_assets(), task)
                         pipeline.tasks.append(set_task_class_concurrency(task, execute))
 
         if self.name.lower() in ['validate', 'report']:
             # report resource filtered  based on labels
-            for report in filter_resources_labels(scenario.get_all_reports(), teflo_options):
+            for report in filter_resources_labels(scenario.get_reports(), teflo_options):
                 for task in report.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         # fetch & set hosts and executes for the given reports task
-                        task = fetch_executes(scenario.get_all_executes(), scenario.get_all_assets(), task)
+                        task = fetch_executes(scenario_graph.get_executes(), scenario_graph.get_assets(), task)
                         pipeline.tasks.append(set_task_class_concurrency(task, report))
 
         if self.name.lower() in ['validate']:
             # notification resource
-            for notification in filter_notifications_to_skip(scenario.get_all_notifications(), teflo_options):
+            for notification in filter_notifications_to_skip(scenario.get_notifications(), teflo_options):
                 for task in notification.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         task['resource'].scenario = scenario
@@ -213,7 +210,7 @@ class NotificationPipelineBuilder(PipelineBuilder):
             return False
         return True
 
-    def build(self, scenario, teflo_options):
+    def build(self, scenario: Scenario, teflo_options, scenario_graph: ScenarioGraph = None):
         """Build teflo notification pipeline.
 
         This method first collects scenario tasks and resources for each scenario(child and master). It filters out
@@ -239,16 +236,30 @@ class NotificationPipelineBuilder(PipelineBuilder):
             list()
         )
 
-        # get notifications
-        scenario_notifications = [item for item in filter_notifications_to_skip(scenario.get_all_notifications(),
-                                                                                teflo_options)]
-        scenario_notifications = [item for item in
-                                  filter_notifications_on_trigger(self.trigger, scenario_notifications,
-                                                                  getattr(scenario, 'passed_tasks'),
-                                                                  getattr(scenario, 'failed_tasks'))
-                                  ]
+        # TODO: Scenario Graph related
+        # We should allow customer to configure wheather they want to send notification with the information
+        # from the whole scenario graph or just the current scenario, we only allow the current scenario for
+        # this moment, for notification with failed/passed task information from whole scenario graph to be
+        # Added
 
-        # notification resource
+        # get notifications
+        scenario_notifications = []
+        scenario: Scenario
+        # for scenario in scenario_graph:
+        if getattr(scenario, "passed_tasks", None) is not None and getattr(scenario,
+                                                                            "failed_tasks", None) is not None:
+
+            scenario_notifications.extend(
+                [item for item in filter_notifications_to_skip(scenario.get_notifications(),
+                                                                                            teflo_options)])
+            scenario_notifications = [item for item in
+                                        filter_notifications_on_trigger(self.trigger, scenario_notifications,
+                                                                        getattr(scenario, 'passed_tasks'),
+                                                                        getattr(scenario, 'failed_tasks'))
+                                      ]
+
+            # notification resource
+
         for notification in scenario_notifications:
             for task in notification.get_tasks():
                 if task['task'].__task_name__ == self.name:

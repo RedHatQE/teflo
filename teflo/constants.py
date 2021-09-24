@@ -112,7 +112,8 @@ DEFAULT_CONFIG = {
     'SETUP_LOGGER': [],
     'NOTIFICATIONS': [],
     "TIMEOUT": DEFAULT_TIMEOUT,
-    "PROVISIONER_OPTIONS": []
+    "PROVISIONER_OPTIONS": [],
+    "INCLUDED_SDF_ITERATE_METHOD": "by_level"
 }
 
 # Default config sections

@@ -23,6 +23,7 @@
     :copyright: (c) 2021 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+from termcolor import colored
 
 
 class TefloError(Exception):
@@ -34,8 +35,8 @@ class TefloError(Exception):
         :param message: error message
         :type message: str
         """
-        super(TefloError, self).__init__(message)
-        self.message = message
+        super(TefloError, self).__init__(colored(message, "red"))
+        self.message = colored(message, "red")
 
 
 class TefloTaskError(TefloError):
@@ -48,6 +49,18 @@ class TefloTaskError(TefloError):
         :type message: str
         """
         super(TefloTaskError, self).__init__(message)
+
+
+class TefloScenarioFailure(TefloError):
+    """Teflo's scenario failure Error."""
+
+    def __init__(self, message):
+        """Constructor.
+
+        :param message: error message
+        :type message: str
+        """
+        super(TefloScenarioFailure, self).__init__(message)
 
 
 class TefloResourceError(TefloError):
@@ -119,7 +132,7 @@ class HelpersError(Exception):
         :param message: error message
         :type message: str
         """
-        super(HelpersError, self).__init__(message)
+        super(HelpersError, self).__init__(colored(message, "red"))
 
 
 class LoggerMixinError(TefloError):

@@ -67,7 +67,7 @@ class Execute(TefloResource):
     def __init__(self,
                  config=None,
                  name=None,
-                 parameters={},
+                 parameters: dict = {},
                  execute_task_cls=ExecuteTask,
                  validate_task_cls=ValidateTask,
                  **kwargs):
