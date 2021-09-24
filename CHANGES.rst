@@ -1,3 +1,30 @@
+Version 2.0.0 (2021-08-02)
+--------------------------
+
+Features
+~~~~~~~~~~~~
+* Recursive include of child scenarios is supported with scenario graph implementation
+* Replaced scenario_streams with the newly added scenario graph
+* teflo show -s sdf_file.yml --show-graph added, users can see the whole scenario graph structure
+* Added term color to display log messages red(for errors) and green for other information
+* Added support for selecting the scenario execution order __by_level__ and __by_depth__ using the *included_sdf_iterate_method* parameter in teflo.cfg
+
+Enhancements
+~~~~~~~~~~~~
+* Redesigned teflo execution pipeline
+* Redesigned the cleanup logic for scenarios
+* Redesigned the validate logic for scenarios
+* Redesigned the results generation
+* Redesigned the inventory generation(output inventory stays the same, the logic behind the scene changed)
+* Added typing for many functions(e.x *def func(param:list=[]):->str*)
+* Added tostring,path,pullpath,inventory methods to scenario class
+
+Documentation
+~~~~~~~~~~~~~
+* Added explanation about how to use scenario graph
+* Added explanation about how *include* works with scenario graph
+
+
 Version 1.2.4 (2021-09-23)
 --------------------------
 
