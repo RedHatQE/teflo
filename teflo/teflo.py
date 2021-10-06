@@ -115,6 +115,9 @@ class Teflo(LoggerMixin, TimeMixin):
                 self._teflo_options['skip_notify'] = value
             if key == 'no_notify' and value:
                 self._teflo_options['no_notify'] = value
+            # assigning cli iterate_method options to self.config['INCLUDED_SDF_ITERATE_METHOD']
+            if key == 'iterate_method' and value:
+                self.config['INCLUDED_SDF_ITERATE_METHOD'] = value
 
         if log_level:
             self.config['LOG_LEVEL'] = log_level

@@ -150,8 +150,14 @@ def show(ctx, scenario, list_labels, vars_data, show_graph):
               metavar="",
               help="Disable sending an notifications defined for the scenario."
               )
+@click.option("-im", "--iterate-method",
+              default=None,
+              type=click.Choice(['by_level', 'by_depth']),
+              help="Iterate the scenario graph by_level or by_depth method",
+              )
 @click.pass_context
-def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels, skip_labels, skip_notify, no_notify):
+def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels, skip_labels, skip_notify, no_notify,
+             iterate_method):
     """Validate a scenario configuration."""
 
     # checking if labels or skip_labels both are set
@@ -167,7 +173,8 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
         labels=labels,
         skip_labels=skip_labels,
         skip_notify=skip_notify,
-        no_notify=no_notify
+        no_notify=no_notify,
+        iterate_method=iterate_method,
     )
 
     scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
@@ -232,8 +239,14 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
               metavar="",
               help="Disable sending an notifications defined for the scenario."
               )
+@click.option("-im", "--iterate-method",
+              default=None,
+              type=click.Choice(['by_level', 'by_depth']),
+              help="Iterate the scenario graph by_level or by_depth method",
+              )
 @click.pass_context
-def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, labels, skip_labels, skip_notify, no_notify):
+def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, labels, skip_labels, skip_notify, no_notify,
+        iterate_method):
     """Run a scenario configuration."""
     print_header()
 
@@ -251,7 +264,8 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
         labels=labels,
         skip_labels=skip_labels,
         skip_notify=skip_notify,
-        no_notify=no_notify
+        no_notify=no_notify,
+        iterate_method=iterate_method,
     )
     #  TODO: allow modify iterate_method from cli
     scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
@@ -303,8 +317,13 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
               metavar="",
               help="Disable sending an notifications defined for the scenario."
               )
+@click.option("-im", "--iterate-method",
+              default=None,
+              type=click.Choice(['by_level', 'by_depth']),
+              help="Iterate the scenario graph by_level or by_depth method",
+              )
 @click.pass_context
-def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_notify, no_notify):
+def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_notify, no_notify, iterate_method):
     """Trigger notifications marked on demand for a scenario configuration."""
     print_header()
 
@@ -316,7 +335,9 @@ def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_not
         data_folder=data_folder,
         workspace=workspace,
         skip_notify=skip_notify,
-        no_notify=no_notify
+        no_notify=no_notify,
+        iterate_method=iterate_method,
+
     )
 
     scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
