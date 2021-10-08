@@ -154,4 +154,10 @@ You can
         street: "Boston Street"
         city: "Boston"
         state: "Massachusetts"
-        
+
+.. note::
+
+   **TEFLO_DATA_FOLDER** , **TEFLO_RESULTS_FOLDER** and **TEFLO_WORKSPACE** are TEFLO
+    environmental variables that are made available during a teflo run,
+    which can be used in scripts and playbooks. They provide the absolute path for teflo's
+    data folder, results folder and workspace respectively
