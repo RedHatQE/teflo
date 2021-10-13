@@ -38,6 +38,7 @@ import mock
 import pytest
 from teflo.resources import Action, Execute, Asset, Report, Scenario, Notification
 from teflo.utils.config import Config
+from teflo.utils.scenario_graph import ScenarioGraph
 from teflo._compat import ConfigParser
 from teflo.core import TefloProvider, ImporterPlugin
 
@@ -336,11 +337,17 @@ def report_resource(mock_plugin_class, mock_plugin_list, config):
     report.do_import = False
     return report
 
+@pytest.fixture()
+def scenario_graph(scenario_resource):
+    sg = ScenarioGraph(root_scenario=scenario_resource, scenario_vars={'user': 'teflo_user'})
+    return sg
 
 @pytest.fixture
 def scenario(action_resource, host, execute_resource, report_resource,
              scenario_resource, notification_on_start_resource, notification_default_resource,
-             notification_on_demand_resource, notification_on_failure_resource, notification_on_success_resource):
+             notification_on_demand_resource, notification_on_failure_resource, notification_on_success_resource,
+             scenario_graph):
+    setattr(scenario_resource, 'scenario_graph', scenario_graph)
     scenario_resource.add_assets(host)
     scenario_resource.add_actions(action_resource)
     scenario_resource.add_executes(execute_resource)

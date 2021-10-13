@@ -149,7 +149,8 @@ Lets go over some of the common ones you will see.
         - File
 
     *   - results.yml
-        - The updated scenario descriptor file (created by teflo). 
+        - The updated scenario descriptor file (created by teflo).
+        - File
 
 .. note::
 

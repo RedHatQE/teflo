@@ -112,6 +112,8 @@ class Scenario(TefloResource):
         self._child_scenarios = list()
         self._included_scenario_path = list()
 
+        self._scenario_graph = None
+
         # set the teflo task classes for the scenario
         self._validate_task_cls = validate_task_cls
 
@@ -669,6 +671,16 @@ class Scenario(TefloResource):
         """Set executes property."""
         raise ValueError('You can not set notifications directly.'
                          'Use function ~Scenario.add_notifications')
+
+    @property
+    def scenario_graph(self):
+        """scenario_graph property for the resource"""
+        return self._scenario_graph
+
+    @scenario_graph.setter
+    def scenario_graph(self, value):
+        """set scenario_graph property"""
+        self._scenario_graph = value
 
     def add_notifications(self, notification):
         """Add notifications resources to the scenario.

@@ -1601,10 +1601,10 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                     except yaml.YAMLError as err:
                         # raising Teflo error to differentiate the yaml issue is with included scenario
                         raise TefloError('Error loading included '
-                                                'scenario data! ' + item + str(err.problem_mark))
+                                         'scenario data! ' + item + str(err.problem_mark))
                 else:
                     raise TefloError('Included File is invalid or Include section is empty.'
-                                           ' You have to provide valid scenario files to be included.')
+                                     ' You have to provide valid scenario files to be included.')
 
     def include(unchecked_list: list, checked_list: dict):
         '''
@@ -1631,7 +1631,8 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                     unchecked_list.append(sc)
 
     include([root_scenario], {})
-    scenario_graph = ScenarioGraph(root_scenario, iterate_method=config.get("INCLUDED_SDF_ITERATE_METHOD", "by_level"))
+    scenario_graph = ScenarioGraph(root_scenario, iterate_method=config.get("INCLUDED_SDF_ITERATE_METHOD", "by_level"),
+                                   scenario_vars=root_scenario_temp_data)
     return scenario_graph
 
 
@@ -1896,13 +1897,17 @@ def generate_default_template_vars(scenario, notification):
     """
     Default template dictionary created to be used
     when rendering the default notification template.
-    :return:
+    :return: temp_dict dict dictionary of selected variables for rendering notification templates
     """
 
     passed_tasks = getattr(scenario, 'passed_tasks', [])
     failed_tasks = getattr(scenario, 'failed_tasks', [])
 
     temp_dict = dict(scenario=scenario)
+
+    temp_dict['scenario_graph'] = scenario.__getattribute__('scenario_graph')
+
+    temp_dict['scenario_vars'] = temp_dict.get('scenario_graph').__getattribute__('scenario_vars')
 
     if getattr(notification, 'on_start', False):
         temp_dict['passed_tasks'] = passed_tasks[-1]
