@@ -19,7 +19,9 @@ workspace=.
 # Endpoint URL of Cachet Status page
 # Cachet status page.
 resource_check_endpoint=<endpoint_ url_for_dependency_check>
-#
+# Allows to skip the exiting teflo run during a task failure.
+# skip_fail variable can be True or False only.
+skip_fail=False
 # A static inventory path can be used for ansible inventory file.
 # Can be relative path in teflo scenario workspace
 # inventory_folder=static/inventory

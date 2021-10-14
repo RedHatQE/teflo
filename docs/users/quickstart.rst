@@ -80,6 +80,8 @@ select. Below are the available run command options.
                                       defined for the scenario.
       -nn, --no-notify                Disable sending any notifications defined for
                                       the scenario.
+      -sf, --skip-fail                Allows to skip the exiting teflo run during
+                                      a task failure.
       --help                          Show this message and exit.
 
 
@@ -140,6 +142,11 @@ select. Below are the available run command options.
         - The log level defines the logging level for messages to be logged.
         - No
         - Info
+
+    *   - skip-fail
+        - Allows to skip the exiting teflo run during a task failure.
+        - No
+        - False
 
 To run your scenario executing all given tasks, run the following command:
 

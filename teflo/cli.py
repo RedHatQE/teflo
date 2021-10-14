@@ -232,8 +232,15 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
               metavar="",
               help="Disable sending an notifications defined for the scenario."
               )
+@click.option("-sf", "--skip-fail",
+              default=False,
+              is_flag=True,
+              metavar="",
+              help="Allows to skip the exiting teflo run during a task failure."
+              )
 @click.pass_context
-def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, labels, skip_labels, skip_notify, no_notify):
+def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, labels, skip_labels,
+        skip_notify, no_notify, skip_fail):
     """Run a scenario configuration."""
     print_header()
 
@@ -251,7 +258,8 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
         labels=labels,
         skip_labels=skip_labels,
         skip_notify=skip_notify,
-        no_notify=no_notify
+        no_notify=no_notify,
+        skip_fail=skip_fail
     )
     #  TODO: allow modify iterate_method from cli
     scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)

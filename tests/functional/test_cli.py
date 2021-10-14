@@ -272,6 +272,26 @@ class TestCli(object):
 
     @staticmethod
     @mock.patch.object(Teflo, 'run')
+    def test_wrong_cli_skip_fail(mock_method, runner):
+        """This is for testing use of wrong skip_fail option in teflo cli"""
+        mock_method.return_value = 0
+        results = runner.invoke(
+            teflo, ['run', '-s', '../assets/descriptor.yml', '--skip-failure']
+        )
+        assert 'Error: No such option: --skip-failure' in results.output
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
+    def test_validate_skip_fail(mock_method, runner):
+        """This is for testing use of wrong skip_fail option in teflo cli"""
+        mock_method.return_value = 0
+        results = runner.invoke(
+            teflo, ['run', '-s', '../assets/descriptor.yml', '-sf']
+        )
+        assert 'failed during the Teflo run' not in results.output
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
     def test_validate_label_option(mock_method, runner):
         """This is for testing use of label option with teflo validate"""
         mock_method.return_value = 0
