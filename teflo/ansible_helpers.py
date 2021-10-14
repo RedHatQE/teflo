@@ -859,7 +859,7 @@ class AnsibleCredentialManager(object):
                 vaultpass = os.getenv("VAULTPASS")
             else:
                 vaultpass = self.__config.get("VAULTPASS", "")
-            if vaultpass is "":
+            if vaultpass == "":
                 raise AnsibleVaultError('No vaultpass was found, please set the \
                 vaultpass in teflo.cfg or in environment variable.')
             self.populate_credetials(self.__config, self.__config["CREDENTIAL_PATH"], vaultpass)
