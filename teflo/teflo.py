@@ -205,6 +205,12 @@ class Teflo(LoggerMixin, TimeMixin):
 
         self.scenario_graph = ScenarioGraph()
 
+        # Updating the os.environ variables with TEFLO_DATA_FOLDER and TEFLO_RESULTS_FOLDER
+        os.environ.update({'TEFLO_DATA_FOLDER': os.path.abspath(self.config.get('DATA_FOLDER')),
+                           'TEFLO_RESULTS_FOLDER': os.path.abspath(self.config.get('RESULTS_FOLDER')),
+                           'TEFLO_WORKSPACE': os.path.abspath(self.config.get('WORKSPACE'))
+                           })
+
     @property
     def name(self):
         """The name of the application.  This is usually the import name
