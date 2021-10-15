@@ -1813,6 +1813,7 @@ def create_individual_testrun_results(artifact_locations, config):
             trun = dict()
             trun['total_tests'] = 0
             trun['failed_tests'] = 0
+            trun['error_tests'] = 0
             trun['skipped_tests'] = 0
             trun['passed_tests'] = 0
             tree = ET.parse(path)
@@ -1830,10 +1831,14 @@ def create_individual_testrun_results(artifact_locations, config):
                     trun['failed_tests'] = trun['failed_tests'] + len([testcase.find('failure')
                                                                         for testcase in test.findall('testcase')
                                                                         if testcase.findall('failure')])
+                    trun['error_tests'] = trun['error_tests'] + len([testcase.find('error')
+                                                                        for testcase in test.findall('testcase')
+                                                                        if testcase.findall('error')])
                     trun['skipped_tests'] = trun['skipped_tests'] + len([testcase.find('skipped')
                                                                          for testcase in test.findall('testcase')
                                                                          if testcase.findall('skipped')])
-                    trun['passed_tests'] = trun['total_tests'] - trun['failed_tests'] - trun['skipped_tests']
+                    trun['passed_tests'] = trun['total_tests'] - trun['failed_tests'] - trun['error_tests'] -\
+                                           trun['skipped_tests']
                 individual_res.append({os.path.basename(path): trun})
             else:
                 LOG.warning("The xml file %s does not have the correct format (no 'testsuite' or 'testsuites'"
@@ -1854,6 +1859,7 @@ def create_aggregate_testrun_results(individual_results):
     """
     total_tests = 0
     failed_tests = 0
+    error_tests = 0
     skipped_tests = 0
     passed_tests = 0
     agg_results = dict()
@@ -1862,11 +1868,13 @@ def create_aggregate_testrun_results(individual_results):
         for val in run.values():
             total_tests += val['total_tests']
             failed_tests += val['failed_tests']
+            error_tests += val['error_tests']
             skipped_tests += val['skipped_tests']
             passed_tests += val['passed_tests']
 
     agg_results.update(aggregate_testrun_results=dict(total_tests=total_tests,
                                                       failed_tests=failed_tests,
+                                                      error_tests=error_tests,
                                                       skipped_tests=skipped_tests,
                                                       passed_tests=passed_tests
                                                       ))

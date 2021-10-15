@@ -523,7 +523,8 @@ def test_filter_resources_03(asset2, asset3):
 def test_create_individual_testrun_results(mock_method):
     mock_method.return_value = ['../assets/artifacts/host03/sample.xml']
     res = create_individual_testrun_results({}, {})
-    assert res[0]['sample.xml'] == {'total_tests': 4, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 4}
+    assert res[0]['sample.xml'] == {'total_tests': 5, 'failed_tests': 0, 'error_tests': 1,
+                                    'skipped_tests': 0, 'passed_tests': 4}
 
 
 @mock.patch('teflo.helpers.search_artifact_location_dict')
@@ -531,8 +532,8 @@ def test_create_individual_testrun_results_1(mock_method):
     """this test verifies xmls with tag testsuite and testsuites work correctly"""
     mock_method.return_value = ['../assets/artifacts/host03/sample1.xml', '../assets/artifacts/host03/sample.xml']
     res = create_individual_testrun_results({}, {})
-    assert res[0]['sample1.xml'] == {'total_tests': 2, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 2}
-    assert res[1]['sample.xml'] == {'total_tests': 4, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 4}
+    assert res[0]['sample1.xml'] == {'total_tests': 2, 'failed_tests': 0, 'error_tests': 0, 'skipped_tests': 0, 'passed_tests': 2}
+    assert res[1]['sample.xml'] == {'total_tests': 5, 'failed_tests': 0, 'error_tests': 1, 'skipped_tests': 0, 'passed_tests': 4}
 
 
 @mock.patch('teflo.helpers.search_artifact_location_dict')
@@ -553,12 +554,14 @@ def test_create_individual_testrun_results_with_incorrect_root_tag(mock_method):
 
 def test_create_aggregate_testrun_results():
     ind_res = [
-                {'sample.xml': {'total_tests': 2, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 2}},
-                {'sample1.xml': {'total_tests': 4, 'failed_tests': 2, 'skipped_tests': 0, 'passed_tests': 2}}
+                {'sample.xml': {'total_tests': 5, 'failed_tests': 0, 'error_tests': 1, 'skipped_tests': 0, 'passed_tests': 4}},
+                {'sample1.xml': {'total_tests': 4, 'failed_tests': 2, 'error_tests': 0, 'skipped_tests': 0, 'passed_tests': 2}}
                ]
     res = create_aggregate_testrun_results(ind_res)
-    assert res['aggregate_testrun_results']['total_tests'] == 6
+    assert res['aggregate_testrun_results']['total_tests'] == 9
     assert res['aggregate_testrun_results']['failed_tests'] == 2
+    assert res['aggregate_testrun_results']['error_tests'] == 1
+    assert res['aggregate_testrun_results']['passed_tests'] == 6
 
 
 def test_filter_notifications_to_skip_01(teflo1, notification_on_start_resource, notification_default_resource):
