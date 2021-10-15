@@ -70,7 +70,7 @@ class TestAnsibleService(object):
         results = ansible_service.run_playbook(playbook)
         mock_method.assert_called_with(playbook='cbn_execute_script_' + ansible_service.uid + '.yml',
                                        logger=logger, extra_vars=None,
-                                       run_options=None, ans_verbosity=ans_verbosity, env_var=None)
+                                       run_options=None, ans_verbosity=ans_verbosity, env_var=os.environ)
 
     @staticmethod
     @mock.patch.object(AnsibleController, 'run_playbook')
@@ -81,7 +81,7 @@ class TestAnsibleService(object):
         ans_verbosity = ansible_service.ans_verbosity
         results = ansible_service.run_playbook(playbook)
         mock_method.assert_called_with(playbook='hello.yml',logger=logger, extra_vars=extra_vars, run_options={},
-                                       ans_verbosity=ans_verbosity, env_var=None)
+                                       ans_verbosity=ans_verbosity, env_var=os.environ)
 
 
     @staticmethod

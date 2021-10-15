@@ -361,3 +361,15 @@ orchestrate:
     hosts: localhost
     ansible_playbook:
       name: ansible/mock_kernel_update.yml
+
+# Example 16
+---
+- name: scripta_task
+  description: ""
+  orchestrator: ansible
+  hosts: controller
+  ansible_script:
+    name: scripts/add_two_numbers.sh
+  environment_vars:
+    X: 12
+    Y: 18

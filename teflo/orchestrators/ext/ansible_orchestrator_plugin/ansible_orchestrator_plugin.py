@@ -59,6 +59,7 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
         self.script = getattr(package, 'ansible_script', None)
         self.shell = getattr(package, 'ansible_shell', None)
         self.all_hosts = getattr(package, 'all_hosts', [])
+        self.env_var = getattr(package, 'environment_vars', {})
 
         # calling the method to do a backward compatibility check in case user is defining name field as a path for
         # script or playbook
@@ -68,7 +69,8 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
         # ansible service object
         self.ans_service = AnsibleService(self.config, self.hosts, self.all_hosts,
                                           self.options, self.galaxy_options,
-                                          concurrency=self.config['TASK_CONCURRENCY']['ORCHESTRATE'].lower())
+                                          concurrency=self.config['TASK_CONCURRENCY']['ORCHESTRATE'].lower(),
+                                          env_var=self.env_var)
 
     def backwards_compat_check(self):
         """ This method is put in place to check if any older ways of assigning ansible_playbook/script names are
