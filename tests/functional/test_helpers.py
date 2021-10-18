@@ -267,6 +267,11 @@ class TestDataInjector(object):
         assert isinstance(cmd[1], list)
         assert cmd[1] == ['world', 'v1']
 
+def test_validate_render_scenario_incorrect_iterate_method(task_concurrency_config):
+    task_concurrency_config['INCLUDED_SDF_ITERATE_METHOD'] = 'wrong_val'
+    with pytest.raises(ValueError) as ex:
+        scenario_graph = validate_render_scenario('../assets/correct_include_descriptor.yml', task_concurrency_config)
+    assert "the iterate method value set in teflo.cfg is incorrect wrong_val" in ex.value.args[0]
 
 def test_validate_render_scenario_no_include(task_concurrency_config):
     scenario_graph = validate_render_scenario(os.path.abspath('../assets/no_include.yml'), task_concurrency_config)

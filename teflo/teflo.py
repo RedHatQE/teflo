@@ -115,7 +115,9 @@ class Teflo(LoggerMixin, TimeMixin):
                 self._teflo_options['skip_notify'] = value
             if key == 'no_notify' and value:
                 self._teflo_options['no_notify'] = value
-
+            # assigning cli iterate_method value to self.config['INCLUDED_SDF_ITERATE_METHOD']
+            if key == 'iterate_method' and value:
+                self.config['INCLUDED_SDF_ITERATE_METHOD'] = value
         if log_level:
             self.config['LOG_LEVEL'] = log_level
 
@@ -742,6 +744,7 @@ class Teflo(LoggerMixin, TimeMixin):
         self.logger.info(' * Workspace             : %s' % self.workspace)
         self.logger.info(' * Log Level             : %s' % self.config['LOG_LEVEL'])
         self.logger.info(' * Tasks                 : %s' % tasklist)
+        self.logger.info(' * Iterate Method        : %s' % self.scenario_graph.iterate_method)
         for sc in self.scenario_graph:
             self.logger.info(' * Scenario              : %s' % getattr(sc, 'name'))
         self.logger.info('-' * 79 + '\n')
@@ -783,7 +786,8 @@ class Teflo(LoggerMixin, TimeMixin):
                              failed_tasks)
         self.logger.info(' * Results Folder                 : %s' %
                          self.config['RESULTS_FOLDER'])
-
+        self.logger.info(' * Iterate Method                 : %s' %
+                         self.scenario_graph.iterate_method)
         for sc in self.scenario_graph:
             self.logger.info(' * Scenario Definition            : %s' % sc.name)
         self.logger.info(' * Final Scenario Definition      : %s' % self.final_results_yml_path)
@@ -827,5 +831,7 @@ class Teflo(LoggerMixin, TimeMixin):
         """Show scenario graph includes structure"""
         from termcolor import colored
         click.echo(colored("Below is the structure of the Scenario Definition Files", "green"))
+        print('\n')
+        print('ITERATE METHOD:', scenario_graph.iterate_method)
         print('\n\n\n')
         print(colored(scenario_graph, "green"))

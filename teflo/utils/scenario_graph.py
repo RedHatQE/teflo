@@ -23,10 +23,11 @@ class ScenarioGraph():
         self._root = root_scenario
         self._stack = []
         if iterate_method == "by_depth":
-
             self._stack = [root_scenario]
         elif iterate_method == "by_level":
             self._stack.append([self.root])
+        else:
+            raise ValueError("the iterate method value set in teflo.cfg is incorrect %s" % iterate_method)
         self._prev = None
         self._current = None
         self._visited = {}
@@ -34,7 +35,6 @@ class ScenarioGraph():
         # 1. by_depth
         # 2. by_level
         self._iterate_method = iterate_method
-
         self._assets = assets
         self._executes = executes
         self._reports = reports
@@ -96,7 +96,6 @@ class ScenarioGraph():
 
     @iterate_method.setter
     def iterate_method(self, value):
-        #  TODO: allow modify iterate_method from cli
         raise ValueError("you cannot set iterate_method of the scenario_graph")
 
     # scenario_vars
@@ -169,7 +168,7 @@ class ScenarioGraph():
 
 
         if iterate_method is by_depth: the traversal order will be:
-            12,13,3,8,5,1,10,11,7,4,9,6,2,0
+            3,12,13,8,5,1,10,11,7,4,9,6,2,0
         if iterate_method is by_level: the traversal order will be:
             12,13,3,8,5,10,11,4,9,6,1,7,2,0
         '''
