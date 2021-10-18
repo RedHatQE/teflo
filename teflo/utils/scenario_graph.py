@@ -163,7 +163,7 @@ class ScenarioGraph():
 
 
         if iterate_method is by_depth: the traversal order will be:
-            12,13,3,8,5,1,10,11,7,4,9,6,2,0
+            3,12,13,8,5,1,10,11,7,4,9,6,2,0
         if iterate_method is by_level: the traversal order will be:
             12,13,3,8,5,10,11,4,9,6,1,7,2,0
         '''
