@@ -802,7 +802,8 @@ class Teflo(LoggerMixin, TimeMixin):
         if self.static_inv_dir:
             if os.listdir(self.config['INVENTORY_FOLDER']):
                 inv_results_dir = os.path.join(self.config['RESULTS_FOLDER'], 'inventory')
-                os.system('cp -r %s/* %s' % (self.config['INVENTORY_FOLDER'], inv_results_dir))
+                if not os.path.samefile(self.config['INVENTORY_FOLDER'], inv_results_dir):
+                    os.system('cp -r %s/* %s' % (self.config['INVENTORY_FOLDER'], inv_results_dir))
 
     def create_teflo_workspace(self, ctx, dirname):
         """Clones the teflo examples git repo and copy the workspace files."""
