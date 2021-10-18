@@ -1782,7 +1782,7 @@ def validate_cli_scenario_option(ctx, scenario, config, vars_data=None):
     except jinja2.exceptions.UndefinedError as err:
         curframe = inspect.currentframe()
         calframe = inspect.getouterframes(curframe, 2)
-        if calframe[1][3] is 'show':
+        if calframe[1][3] == 'show':
             click.echo("\n\nYou need to use --vars-data to fill your variables for show command")
             ctx.exit(1)
         else:

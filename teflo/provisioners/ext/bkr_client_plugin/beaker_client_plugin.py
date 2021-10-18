@@ -141,7 +141,7 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
 
         # set attributes for beaker xml object
         for key, value in self.provider_params.items():
-            if key is not 'name':
+            if key != 'name':
                 if value:
                     setattr(self.bkr_xml, key, value)
 
