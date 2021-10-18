@@ -8,7 +8,7 @@ from teflo.resources.scenario import Scenario
 
 class ScenarioGraph():
 
-    def __init__(self, root_scenario: Scenario = None, iterate_method: str = "by_level",
+    def __init__(self, root_scenario: Scenario = None, iterate_method: str = "by_depth",
                  assets: list = [], executes: list = [],
                  reports: list = [], notifications: list = [], actions: list = [],
                  passed_tasks: list = [], failed_tasks: list = []):
