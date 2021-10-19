@@ -8,7 +8,7 @@ from teflo.resources.scenario import Scenario
 
 class ScenarioGraph():
 
-    def __init__(self, root_scenario: Scenario = None, iterate_method: str = "by_level",
+    def __init__(self, root_scenario: Scenario = None, iterate_method: str = "by_level", scenario_vars: dict = {},
                  assets: list = [], executes: list = [],
                  reports: list = [], notifications: list = [], actions: list = [],
                  passed_tasks: list = [], failed_tasks: list = []):
@@ -42,6 +42,7 @@ class ScenarioGraph():
         self._actions = actions
         self._passed_tasks = passed_tasks
         self._failed_tasks = failed_tasks
+        self._scenario_vars = scenario_vars
 
 # root
     @property
@@ -94,9 +95,14 @@ class ScenarioGraph():
         return self._iterate_method
 
     @iterate_method.setter
-    def iterate_method(self):
+    def iterate_method(self, value):
         #  TODO: allow modify iterate_method from cli
         raise ValueError("you cannot set iterate_method of the scenario_graph")
+
+    # scenario_vars
+    @property
+    def scenario_vars(self):
+        return self._scenario_vars
 
 # iteration implemetation
     def is_visited(self, sc):
@@ -425,7 +431,7 @@ class ScenarioGraph():
         holds
         """
 
-        self.__init__(self.root, self.iterate_method, assets=self.get_assets(), executes=self.get_executes(
-        ), notifications=self.get_notifications(), reports=self.get_reports(), actions=self.get_actions(),
-                failed_tasks=self.get_failed_tasks(),
-                passed_tasks=self.get_passed_tasks())
+        self.__init__(self.root, self.iterate_method, scenario_vars=self.scenario_vars, assets=self.get_assets(),
+                      executes=self.get_executes(), notifications=self.get_notifications(), reports=self.get_reports(),
+                      actions=self.get_actions(), failed_tasks=self.get_failed_tasks(),
+                      passed_tasks=self.get_passed_tasks())

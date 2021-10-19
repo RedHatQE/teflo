@@ -274,6 +274,8 @@ class Teflo(LoggerMixin, TimeMixin):
             # Add resources to sc objects
             self._populate_scenario_resources(sc, sc.yaml_data)
             self.scenario_graph.reload_resources_from_scenario(sc)
+            # setting scenario_graph property to each scenario in the scenario_graph
+            sc.__setattr__('scenario_graph', self.scenario_graph)
 
         self._validate_labels()
 

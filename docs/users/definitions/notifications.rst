@@ -204,8 +204,13 @@ Below is the list of data being rendered into the message
  * The list of artifacts that were collected after test execution if any
  * The import result urls of any test artifacts that were imported into a reporting system
 
-Teflo makes its scenario object available along with the environmental variables to user when
-designing their own messaging template. The key for teflo's scenario object is **scenario**
+Teflo makes its scenario and scenario_graph objects available to user when designing their
+own messaging template. The key for teflo's scenario object is **scenario** and for scenario_graph
+is **scenario_graph**
+
+Along with the scenario object, users can get all the variables set during teflo run as well
+as environment variables as scenario_vars dictionary to be used in the templates. The key
+for this is **scenario_vars**
 
 Examples
 --------
@@ -244,6 +249,8 @@ a.
 
    {{ scenario.assets[0].name }}
 
+   The data directory is {{ scenario_vars.TEFLO_DATA_FOLDER }}
+
 b.
 
 .. code-block:: bash
@@ -252,8 +259,8 @@ b.
 
    This is a Teflo Notification for Execute task.
 
-    {% if scenario.executes %}
-        {% for execute in scenario.executes %}
+    {% if scenario.get_executes() %}
+        {% for execute in scenario.get_executes() %}
         Execute task name: {{ execute.name }}
                 {% if execute.artifact_locations %}
         Collected the following artifacts:
@@ -344,7 +351,86 @@ Example 6
 Using custom template and using teflo's data for formatting
 
 .. literalinclude:: ../../../examples/docs-usage/notification.yml
-    :lines: 58-66
+    :lines: 68-79
+
+Example 7
++++++++++
+
+Using custom template and using teflo's variables for formatting
+
+Consider teflo_var.yml is the file set as the default variable file in teflo.cfg
+
+.. code-block:: yaml
+
+    [defaults]
+    var_file=./teflo_var.yml
+
+The contents of teflo_var.yml:
+
+.. code-block:: yaml
+
+   ---
+   username: teflo_user
+   msg_template: template.jinja
+   var_a: hello
+
+The template template.jinja will look like this
+
+.. code-block:: yaml
+
+    {{scenario_vars.var_a}} {{ scenario_vars.username }},
+
+    This is a Teflo Notification.
+
+    Teflo has completed executing the scenario, {{ scenario.name }}, with overall status:
+
+    {% if scenario.overall_status == 0 %}
+    Passed
+    {% else %}
+    Failed
+    {% endif %}
+
+    The data folder is {{ scenario_vars.TEFLO_DATA_FOLDER }}
+
+Scenario file notification block
+
+.. literalinclude:: ../../../examples/docs-usage/notification.yml
+    :lines: 81-92
+
+The above example post run will be seen as following in the results.yml file,
+where the variables from teflo_var.file are used
+
+.. code-block:: yaml
+
+   notifications:
+     - name: msg_template
+       notifier: email-notifier
+       credential: email
+       on_success: true
+       on_failure: true
+       on_tasks:
+         - provision
+       on_start: false
+       on_demand: false
+       to:
+         - jsmith@redhat.com
+         - fbar@redhat.com
+       from: qe-team@redhat.com
+       subject: test email notification is for user teflo_user
+       message_template: template.jinja
+
+The above example will send email which will look like this:
+
+.. code-block:: yaml
+
+   hello teflo_user,
+
+   This is a Teflo Notification.
+
+   Teflo has completed executing the scenario, test1, with overall status:
+   Passed
+
+   The data folder is /home/workspace/teflo/data_folder/nzohposc6v/
 
 
 Sending Chat Notifications

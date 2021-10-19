@@ -320,7 +320,7 @@ class Notification(TefloResource):
             """
 
         profile = OrderedDict()
-        filtered_attr = {k: v for k, v in vars(self).items() if not k.startswith('_') and k != 'scenario'}
+        filtered_attr = {k: v for k, v in vars(self).items() if not k.startswith('_') and not k.startswith('scenario')}
 
         # update asset fields
         for f in self._fields:

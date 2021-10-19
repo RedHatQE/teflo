@@ -34,7 +34,7 @@ from fixtures import action_resource, action_resource_cleanup, scenario, \
     scenario_resource1, execute1, execute2, asset2, action2, scenario_labels,\
     timeout_param_provision, timeout_param_execute,\
     timeout_param_report, timeout_param_orchestrate, \
-    basic_scenario_graph_with_provision_only
+    basic_scenario_graph_with_provision_only, scenario_graph
 
 __all__ = [
     basic_scenario_graph_with_provision_only,
@@ -57,6 +57,7 @@ __all__ = [
     scenario_resource,
     scenario_resource1,
     scenario_labels,
+    scenario_graph,
     master_child_scenario,
     notification_default_resource,
     notification_on_start_resource,

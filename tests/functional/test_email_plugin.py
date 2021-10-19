@@ -29,6 +29,7 @@ from smtplib import SMTPAuthenticationError, SMTPException
 from teflo.notifiers.ext import EmailNotificationPlugin
 from teflo.resources import Notification
 from teflo.exceptions import TefloNotifierError
+from teflo.utils.scenario_graph import ScenarioGraph
 
 @pytest.fixture(scope='class')
 def note_params():
@@ -55,6 +56,7 @@ def note_config_params():
     return params
 
 
+
 class TestEmailNotifier(object):
     from teflo.resources import Scenario
     @staticmethod
@@ -62,7 +64,7 @@ class TestEmailNotifier(object):
         return
 
     @staticmethod
-    def test_notify_no_config(scenario:Scenario, note_params):
+    def test_notify_no_config(scenario:Scenario, note_params, scenario_graph):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         setattr(scenario, 'overall_status', 0)
@@ -113,7 +115,7 @@ class TestEmailNotifier(object):
     @mock.patch.object(Notification, 'workspace', os.path.abspath(os.path.join(os.path.dirname(
         os.path.dirname(__file__)), 'assets')))
     @mock.patch.object(EmailNotificationPlugin, 'send_message', send_message)
-    def test_custom_message_template_notify(scenario:Scenario):
+    def test_custom_message_template_notify(scenario:Scenario, scenario_graph):
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
         setattr(scenario, 'overall_status', 0)
