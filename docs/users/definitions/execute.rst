@@ -450,7 +450,7 @@ Testrun Results for Artifacts collected during the Execute block:
 Teflo generates a testrun results summary for all the **xml files** it collects as a part of artifacts OR
 artifact_locations in an execute block. This summary can be seen in the results.xml as weel as is printed out
 on the console. The summary shows aggregate summary of all xmls collected and individual summary
-of each xml file. The summary contains **number of tests passed, failed, skipped and the total tests.**
+of each xml file. The summary contains **number of tests passed, failed, errored, skipped and the total tests.**
 
 .. code-block:: yaml
 
@@ -478,27 +478,32 @@ of each xml file. The summary contains **number of tests passed, failed, skipped
         aggregate_testrun_results:
           total_tests: 22
           failed_tests: 9
+          error_tests: 0
           skipped_tests: 0
           passed_tests: 13
         individual_results:
         - junit_example.xml:
             total_tests: 6
             failed_tests: 2
+            error_tests: 0
             skipped_tests: 0
             passed_tests: 4
         - junit_example.xml:
             total_tests: 6
             failed_tests: 2
+            error_tests: 0
             skipped_tests: 0
             passed_tests: 4
         - ocp_edge_deploment_integration_results.xml:
             total_tests: 8
             failed_tests: 5
+            error_tests: 0
             skipped_tests: 0
             passed_tests: 3
         - SampleTest.xml:
             total_tests: 2
             failed_tests: 0
+            error_tests: 0
             skipped_tests: 0
             passed_tests: 2
 

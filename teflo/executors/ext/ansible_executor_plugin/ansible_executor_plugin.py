@@ -301,6 +301,8 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
                              self.execute.testrun_results['aggregate_testrun_results']['total_tests'])
             self.logger.info(' * Failed Tests            : %s' %
                              self.execute.testrun_results['aggregate_testrun_results']['failed_tests'])
+            self.logger.info(' * Error Tests             : %s' %
+                             self.execute.testrun_results['aggregate_testrun_results']['error_tests'])
             self.logger.info(' * Skipped Tests           : %s' %
                              self.execute.testrun_results['aggregate_testrun_results']['skipped_tests'])
             self.logger.info(' * Passed Tests            : %s' %
@@ -314,6 +316,7 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
                         self.logger.info(' * File Name               : %s' % keys)
                         self.logger.info(' * Total Tests             : %s' % values['total_tests'])
                         self.logger.info(' * Failed Tests            : %s' % values['failed_tests'])
+                        self.logger.info(' * Error Tests             : %s' % values['error_tests'])
                         self.logger.info(' * Skipped Tests           : %s' % values['skipped_tests'])
                         self.logger.info(' * Passed Tests            : %s' % values['passed_tests'])
                         self.logger.info('-' * 79)
