@@ -3,7 +3,7 @@ name: "Push the master branch to pypi when develop is merged to master and versi
 on:
   push:
     branches:
-      - master
+      - version_1_2_X
     paths:
       - 'teflo/__init__.py'
 

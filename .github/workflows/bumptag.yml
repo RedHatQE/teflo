@@ -4,7 +4,7 @@ name: "Autobump tag on master branch and relese to pypi"
 on:
   push:
     branches:
-      - master
+      - version_1_2_X
     paths:
       - 'teflo/__init__.py'
 
