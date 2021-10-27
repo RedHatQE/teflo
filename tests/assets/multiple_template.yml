@@ -17,6 +17,9 @@ provision:
   - name: {{ dict_var  }}
     provisioner: openstack
 
+  - name: {{ python_version  }}
+    provisioner: openstack
+
 orchestrate:
 
 execute:
