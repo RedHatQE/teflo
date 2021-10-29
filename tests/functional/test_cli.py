@@ -192,6 +192,7 @@ class TestCli(object):
         assert 'another_test' in results.output
         assert "['/dev/vdc']" in results.output
         assert "{'perl': 'Elite', 'python': 'Elite', 'pascal': 'Lame'}" in results.output
+        assert "3.10.0" in results.output
         assert results.exit_code == 0
 
     @staticmethod
