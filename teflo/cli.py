@@ -305,7 +305,7 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
               )
 @click.pass_context
 def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_notify, no_notify):
-    """Trigger notifications marked on demand for a scenario configuration."""
+    """Trigger notifications marked on demand for a scenario."""
     print_header()
 
     #  TODO: allow modify iterate_method from cli
