@@ -113,7 +113,8 @@ DEFAULT_CONFIG = {
     'NOTIFICATIONS': [],
     "TIMEOUT": DEFAULT_TIMEOUT,
     "PROVISIONER_OPTIONS": [],
-    "INCLUDED_SDF_ITERATE_METHOD": "by_level"
+    "INCLUDED_SDF_ITERATE_METHOD": "by_level",
+    "TOGGLE_JINJA_INCLUDE": "False"
 }
 
 # Default config sections
