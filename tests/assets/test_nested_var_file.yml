@@ -10,3 +10,7 @@ languages:
   python: Elite
   pascal: Lame
 dict_var: "{{ languages }}"
+unused: "{{ ansible_facts.hostname }}"
+python:
+  version: "3.10.0"
+python_version: "{{ python.version }}"
