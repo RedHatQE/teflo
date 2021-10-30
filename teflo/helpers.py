@@ -1416,6 +1416,8 @@ def replace_brackets(input, temp_data):
                 break
 
         key = input[key_start:key_end].strip()
+        if temp_data.get(key, None) is None:
+            return input
         if not isinstance(temp_data[key], str):
             temp_data.update({key: preprocyaml(temp_data[key], temp_data)})
 
@@ -1471,6 +1473,28 @@ def preprocyaml(input, temp_data):
         return input
 
 
+def preprocyaml_jinja(temp_data: dict, file_path: str = None) -> dict:
+    """
+    This function recursively render the temp_data(var_data), with itself until
+    the rendered result doesn't change any more.
+    It returns a dict version of the temp_data
+    """
+    prev_res = ""
+    res_dict = temp_data
+    result = yaml.dump(res_dict, sort_keys=False)
+
+    class NullUndefined(jinja2.Undefined):
+        def __getattr__(self, key):
+            return ''
+
+    while result != prev_res:
+        prev_res = result
+        t = jinja2.Template(result, undefined=NullUndefined)
+        result = t.render(yaml.safe_load(result))
+
+    return yaml.safe_load(result)
+
+
 def preproc_path(data_folder: str) -> str:
     """
     This method takes a path and remove
@@ -1512,7 +1536,8 @@ def validate_render_scenario(scenario_path, config, temp_data_raw=()):
     if isinstance(temp_data_raw, tuple):
         var_file_list.extend(list(temp_data_raw))
     # Convert each item to an object, then reduce them all back to one
-    temp_data_objs = [file_mgmt('r', t) if os.path.isfile(t) else json.loads(t) for t in var_file_list]
+    temp_data_objs = [file_mgmt("r", t) if os.path.isfile(t)
+                                  else json.loads(t) for t in var_file_list]
     # Reduce it down to a single object we can work with
     temp_data = {}
     [temp_data.update(t) for t in temp_data_objs]
@@ -1520,6 +1545,7 @@ def validate_render_scenario(scenario_path, config, temp_data_raw=()):
     for item in temp_data.items():
         temp_data.update({item[0]: preprocyaml(item[1], temp_data)})
 
+    temp_data = preprocyaml_jinja(temp_data)
     temp_data.update(os.environ)
 
     try:
