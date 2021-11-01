@@ -495,7 +495,7 @@ def is_url_valid(url):
     return True
 
 
-def template_render(filepath, env_dict):
+def template_render(filepath, env_dict, toggle_jinja_include=False):
     """
     A function to do jinja templating given a file and a dictionary of key/vars
 
@@ -505,8 +505,12 @@ def template_render(filepath, env_dict):
     :rtype: data stream
     """
     path, filename = os.path.split(filepath)
-    return jinja2.Environment(loader=jinja2.FileSystemLoader(
-        path), lstrip_blocks=True, trim_blocks=True).get_template(filename).render(env_dict)
+    if toggle_jinja_include:
+        return jinja2.Environment(loader=jinja2.FileSystemLoader(
+            path), lstrip_blocks=True, trim_blocks=False).get_template(filename).render(env_dict)
+    else:
+        return jinja2.Environment(loader=jinja2.FileSystemLoader(
+            path), lstrip_blocks=True, trim_blocks=True).get_template(filename).render(env_dict)
 
 
 def exec_local_cmd(cmd, env_var=None):
@@ -1573,8 +1577,10 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
     # Must import these two libs here to avoid circular import for Python intepreter
     from .resources import Scenario
     from .utils.scenario_graph import ScenarioGraph
-    yaml.safe_load(template_render(root_scenario_path, root_scenario_temp_data))
-    root_scenario_yaml_data = template_render(root_scenario_path, root_scenario_temp_data)
+    yaml.safe_load(template_render(root_scenario_path, root_scenario_temp_data,
+                                   config.get("TOGGLE_JINJA_INCLUDE", False)))
+    root_scenario_yaml_data = template_render(root_scenario_path, root_scenario_temp_data,
+                                              config.get("TOGGLE_JINJA_INCLUDE", False))
     root_scenario = Scenario(config=config, path=os.path.basename(root_scenario_path))
     root_scenario.fullpath = root_scenario_path
     root_scenario.yaml_data = root_scenario_yaml_data
@@ -1609,10 +1615,12 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                         item = os.path.join(config['WORKSPACE'], item)
                     # check to verify the data in included scenario is valid
                     try:
-                        yaml.safe_load(template_render(item, root_scenario_temp_data))
+                        yaml.safe_load(template_render(item, root_scenario_temp_data,
+                                                       config.get("TOGGLE_JINJA_INCLUDE", False)))
                         child_sc = Scenario(config=config, path=path)
                         child_sc.fullpath = sc_fullpath if os.path.isfile(sc_fullpath) else sc_abspath
-                        child_sc.yaml_data = template_render(item, root_scenario_temp_data)
+                        child_sc.yaml_data = template_render(item, root_scenario_temp_data,
+                                                             config.get("TOGGLE_JINJA_INCLUDE", False))
                         parent_scenario.add_child_scenario(child_sc)
                         # use filename because the scenario name could
                         # contain some special characters, which is not good for

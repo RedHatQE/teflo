@@ -1,0 +1,32 @@
+
+# -*- coding: utf-8 -*-
+---
+include:
+  - teflo/stack/provision_localhost.yml
+  - teflo/stack/provision_libvirt.yml
+  - {% if true %}teflo/stack/orchestrate-123.yml{% endif %}
+  - teflo/stack/orchestrate.yml
+
+name: py3_include_provision
+description: "Provision step"
+
+provision:
+  - name: local_host
+    groups: localhost
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+
+
+orchestrate:
+  - name: "{{ from_cmd_line }}"
+    description: "Test teflo" 
+    orchestrator: ansible
+    hosts: local_host
+    ansible_playbook:
+      name: playbook.yml
+    ansible_options:
+      extra_vars:
+        hello: "{{ hello }}"
+
+
