@@ -33,7 +33,12 @@ Once teflo is installed, you can run the teflo command to view its options:
     $ teflo
     Usage: teflo [OPTIONS] COMMAND [ARGS]...
 
-      Teflo - Interoperability Testing Framework
+      Teflo - (Test Execution Framework Libraries and Objects)
+
+      It is an orchestration software that controls the flow of a set of testing
+      scenarios.
+
+      It was formerly known as Carbon
 
     Options:
       -v, --verbose  Add verbosity to the commands.
@@ -42,8 +47,9 @@ Once teflo is installed, you can run the teflo command to view its options:
 
     Commands:
       init      Initializes a teflo project in your workspace.
-      notify    Trigger notifications for a scenario configuration on demand.
+      notify    Trigger notifications marked on demand for a scenario.
       run       Run a scenario configuration.
+      show      Show information about the scenario.
       validate  Validate a scenario configuration.
 
 Run
@@ -70,21 +76,50 @@ select. Below are the available run command options.
       --log-level [debug|info]        Select logging level. (default=info)
       --vars-data                     Pass in variable data to template the
                                       scenario. Can be a file or raw json.
+
       -l, --labels                    Use only the resources associated with
                                       labels for running the tasks. labels and
                                       skip_labels are mutually exclusive
+
       -sl, --skip-labels              Skip the resources associated with
                                       skip_labels for running the tasks. labels
                                       and skip_labels are mutually exclusive
+
       -sn, --skip-notify              Skip triggering the specific notification
                                       defined for the scenario.
-      -nn, --no-notify                Disable sending any notifications defined for
+
+      -nn, --no-notify                Disable sending an notifications defined for
                                       the scenario.
+
       --help                          Show this message and exit.
 
 
+Running Included Scenarios
+++++++++++++++++++++++++++
+
+With Teflo Version 2.0 onwards , Teflo supports recursive inclusion of scenarios, i.e.
+a parent scenario can have more than one included scenarios, and these included scenarios
+then can have more included scenarios. This is handled by Teflo using a Scenario Graph
+data structure.
+Please view `Included Scenarios <./definitions/include.html#including-scenarios>`__ to know more.
+
+During a teflo run , based on what tasks are to be run, a task pipeline is created
+for each scenario. These pipelines are run sequentially in the order of how the scenario_graph
+is traversed. Within each pipeline an individual task can be run sequentially or concurrently as before.
+Please view `Scenario Graph <./definitions/include.html#scenario-graph-explanation>`__ to understand
+how included scenarios will be executed.
+
+For .e.g. if the tasks to be done are provision and orchestrate and included scenarios are
+being used, then based on how the scenario graph is traversed, the provision and orchestrate
+pipeline will be run (sequentially or concurrently based on the settings in teflo.cfg) for
+each scenario in the graph.
+
+The exception to this rule are the validate
+and cleanup task, for which the entire scenario graph is considered together and validated.
+
 .. note::
-   
+   **For version 1.2.5 and below**
+
    If 'Include' section is present in the scenario file, teflo will aggregate and execute
    the selected tasks from both, main/parent and the included scenario file. e.g. 
    if common.yml is the included scenario file, scenario.yml is the main scenario file
