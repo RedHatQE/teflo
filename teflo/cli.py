@@ -249,9 +249,17 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
               type=click.Choice(ITERATE_METHOD_CHOICES),
               help="Iterate the scenario graph by_level or by_depth method",
               )
+@click.option("-sf", "--skip-fail",
+              default=False,
+              is_flag=True,
+              metavar="",
+              help="The teflo run exits on occurrence of a failure of a task in a scenario, "
+                   "if user wants to continue the teflo run, in spite of one task failure, "
+                   "the skip_fail flag will allow it."
+              )
 @click.pass_context
-def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, labels, skip_labels, skip_notify, no_notify,
-        iterate_method):
+def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, labels, skip_labels,
+        skip_notify, no_notify, iterate_method, skip_fail):
     """Run a scenario configuration."""
     print_header()
 
@@ -271,6 +279,7 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
         skip_notify=skip_notify,
         no_notify=no_notify,
         iterate_method=iterate_method,
+        skip_fail=skip_fail
     )
     scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
 
