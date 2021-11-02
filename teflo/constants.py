@@ -55,6 +55,11 @@ TASK_LOGLEVEL_CHOICES = [
     "info"
 ]
 
+ITERATE_METHOD_CHOICES = [
+    "by_level",
+    "by_depth"
+]
+
 PROVISIONERS = {
     "beaker": ["beaker-client", "linchpin-wrapper"],
     "openstack": ["openstack-libcloud", "linchpin-wrapper"],

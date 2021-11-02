@@ -172,7 +172,7 @@ class TestCli(object):
     @staticmethod
     @mock.patch.object(Teflo, 'run')
     def test_valid_run_multiple_vars(mock_method, runner):
-        """This test will chekc if multiple vars can be provided on cli and the take precedence over other variable
+        """This test will check if multiple vars can be provided on cli and the take precedence over other variable
            files"""
         mock_method.return_value = 0
         results = runner.invoke(
@@ -188,7 +188,7 @@ class TestCli(object):
     @staticmethod
     @mock.patch.object(Teflo, 'run')
     def test_valid_run_multiple_nested_vars(mock_method, runner):
-        """This test will chekc if multiple vars can be provided on cli and the take precedence over other variable
+        """This test will check if multiple vars can be provided on cli and the take precedence over other variable
            files"""
         mock_method.return_value = 0
         results = runner.invoke(
@@ -269,6 +269,16 @@ class TestCli(object):
             teflo, ['run', '-s', '../assets/descriptor.yml', '-d', '/tmp', '-nn']
         )
         assert results.exit_code == 0
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
+    def test_iterate_method(mock_method, runner):
+        """This is for testing use of iterate_method option with teflo run"""
+        mock_method.return_value = 0
+        results = runner.invoke(
+            teflo, ['run', '-s', '../localhost_scenario/scenario_local.yml', '-im', 'by_wrong']
+        )
+        assert results.exit_code == 2
 
     @staticmethod
     @mock.patch.object(Teflo, 'run')
