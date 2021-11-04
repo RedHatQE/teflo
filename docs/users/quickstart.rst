@@ -91,6 +91,10 @@ select. Below are the available run command options.
       -nn, --no-notify                Disable sending an notifications defined for
                                       the scenario.
 
+      -sf, --skip-fail                The teflo run exits on occurrence of a failure of a task in
+                                      a scenario, if user wants to continue the teflo run, in spite
+                                      of one task failure, the skip_fail flag will allow it.
+
       --help                          Show this message and exit.
 
 
@@ -175,6 +179,13 @@ and cleanup task, for which the entire scenario graph is considered together and
         - The log level defines the logging level for messages to be logged.
         - No
         - Info
+
+    *   - skip-fail
+        - The teflo run exits on occurrence of a failure of a task in a scenario, if user wants to
+          continue the teflo run, in spite of one task failure, the skip_fail parameter can be set
+          to true in the teflo.cfg or passed using cli.
+        - No
+        - False
 
 To run your scenario executing all given tasks, run the following command:
 

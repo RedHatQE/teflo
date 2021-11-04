@@ -118,6 +118,9 @@ class Teflo(LoggerMixin, TimeMixin):
             # assigning cli iterate_method value to self.config['INCLUDED_SDF_ITERATE_METHOD']
             if key == 'iterate_method' and value:
                 self.config['INCLUDED_SDF_ITERATE_METHOD'] = value
+            if key == 'skip_fail':
+                self._teflo_options['skip_fail'] = value
+
         if log_level:
             self.config['LOG_LEVEL'] = log_level
 
@@ -578,15 +581,23 @@ class Teflo(LoggerMixin, TimeMixin):
             self.scenario_graph.reload_resources_from_scenario(sc)
             if not self.teflo_options.get('no_notify', False):
                 self.notify('on_complete', status, passed_tasks, failed_tasks, sc)
-            # TODO: Scenario Graph related
-            # We should let customer decide wtheather they want to fail the whole graph
-            # right after anyone of the scenario failed
 
             def exit_on_status():
 
                 state = 'FAILED' if status else 'PASSED'
-                if state is 'FAILED':
-                    raise TefloScenarioFailure("`%s` failed during running" % sc.name)
+
+                if str(self.config.get("SKIP_FAIL")).lower() != 'true' and \
+                        str(self.config.get("SKIP_FAIL")).lower() != 'false' and \
+                        self.config.get("SKIP_FAIL") is not None:
+                    self.logger.error('The skip_fail variable can be true or false only. Running'
+                                      ' as default value which is False')
+                    self.config["SKIP_FAIL"] = 'False'
+
+                if str(self.config.get("SKIP_FAIL")).lower() != 'true' \
+                        and self._teflo_options['skip_fail'] is not True and state is 'FAILED':
+                    raise TefloScenarioFailure(
+                        "Scenario `%s` failed during the Teflo run" % sc.name)
+
             exit_on_status()
 
     def notify(self, task, status=0, passed_tasks=None, failed_tasks=None, scenario: Scenario = None):
