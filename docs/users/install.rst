@@ -196,14 +196,17 @@ n and n-2 teflo releases
         - 1.2.2
         - 1.2.3
         - 1.2.4
+        - 1.2.5
 
     *   - Rppreproc Plugin
         - 1.0.0
         - 1.0.0
         - 2.0.0
         - 2.0.0
+        - 2.0.0
 
     *   - Polarion Plugin
+        - 1.0.0
         - 1.0.0
         - 1.0.0
         - 1.0.0
@@ -214,8 +217,10 @@ n and n-2 teflo releases
         - 1.0.2
         - 1.0.2
         - 1.0.2
+        - 1.0.2
 
     *   - Openstack Client Plugin
+        - 1.0.1
         - 1.0.1
         - 1.0.1
         - 1.0.1
@@ -226,14 +231,17 @@ n and n-2 teflo releases
         - 1.1.1
         - 1.1.1
         - 1.1.1
+        - 1.1.1
 
     *   - Terraform Plugin
         - 1.0.0
         - 1.0.0
         - 1.0.0
         - 1.0.0
+        - 1.0.0
 
     *   - Notify Service Plugin
+        - 1.0.0
         - 1.0.0
         - 1.0.0
         - 1.0.0
@@ -245,10 +253,12 @@ n and n-2 teflo releases
         - 1.2.1
         - 1.2.1
         - 1.2.1
+        - 1.2.1
 
 
     *   - Rp_preproc
         - 0.1.4
         - 0.1.4
+        - 0.1.11
         - 0.1.11
         - 0.1.11
