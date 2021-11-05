@@ -431,6 +431,7 @@ class Teflo(LoggerMixin, TimeMixin):
 
         self.end()
         # determine state
+        # 0 is false here
         state = 'FAILED' if status[0] else 'PASSED'
 
         self._write_out_results()
@@ -439,7 +440,14 @@ class Teflo(LoggerMixin, TimeMixin):
 
         self._archive_results()
 
+        if self.config["CLEAN_CACHED_WORKSPACE_AFTER_EACH_RUN"].lower() == "true":
+            self.clean_cached_remote_workspace()
+
         sys.exit(status[0])
+
+    def clean_cached_remote_workspace(self):
+        if os.path.isdir(self.config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"]):
+            shutil.rmtree(self.config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"])
 
     def cleanup_helper(self, final_passed_tasks: list, final_failed_tasks: list, status: list):
         """
