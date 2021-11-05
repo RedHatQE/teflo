@@ -32,7 +32,7 @@ from teflo.exceptions import TefloActionError, TefloError
 import click
 from . import __version__
 from .teflo import Teflo
-from .constants import TASKLIST, TASK_LOGLEVEL_CHOICES
+from .constants import TASKLIST, TASK_LOGLEVEL_CHOICES, ITERATE_METHOD_CHOICES
 from .helpers import validate_cli_scenario_option
 
 
@@ -81,10 +81,16 @@ def create():
               metavar="",
               is_flag=True,
               help="Display the scenario structure in case of included scenarios.")
+@click.option("-im", "--iterate-method",
+              default=None,
+              metavar="",
+              type=click.Choice(ITERATE_METHOD_CHOICES),
+              is_flag=True,
+              help="Iterate the scenario graph by_level or by_depth method",
+              )
 @click.pass_context
-def show(ctx, scenario, list_labels, vars_data, show_graph):
+def show(ctx, scenario, list_labels, vars_data, show_graph, iterate_method):
     """Show information about the scenario."""
-    #  TODO: allow modify iterate_method from cli
     print_header()
     # Create a new teflo compound
     cbn = Teflo(__name__)
@@ -150,15 +156,20 @@ def show(ctx, scenario, list_labels, vars_data, show_graph):
               metavar="",
               help="Disable sending an notifications defined for the scenario."
               )
+@click.option("-im", "--iterate-method",
+              default=None,
+              type=click.Choice(ITERATE_METHOD_CHOICES),
+              help="Iterate the scenario graph by_level or by_depth method",
+              )
 @click.pass_context
-def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels, skip_labels, skip_notify, no_notify):
+def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels, skip_labels, skip_notify, no_notify,
+             iterate_method):
     """Validate a scenario configuration."""
 
     # checking if labels or skip_labels both are set
     if labels and skip_labels:
         click.echo('Labels and skip_labels are mutually exclusive. Only one of them can be used')
         ctx.exit()
-    #  TODO: allow modify iterate_method from cli
     cbn = Teflo(
         __name__,
         log_level=log_level,
@@ -167,7 +178,8 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
         labels=labels,
         skip_labels=skip_labels,
         skip_notify=skip_notify,
-        no_notify=no_notify
+        no_notify=no_notify,
+        iterate_method=iterate_method,
     )
 
     scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
@@ -232,8 +244,22 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
               metavar="",
               help="Disable sending an notifications defined for the scenario."
               )
+@click.option("-im", "--iterate-method",
+              default=None,
+              type=click.Choice(ITERATE_METHOD_CHOICES),
+              help="Iterate the scenario graph by_level or by_depth method",
+              )
+@click.option("-sf", "--skip-fail",
+              default=False,
+              is_flag=True,
+              metavar="",
+              help="The teflo run exits on occurrence of a failure of a task in a scenario, "
+                   "if user wants to continue the teflo run, in spite of one task failure, "
+                   "the skip_fail flag will allow it."
+              )
 @click.pass_context
-def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, labels, skip_labels, skip_notify, no_notify):
+def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, labels, skip_labels,
+        skip_notify, no_notify, iterate_method, skip_fail):
     """Run a scenario configuration."""
     print_header()
 
@@ -251,9 +277,10 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
         labels=labels,
         skip_labels=skip_labels,
         skip_notify=skip_notify,
-        no_notify=no_notify
+        no_notify=no_notify,
+        iterate_method=iterate_method,
+        skip_fail=skip_fail
     )
-    #  TODO: allow modify iterate_method from cli
     scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
 
     # Sending the scenario graph to the teflo object
@@ -303,12 +330,16 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
               metavar="",
               help="Disable sending an notifications defined for the scenario."
               )
+@click.option("-im", "--iterate-method",
+              default=None,
+              type=click.Choice(ITERATE_METHOD_CHOICES),
+              help="Iterate the scenario graph by_level or by_depth method",
+              )
 @click.pass_context
-def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_notify, no_notify):
-    """Trigger notifications marked on demand for a scenario configuration."""
+def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_notify, no_notify, iterate_method):
+    """Trigger notifications marked on demand for a scenario."""
     print_header()
 
-    #  TODO: allow modify iterate_method from cli
     # Create a new teflo compound
     cbn = Teflo(
         __name__,
@@ -316,7 +347,8 @@ def notify(ctx, scenario, log_level, data_folder, workspace, vars_data, skip_not
         data_folder=data_folder,
         workspace=workspace,
         skip_notify=skip_notify,
-        no_notify=no_notify
+        no_notify=no_notify,
+        iterate_method=iterate_method,
     )
 
     scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)

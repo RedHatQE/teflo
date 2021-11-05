@@ -149,4 +149,11 @@ Lets go over some of the common ones you will see.
         - File
 
     *   - results.yml
-        - The updated scenario descriptor file (created by teflo). 
+        - The updated scenario descriptor file (created by teflo).
+        - File
+
+.. note::
+
+   **TEFLO_DATA_FOLDER**, **TEFLO_RESULTS_FOLDER**, **TEFLO_WORKSPACE** are TEFLO
+   environmental variables that are made available during a teflo run. They provide
+   the absolute path for the data folder, results folder and workspace respectively

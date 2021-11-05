@@ -55,6 +55,11 @@ TASK_LOGLEVEL_CHOICES = [
     "info"
 ]
 
+ITERATE_METHOD_CHOICES = [
+    "by_level",
+    "by_depth"
+]
+
 PROVISIONERS = {
     "beaker": ["beaker-client", "linchpin-wrapper"],
     "openstack": ["openstack-libcloud", "linchpin-wrapper"],
@@ -113,7 +118,8 @@ DEFAULT_CONFIG = {
     'NOTIFICATIONS': [],
     "TIMEOUT": DEFAULT_TIMEOUT,
     "PROVISIONER_OPTIONS": [],
-    "INCLUDED_SDF_ITERATE_METHOD": "by_level"
+    "INCLUDED_SDF_ITERATE_METHOD": "by_level",
+    "TOGGLE_JINJA_INCLUDE": "False"
 }
 
 # Default config sections

@@ -8,7 +8,7 @@ from teflo.resources.scenario import Scenario
 
 class ScenarioGraph():
 
-    def __init__(self, root_scenario: Scenario = None, iterate_method: str = "by_level",
+    def __init__(self, root_scenario: Scenario = None, iterate_method: str = "by_level", scenario_vars: dict = {},
                  assets: list = [], executes: list = [],
                  reports: list = [], notifications: list = [], actions: list = [],
                  passed_tasks: list = [], failed_tasks: list = []):
@@ -23,10 +23,11 @@ class ScenarioGraph():
         self._root = root_scenario
         self._stack = []
         if iterate_method == "by_depth":
-
             self._stack = [root_scenario]
         elif iterate_method == "by_level":
             self._stack.append([self.root])
+        else:
+            raise ValueError("the iterate method value set in teflo.cfg is incorrect %s" % iterate_method)
         self._prev = None
         self._current = None
         self._visited = {}
@@ -34,7 +35,6 @@ class ScenarioGraph():
         # 1. by_depth
         # 2. by_level
         self._iterate_method = iterate_method
-
         self._assets = assets
         self._executes = executes
         self._reports = reports
@@ -42,6 +42,7 @@ class ScenarioGraph():
         self._actions = actions
         self._passed_tasks = passed_tasks
         self._failed_tasks = failed_tasks
+        self._scenario_vars = scenario_vars
 
 # root
     @property
@@ -94,9 +95,13 @@ class ScenarioGraph():
         return self._iterate_method
 
     @iterate_method.setter
-    def iterate_method(self):
-        #  TODO: allow modify iterate_method from cli
+    def iterate_method(self, value):
         raise ValueError("you cannot set iterate_method of the scenario_graph")
+
+    # scenario_vars
+    @property
+    def scenario_vars(self):
+        return self._scenario_vars
 
 # iteration implemetation
     def is_visited(self, sc):
@@ -163,7 +168,7 @@ class ScenarioGraph():
 
 
         if iterate_method is by_depth: the traversal order will be:
-            12,13,3,8,5,1,10,11,7,4,9,6,2,0
+            3,12,13,8,5,1,10,11,7,4,9,6,2,0
         if iterate_method is by_level: the traversal order will be:
             12,13,3,8,5,10,11,4,9,6,1,7,2,0
         '''
@@ -425,7 +430,7 @@ class ScenarioGraph():
         holds
         """
 
-        self.__init__(self.root, self.iterate_method, assets=self.get_assets(), executes=self.get_executes(
-        ), notifications=self.get_notifications(), reports=self.get_reports(), actions=self.get_actions(),
-                failed_tasks=self.get_failed_tasks(),
-                passed_tasks=self.get_passed_tasks())
+        self.__init__(self.root, self.iterate_method, scenario_vars=self.scenario_vars, assets=self.get_assets(),
+                      executes=self.get_executes(), notifications=self.get_notifications(), reports=self.get_reports(),
+                      actions=self.get_actions(), failed_tasks=self.get_failed_tasks(),
+                      passed_tasks=self.get_passed_tasks())

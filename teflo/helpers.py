@@ -495,7 +495,7 @@ def is_url_valid(url):
     return True
 
 
-def template_render(filepath, env_dict):
+def template_render(filepath, env_dict, toggle_jinja_include=False):
     """
     A function to do jinja templating given a file and a dictionary of key/vars
 
@@ -505,8 +505,12 @@ def template_render(filepath, env_dict):
     :rtype: data stream
     """
     path, filename = os.path.split(filepath)
-    return jinja2.Environment(loader=jinja2.FileSystemLoader(
-        path), lstrip_blocks=True, trim_blocks=True).get_template(filename).render(env_dict)
+    if toggle_jinja_include:
+        return jinja2.Environment(loader=jinja2.FileSystemLoader(
+            path), lstrip_blocks=True, trim_blocks=False).get_template(filename).render(env_dict)
+    else:
+        return jinja2.Environment(loader=jinja2.FileSystemLoader(
+            path), lstrip_blocks=True, trim_blocks=True).get_template(filename).render(env_dict)
 
 
 def exec_local_cmd(cmd, env_var=None):
@@ -1416,6 +1420,8 @@ def replace_brackets(input, temp_data):
                 break
 
         key = input[key_start:key_end].strip()
+        if temp_data.get(key, None) is None:
+            return input
         if not isinstance(temp_data[key], str):
             temp_data.update({key: preprocyaml(temp_data[key], temp_data)})
 
@@ -1471,6 +1477,28 @@ def preprocyaml(input, temp_data):
         return input
 
 
+def preprocyaml_jinja(temp_data: dict, file_path: str = None) -> dict:
+    """
+    This function recursively render the temp_data(var_data), with itself until
+    the rendered result doesn't change any more.
+    It returns a dict version of the temp_data
+    """
+    prev_res = ""
+    res_dict = temp_data
+    result = yaml.dump(res_dict, sort_keys=False)
+
+    class NullUndefined(jinja2.Undefined):
+        def __getattr__(self, key):
+            return ''
+
+    while result != prev_res:
+        prev_res = result
+        t = jinja2.Template(result, undefined=NullUndefined)
+        result = t.render(yaml.safe_load(result))
+
+    return yaml.safe_load(result)
+
+
 def preproc_path(data_folder: str) -> str:
     """
     This method takes a path and remove
@@ -1512,7 +1540,8 @@ def validate_render_scenario(scenario_path, config, temp_data_raw=()):
     if isinstance(temp_data_raw, tuple):
         var_file_list.extend(list(temp_data_raw))
     # Convert each item to an object, then reduce them all back to one
-    temp_data_objs = [file_mgmt('r', t) if os.path.isfile(t) else json.loads(t) for t in var_file_list]
+    temp_data_objs = [file_mgmt("r", t) if os.path.isfile(t)
+                                  else json.loads(t) for t in var_file_list]
     # Reduce it down to a single object we can work with
     temp_data = {}
     [temp_data.update(t) for t in temp_data_objs]
@@ -1520,6 +1549,7 @@ def validate_render_scenario(scenario_path, config, temp_data_raw=()):
     for item in temp_data.items():
         temp_data.update({item[0]: preprocyaml(item[1], temp_data)})
 
+    temp_data = preprocyaml_jinja(temp_data)
     temp_data.update(os.environ)
 
     try:
@@ -1547,8 +1577,10 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
     # Must import these two libs here to avoid circular import for Python intepreter
     from .resources import Scenario
     from .utils.scenario_graph import ScenarioGraph
-    yaml.safe_load(template_render(root_scenario_path, root_scenario_temp_data))
-    root_scenario_yaml_data = template_render(root_scenario_path, root_scenario_temp_data)
+    yaml.safe_load(template_render(root_scenario_path, root_scenario_temp_data,
+                                   config.get("TOGGLE_JINJA_INCLUDE", False)))
+    root_scenario_yaml_data = template_render(root_scenario_path, root_scenario_temp_data,
+                                              config.get("TOGGLE_JINJA_INCLUDE", False))
     root_scenario = Scenario(config=config, path=os.path.basename(root_scenario_path))
     root_scenario.fullpath = root_scenario_path
     root_scenario.yaml_data = root_scenario_yaml_data
@@ -1583,10 +1615,12 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                         item = os.path.join(config['WORKSPACE'], item)
                     # check to verify the data in included scenario is valid
                     try:
-                        yaml.safe_load(template_render(item, root_scenario_temp_data))
+                        yaml.safe_load(template_render(item, root_scenario_temp_data,
+                                                       config.get("TOGGLE_JINJA_INCLUDE", False)))
                         child_sc = Scenario(config=config, path=path)
                         child_sc.fullpath = sc_fullpath if os.path.isfile(sc_fullpath) else sc_abspath
-                        child_sc.yaml_data = template_render(item, root_scenario_temp_data)
+                        child_sc.yaml_data = template_render(item, root_scenario_temp_data,
+                                                             config.get("TOGGLE_JINJA_INCLUDE", False))
                         parent_scenario.add_child_scenario(child_sc)
                         # use filename because the scenario name could
                         # contain some special characters, which is not good for
@@ -1601,10 +1635,10 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                     except yaml.YAMLError as err:
                         # raising Teflo error to differentiate the yaml issue is with included scenario
                         raise TefloError('Error loading included '
-                                                'scenario data! ' + item + str(err.problem_mark))
+                                         'scenario data! ' + item + str(err.problem_mark))
                 else:
                     raise TefloError('Included File is invalid or Include section is empty.'
-                                           ' You have to provide valid scenario files to be included.')
+                                     ' You have to provide valid scenario files to be included.')
 
     def include(unchecked_list: list, checked_list: dict):
         '''
@@ -1631,7 +1665,8 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                     unchecked_list.append(sc)
 
     include([root_scenario], {})
-    scenario_graph = ScenarioGraph(root_scenario, iterate_method=config.get("INCLUDED_SDF_ITERATE_METHOD", "by_level"))
+    scenario_graph = ScenarioGraph(root_scenario, iterate_method=config.get("INCLUDED_SDF_ITERATE_METHOD", "by_level"),
+                                   scenario_vars=root_scenario_temp_data)
     return scenario_graph
 
 
@@ -1782,7 +1817,7 @@ def validate_cli_scenario_option(ctx, scenario, config, vars_data=None):
     except jinja2.exceptions.UndefinedError as err:
         curframe = inspect.currentframe()
         calframe = inspect.getouterframes(curframe, 2)
-        if calframe[1][3] is 'show':
+        if calframe[1][3] == 'show':
             click.echo("\n\nYou need to use --vars-data to fill your variables for show command")
             ctx.exit(1)
         else:
@@ -1812,6 +1847,7 @@ def create_individual_testrun_results(artifact_locations, config):
             trun = dict()
             trun['total_tests'] = 0
             trun['failed_tests'] = 0
+            trun['error_tests'] = 0
             trun['skipped_tests'] = 0
             trun['passed_tests'] = 0
             tree = ET.parse(path)
@@ -1829,10 +1865,14 @@ def create_individual_testrun_results(artifact_locations, config):
                     trun['failed_tests'] = trun['failed_tests'] + len([testcase.find('failure')
                                                                         for testcase in test.findall('testcase')
                                                                         if testcase.findall('failure')])
+                    trun['error_tests'] = trun['error_tests'] + len([testcase.find('error')
+                                                                        for testcase in test.findall('testcase')
+                                                                        if testcase.findall('error')])
                     trun['skipped_tests'] = trun['skipped_tests'] + len([testcase.find('skipped')
                                                                          for testcase in test.findall('testcase')
                                                                          if testcase.findall('skipped')])
-                    trun['passed_tests'] = trun['total_tests'] - trun['failed_tests'] - trun['skipped_tests']
+                    trun['passed_tests'] = trun['total_tests'] - trun['failed_tests'] - trun['error_tests'] -\
+                                           trun['skipped_tests']
                 individual_res.append({os.path.basename(path): trun})
             else:
                 LOG.warning("The xml file %s does not have the correct format (no 'testsuite' or 'testsuites'"
@@ -1853,6 +1893,7 @@ def create_aggregate_testrun_results(individual_results):
     """
     total_tests = 0
     failed_tests = 0
+    error_tests = 0
     skipped_tests = 0
     passed_tests = 0
     agg_results = dict()
@@ -1861,11 +1902,13 @@ def create_aggregate_testrun_results(individual_results):
         for val in run.values():
             total_tests += val['total_tests']
             failed_tests += val['failed_tests']
+            error_tests += val['error_tests']
             skipped_tests += val['skipped_tests']
             passed_tests += val['passed_tests']
 
     agg_results.update(aggregate_testrun_results=dict(total_tests=total_tests,
                                                       failed_tests=failed_tests,
+                                                      error_tests=error_tests,
                                                       skipped_tests=skipped_tests,
                                                       passed_tests=passed_tests
                                                       ))
@@ -1896,13 +1939,17 @@ def generate_default_template_vars(scenario, notification):
     """
     Default template dictionary created to be used
     when rendering the default notification template.
-    :return:
+    :return: temp_dict dict dictionary of selected variables for rendering notification templates
     """
 
     passed_tasks = getattr(scenario, 'passed_tasks', [])
     failed_tasks = getattr(scenario, 'failed_tasks', [])
 
     temp_dict = dict(scenario=scenario)
+
+    temp_dict['scenario_graph'] = scenario.__getattribute__('scenario_graph')
+
+    temp_dict['scenario_vars'] = temp_dict.get('scenario_graph').__getattribute__('scenario_vars')
 
     if getattr(notification, 'on_start', False):
         temp_dict['passed_tasks'] = passed_tasks[-1]

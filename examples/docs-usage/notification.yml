@@ -77,3 +77,16 @@ notifications:
     from: qe-team@redhat.com
     subject: test email notification using default template {{ UUID }}
     message_template: email_templ.txt
+
+---
+notifications:
+  - name: msg_template
+    notifier: email-notifier
+    credential: email
+    on_tasks: ['provision']
+    to:
+      - jsmith@redhat.com
+      - fbar@redhat.com
+    from: qe-team@redhat.com
+    subject: test email notification is for user {{ username }}
+    message_template: {{ msg_template }}

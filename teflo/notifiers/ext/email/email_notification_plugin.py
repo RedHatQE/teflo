@@ -47,6 +47,7 @@ class EmailNotificationPlugin(NotificationPlugin):
         super(EmailNotificationPlugin, self).__init__(notification=notification)
 
         self.scenario = getattr(self.notification, 'scenario')
+        self.scenario_graph = getattr(self.scenario, 'scenario_graph')
         self.sender = getattr(self.notification, 'from')
         self.receivers = getattr(self.notification, 'to')
         self.cc = getattr(notification, 'cc', [])
@@ -146,7 +147,8 @@ class EmailNotificationPlugin(NotificationPlugin):
                 self.body = template_render(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                             'templates/email_txt_template.jinja')
                                                             ),
-                                            generate_default_template_vars(self.scenario, self.notification)
+
+                                              generate_default_template_vars(self.scenario, self.notification)
                                             )
             else:
                 self.body = template_render(os.path.abspath(os.path.join(os.path.dirname(__file__),
@@ -155,11 +157,10 @@ class EmailNotificationPlugin(NotificationPlugin):
                                             generate_default_template_vars(self.scenario, self.notification)
                                             )
         elif not self.body and self.body_tmpl:
-            var_dict = dict()
-            # Updating the the var_dict with scenario object to be used if needed by the user template
-            var_dict.update(scenario=generate_default_template_vars(self.scenario, self.notification).get('scenario'))
-            # Updating the the var_dict with environmental variables be used in the user template
-            var_dict.update(os.environ)
+
+            # this var_dict consists of scenario object and scenario_vars which are all the variables
+            # used by teflo along with environment variables
+            var_dict = generate_default_template_vars(self.scenario, self.notification)
             self.body = template_render(os.path.abspath(os.path.join(getattr(self.notification, 'workspace'),
                                         self.body_tmpl)), var_dict)
 

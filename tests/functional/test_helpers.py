@@ -26,6 +26,7 @@
 """
 
 from teflo.resources import scenario
+import yaml
 import pytest
 import os
 import mock
@@ -39,7 +40,7 @@ from teflo._compat import ConfigParser
 from teflo.utils.config import Config
 from teflo.exceptions import TefloError, HelpersError
 from teflo.provisioners.ext import BeakerClientProvisionerPlugin
-from teflo.helpers import DataInjector, validate_render_scenario, set_task_class_concurrency, \
+from teflo.helpers import DataInjector, template_render, validate_render_scenario, set_task_class_concurrency, \
     mask_credentials_password, sort_tasklist, find_artifacts_on_disk, \
     get_default_provisioner_plugin, get_ans_verbosity, schema_validator, filter_resources_labels,\
     create_individual_testrun_results, create_aggregate_testrun_results, filter_notifications_to_skip, \
@@ -53,6 +54,20 @@ def task_concurrency_config():
     cfgp.read(config_file)
     cfgp.set('task_concurrency', 'provision', 'True')
     cfgp.set('task_concurrency', 'report', 'True')
+    with open(config_file, 'w') as cf:
+        cfgp.write(cf)
+    os.environ['TEFLO_SETTINGS'] = config_file
+    config = Config()
+    config.load()
+    return config
+
+
+@pytest.fixture(scope='class')
+def template_render_config_with_jinjainclude_on():
+    config_file = '../assets/teflo.cfg'
+    cfgp = ConfigParser()
+    cfgp.read(config_file)
+    cfgp.set('defaults', 'toggle_jinja_include', 'True')
     with open(config_file, 'w') as cf:
         cfgp.write(cf)
     os.environ['TEFLO_SETTINGS'] = config_file
@@ -252,6 +267,11 @@ class TestDataInjector(object):
         assert isinstance(cmd[1], list)
         assert cmd[1] == ['world', 'v1']
 
+def test_validate_render_scenario_incorrect_iterate_method(task_concurrency_config):
+    task_concurrency_config['INCLUDED_SDF_ITERATE_METHOD'] = 'wrong_val'
+    with pytest.raises(ValueError) as ex:
+        scenario_graph = validate_render_scenario('../assets/correct_include_descriptor.yml', task_concurrency_config)
+    assert "the iterate method value set in teflo.cfg is incorrect wrong_val" in ex.value.args[0]
 
 def test_validate_render_scenario_no_include(task_concurrency_config):
     scenario_graph = validate_render_scenario(os.path.abspath('../assets/no_include.yml'), task_concurrency_config)
@@ -523,7 +543,8 @@ def test_filter_resources_03(asset2, asset3):
 def test_create_individual_testrun_results(mock_method):
     mock_method.return_value = ['../assets/artifacts/host03/sample.xml']
     res = create_individual_testrun_results({}, {})
-    assert res[0]['sample.xml'] == {'total_tests': 4, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 4}
+    assert res[0]['sample.xml'] == {'total_tests': 5, 'failed_tests': 0, 'error_tests': 1,
+                                    'skipped_tests': 0, 'passed_tests': 4}
 
 
 @mock.patch('teflo.helpers.search_artifact_location_dict')
@@ -531,8 +552,10 @@ def test_create_individual_testrun_results_1(mock_method):
     """this test verifies xmls with tag testsuite and testsuites work correctly"""
     mock_method.return_value = ['../assets/artifacts/host03/sample1.xml', '../assets/artifacts/host03/sample.xml']
     res = create_individual_testrun_results({}, {})
-    assert res[0]['sample1.xml'] == {'total_tests': 2, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 2}
-    assert res[1]['sample.xml'] == {'total_tests': 4, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 4}
+    assert res[0]['sample1.xml'] == {'total_tests': 2, 'failed_tests': 0,
+                                     'error_tests': 0, 'skipped_tests': 0, 'passed_tests': 2}
+    assert res[1]['sample.xml'] == {'total_tests': 5, 'failed_tests': 0,
+                                    'error_tests': 1, 'skipped_tests': 0, 'passed_tests': 4}
 
 
 @mock.patch('teflo.helpers.search_artifact_location_dict')
@@ -553,12 +576,14 @@ def test_create_individual_testrun_results_with_incorrect_root_tag(mock_method):
 
 def test_create_aggregate_testrun_results():
     ind_res = [
-                {'sample.xml': {'total_tests': 2, 'failed_tests': 0, 'skipped_tests': 0, 'passed_tests': 2}},
-                {'sample1.xml': {'total_tests': 4, 'failed_tests': 2, 'skipped_tests': 0, 'passed_tests': 2}}
+                {'sample.xml': {'total_tests': 5, 'failed_tests': 0, 'error_tests': 1, 'skipped_tests': 0, 'passed_tests': 4}},
+                {'sample1.xml': {'total_tests': 4, 'failed_tests': 2, 'error_tests': 0, 'skipped_tests': 0, 'passed_tests': 2}}
                ]
     res = create_aggregate_testrun_results(ind_res)
-    assert res['aggregate_testrun_results']['total_tests'] == 6
+    assert res['aggregate_testrun_results']['total_tests'] == 9
     assert res['aggregate_testrun_results']['failed_tests'] == 2
+    assert res['aggregate_testrun_results']['error_tests'] == 1
+    assert res['aggregate_testrun_results']['passed_tests'] == 6
 
 
 def test_filter_notifications_to_skip_01(teflo1, notification_on_start_resource, notification_default_resource):
@@ -622,3 +647,10 @@ def test_check_for_var_file_with_default_path_as_dir(teflo1):
     assert '/tmp/teflo_var_file/var1.yml' in res
     assert len(res) == 2
     os.system("rm -r /tmp/teflo_var_file")
+
+
+def test_template_render(template_render_config_with_jinjainclude_on):
+    rendered_text = template_render('../assets/test_template_render.yml', {},
+                                    template_render_config_with_jinjainclude_on["TOGGLE_JINJA_INCLUDE"])
+    result = yaml.safe_load(rendered_text)
+    assert len(result["include"]) == 4

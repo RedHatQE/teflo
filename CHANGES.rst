@@ -1,3 +1,27 @@
+Version 2.1.0 (2021-11-05)
+--------------------------
+
+Documentation
+~~~~~~~~~~~~
+* Modified quickstart page and flowchart for teflo
+
+Enhancements
+~~~~~~~~~~~~
+* Make the data folder and results folder available to users in the form of environment variables 
+* Added support usage of variables in the variables files in message notification templating
+* Add skip failures ability during the graph run 
+* Allow iterate_method from cli 
+* Added check for installing ansible roles when running ansible playbooks under resource_check method 
+
+Bug Fixes
+~~~~~~~~~~~~~
+* Fixed syntax warnings in CI
+* Fix same file error 
+* Fixed test result summary does not take into account error test case elements 
+* Fixed the ansible nested var issue 
+* Fix issues of jinja templating in include
+
+
 Version 2.0.0 (2021-08-02)
 --------------------------
 
@@ -23,6 +47,18 @@ Documentation
 ~~~~~~~~~~~~~
 * Added explanation about how to use scenario graph
 * Added explanation about how *include* works with scenario graph
+
+Version 1.2.5 (2021-11-05)
+--------------------------
+
+Enhancements
+~~~~~~~~~~~~
+* Enabled ci for version 1.2.x
+
+Bug Fixes
+~~~~~~~~~
+* Fix for: custom resource_check does not honor the ansible_galaxy_options
+* Fixed the ansible nested var issue with ansible_facts
 
 
 Version 1.2.4 (2021-09-23)
