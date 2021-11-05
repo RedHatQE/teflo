@@ -1,3 +1,15 @@
+Version 1.2.5 (2021-11-05)
+--------------------------
+
+Enhancements
+~~~~~~~~~~~~
+* Enabled ci for version 1.2.x
+
+Bug Fixes
+~~~~~~~~~
+* Fix for: custom resource_check does not honor the ansible_galaxy_options
+* Fixed the ansible nested var issue with ansible_facts
+
 Version 1.2.4 (2021-09-23)
 --------------------------
 
