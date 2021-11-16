@@ -50,6 +50,12 @@ understand the key/values defined.
         - Yes
         - n/a
 
+    *   - environment_vars
+        - Additional environment variables to be passed during the orchestrate task
+        - dict
+        - No
+        - environment variables set prior to starting the teflo run are available
+
 Hosts
 -----
 
@@ -777,6 +783,16 @@ provide the script parameters
 
 .. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 286-294
+
+Example 16
+~~~~~~~~~~
+
+Example to use environment_vars to be passed to the ansible playbook/script/command
+Variables X and Y are available during the script execution and can be retrieved
+for additional logic within the script
+
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
+    :lines: 366-375
 
 Resources
 ~~~~~~~~~

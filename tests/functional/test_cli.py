@@ -279,6 +279,9 @@ class TestCli(object):
             teflo, ['run', '-s', '../localhost_scenario/scenario_local.yml', '-im', 'by_wrong']
         )
         assert results.exit_code == 2
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
     def test_wrong_cli_skip_fail(mock_method, runner):
         """This is for testing use of wrong skip_fail option in teflo cli"""
         mock_method.return_value = 0

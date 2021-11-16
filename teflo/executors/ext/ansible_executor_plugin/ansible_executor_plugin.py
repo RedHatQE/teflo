@@ -27,6 +27,7 @@
 
 import ast
 import os.path
+import os
 import textwrap
 from teflo.core import ExecutorPlugin
 from teflo.exceptions import ArchiveArtifactsError, TefloExecuteError, AnsibleServiceError
@@ -67,11 +68,12 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
         self.options = getattr(package, 'ansible_options', None)
         self.ignorerc = getattr(package, 'ignore_rc', False)
         self.validrc = getattr(package, 'valid_rc', None)
-
+        self.env_var = getattr(package, 'environment_vars', {})
         self.injector = DataInjector(self.all_hosts)
 
         self.ans_service = AnsibleService(self.config, self.hosts, self.all_hosts, self.options,
-                                          concurrency=self.config['TASK_CONCURRENCY']['EXECUTE'].lower())
+                                          concurrency=self.config['TASK_CONCURRENCY']['EXECUTE'].lower(),
+                                          env_var=self.env_var)
 
         self.ans_verbosity = get_ans_verbosity(self.config)
 

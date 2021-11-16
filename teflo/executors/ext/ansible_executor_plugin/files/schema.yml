@@ -102,3 +102,7 @@ mapping:
       - type: str
   ignore_rc:
     type: bool
+  environment_vars:
+    allowempty: True
+    type: map
+

@@ -50,3 +50,6 @@ mapping:
   ansible_galaxy_options:
     allowempty: True
     type: map
+  environment_vars:
+    allowempty: True
+    type: map

@@ -267,3 +267,22 @@ execute:
       - artifacts/dir1/abc.log
 
 
+# example for env vars
+---
+execute:
+  - name: playbook execution
+    description: "execute playbook tests against the clients"
+    hosts: clients
+    executor: runner
+    playbook:
+    - name: ansible/test_gather_machine_facts.yml
+    ansible_options:
+      extra_vars:
+        workspace: .
+      skip_tags:
+       - cleanup
+    artifacts:
+    - ~/cloud-user/client.facts
+    environment_vars:
+      data_dir: /home/data
+      uname: teflo_user

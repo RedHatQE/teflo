@@ -135,10 +135,17 @@ Please see the table below to understand the key/values defined.
         - n/a
 
     *   - ansible_options
-        - git information for the tests in execution
-        - dictionary of ansible options
+        - get ansible options for the tests in execution
+        - dictionary
         - No
         - n/a
+
+    *   - environment_vars
+        - Additional environment variables to be passed during the test execution
+        - dict
+        - No
+        - environment variables set prior to starting the teflo run are available
+
 
 
 Hosts
@@ -519,6 +526,15 @@ following setting to False in the teflo.cfg
 
    Teflo expects the xmls collected to have the **<testsuites>** tag  OR **<testsuite>** as its root tag,
    else it skips those xml files for testrun summary generation
+
+Using environment variables:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the below example the environment variables data_dir and uname are made available during
+the playbook execution
+
+.. literalinclude:: ../../../examples/docs-usage/execute.yml
+    :lines: 271-288
 
 Common Examples
 ---------------

@@ -11,3 +11,8 @@
 
   - name: print user name
     shell: "echo {{ name }}"
+
+
+  - name: get env vars
+    shell: "echo {{ lookup('env', 'uname') }}, {{ lookup('env', 'project') }} "
+
