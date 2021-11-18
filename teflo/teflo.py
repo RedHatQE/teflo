@@ -470,23 +470,27 @@ class Teflo(LoggerMixin, TimeMixin):
     def collect_final_passed_failed_tasks_status(self, final_passed_tasks: list,
                                                  final_failed_tasks: list, status: list):
         """
-        This method collects all tests from all scenarios from
+        This method collects all failed and passed tasks from all scenarios in
         the self.scenario_graph
         """
 
         for sc in self.scenario_graph:
-            if getattr(sc, "passed_tasks", None) is not None:
-                for task in sc.passed_tasks:
-                    if task not in final_passed_tasks:
-                        final_passed_tasks.append(task)
 
             if getattr(sc, "failed_tasks", None) is not None:
                 for task in sc.failed_tasks:
                     if task not in final_failed_tasks:
                         final_failed_tasks.append(task)
+                    if task in final_passed_tasks:
+                        final_passed_tasks.remove(task)
+
+            if getattr(sc, "passed_tasks", None) is not None:
+                for task in sc.passed_tasks:
+                    if task not in final_passed_tasks and task not in final_failed_tasks:
+                        final_passed_tasks.append(task)
 
             if getattr(sc, "overall_status", None) is not None:
-                status[0] = 1 if sc.overall_status == 1 else status[0]
+                if sc.overall_status == 1:
+                    status[0] = 1
 
     def run_helper(self, sc: Scenario = None, tasklist: list = TASKLIST):
         """
@@ -551,7 +555,6 @@ class Teflo(LoggerMixin, TimeMixin):
             # reload resource objects
             sc.reload_resources(ex.results)
             self.scenario_graph.reload_resources_from_scenario(sc)
-
             # roll back by cleaning up any resources that might have been provisioned
             if "cleanup" in tasklist and [item for item in failed_tasks if item != 'cleanup']:
                 if [item for item in passed_tasks if item == 'provision'] \
@@ -566,7 +569,6 @@ class Teflo(LoggerMixin, TimeMixin):
 
                         # reload resource objects
                         sc.reload_resources(data)
-
                         passed_tasks.append(task)
                     except Exception as ex:
                         self.logger.error(ex)
@@ -605,8 +607,6 @@ class Teflo(LoggerMixin, TimeMixin):
         This method handle all notifications
         """
 
-        scenario: Scenario
-
         self.logger.info('Sending out any notifications that are registered.')
 
         if task == 'on_demand':
@@ -615,15 +615,6 @@ class Teflo(LoggerMixin, TimeMixin):
             self.logger.info(' * Task    : notify')
             sc: Scenario
             for sc in self.scenario_graph:
-                setattr(sc, 'overall_status', status)
-                setattr(sc, 'passed_tasks', [])
-                setattr(sc, 'failed_tasks', [])
-
-                if passed_tasks:
-                    setattr(sc, 'passed_tasks', passed_tasks)
-
-                if failed_tasks:
-                    setattr(sc, 'failed_tasks', failed_tasks)
                 try:
                     data = self._run_pipeline(task, sc)
                     self.scenario_graph.remove_resources_from_scenario(sc)
@@ -643,16 +634,16 @@ class Teflo(LoggerMixin, TimeMixin):
             state = 'FAILED' if status else 'PASSED'
 
             self._write_out_results()
-            self._print_footer(getattr(sc, 'passed_tasks', []),
-                                getattr(sc, 'failed_tasks', []),
-                                state)
+            final_passed_tasks = []
+            final_failed_tasks = []
+            self.collect_final_passed_failed_tasks_status(final_passed_tasks, final_failed_tasks, [status])
+
+            self._print_footer(final_passed_tasks, final_failed_tasks, state)
 
             self._archive_results()
             sys.exit(status)
         else:
             setattr(scenario, 'overall_status', status)
-            setattr(scenario, 'passed_tasks', [])
-            setattr(scenario, 'failed_tasks', [])
 
             if passed_tasks:
                 setattr(scenario, 'passed_tasks', passed_tasks)

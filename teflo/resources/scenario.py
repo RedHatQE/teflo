@@ -59,7 +59,9 @@ class Scenario(TefloResource):
         'name',         # the name of the scenario
         'description',  # a brief description of what the scenario is,
         'resource_check',    # external dependency check resources
-        'overall_status'
+        'overall_status',
+        'passed_tasks',
+        'failed_tasks'
     ]
 
     def __init__(self,
@@ -113,6 +115,9 @@ class Scenario(TefloResource):
         self._included_scenario_path = list()
 
         self._scenario_graph = None
+
+        self._passed_tasks = list()
+        self._failed_tasks = list()
 
         # set the teflo task classes for the scenario
         self._validate_task_cls = validate_task_cls
@@ -682,6 +687,34 @@ class Scenario(TefloResource):
         """set scenario_graph property"""
         self._scenario_graph = value
 
+    @property
+    def passed_tasks(self):
+        """passed_tasks property for the scenario"""
+        return self._passed_tasks
+
+    @passed_tasks.setter
+    def passed_tasks(self, value):
+        """set passed_tasks property"""
+        if not isinstance(value, list):
+            raise ScenarioError("The scenario passed_tasks value needs to be a list")
+        for task in value:
+            if task not in self.passed_tasks:
+                self._passed_tasks.append(task)
+
+    @property
+    def failed_tasks(self):
+        """failed_tasks property for the scenario"""
+        return self._failed_tasks
+
+    @failed_tasks.setter
+    def failed_tasks(self, value):
+        """set failed_tasks property"""
+        if not isinstance(value, list):
+            raise ScenarioError("The scenario failed_tasks value needs to be a list")
+        for task in value:
+            if task not in self.failed_tasks:
+                self._failed_tasks.append(task)
+
     def add_notifications(self, notification):
         """Add notifications resources to the scenario.
 
@@ -729,9 +762,9 @@ class Scenario(TefloResource):
         profile['execute'] = [execute.profile() for execute in self.executes]
         profile['report'] = [report.profile() for report in self.reports]
         profile['notifications'] = [notification.profile() for notification in self.notifications]
-        if hasattr(self, 'overall_status'):
-            profile['overall_status'] = getattr(self, 'overall_status')
-
+        for prop in ['overall_status', 'passed_tasks', 'failed_tasks']:
+            if hasattr(self, prop):
+                profile[prop] = getattr(self, prop)
         return profile
 
     def _construct_validate_task(self):
