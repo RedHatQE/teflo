@@ -35,7 +35,6 @@ from teflo.cli import print_header, teflo
 from click.testing import CliRunner
 from teflo.exceptions import TefloError
 
-
 @pytest.fixture(scope='class')
 def runner():
     return CliRunner()
@@ -200,6 +199,20 @@ class TestCli(object):
         assert 'another_test' in results.output
 
         assert results.exit_code == 0
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
+    def test_provision_run_multiple_vars_files_in_directory(mock_method, runner):
+        mock_method.return_value = 0
+        results = runner.invoke(
+            teflo, ['run', '-s', '../assets/scenario_graph_basic_test/sdf.yml',
+                    '-d', '/tmp', '--vars-data', '../assets/vars_files']
+        )
+        assert 'firstval' in results.output
+        assert 'secondval' in results.output
+        assert 'is a directory' in results.output
+        assert results.exit_code == 0
+
 
     @staticmethod
     @mock.patch.object(Teflo, 'run')

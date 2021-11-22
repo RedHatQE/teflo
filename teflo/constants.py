@@ -34,6 +34,7 @@ SCHEMA_EXT = os.path.join(os.path.dirname(__file__), 'files/extensions.py')
 DATA_FOLDER = tempfile.gettempdir()
 DEFAULT_INVENTORY = os.path.join(DATA_FOLDER, '.results/inventory')
 DEFAULT_ARTIFACT = os.path.join(DATA_FOLDER, '.results/artifacts')
+EXTRA_VARS_FILES = []
 
 TASKLIST = [
     "validate",
@@ -122,6 +123,7 @@ DEFAULT_CONFIG = {
     "TOGGLE_JINJA_INCLUDE": "False",
     "REMOTE_WORKSPACE_DOWNLOAD_LOCATION": ".teflo_remote_workspace_cache/",
     "CLEAN_CACHED_WORKSPACE_AFTER_EACH_RUN": "True",
+    "EXTRA_VARS_FILES": EXTRA_VARS_FILES,
 }
 
 # Default config sections

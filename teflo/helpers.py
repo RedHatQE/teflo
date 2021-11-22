@@ -1331,7 +1331,7 @@ def build_artifact_regex_query(name):
     return regquery
 
 
-def check_for_var_file(config):
+def check_for_var_file(config, temp_data_raw=()):
     """ This method  is for checking if variable file/directory is provided by the user in teflo.cfg under var_file key,
      var_file.yml under the workspace , vars folder in the workspace and
      It looks for yaml/yml files and then returns a list of file paths
@@ -1345,6 +1345,8 @@ def check_for_var_file(config):
 
     :param config: config object for teflo
     :type config: config obj
+    :param temp_data_raw: cli tuple input
+    :type temp_data_raw: tuple
     :return: var_file_list
     :rtype: list of variable file paths
     """
@@ -1374,7 +1376,6 @@ def check_for_var_file(config):
         if os.path.isdir(default_var_file):
             LOG.debug("Default variable file path in teflo.cfg is a directory. "
                       "Looking for .yml files to be used as variable files")
-
             for subdir, dirs, files in os.walk(default_var_file):
                 for filename in files:
                     filepath = subdir + os.sep + filename
@@ -1383,7 +1384,35 @@ def check_for_var_file(config):
         else:
             LOG.debug("Default variable file found in teflo.cfg")
             var_file_list.append(default_var_file)
-
+    # CHECK IF VAR_DATA WAS GIVEN BY USER IS FILE OR DIR
+    # json_val_list will get json expression input from the cli.
+    json_val_list = []
+    if temp_data_raw:
+        for item in temp_data_raw:
+            if item.endswith(".yml"):
+                var_file_list.append(item)
+            elif os.path.exists(item):
+                if os.path.isdir(item):
+                    LOG.debug("User variable file path given by CLI is a directory. "
+                              "Looking for .yml files to be used as variable files")
+                    for subdir, dirs, files in os.walk(item):
+                        for filename in files:
+                            filepath = subdir + os.sep + filename
+                            if filepath.endswith(".yml"):
+                                var_file_list.append(filepath)
+            else:
+                try:
+                    # testing if the string provided is correct json format, if its not it will throw a ValueError
+                    # Teflo will then skip that value from adding to the variable list
+                    json.loads(item)
+                except ValueError as e:
+                    LOG.info("Value entered at cli %s is Not Json Expression, will skip adding this into "
+                              "list of variables to be used" % item)
+                json_val_list.append(item)
+    # USING deepcopy() TO GET var_file_list INTO config_var_list BEFORE APPENDING JSON VALUES.
+    config_var_list = deepcopy(var_file_list)
+    config['EXTRA_VARS_FILES'] = config_var_list
+    var_file_list.extend(json_val_list)
     return var_file_list
 
 
@@ -1552,12 +1581,11 @@ def validate_render_scenario(scenario_path, config, temp_data_raw=()):
     """
 
     # Click gives us a tuple, by default
-    var_file_list = check_for_var_file(config)
-    if isinstance(temp_data_raw, tuple):
-        var_file_list.extend(list(temp_data_raw))
+    var_file_list = check_for_var_file(config, temp_data_raw)
     # Convert each item to an object, then reduce them all back to one
     temp_data_objs = [file_mgmt("r", t) if os.path.isfile(t)
                                   else json.loads(t) for t in var_file_list]
+
     # Reduce it down to a single object we can work with
     temp_data = {}
     [temp_data.update(t) for t in temp_data_objs]
