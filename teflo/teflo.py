@@ -596,7 +596,7 @@ class Teflo(LoggerMixin, TimeMixin):
                     self.config["SKIP_FAIL"] = 'False'
 
                 if str(self.config.get("SKIP_FAIL")).lower() != 'true' \
-                        and self._teflo_options['skip_fail'] is not True and state is 'FAILED':
+                        and self._teflo_options.get('skip_fail') is not True and state is 'FAILED':
                     raise TefloScenarioFailure(
                         "Scenario `%s` failed during the Teflo run" % sc.name)
 
