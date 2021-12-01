@@ -1,9 +1,10 @@
 ---
 name: sdf8
-include:
-  - sdf12.yml
-  - sdf13.yml
 description: "Included scenario for py3 environment using linchpin"
+
+include:
+- sdf12.yml
+- sdf13.yml
 
 provision:
   - name: sdf8host
@@ -12,3 +13,5 @@ provision:
     ansible_params:
       ansible_connection: local
     labels: ['hello1','hello2']
+
+failed_tasks: ['execute']
