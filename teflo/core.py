@@ -398,6 +398,12 @@ class TefloResource(LoggerMixin, TimeMixin):
         # every resource can have optional labels
         self._labels = list()
 
+    def __eq__(self, o) -> bool:
+        return self.name == o.name
+
+    def __hash__(self) -> int:
+        return super().__hash__()
+
     @property
     def name(self):
         return self._name

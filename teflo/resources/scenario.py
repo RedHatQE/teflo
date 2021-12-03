@@ -179,106 +179,30 @@ class Scenario(TefloResource):
         :return:
         """
         if isinstance(item, Asset):
-            try:
+            if self._assets.__contains__(item):
                 return self._assets.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._assets))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._assets.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         elif isinstance(item, Action):
-            try:
+            if self._actions.__contains__(item):
                 return self._actions.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                # TODO: Remove the try/except when the resources implement __eq__/__hash__
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._actions))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._actions.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         elif isinstance(item, Execute):
-            try:
+            if self._executes.__contains__(item):
                 return self._executes.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._executes))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._executes.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         elif isinstance(item, Report):
-            try:
+            if self._reports.__contains__(item):
                 return self._reports.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._reports))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._reports.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         elif isinstance(item, Notification):
-            try:
+            if self._notifications.__contains__(item):
                 return self._notifications.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._notifications))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._notifications.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         else:
             raise ValueError('Resource must be of a valid Resource type.'
                              'Check the type of the given item: %s' % item)
