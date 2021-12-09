@@ -29,7 +29,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: install required packages
         run: |
-          yum install -y gcc python3 python3-devel python3-pip krb5-workstation krb5-devel
+          yum install -y gcc python3 python3-devel python3-pip krb5-workstation krb5-devel git
 
       - name: install pip virtualenv and tox
         run: pip3 install virtualenv tox

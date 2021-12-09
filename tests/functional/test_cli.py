@@ -42,6 +42,22 @@ def runner():
 
 
 class TestCli(object):
+
+    @staticmethod
+    def test_remote_include(runner):
+        """This is for testing use of remote include"""
+
+        """
+        teflo run -s remote_include.yml --vars-data '{"hello":"unit_test"}' -t provision -t orchestrate
+        """
+
+        results = runner.invoke(
+            teflo, ['run', '-s', '../assets/remote_include.yml', '--vars-data',
+                    json.dumps(dict(hello='unit_test')), '-t', 'provision', '-t', 'orchestrate']
+        )
+        assert results.exit_code == 0
+        assert "unit_test" in results.output
+
     @staticmethod
     def test_print_header():
         assert print_header() is None

@@ -52,7 +52,6 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
         :type package: object
         """
         super(AnsibleOrchestratorPlugin, self).__init__(package)
-
         self.options = getattr(package, 'ansible_options', None)
         self.galaxy_options = getattr(package, 'ansible_galaxy_options', None)
         self.playbook = getattr(package, 'ansible_playbook', None)
@@ -97,13 +96,25 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
                          schema_ext_files=[self.__schema_ext_path__])
 
         # verifying when script or playbook is present in the orchestrate task, the name key provides a path that exist
+
         if self.script:
             if os.path.exists(self.script.get('name').split(' ', 1)[0]):
+                self.logger.debug('Found Action resource script %s' % self.script.get('name'))
+            elif os.path.exists(os.path.join(
+                    self.config["WORKSPACE"], self.script.get('name').split(' ', 1)[0])):
+                self.script["name"] = os.path.join(
+                    self.config["WORKSPACE"], self.script.get('name').split(' ', 1)[0])
                 self.logger.debug('Found Action resource script %s' % self.script.get('name'))
             else:
                 raise TefloOrchestratorError('Cannot find Action resource script %s' % self.script.get('name'))
         elif self.playbook:
             if os.path.exists(self.playbook.get('name').split(' ', 1)[0]):
+                # os.path.exists(os.path.join(self.playbook.get('name').split(' ', 1)[0]):
+                self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
+            # it doesn't have short_lib_name here, so it can't find the file
+            elif os.path.exists(os.path.join(self.config["WORKSPACE"], self.playbook.get('name').split(' ', 1)[0])):
+                self.playbook["name"] = os.path.join(
+                    self.config["WORKSPACE"], self.playbook.get('name').split(' ', 1)[0])
                 self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
             else:
                 raise TefloOrchestratorError('Cannot find Action resource playbook %s' %
@@ -111,6 +122,11 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
 
     def __playbook__(self):
         self.logger.info('Executing playbook:')
+        name_split = self.playbook.get('name').split(' ', 1)
+        if os.path.exists(os.path.join(self.config["WORKSPACE"], self.playbook.get('name').split(' ', 1)[0])):
+            name_split[0] = os.path.join(
+                    self.config["WORKSPACE"], name_split[0])
+            self.playbook["name"] = " ".join(name_split)
         results = self.ans_service.run_playbook(self.playbook)
         if results[0] != 0:
             raise TefloOrchestratorError('Playbook %s failed to run\nThe error is:\n%s' %
@@ -120,7 +136,11 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
 
     def __script__(self):
         self.logger.info('Executing script:')
-
+        name_split = self.script.get('name').split(' ', 1)
+        if os.path.exists(os.path.join(self.config["WORKSPACE"], self.script.get('name').split(' ', 1)[0])):
+            name_split[0] = os.path.join(
+                    self.config["WORKSPACE"], name_split[0])
+            self.script["name"] = " ".join(name_split)
         result = self.ans_service.run_script_playbook(self.script)
         if result['rc'] != 0:
             raise TefloOrchestratorError('Script %s failed. Host=%s rc=%d Error: %s'

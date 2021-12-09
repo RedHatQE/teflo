@@ -61,7 +61,8 @@ class Scenario(TefloResource):
         'resource_check',    # external dependency check resources
         'overall_status',
         'passed_tasks',
-        'failed_tasks'
+        'failed_tasks',
+        'remote_workspace'
     ]
 
     def __init__(self,
@@ -114,6 +115,7 @@ class Scenario(TefloResource):
         self._child_scenarios = list()
         self._included_scenario_path = list()
 
+        self._remote_workspace = list()
         self._scenario_graph = None
 
         self._passed_tasks = list()
@@ -502,17 +504,31 @@ class Scenario(TefloResource):
 
     @property
     def included_scenario_path(self):
-        """Reports property.
+        """scenario path property.
 
-        :return: report resources associated to the scenario
+        :return: scenario path property to the scenario
         :rtype: list
         """
         return self._included_scenario_path
 
     @included_scenario_path.setter
     def included_scenario_path(self, included_scenario_path):
-        """Set report property."""
+        """scenario path property."""
         self._included_scenario_path.append(included_scenario_path)
+
+    @property
+    def remote_workspace(self):
+        """remote_workspace property.
+
+        :return: remote_workspace property to the scenario
+        :rtype: list
+        """
+        return self._remote_workspace
+
+    @remote_workspace.setter
+    def remote_workspace(self, remote_workspace):
+        """Set remote_workspace property."""
+        self._remote_workspace = remote_workspace
 
     @property
     def reports(self):
@@ -678,6 +694,7 @@ class Scenario(TefloResource):
         profile = OrderedDict()
         profile['name'] = self.name
         profile['description'] = self.description
+        profile['remote_workspace'] = self.remote_workspace
         if self.child_scenarios:
             profile['include'] = self.included_scenario_path
         profile['resource_check'] = self.resource_check
