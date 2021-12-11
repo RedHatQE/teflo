@@ -1589,11 +1589,6 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
     # leave this line here for future improvement
     # root_config = deepcopy(config)
 
-    from .utils.config import Config
-    root_config = Config()
-    for item in config.items():
-        root_config[item[0]] = item[1]
-
     def addAllIncludes(parent_scenario: Scenario, checked_list: dict):
         '''
         This method add all included child sdfs to the parent_scenario
@@ -1638,7 +1633,8 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
             return ret
 
         workspace_info = None
-        if 'remote_workspace' in data.keys() and data['remote_workspace'] is not None:
+        if 'remote_workspace' in data.keys() and data['remote_workspace'] is not None \
+                and len(data['remote_workspace']) is not 0:
             remote_workspaces = data['remote_workspace']
             workspace_info = process_remote_workspace(remote_workspaces)
 
@@ -1651,6 +1647,8 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
             real_path = path.split("/")
             if workspace_info.get(real_path[0], None) is not None:
                 real_path[0] = workspace_info.get(real_path[0], None)
+            else:
+                return path, None
             ret = "/".join(real_path)
             # return processed full path and the remote workspace dir name
             return ret, real_path[0]
@@ -1685,10 +1683,17 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                     try:
                         yaml.safe_load(template_render(item, root_scenario_temp_data,
                                                        config.get("TOGGLE_JINJA_INCLUDE", False)))
+                        from .utils.config import Config
+                        root_config = Config()
+                        root_config.load()
+                        for xxx in parent_scenario.config.items():
+                            root_config[xxx[0]] = xxx[1]
                         child_sc = Scenario(config=root_config, path=path)
                         # change workspace if this is a remote sc
-                        if remote_path[1]:
+                        if workspace_info is not None and remote_path[1]:
                             child_sc.config["WORKSPACE"] = remote_path[1]
+                        else:
+                            child_sc.config["WORKSPACE"] = parent_scenario.config.get("WORKSPACE")
                         child_sc.fullpath = sc_fullpath if os.path.isfile(sc_fullpath) else sc_abspath
                         child_sc.yaml_data = template_render(item, root_scenario_temp_data,
                                                              config.get("TOGGLE_JINJA_INCLUDE", False))
