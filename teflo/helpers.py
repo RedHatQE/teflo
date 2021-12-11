@@ -1633,7 +1633,8 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
             return ret
 
         workspace_info = None
-        if 'remote_workspace' in data.keys() and data['remote_workspace'] is not None:
+        if 'remote_workspace' in data.keys() and data['remote_workspace'] is not None \
+                and len(data['remote_workspace']) is not 0:
             remote_workspaces = data['remote_workspace']
             workspace_info = process_remote_workspace(remote_workspaces)
 
@@ -1687,7 +1688,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                             root_config[xxx[0]] = xxx[1]
                         child_sc = Scenario(config=root_config, path=path)
                         # change workspace if this is a remote sc
-                        if remote_path[1]:
+                        if workspace_info is not None and remote_path[1]:
                             child_sc.config["WORKSPACE"] = remote_path[1]
                         else:
                             child_sc.config["WORKSPACE"] = parent_scenario.config.get("WORKSPACE")
