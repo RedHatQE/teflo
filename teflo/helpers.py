@@ -1647,6 +1647,8 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
             real_path = path.split("/")
             if workspace_info.get(real_path[0], None) is not None:
                 real_path[0] = workspace_info.get(real_path[0], None)
+            else:
+                return path, None
             ret = "/".join(real_path)
             # return processed full path and the remote workspace dir name
             return ret, real_path[0]
