@@ -1686,6 +1686,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                     try:
                         yaml.safe_load(template_render(item, root_scenario_temp_data,
                                                        config.get("TOGGLE_JINJA_INCLUDE", False)))
+                        root_config["WORKSPACE"] = config.get("WORKSPACE")
                         child_sc = Scenario(config=root_config, path=path)
                         # change workspace if this is a remote sc
                         if remote_path[1]:
