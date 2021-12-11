@@ -30,7 +30,12 @@ class ArtifactImporter(LoggerMixin, TimeMixin):
         self.report = report
         self.artifact_paths = []
         self.plugin = getattr(self.report, 'importer_plugin')(report)
-
+        
+        print("=====================print out reports.config from artifactimporter==============")
+        print("=====================print out reports.config from artifactimporter==============")
+        print("=====================print out reports.config from artifactimporter==============")
+        print("=====================print out reports.config from artifactimporter==============")
+        print(report.config)
         # check if user specified data pass-through injection
         if self.report.executes:
             # report.executes exist then look for host_list
