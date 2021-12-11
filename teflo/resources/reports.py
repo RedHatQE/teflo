@@ -127,12 +127,6 @@ class Report(TefloResource):
                 found_name = True
         if found_name:
             self._importer_plugin = get_importer_plugin_class(importer_name)
-            print("=====================print out reports.config==============")
-            print("=====================print out reports.config==============")
-            print("=====================print out reports.config==============")
-            print("=====================print out reports.config==============")
-            print("=====================print out reports.config==============")
-            print(self.config)
             self.do_import = True
         else:
             self.logger.error('Importer %s for report artifacts %s is invalid.'
