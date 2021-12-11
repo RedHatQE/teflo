@@ -151,3 +151,6 @@ Example teflo.cfg
     :lines: 1-13
 
 workspace_url is the url of the git repo(your teflo workspace), alias_name is the name which you want to use in include section
+.. note::
+
+        The alias_name should not be the same as local folder, it will collide
