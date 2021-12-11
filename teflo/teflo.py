@@ -277,7 +277,10 @@ class Teflo(LoggerMixin, TimeMixin):
         print("============================report's config after load_resources================================")
         print("============================report's config after load_resources================================")
         print("============================report's config after load_resources================================")
-        print(scenario_obj.reports.config)
+        for report in scenario_obj.reports:
+            print(report.config)
+        print("============================report's config after load_resources================================")
+        print("============================report's config after load_resources================================")
         print("============================report's config after load_resources================================")
         print("============================report's config after load_resources================================")
         print("============================report's config after load_resources================================")
