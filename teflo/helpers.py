@@ -1591,6 +1591,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
 
     from .utils.config import Config
     root_config = Config()
+    root_config.load()
     for item in config.items():
         root_config[item[0]] = item[1]
 
