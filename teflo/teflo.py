@@ -249,6 +249,15 @@ class Teflo(LoggerMixin, TimeMixin):
 
     def _populate_scenario_resources(self, scenario_obj: Scenario, scenario_stream):
 
+        print("============================sc's workspace================================")
+        print("============================sc's workspace================================")
+        print("============================sc's workspace================================")
+        print("============================sc's workspace================================")
+        print("============================sc's workspace================================")
+        print(scenario_obj.workspace)
+        print(scenario_obj.config["WORKSPACE"])
+        print("============================sc's workspace================================")
+        print("============================sc's workspace================================")
         scenario_data = yaml.safe_load(scenario_stream)
         pro_items = scenario_data.pop('provision', None)
         orc_items = scenario_data.pop('orchestrate', None)
@@ -263,6 +272,15 @@ class Teflo(LoggerMixin, TimeMixin):
         scenario_obj.load_resources(Execute, exe_items)
         scenario_obj.load_resources(Report, rpt_items)
         scenario_obj.load_resources(Notification, notify_items)
+        print("============================report's config after load_resources================================")
+        print("============================report's config after load_resources================================")
+        print("============================report's config after load_resources================================")
+        print("============================report's config after load_resources================================")
+        print("============================report's config after load_resources================================")
+        print(scenario_obj.reports.config)
+        print("============================report's config after load_resources================================")
+        print("============================report's config after load_resources================================")
+        print("============================report's config after load_resources================================")
 
     def load_from_yaml(self, scenario_graph: ScenarioGraph):
         """
