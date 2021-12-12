@@ -123,3 +123,37 @@ report:
   .
   .
   .
+---
+name: remote_include_example
+description: include remote sdf from git server
+
+remote_workspace:
+  - workspace_url: git@github.com:dno-github/remote-teflo-lib1.git 
+    alias_name: remote
+    # the alias_name should not be the same as local folder, it will collide
+  - workspace_url: git@github.com:dno-github/remote-teflo-lib1.git 
+    alias_name: remote2
+
+include:
+  - "remote/sdf_remote.yml"
+
+name: sdf using remote include
+description: "Provision step"
+
+provision:
+  - name: from_local_parent
+    groups: localhost
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+
+
+execute:
+  .
+  .
+  .
+
+report:
+  .
+  .
+  .

@@ -225,7 +225,7 @@ class AnsibleService(object):
 
     playbook_name = Template("cbn_execute_$type$uid.yml")
 
-    def __init__(self, config, hosts, all_hosts, ansible_options, galaxy_options=None, concurrency=None):
+    def __init__(self, config, hosts, all_hosts, ansible_options, galaxy_options=None, concurrency=None, env_var={}):
         self.hosts = hosts
         self.all_hosts = all_hosts
         self.config = config
@@ -236,7 +236,12 @@ class AnsibleService(object):
         # uuid that we can append to playbook and results file in case
         # execute/orchestrate tasks run concurrently
         self.uid = gen_random_str(5)
-        self.env_var = None
+        # setting the env variables for ansible with the os.environ
+        self.env_var = os.environ
+        if env_var:
+            # Adding any user defined env var to the os.environ
+            self.env_var = self.env_var.update(env_var)
+
         self.ans_log_path = ''
 
         # Setting ANSIBLE_LOG_PATH env variable when running actions concurrently, so each action logs gets
@@ -244,7 +249,7 @@ class AnsibleService(object):
         if concurrency == 'true':
             ans_log = 'ansible_' + self.uid + '.log'
             self.ans_log_path = os.path.join(self.config['WORKSPACE'], ans_log)
-            self.env_var = {'ANSIBLE_LOG_PATH': self.ans_log_path}
+            self.env_var.update({'ANSIBLE_LOG_PATH': self.ans_log_path})
 
         # passing the teflo's inventory directory to the Ansible Controller
         self.ans_controller = AnsibleController(os.path.abspath(self.config['INVENTORY_FOLDER']))

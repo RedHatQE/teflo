@@ -119,7 +119,9 @@ DEFAULT_CONFIG = {
     "TIMEOUT": DEFAULT_TIMEOUT,
     "PROVISIONER_OPTIONS": [],
     "INCLUDED_SDF_ITERATE_METHOD": "by_level",
-    "TOGGLE_JINJA_INCLUDE": "False"
+    "TOGGLE_JINJA_INCLUDE": "False",
+    "REMOTE_WORKSPACE_DOWNLOAD_LOCATION": ".teflo_remote_workspace_cache/",
+    "CLEAN_CACHED_WORKSPACE_AFTER_EACH_RUN": "True",
 }
 
 # Default config sections

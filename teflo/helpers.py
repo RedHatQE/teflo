@@ -24,6 +24,7 @@
     :copyright: (c) 2021 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+from copy import deepcopy
 import inspect
 import json
 import os
@@ -1584,6 +1585,9 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
     root_scenario = Scenario(config=config, path=os.path.basename(root_scenario_path))
     root_scenario.fullpath = root_scenario_path
     root_scenario.yaml_data = root_scenario_yaml_data
+    # deepcopy will work only under pythonversion > 3.9
+    # leave this line here for future improvement
+    # root_config = deepcopy(config)
 
     def addAllIncludes(parent_scenario: Scenario, checked_list: dict):
         '''
@@ -1599,6 +1603,56 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
             return
 
         data = yaml.safe_load(parent_scenario.yaml_data)
+
+        # process the parent sc here, (process its remote_workspace section,include section)
+
+        def process_remote_workspace(remote_workspaces: list):
+
+            if config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"][-1] != "/":
+                config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"] = config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"] + "/"
+            ret = {}
+            for workspace in remote_workspaces:
+                url = workspace.get("workspace_url", None)
+                short_name_of_workspace = workspace.get("alias_name", None)
+                if url is None:
+                    raise TefloError(
+                            "Your format of the imported remote_workspace is incorrect ")
+                cmd = 'git clone ' + url + ' ' + config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"] + short_name_of_workspace
+                if not os.path.isdir(config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"] + short_name_of_workspace):
+                    result = exec_local_cmd(cmd)
+                    if result[0] != 0:
+                        raise TefloError("Remote remote_workspaces download failed!!")
+
+                # all remote remote_workspaces should be stored in the same place
+                # (root_workspace/.teflo_remote_workspace_cache/)
+                # so we should use root_config instead of parent_scenario.config,
+                # which always contains the root sdf workspace path
+                remote_workspace_path = os.path.join(
+                        config["WORKSPACE"], config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"] + short_name_of_workspace)
+                ret[short_name_of_workspace] = remote_workspace_path
+            return ret
+
+        workspace_info = None
+        if 'remote_workspace' in data.keys() and data['remote_workspace'] is not None \
+                and len(data['remote_workspace']) is not 0:
+            remote_workspaces = data['remote_workspace']
+            workspace_info = process_remote_workspace(remote_workspaces)
+
+        def process_path(path: str, workspace_info: dict):
+            # ex remote_workspace/sdf.yml
+            if path is None or path == "":
+                return None, None
+            if workspace_info is None:
+                return None, None
+            real_path = path.split("/")
+            if workspace_info.get(real_path[0], None) is not None:
+                real_path[0] = workspace_info.get(real_path[0], None)
+            else:
+                return path, None
+            ret = "/".join(real_path)
+            # return processed full path and the remote workspace dir name
+            return ret, real_path[0]
+
         if 'include' in data.keys() and data['include'] is not None:
             include_item = data['include']
             for item in include_item:
@@ -1607,17 +1661,39 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                         "Your scenario has an import cycle. \
                             %s is already a node in the scenario graph, It cannot be added again. "
                         % item)
-                sc_fullpath = os.path.join(config['WORKSPACE'], item)
+                # this config is from the root teflo project which means the current workspace's teflo.cfg
+                sc_fullpath = os.path.join(parent_scenario.config['WORKSPACE'], item)
                 sc_abspath = item
-                if os.path.isfile(sc_fullpath) or os.path.isfile(sc_abspath):
+                # return processed path and the remote short name
+                remote_path = process_path(item, workspace_info)
+                sc_fullpath_is_valid = os.path.isfile(sc_fullpath)
+                sc_abspath_is_valid = os.path.isfile(sc_abspath)
+                remote_path_is_valid = os.path.isfile(remote_path[0]) if \
+                    remote_path[0] else False
+
+                if sc_fullpath_is_valid or sc_abspath_is_valid or remote_path_is_valid:
                     path = os.path.basename(item)
-                    if os.path.isfile(os.path.join(config['WORKSPACE'], item)):
-                        item = os.path.join(config['WORKSPACE'], item)
+                    if os.path.isfile(sc_fullpath):
+                        item = sc_fullpath
+                    elif os.path.isfile(sc_abspath):
+                        item = sc_abspath
+                    elif remote_path[0] and os.path.isfile(remote_path[0]):
+                        item = remote_path[0]
                     # check to verify the data in included scenario is valid
                     try:
                         yaml.safe_load(template_render(item, root_scenario_temp_data,
                                                        config.get("TOGGLE_JINJA_INCLUDE", False)))
-                        child_sc = Scenario(config=config, path=path)
+                        from .utils.config import Config
+                        root_config = Config()
+                        root_config.load()
+                        for xxx in parent_scenario.config.items():
+                            root_config[xxx[0]] = xxx[1]
+                        child_sc = Scenario(config=root_config, path=path)
+                        # change workspace if this is a remote sc
+                        if workspace_info is not None and remote_path[1]:
+                            child_sc.config["WORKSPACE"] = remote_path[1]
+                        else:
+                            child_sc.config["WORKSPACE"] = parent_scenario.config.get("WORKSPACE")
                         child_sc.fullpath = sc_fullpath if os.path.isfile(sc_fullpath) else sc_abspath
                         child_sc.yaml_data = template_render(item, root_scenario_temp_data,
                                                              config.get("TOGGLE_JINJA_INCLUDE", False))

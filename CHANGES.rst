@@ -1,3 +1,21 @@
+Version 2.2.0 (2021-12-11)
+--------------------------
+
+Features
+~~~~~~~~~
+* From this release, users are able to define remote_workspace in sdf file and use remote scenario
+
+Enhancements
+~~~~~~~~~~~~
+* Make env variables available during Orchestrate and execute stage of Teflo run 
+* Added __hash__ and __eq__ for Teflo Resource class
+
+Bug Fixes
+~~~~~~~~~~~~~
+* Fixed notification to display passed and failed tasks for the entire scenario_graph 
+* Fixed "for running You have to provide a valid scenario file. fails with 'skip-fail' KeyError" 
+
+
 Version 2.1.0 (2021-11-05)
 --------------------------
 

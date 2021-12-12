@@ -59,7 +59,10 @@ class Scenario(TefloResource):
         'name',         # the name of the scenario
         'description',  # a brief description of what the scenario is,
         'resource_check',    # external dependency check resources
-        'overall_status'
+        'overall_status',
+        'passed_tasks',
+        'failed_tasks',
+        'remote_workspace'
     ]
 
     def __init__(self,
@@ -112,7 +115,11 @@ class Scenario(TefloResource):
         self._child_scenarios = list()
         self._included_scenario_path = list()
 
+        self._remote_workspace = list()
         self._scenario_graph = None
+
+        self._passed_tasks = list()
+        self._failed_tasks = list()
 
         # set the teflo task classes for the scenario
         self._validate_task_cls = validate_task_cls
@@ -174,106 +181,30 @@ class Scenario(TefloResource):
         :return:
         """
         if isinstance(item, Asset):
-            try:
+            if self._assets.__contains__(item):
                 return self._assets.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._assets))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._assets.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         elif isinstance(item, Action):
-            try:
+            if self._actions.__contains__(item):
                 return self._actions.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                # TODO: Remove the try/except when the resources implement __eq__/__hash__
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._actions))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._actions.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         elif isinstance(item, Execute):
-            try:
+            if self._executes.__contains__(item):
                 return self._executes.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._executes))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._executes.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         elif isinstance(item, Report):
-            try:
+            if self._reports.__contains__(item):
                 return self._reports.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._reports))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._reports.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         elif isinstance(item, Notification):
-            try:
+            if self._notifications.__contains__(item):
                 return self._notifications.index(item)
-            except ValueError:
-                # Just in case attempt to locate the resource index by name
-                # since some tasks run in parallel and when they return
-                # the resource object it is a different memory reference.
-                # Since the resource objects don't have an implementation
-                # of __eq__ and/or __hash__ this is the next best way to test
-                # for object resource equality
-                try:
-                    try:
-                        res = list(filter(lambda x: x.name == item.name, self._notifications))[-1]
-                    except IndexError:
-                        # This means the resource doesn't exist at all
-                        # most likely rvalue resource
-                        return None
-                    return self._notifications.index(res)
-                except ValueError:
-                    return None
+            else:
+                return None
         else:
             raise ValueError('Resource must be of a valid Resource type.'
                              'Check the type of the given item: %s' % item)
@@ -573,17 +504,31 @@ class Scenario(TefloResource):
 
     @property
     def included_scenario_path(self):
-        """Reports property.
+        """scenario path property.
 
-        :return: report resources associated to the scenario
+        :return: scenario path property to the scenario
         :rtype: list
         """
         return self._included_scenario_path
 
     @included_scenario_path.setter
     def included_scenario_path(self, included_scenario_path):
-        """Set report property."""
+        """scenario path property."""
         self._included_scenario_path.append(included_scenario_path)
+
+    @property
+    def remote_workspace(self):
+        """remote_workspace property.
+
+        :return: remote_workspace property to the scenario
+        :rtype: list
+        """
+        return self._remote_workspace
+
+    @remote_workspace.setter
+    def remote_workspace(self, remote_workspace):
+        """Set remote_workspace property."""
+        self._remote_workspace = remote_workspace
 
     @property
     def reports(self):
@@ -682,6 +627,34 @@ class Scenario(TefloResource):
         """set scenario_graph property"""
         self._scenario_graph = value
 
+    @property
+    def passed_tasks(self):
+        """passed_tasks property for the scenario"""
+        return self._passed_tasks
+
+    @passed_tasks.setter
+    def passed_tasks(self, value):
+        """set passed_tasks property"""
+        if not isinstance(value, list):
+            raise ScenarioError("The scenario passed_tasks value needs to be a list")
+        for task in value:
+            if task not in self.passed_tasks:
+                self._passed_tasks.append(task)
+
+    @property
+    def failed_tasks(self):
+        """failed_tasks property for the scenario"""
+        return self._failed_tasks
+
+    @failed_tasks.setter
+    def failed_tasks(self, value):
+        """set failed_tasks property"""
+        if not isinstance(value, list):
+            raise ScenarioError("The scenario failed_tasks value needs to be a list")
+        for task in value:
+            if task not in self.failed_tasks:
+                self._failed_tasks.append(task)
+
     def add_notifications(self, notification):
         """Add notifications resources to the scenario.
 
@@ -721,6 +694,7 @@ class Scenario(TefloResource):
         profile = OrderedDict()
         profile['name'] = self.name
         profile['description'] = self.description
+        profile['remote_workspace'] = self.remote_workspace
         if self.child_scenarios:
             profile['include'] = self.included_scenario_path
         profile['resource_check'] = self.resource_check
@@ -729,9 +703,9 @@ class Scenario(TefloResource):
         profile['execute'] = [execute.profile() for execute in self.executes]
         profile['report'] = [report.profile() for report in self.reports]
         profile['notifications'] = [notification.profile() for notification in self.notifications]
-        if hasattr(self, 'overall_status'):
-            profile['overall_status'] = getattr(self, 'overall_status')
-
+        for prop in ['overall_status', 'passed_tasks', 'failed_tasks']:
+            if hasattr(self, prop):
+                profile[prop] = getattr(self, prop)
         return profile
 
     def _construct_validate_task(self):

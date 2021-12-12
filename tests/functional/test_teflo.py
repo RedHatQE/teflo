@@ -37,9 +37,17 @@ from teflo import Teflo
 from teflo.constants import RESULTS_FILE
 from teflo.exceptions import TefloError
 from teflo.helpers import template_render
+from click.testing import CliRunner
+from teflo.cli import teflo
+
+
+@pytest.fixture()
+def runner():
+    return CliRunner()
 
 
 class TestTeflo(object):
+
     @staticmethod
     def test_create_teflo_instance_01():
         teflo = Teflo(data_folder='/tmp')
@@ -95,7 +103,6 @@ class TestTeflo(object):
     @staticmethod
     def test_artifacts_folder_created():
         teflo = Teflo(data_folder='/tmp')
-        print(teflo.data_folder)
         assert (os.path.exists(os.path.join(teflo.config['RESULTS_FOLDER'], 'artifacts')))
 
     @staticmethod
@@ -174,6 +181,7 @@ class TestTeflo(object):
                "Please check the labels provided during the run match the ones in "\
                "scenario descriptor file" in ex.value.args[0]
 
+    @staticmethod
     def test_validate_labels_02(scenario_labels):
         """ this test verifies validate_labels throws error when wrong skip_labels is provided"""
         teflo = Teflo(data_folder='/tmp', workspace='/tmp', skip_labels=('lab1', 'label2'))
@@ -182,3 +190,14 @@ class TestTeflo(object):
         assert "No resources were found corresponding to the label/skip_label lab1. " \
                "Please check the labels provided during the run match the ones in "\
                "scenario descriptor file" in ex.value.args[0]
+
+    @staticmethod
+    def test_collect_final_passed_failed_tasks_status(runner):
+        """This test if to verify if there are failed tasks they are not seen in passed task list"""
+        results = runner.invoke(teflo, ['notify', '-s', '../assets/scenario_graph_basic_test/sdf8.yml',
+                                        '-w', '../assets/scenario_graph_basic_test/']
+                                )
+
+        assert results.exit_code == 0
+        assert "* Passed Tasks                   : ['provision']" in results.output
+        assert "* Failed Tasks                   : ['execute']" in results.output

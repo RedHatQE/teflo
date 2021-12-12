@@ -114,6 +114,7 @@ orchestrate:
     ansible_playbook:
       name: ansible/template_host_test_playbook_tasks.yml
 
+  # testing variable files usage and environment variables usage
   - name: playbook_2
     description: "run orchestrate step using file key (list) as extra_vars"
     orchestrator: ansible
@@ -124,6 +125,9 @@ orchestrate:
       extra_vars:
         file:
         - variable_1.yml
+    environment_vars:
+      uname: 'Teflo_Teflo'
+      project: 'Teflo2.0'
 
 execute:
   - name: Test running command
