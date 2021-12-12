@@ -15,8 +15,10 @@ n and n-2 teflo releases
         - 1.2.4
         - 2.0.0
         - 2.1.0
+        - 2.2.0
 
     *   - Rppreproc Plugin
+        - 2.0.0
         - 2.0.0
         - 2.0.0
         - 2.0.0
@@ -25,8 +27,10 @@ n and n-2 teflo releases
         - 1.0.0
         - 1.0.0
         - 1.0.0
+        - 1.0.0
 
     *   - Linchpin Plugin
+        - 1.0.2
         - 1.0.2
         - 1.0.2
         - 1.0.2
@@ -35,13 +39,16 @@ n and n-2 teflo releases
         - 1.0.1
         - 1.0.1
         - 1.0.1
+        - 1.0.1
 
     *   - Webhooks Notification Plugin
         - 1.1.1
         - 2.0.0
         - 2.0.1
+        - 2.0.1
 
     *   - Terraform Plugin
+        - 1.0.0
         - 1.0.0
         - 1.0.0
         - 1.0.0
@@ -50,8 +57,10 @@ n and n-2 teflo releases
         - 1.0.0
         - 2.0.0
         - 2.0.1
+        - 2.0.1
 
     *   - Polar
+        - 1.2.1
         - 1.2.1
         - 1.2.1
         - 1.2.1
@@ -59,4 +68,5 @@ n and n-2 teflo releases
     *   - Rp_preproc
         - 0.1.11
         - 0.1.11
+        - 0.1.13
         - 0.1.13
