@@ -43,6 +43,7 @@ import fnmatch
 import stat
 import jinja2
 import requests
+import ipaddress
 from paramiko import RSAKey
 from ruamel.yaml.comments import CommentedMap as OrderedDict
 from collections import OrderedDict
@@ -857,10 +858,19 @@ def ssh_retry(obj):
                     'ERROR: Unexpected error - Group %s not found in inventory file!' % kwargs['extra_vars']['hosts']
                 )
 
+        def is_ipv4(address):
+            ip = ipaddress.ip_address(address)
+
+            if isinstance(ip, ipaddress.IPv4Address):
+                return True
+            else:
+                return False
+
         def can_connect(group):
 
             sys_vars = group.vars
             server_ip = group.hosts[0].address
+            server_ip_address = socket.getaddrinfo(server_ip, None)[0][-1][0]
             LOG.info(server_ip)
 
             # skip ssh connectivity check if server is localhost
@@ -877,7 +887,12 @@ def ssh_retry(obj):
                 try:
                     # Test ssh connection
                     pkey = import_privkey_file(server_key_file)
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                    if is_ipv4(server_ip_address):
+                        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    else:
+                        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+
                     sock.connect((server_ip, server_ssh_port))
 
                     session = Session()
