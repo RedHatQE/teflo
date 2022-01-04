@@ -15,6 +15,7 @@ properties([
             name: 'SCENARIO_REPO_URL'
         ), 
         string(
+            defaultValue: '1.0',
             description: 'Layered product version of Scenario (eg. 1.0)',
             name: 'LAYERED_PRODUCT_VERSION'
         ),
