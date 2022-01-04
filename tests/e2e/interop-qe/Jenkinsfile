@@ -1,0 +1,159 @@
+/**
+* Pipeline Parameters
+*/
+
+properties([
+    parameters([
+        string(
+            defaultValue: 'info',
+            description: 'Teflo Log Level',
+            name: 'LOG_LEVEL'
+        ),
+        string(
+            defaultValue: 'https://gitlab.cee.redhat.com/PIT/scenarios/mock-rhel.git@master', 
+            description: 'Scenario to test (eg. mock-rhel)', 
+            name: 'SCENARIO_REPO_URL'
+        ), 
+        string(
+            description: 'Layered product version of Scenario (eg. 1.0)',
+            name: 'LAYERED_PRODUCT_VERSION'
+        ),
+        string(
+            description: 'Teflo version to test the scenario', 
+            name: 'TEFLO_URL'
+        ), 
+        string(
+            description: 'Openstack credential to use within the teflo.cfg',
+            name: 'OPENSTACK_CREDENTIAL'
+        ),
+        string(
+            description: 'Openstack network to use when creating instances',
+            name: 'OS_NETWORK'
+        ),
+        string(
+            description: 'Openstack key pair/ssh private key to use with created instances',
+            name: 'OS_KEYPAIR'
+        ),
+        string(
+            description: 'Folder in jenkins agent where teflo.cfg and SSH keys are present (eg. /var/lib/jenkins/creds)',
+            name: 'CREDS_FOLDER'
+        ),
+        string(
+            defaultValue: 'rhel8', 
+            description: 'Defines which Jenkins node the pipeline should run on', 
+            name: 'NODE'
+        )
+    ])
+])
+
+/**
+* Pipeline Stages
+*/
+
+node(params.NODE) {
+         def venv = "envs"
+         def scenarioDir = String.join("/", "${venv}", "${params.SCENARIO_REPO_URL}".split("/")[-1].split(".git")[0])
+         env.LAYERED_PRODUCT_VERSION = "${params.LAYERED_PRODUCT_VERSION}"
+         env.TEFLO_SETTINGS = "${params.CREDS_FOLDER}/teflo.cfg" 
+         env.OS_KEYPAIR = "${params.OS_KEYPAIR}"
+         env.OPENSTACK_CREDENTIAL = "${params.OPENSTACK_CREDENTIAL}"
+         env.OS_NETWORK = "${params.OS_NETWORK}"
+ 
+         stage("Scenario Setup") {
+             /* Install pip, Create venv, Clone mock-rhel
+             */
+             setupScenario("${venv}", "${params.SCENARIO_REPO_URL}", "${scenarioDir}", "${params.TEFLO_URL}", "${params.CREDS_FOLDER}") 
+         } 
+         stage("Validate") {
+             /* Run teflo validate
+             */
+             runTask("${venv}", "${scenarioDir}", "validate", "${params.LOG_LEVEL}")
+         }
+         stage("Provision") {
+             /* Run teflo provision
+             */
+             runTask("${venv}", "${scenarioDir}", "provision", "${params.LOG_LEVEL}")
+         }
+         stage("Orchestrate") {
+             /* Run teflo orchestrate
+             */
+             runTask("${venv}", "${scenarioDir}", "orchestrate", "${params.LOG_LEVEL}")
+         }
+         stage("Execute") {
+             /* Run teflo execute
+             */
+             runTask("${venv}", "${scenarioDir}", "execute", "${params.LOG_LEVEL}")
+             archiveArtifacts artifacts: "**"
+         }
+         stage("Cleanup") {
+             /* Run teflo cleanup
+             */
+             runTask("${venv}", "${scenarioDir}", "cleanup", "${params.LOG_LEVEL}")
+         }
+}
+
+/**
+ * Setup Scenario to create venv, install scenario package
+ * @param venvName the virtual environment name
+ * @param scenario the scenario to install
+ * @param scenarioDir the directory where scenario files are present
+ * @param teflo the teflo version to test
+ */
+def setupScenario(String venvName, String scenario, String scenarioDir, String teflo, String credsDir) {
+    //Creating Python virtual environment
+    sh("""
+    python3 -m venv ${venvName}
+    ${venvName}/bin/pip install --upgrade pip
+    ${venvName}/bin/pip install wheel
+    """)
+    echo("Python virtual environment '${venvName}' created")
+
+    //Install Scenario 
+    sh("""
+    ${venvName}/bin/pip install ${(scenario =~ "http") ? "git+${scenario}" : scenario}
+    """)
+    echo("Successfully installed Scenario '${scenario}'")
+
+    //Install teflo from TEFLO_URL
+    echo("Installing teflo '${teflo}'")
+    sh("""
+    ${venvName}/bin/pip install --force-reinstall ${(teflo =~ "http") ? "git+${teflo}" : teflo}
+    """)
+
+    //List the installed packages
+    sh("""
+    ${venvName}/bin/pip list
+    """)
+
+    //Copy SSH keys
+    dir("${scenarioDir}") {
+       echo ("Copy SSH keys")
+       sh("""
+       cp ${credsDir}/key/*  keys/
+       chmod 0600 keys/*
+       """)
+    }
+}
+
+/**
+ * Run teflo tasks
+ * @param venvName the virtual environment name
+ * @param task the teflo [validate|provision|orchestrate|report|cleanup] tasks
+ * @param scenarioDir the directory where scenario files are present
+ * @param loglevel the logging level
+ */
+def runTask(String venvName, String scenarioDir, String task, String logLevel) {
+    echo("Running teflo task '${task}'")
+    dir("${scenarioDir}") {
+            sh("""
+            set +x; source ${env.WORKSPACE}/${venvName}/bin/activate; set -x
+            teflo run \
+            -t ${task} \
+            -s ${("${task}" == "validate") ? "teflo/scenario.yml" : "${env.WORKSPACE}/.teflo/.results/results.yml" } \
+            -d "${env.WORKSPACE}/.teflo" \
+            -w . \
+            --log-level ${logLevel}
+            """)
+    }
+    echo("Teflo task '${task}' finished")
+}
