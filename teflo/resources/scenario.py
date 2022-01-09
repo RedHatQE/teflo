@@ -114,6 +114,8 @@ class Scenario(TefloResource):
         # Properties to take care of included scenarios
         self._child_scenarios = list()
         self._included_scenario_path = list()
+        self._children_size = 0
+        self._my_parent = None
 
         self._remote_workspace = list()
         self._scenario_graph = None
@@ -568,6 +570,22 @@ class Scenario(TefloResource):
     @inventory.setter
     def inventory(self, inventory: Inventory):
         self._inventory = inventory
+
+    @property
+    def children_size(self):
+        return self._children_size
+
+    @children_size.setter
+    def children_size(self, children_size):
+        self._children_size = children_size
+
+    @property
+    def my_parent(self):
+        return self._my_parent
+
+    @my_parent.setter
+    def my_parent(self, my_parent):
+        self._my_parent = my_parent
 
     @property
     def child_scenarios(self):

@@ -1605,7 +1605,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
     # root_config = deepcopy(config)
 
     def addAllIncludes(parent_scenario: Scenario, checked_list: dict):
-        '''
+        """
         This method add all included child sdfs to the parent_scenario
         as its child_scenarios
 
@@ -1613,7 +1613,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
         :type root_scenario_path: Scenario
         :param checked_list: the checked list for all visited Scenarios
         :type checked_list: dict
-        '''
+        """
         if parent_scenario is None:
             return
 
@@ -1712,7 +1712,15 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                         child_sc.fullpath = sc_fullpath if os.path.isfile(sc_fullpath) else sc_abspath
                         child_sc.yaml_data = template_render(item, root_scenario_temp_data,
                                                              config.get("TOGGLE_JINJA_INCLUDE", False))
+
                         parent_scenario.add_child_scenario(child_sc)
+                        child_sc.my_parent = parent_scenario
+
+                        child_sc_loop = child_sc
+                        while child_sc_loop.my_parent is not None:
+                            child_sc_loop.my_parent.children_size += 1
+                            child_sc_loop = child_sc_loop.my_parent
+
                         # use filename because the scenario name could
                         # contain some special characters, which is not good for
                         # file generation
@@ -1732,17 +1740,18 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                                      ' You have to provide valid scenario files to be included.')
 
     def include(unchecked_list: list, checked_list: dict):
-        '''
+        """
         This method will build a scenario linked graph
-        It reads from the unckecked_list for unread sceanrios
+        It reads from the unckecked_list for unread scenarios
         and add all its child to it, then add all it's children
         to the unchecked list for next iteration
 
-        :param unchecked_list: the unchecked list of sceanrios
+        :param unchecked_list: the unchecked list of scenarios
         :type unchecked_list: list
         :param checked_list: the checked list for all visited Scenarios
         :type checked_list: dict
-        '''
+        """
+
         # unchecked_list is a queue-liked list, we keep this as channel
         # to maintain all unchecked scenarios
         while len(unchecked_list) != 0:
