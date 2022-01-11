@@ -47,6 +47,8 @@ from .exceptions import AnsibleServiceError
 from ansible.parsing.vault import VaultSecret
 from .exceptions import AnsibleVaultError
 from ._compat import RawConfigParser, VaultLib, ansible_ver, is_py2
+import configparser
+import glob
 
 LOG = getLogger(__name__)
 
@@ -560,6 +562,21 @@ class AnsibleService(object):
                 elif setting.name == 'DEFAULT_TRANSPORT':
                     returndict["connection"] = setting.value
             return returndict
+
+    def get_playbook_path(self, coll_path=None, playbook=None):
+        """ This method is used while looking for the playbook path using fqcn
+        """
+        if coll_path and playbook:
+            fqcn_playbook_path = playbook.split('.')
+            coll_dir_path = coll_path + '/ansible_collections/' + '%s/%s' % (fqcn_playbook_path[0],
+                                                                             fqcn_playbook_path[1])
+            files = glob.glob(coll_dir_path + '/**/*.yml', recursive=True)
+            if files:
+                for path in files:
+                    if fqcn_playbook_path[-1] in path:
+                        self.logger.debug('Found Collections at: %s' % path)
+                        return path
+            return coll_dir_path
 
     def alog_update(self, folder_name=None):
         """move ansible logs to data folder/folder_name(if provided)

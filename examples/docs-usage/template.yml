@@ -191,6 +191,17 @@ orchestrate:
         rhn_password: password
         auto: True
 
+   # use FQCN and collection install
+  - name: Example 1                             # action name
+    description: "use fqcn"                     # describes what is being performed on the hosts
+    orchestrator: ansible                       # orchestrator module to use in this case ansible
+    hosts:                                      # hosts which the action is executed on
+      - all                                     # ref above ^^ to all hosts : provision.*
+    ansible_playbook:
+      name: namespace.collection1.playbook1       # playbook name(Using FQCN)
+    ansible_galaxy_options:
+      role_file: requirements.yml               # A .yml file to describe collection(name,type,version)
+
 # execute section
 
 # defines all the tests to be executed for the scenario

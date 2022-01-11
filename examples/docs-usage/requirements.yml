@@ -1,0 +1,5 @@
+---
+collections:
+  - name: https://github.com/collection/path
+    type: git
+    version: main

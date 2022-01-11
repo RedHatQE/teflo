@@ -83,6 +83,14 @@ class TestAnsibleService(object):
         mock_method.assert_called_with(playbook='hello.yml',logger=logger, extra_vars=extra_vars, run_options={},
                                        ans_verbosity=ans_verbosity, env_var=os.environ)
 
+    @staticmethod
+    @mock.patch.object(AnsibleController, 'run_playbook')
+    def test_run_playbook_name_as_fqcn(mock_method, ansible_service):
+        playbook = 'coll.project.hello'
+        coll_playbook_name = ansible_service.get_default_config(key="COLLECTIONS_PATHS")
+        test_run = ansible_service.get_playbook_path(coll_playbook_name[0], playbook)
+        assert '/collections/ansible_collections/coll/project' in test_run
+
 
     @staticmethod
     @mock.patch.object(AnsibleController, 'run_playbook', run_playbook)
