@@ -1592,7 +1592,15 @@ def validate_render_scenario(scenario_path, config, temp_data_raw=()):
 
     for item in temp_data.items():
         temp_data.update({item[0]: preprocyaml(item[1], temp_data)})
-
+        # if the processed value is not parsable by jinja2 engine,
+        # we should make it to "" then
+        if isinstance(item[1], str):
+            temp_dict = {}
+            temp_dict[item[0]] = item[1]
+            try:
+                preprocyaml_jinja(temp_dict)
+            except jinja2.exceptions.TemplateSyntaxError:
+                temp_data[item[0]] = ""
     temp_data = preprocyaml_jinja(temp_data)
     temp_data.update(os.environ)
 
