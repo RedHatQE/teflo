@@ -357,6 +357,42 @@ class TestActionResource(object):
         assert action.name == 'action'
 
     @staticmethod
+    def test_create_action_with_name_in_parameters():
+        params = dict(
+            name='action',
+            description='description goes here.',
+            hosts=['host01']
+        )
+
+        action = Action(parameters=params)
+        assert action.name == 'action'
+
+    @staticmethod
+    def test_resource_id_generation():
+        params = dict(
+            name='action',
+            description='description goes here.',
+            hosts=['host01'],
+        )
+
+        action = Action(parameters=params)
+        assert action.resource_id != None
+
+    @staticmethod
+    def test_setting_of_resource_id():
+        params = dict(
+            name='action',
+            description='description goes here.',
+            hosts=['host01']
+        )
+
+        action = Action(parameters=params)
+        assert action.resource_id != None
+        with pytest.raises(AttributeError) as ex:
+            action.resource_id = "hello"
+        assert 'You cannot set resource_id after class is instantiated.' in ex.value.args
+
+    @staticmethod
     def test_create_action_without_hosts():
         params = dict(
             name='action',
@@ -472,6 +508,31 @@ class TestReportResource(object):
         mock_plugin_class.return_value = ImporterPlugin
         report = Report(name='test.xml', parameters=params, config=config)
         assert isinstance(report.executes, list)
+
+    @staticmethod
+    @mock.patch('teflo.resources.reports.get_importers_plugin_list')
+    @mock.patch('teflo.resources.reports.get_importer_plugin_class')
+    def test_resource_id_generation(mock_plugin_class, mock_plugin_list, default_report_params, config):
+        params = copy.deepcopy(default_report_params)
+        mock_plugin_list.return_value = ['polarion']
+        mock_plugin_class.return_value = ImporterPlugin
+
+        report = Report(name='test.xml', parameters=params, config=config)
+        with pytest.raises(AttributeError) as ex:
+            report.resource_id = "hello"
+        assert 'You cannot set resource_id after class is instantiated.' in ex.value.args
+        
+
+    @staticmethod
+    @mock.patch('teflo.resources.reports.get_importers_plugin_list')
+    @mock.patch('teflo.resources.reports.get_importer_plugin_class')
+    def test_setting_of_resource_id(mock_plugin_class, mock_plugin_list, default_report_params, config):
+        params = copy.deepcopy(default_report_params)
+        mock_plugin_list.return_value = ['polarion']
+        mock_plugin_class.return_value = ImporterPlugin
+
+        report = Report(name='test.xml', parameters=params, config=config)
+        report.resource_id != None
 
     @staticmethod
     @mock.patch('teflo.resources.reports.get_importers_plugin_list')
@@ -759,7 +820,7 @@ class TestScenarioResource(object):
                 assert sc.children_size == 3
 
     @staticmethod
-    def test_reload_method_assets_mixed_tasks(task_list_host, scenario_res1):
+    def test_reload_method_assets_mixed_tasks(task_list_host, scenario_res1:Scenario):
         scenario_res1.reload_resources(task_list_host)
         assert len(scenario_res1.assets) == 3
         assert scenario_res1.assets[0].name == 'host_count_0'
