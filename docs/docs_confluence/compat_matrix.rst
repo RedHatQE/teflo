@@ -14,7 +14,7 @@ n and n-2 teflo releases
     *   - Teflo Release
         - 2.1.0
         - 2.2.0
-        - 2.2.1
+        - 2.2.2
 
     *   - Rppreproc Plugin
         - 2.0.0
