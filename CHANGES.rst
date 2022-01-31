@@ -1,22 +1,8 @@
-Version 2.2.1 (2022-01-31)
---------------------------
-
-Enhancements
-~~~~~~~~~~~~
-* make scenario graph size a static attribute
-* Allow ANSIBLE_EXTRA_VARS_FILES option for orchestrate/execute task to pick up variable files provided via cli
-
-Bug Fixes
-~~~~~~~~~
-* Allow IPv6 addresses SSH connection validation
-* Fixed nested var issue
-* Fixed duplicate resource name issue
-
 Version 2.2.0 (2021-12-11)
 --------------------------
 
 Features
-~~~~~~~~
+~~~~~~~~~
 * From this release, users are able to define remote_workspace in sdf file and use remote scenario
 
 Enhancements
@@ -25,7 +11,7 @@ Enhancements
 * Added __hash__ and __eq__ for Teflo Resource class
 
 Bug Fixes
-~~~~~~~~~
+~~~~~~~~~~~~~
 * Fixed notification to display passed and failed tasks for the entire scenario_graph 
 * Fixed "for running You have to provide a valid scenario file. fails with 'skip-fail' KeyError" 
 
@@ -34,7 +20,7 @@ Version 2.1.0 (2021-11-05)
 --------------------------
 
 Documentation
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 * Modified quickstart page and flowchart for teflo
 
 Enhancements
@@ -46,7 +32,7 @@ Enhancements
 * Added check for installing ansible roles when running ansible playbooks under resource_check method 
 
 Bug Fixes
-~~~~~~~~~
+~~~~~~~~~~~~~
 * Fixed syntax warnings in CI
 * Fix same file error 
 * Fixed test result summary does not take into account error test case elements 
@@ -58,7 +44,7 @@ Version 2.0.0 (2021-08-02)
 --------------------------
 
 Features
-~~~~~~~~
+~~~~~~~~~~~~
 * Recursive include of child scenarios is supported with scenario graph implementation
 * Replaced scenario_streams with the newly added scenario graph
 * teflo show -s sdf_file.yml --show-graph added, users can see the whole scenario graph structure

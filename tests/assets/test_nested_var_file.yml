@@ -14,4 +14,3 @@ unused: "{{ ansible_facts.hostname }}"
 python:
   version: "3.10.0"
 python_version: "{{ python.version }}"
-osp_director_input_dir: "{{ lookup('config', 'COLLECTIONS_PATH', 'COLLECTIONS_PATHS', wantlist=True, on_missing='skip')[0][0] }}/ansible_collections/css/psi/tests/environments/{{ os_cloud }}/cloud/undercloud"
