@@ -43,6 +43,7 @@ import fnmatch
 import stat
 import jinja2
 import requests
+import ipaddress
 from paramiko import RSAKey
 from ruamel.yaml.comments import CommentedMap as OrderedDict
 from collections import OrderedDict
@@ -857,10 +858,19 @@ def ssh_retry(obj):
                     'ERROR: Unexpected error - Group %s not found in inventory file!' % kwargs['extra_vars']['hosts']
                 )
 
+        def is_ipv4(address):
+            ip = ipaddress.ip_address(address)
+
+            if isinstance(ip, ipaddress.IPv4Address):
+                return True
+            else:
+                return False
+
         def can_connect(group):
 
             sys_vars = group.vars
             server_ip = group.hosts[0].address
+            server_ip_address = socket.getaddrinfo(server_ip, None)[0][-1][0]
             LOG.info(server_ip)
 
             # skip ssh connectivity check if server is localhost
@@ -877,7 +887,12 @@ def ssh_retry(obj):
                 try:
                     # Test ssh connection
                     pkey = import_privkey_file(server_key_file)
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                    if is_ipv4(server_ip_address):
+                        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    else:
+                        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+
                     sock.connect((server_ip, server_ssh_port))
 
                     session = Session()
@@ -1316,7 +1331,7 @@ def build_artifact_regex_query(name):
     return regquery
 
 
-def check_for_var_file(config):
+def check_for_var_file(config, temp_data_raw=()):
     """ This method  is for checking if variable file/directory is provided by the user in teflo.cfg under var_file key,
      var_file.yml under the workspace , vars folder in the workspace and
      It looks for yaml/yml files and then returns a list of file paths
@@ -1330,6 +1345,8 @@ def check_for_var_file(config):
 
     :param config: config object for teflo
     :type config: config obj
+    :param temp_data_raw: cli tuple input
+    :type temp_data_raw: tuple
     :return: var_file_list
     :rtype: list of variable file paths
     """
@@ -1359,7 +1376,6 @@ def check_for_var_file(config):
         if os.path.isdir(default_var_file):
             LOG.debug("Default variable file path in teflo.cfg is a directory. "
                       "Looking for .yml files to be used as variable files")
-
             for subdir, dirs, files in os.walk(default_var_file):
                 for filename in files:
                     filepath = subdir + os.sep + filename
@@ -1368,7 +1384,35 @@ def check_for_var_file(config):
         else:
             LOG.debug("Default variable file found in teflo.cfg")
             var_file_list.append(default_var_file)
-
+    # CHECK IF VAR_DATA WAS GIVEN BY USER IS FILE OR DIR
+    # json_val_list will get json expression input from the cli.
+    json_val_list = []
+    if temp_data_raw:
+        for item in temp_data_raw:
+            if item.endswith(".yml"):
+                var_file_list.append(item)
+            elif os.path.exists(item):
+                if os.path.isdir(item):
+                    LOG.debug("User variable file path given by CLI is a directory. "
+                              "Looking for .yml files to be used as variable files")
+                    for subdir, dirs, files in os.walk(item):
+                        for filename in files:
+                            filepath = subdir + os.sep + filename
+                            if filepath.endswith(".yml"):
+                                var_file_list.append(filepath)
+            else:
+                try:
+                    # testing if the string provided is correct json format, if its not it will throw a ValueError
+                    # Teflo will then skip that value from adding to the variable list
+                    json.loads(item)
+                except ValueError as e:
+                    LOG.info("Value entered at cli %s is Not Json Expression, will skip adding this into "
+                              "list of variables to be used" % item)
+                json_val_list.append(item)
+    # USING deepcopy() TO GET var_file_list INTO config_var_list BEFORE APPENDING JSON VALUES.
+    config_var_list = deepcopy(var_file_list)
+    config['EXTRA_VARS_FILES'] = config_var_list
+    var_file_list.extend(json_val_list)
     return var_file_list
 
 
@@ -1537,19 +1581,26 @@ def validate_render_scenario(scenario_path, config, temp_data_raw=()):
     """
 
     # Click gives us a tuple, by default
-    var_file_list = check_for_var_file(config)
-    if isinstance(temp_data_raw, tuple):
-        var_file_list.extend(list(temp_data_raw))
+    var_file_list = check_for_var_file(config, temp_data_raw)
     # Convert each item to an object, then reduce them all back to one
     temp_data_objs = [file_mgmt("r", t) if os.path.isfile(t)
                                   else json.loads(t) for t in var_file_list]
+
     # Reduce it down to a single object we can work with
     temp_data = {}
     [temp_data.update(t) for t in temp_data_objs]
 
     for item in temp_data.items():
         temp_data.update({item[0]: preprocyaml(item[1], temp_data)})
-
+        # if the processed value is not parsable by jinja2 engine,
+        # we should make it to "" then
+        if isinstance(item[1], str):
+            temp_dict = {}
+            temp_dict[item[0]] = item[1]
+            try:
+                preprocyaml_jinja(temp_dict)
+            except jinja2.exceptions.TemplateSyntaxError:
+                temp_data[item[0]] = ""
     temp_data = preprocyaml_jinja(temp_data)
     temp_data.update(os.environ)
 
@@ -1590,7 +1641,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
     # root_config = deepcopy(config)
 
     def addAllIncludes(parent_scenario: Scenario, checked_list: dict):
-        '''
+        """
         This method add all included child sdfs to the parent_scenario
         as its child_scenarios
 
@@ -1598,7 +1649,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
         :type root_scenario_path: Scenario
         :param checked_list: the checked list for all visited Scenarios
         :type checked_list: dict
-        '''
+        """
         if parent_scenario is None:
             return
 
@@ -1697,7 +1748,15 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                         child_sc.fullpath = sc_fullpath if os.path.isfile(sc_fullpath) else sc_abspath
                         child_sc.yaml_data = template_render(item, root_scenario_temp_data,
                                                              config.get("TOGGLE_JINJA_INCLUDE", False))
+
                         parent_scenario.add_child_scenario(child_sc)
+                        child_sc.my_parent = parent_scenario
+
+                        child_sc_loop = child_sc
+                        while child_sc_loop.my_parent is not None:
+                            child_sc_loop.my_parent.children_size += 1
+                            child_sc_loop = child_sc_loop.my_parent
+
                         # use filename because the scenario name could
                         # contain some special characters, which is not good for
                         # file generation
@@ -1717,17 +1776,18 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                                      ' You have to provide valid scenario files to be included.')
 
     def include(unchecked_list: list, checked_list: dict):
-        '''
+        """
         This method will build a scenario linked graph
-        It reads from the unckecked_list for unread sceanrios
+        It reads from the unckecked_list for unread scenarios
         and add all its child to it, then add all it's children
         to the unchecked list for next iteration
 
-        :param unchecked_list: the unchecked list of sceanrios
+        :param unchecked_list: the unchecked list of scenarios
         :type unchecked_list: list
         :param checked_list: the checked list for all visited Scenarios
         :type checked_list: dict
-        '''
+        """
+
         # unchecked_list is a queue-liked list, we keep this as channel
         # to maintain all unchecked scenarios
         while len(unchecked_list) != 0:

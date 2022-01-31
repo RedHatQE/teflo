@@ -33,7 +33,7 @@ Here is an example scenario file using Jinja to template some variable data:
               - {{ networks | default('provider_net_ipv6_only') }}
 
 
-The variable data can now be passed in one of two ways.
+The variable data can now be passed in one of three ways.
 
 Raw JSON
 --------
@@ -48,7 +48,7 @@ You can pass in the data raw as a JSON dictionary
 .. code-block:: bash
 
     teflo run -s scenario.yml -t provision --vars-data '{"flavor": "m2.small", "name": "test"}'
-    --vars-data '{ "count": "2" }'
+    --vars-data '{"count": "2"}'
 
 Variable File
 -------------
@@ -80,7 +80,7 @@ You can pass in the variable file directly
 
 .. code-block:: bash
 
-    teflo run -s scenario.yml -t provision --vars-data template_file.yml --vars-data '{ "count": "2" }'
+    teflo run -s scenario.yml -t provision --vars-data template_file.yml --vars-data '{"count": "2"}'
 
 If using teflo.cfg this can be set as below. The var_file param can be a path to the variable file or path to
 the directory where the variable file is stored. If Teflo identifies it a directory then recursively it looks for all
@@ -102,6 +102,17 @@ The above example will look like
 .. code-block:: bash
 
     teflo run -s scenario.yml -t provision
+
+Directory with multiple .yml files
+-----------------------------------
+
+You can pass in a directory path containing multiple .yml files.
+The code will look for files ending with '.yml'
+
+.. code-block:: bash
+
+    teflo run -s scenario.yml -t provision --vars-data ~/files_dir
+    --vars-data '{"count": "2", "key": "val"}'
 
 
 Nested Variable Usage

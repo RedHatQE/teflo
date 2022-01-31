@@ -40,6 +40,7 @@ from traceback import format_exc
 from ._compat import RawConfigParser, string_types
 from .constants import LOGGING_CONFIG
 import threading
+from .helpers import gen_random_str
 
 
 class LoggerMixin(object):
@@ -397,12 +398,21 @@ class TefloResource(LoggerMixin, TimeMixin):
 
         # every resource can have optional labels
         self._labels = list()
+        self._resource_id = gen_random_str(10)
 
     def __eq__(self, o) -> bool:
-        return self.name == o.name
+        return self.resource_id == o.resource_id
 
     def __hash__(self) -> int:
         return super().__hash__()
+
+    @property
+    def resource_id(self):
+        return self._resource_id
+
+    @resource_id.setter
+    def resource_id(self, id):
+        raise AttributeError('You cannot set resource_id after class is instantiated.')
 
     @property
     def name(self):
@@ -518,17 +528,17 @@ class TefloResource(LoggerMixin, TimeMixin):
 
         :param data: a dictionary with attributes for the resource
         """
-        for key, value in data.items():
-            # name has precedence when coming from a YAML file
-            # if name is set through name=, it will be overwritten
-            # by the YAML file properties.
-            if key == 'name':
-                self._name = value
-            elif key == 'description':
-                self._description = value
-            elif key in self._fields:
-                setattr(self, key, value)
         if data:
+            for key, value in data.items():
+                # name has precedence when coming from a YAML file
+                # if name is set through name=, it will be overwritten
+                # by the YAML file properties.
+                if key == 'name':
+                    self._name = value
+                elif key == 'description':
+                    self._description = value
+                elif key in self._fields:
+                    setattr(self, key, value)
             self.reload_tasks()
 
     def _get_task_constructors(self):

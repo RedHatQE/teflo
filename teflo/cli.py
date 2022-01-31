@@ -75,7 +75,7 @@ def create():
 @click.option("--vars-data",
               multiple=True,
               metavar="",
-              help="Pass in variable data to template the scenario. Can be a file or raw json.")
+              help="Pass in variable data to template the scenario. Can be a file, directory or raw json.")
 @click.option("--show-graph",
               default=None,
               metavar="",
@@ -129,7 +129,7 @@ def show(ctx, scenario, list_labels, vars_data, show_graph, iterate_method):
 @click.option("--vars-data",
               multiple=True,
               metavar="",
-              help="Pass in variable data to template the scenario. Can be a file or raw json.")
+              help="Pass in variable data to template the scenario. Can be a file, directory or raw json.")
 @click.option("-l", "--labels",
               default=None,
               metavar="",
@@ -217,7 +217,8 @@ def validate(ctx, scenario, data_folder, log_level, workspace, vars_data, labels
 @click.option("--vars-data",
               multiple=True,
               metavar="",
-              help="Pass in variable data to template the scenario. Can be a file or raw json.")
+              type=str,
+              help="Pass in variable data to template the scenario. Can be a file, directory or raw json.")
 @click.option("-l", "--labels",
               default=None,
               metavar="",
@@ -317,7 +318,7 @@ def run(ctx, task, scenario, log_level, data_folder, workspace, vars_data, label
 @click.option("--vars-data",
               multiple=True,
               metavar="",
-              help="Pass in variable data to template the scenario. Can be a file or raw json.")
+              help="Pass in variable data to template the scenario. Can be a file, directory or raw json.")
 @click.option("-sn", "--skip-notify",
               default=None,
               metavar="",
