@@ -401,6 +401,7 @@ class AnsibleService(object):
             extra_vars.update(self.options['extra_vars'])
             # inject data into extra_vars
             extra_vars = self.injector.inject_dictionary(extra_vars)
+
         extra_vars['localhost'] = False
         if self.hosts:
             for h in self.hosts:
@@ -412,7 +413,7 @@ class AnsibleService(object):
         # Looking for all the variable files that teflo finds and add them as extra_vars for the ansible playbooks
         if self.config.get('ANSIBLE_EXTRA_VARS_FILES') and \
                 self.config.get('ANSIBLE_EXTRA_VARS_FILES').lower() == 'true':
-            var_files_list = self.config.get('EXTRA_VARS_FILES')
+            var_files_list = check_for_var_file(self.config)
             file = extra_vars.get('file')
             if file:
                 if not isinstance(file, str):

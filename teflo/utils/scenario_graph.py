@@ -116,10 +116,15 @@ class ScenarioGraph():
                 return sc
         return None
 
+# TODO: Scenario Graph related
+# Make this to static attribute
 # size
     @property
     def size(self):
-        return self._root.children_size + 1
+        count = 0
+        for sc in self:
+            count += 1
+        return count
 
     @size.setter
     def size(self, size):

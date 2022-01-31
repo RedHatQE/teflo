@@ -71,7 +71,6 @@ scenarios but with this particular scenario you want to also a run a non-common 
 
 Example 5
 +++++++++
-
 If you want to use jinja templating for __include__ section, you can set a parameter called __toggle_jinja_include__ to be true, under __defaults__ section in teflo.cfg
 .. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 93-125
@@ -128,13 +127,11 @@ and sdf is the main scenario
 
 by_level
 +++++++++
-
 The execution order will be
 12,13,3,8,5,10,11,4,9,6,1,7,2,0
 
 by_depth
 +++++++++
-
 The execution order will be
 12,13,3,8,5,1,10,11,7,4,9,6,2,0
 
@@ -144,14 +141,12 @@ Remote Include
 You can include teflo workspace from remote server(currently only support for git)
 
 Example SDF
-+++++++++++
-
+++++++++++++
 .. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 126-158
 
 Example teflo.cfg
-+++++++++++++++++
-
+++++++++++++
 .. literalinclude:: ../../../examples/docs-usage/teflo_example.cfg
     :lines: 1-13
 
