@@ -566,7 +566,7 @@ def exec_local_cmd_pipe(cmd, logger, env_var=None):
         if output == "" and error == "" and proc.poll() is not None:
             break
         if output:
-            logger.info(output.strip())
+            logger.info(output.rstrip())
     rc = proc.poll()
     if rc != 0:
         for line in proc.stderr:
