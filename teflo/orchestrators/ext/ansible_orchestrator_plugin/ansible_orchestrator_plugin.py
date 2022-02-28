@@ -129,8 +129,11 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
             self.playbook["name"] = " ".join(name_split)
         results = self.ans_service.run_playbook(self.playbook)
         if results[0] != 0:
-            raise TefloOrchestratorError('Playbook %s failed to run\nThe error is:\n%s' %
-                                         (self.playbook['name'], results[1]))
+            if results[1]:
+                self.logger.debug("During the failure these messages were thrown as a part"
+                                  " of stderr:\n %s " % results[1])
+            raise TefloOrchestratorError('Playbook %s failed to run.\nPlease look at the scenario'
+                                         ' log for ansible failure.' % self.playbook['name'])
         else:
             self.logger.info('Successfully completed playbook : %s' % self.playbook['name'])
 
@@ -143,8 +146,11 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
             self.script["name"] = " ".join(name_split)
         result = self.ans_service.run_script_playbook(self.script)
         if result['rc'] != 0:
-            raise TefloOrchestratorError('Script %s failed. Host=%s rc=%d Error: %s'
-                                          % (self.script['name'], result['host'], result['rc'], result['err']))
+            self.logger.debug("During the failure these messages were thrown as a part of"
+                              " stderr:\n %s" % result['err'])
+            raise TefloOrchestratorError('Script %s failed. Host=%s rc=%d.\nError: Please look at'
+                                         ' the scenario log for failure.'
+                                          % (self.script['name'], result['host'], result['rc']))
         else:
             self.logger.info('Successfully completed script : %s' % self.script['name'])
 
@@ -153,8 +159,11 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
         for shell in self.shell:
             result = self.ans_service.run_shell_playbook(shell)
             if result['rc'] != 0:
-                raise TefloOrchestratorError('Command %s failed. Host=%s rc=%d Error: %s'
-                                               % (shell['command'], result['host'], result['rc'], result['err']))
+                self.logger.debug("During the failure these messages were thrown as a part of"
+                                  " stderr:\n %s" % result['err'])
+                raise TefloOrchestratorError('Command %s failed. Host=%s rc=%d.\nError: Please look'
+                                             ' at the scenario log for failure.'
+                                               % (shell['command'], result['host'], result['rc']))
             else:
                 self.logger.info('Successfully completed command : %s' % shell['command'])
 
