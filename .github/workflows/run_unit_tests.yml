@@ -27,9 +27,9 @@ jobs:
       - run: cat /etc/os-release
 
       # Fix for repositories because EOL of centos:8
-      - name: remove mirrorlist and point to vault.centos.org repo
+      - name: remove mirrorlist and point to vault.epel.cloud repo
         run: |
-          cat /etc/os-release | grep -e "CentOS-8" || exit 0 && cd /etc/yum.repos.d/ && sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+          cat /etc/os-release | grep -e "CentOS-8" || exit 0 && cd /etc/yum.repos.d/ && sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.epel.cloud|g' /etc/yum.repos.d/CentOS-*
 
       # Runs a single command using the runners shell
       - name: install required packages
