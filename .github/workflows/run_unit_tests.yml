@@ -17,7 +17,10 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['centos:7', 'centos:8']
+        container:
+        - 'centos:7'
+        - 'quay.io/centos/centos:stream'
+        - 'quay.io/shshevac/teflo_ubi8'
       fail-fast: false
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -25,11 +28,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - run: cat /etc/os-release
-
-      # Fix for repositories because EOL of centos:8
-      - name: remove mirrorlist and point to vault.epel.cloud repo
-        run: |
-          cat /etc/os-release | grep -e "CentOS-8" || exit 0 && cd /etc/yum.repos.d/ && sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.epel.cloud|g' /etc/yum.repos.d/CentOS-*
 
       # Runs a single command using the runners shell
       - name: install required packages
