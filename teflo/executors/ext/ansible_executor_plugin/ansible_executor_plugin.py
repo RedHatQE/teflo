@@ -115,14 +115,20 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
             elif validrc:
                 if result['rc'] not in validrc:
                     self.status = 1
-                    self.logger.error('Command %s failed. Host=%s rc=%d Error: %s'
-                                      % (shell['command'], result['host'], result['rc'], result['err']))
+                    self.logger.error('Command %s failed. Host=%s rc=%d\nError: Please look at the'
+                                      ' scenario log for failure.'
+                                      % (shell['command'], result['host'], result['rc']))
+                    self.logger.debug("During the failure these messages were thrown as a part of"
+                                      " stderr:\n %s" % result['err'])
 
             else:
                 if result['rc'] != 0:
                     self.status = 1
-                    self.logger.error('Command %s failed. Host=%s rc=%d Error: %s'
-                                      % (shell['command'], result['host'], result['rc'], result['err']))
+                    self.logger.error('Command %s failed. Host=%s rc=%d\nError: Please look at the'
+                                      ' scenario log for failure.'
+                                      % (shell['command'], result['host'], result['rc']))
+                    self.logger.debug("During the failure these messages were thrown as a part of"
+                                      " stderr:\n %s" % result['err'])
 
             if self.status == 1:
                 raise ArchiveArtifactsError('Command %s failed to run ' % shell['name'])
@@ -150,13 +156,19 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
 
                 if result['rc'] not in validrc:
                     self.status = 1
-                    self.logger.error('Script %s failed. Host=%s rc=%d Error: %s'
-                                      % (script['name'], result['host'], result['rc'], result['err']))
+                    self.logger.error('Script %s failed. Host=%s rc=%d\nError: Please look at the'
+                                      ' scenario log for failure.'
+                                      % (script['name'], result['host'], result['rc']))
+                    self.logger.debug("During the failure these messages were thrown as a part of"
+                                      " stderr:\n %s" % result['err'])
             else:
                 if result['rc'] != 0:
                     self.status = 1
-                    self.logger.error('Script %s failed. Host=%s rc=%d Error: %s'
-                                      % (script['name'], result['host'], result['rc'], result['err']))
+                    self.logger.error('Script %s failed. Host=%s rc=%d\nError: Please look at the'
+                                      ' scenario log for failure.'
+                                      % (script['name'], result['host'], result['rc']))
+                    self.logger.debug("During the failure these messages were thrown as a part of"
+                                      " stderr:\n %s" % result['err'])
             if self.status == 1:
                 raise ArchiveArtifactsError('Script %s failed to run' % script['name'])
             else:
@@ -177,7 +189,11 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
                                  % playbook['name'])
             elif results[0] != 0:
                 self.status = 1
-                raise ArchiveArtifactsError('Playbook %s failed to run' % playbook['name'])
+                if results[1]:
+                    self.logger.debug("During the failure these messages were thrown as a part of"
+                                      " stderr:\n %s " % results[1])
+                raise ArchiveArtifactsError('Playbook %s failed to run.\nPlease look at the scenario'
+                                            ' log for ansible failure.' % playbook['name'])
             else:
                 self.logger.info('Successfully executed playbook : %s' % playbook['name'])
 

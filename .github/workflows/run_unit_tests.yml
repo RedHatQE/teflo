@@ -17,7 +17,10 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['centos:7', 'centos:8']
+        container:
+        - 'centos:7'
+        - 'quay.io/centos/centos:stream'
+        - 'quay.io/shshevac/teflo_ubi8'
       fail-fast: false
 
     # Steps represent a sequence of tasks that will be executed as part of the job
