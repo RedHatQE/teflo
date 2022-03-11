@@ -1,3 +1,12 @@
+Version 2.2.3 (2022-03-11)
+--------------------------
+
+Bug Fixes
+~~~~~~~~~
+* Fixed issue with centos 8 image for unit tests
+* Fixed ansible warnings in stderr
+* Fixed preserve whitespace when dumping ansible output
+
 Version 2.2.2 (2022-01-31)
 --------------------------
 
