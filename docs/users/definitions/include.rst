@@ -72,7 +72,8 @@ scenarios but with this particular scenario you want to also a run a non-common 
 Example 5
 +++++++++
 
-If you want to use jinja templating for __include__ section, you can set a parameter called __toggle_jinja_include__ to be true, under __defaults__ section in teflo.cfg
+You can use jinja templating like below
+
 .. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 93-125
 

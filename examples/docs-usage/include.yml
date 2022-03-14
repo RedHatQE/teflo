@@ -97,7 +97,7 @@ description: Descriptor file with include section
 include:
   - teflo/stack/provision_localhost.yml
   - teflo/stack/provision_libvirt.yml
-  - {% if true %}teflo/stack/orchestrate-123.yml{% endif %}
+{% if true %}  - teflo/stack/orchestrate-123.yml{% endif %}
   - teflo/stack/orchestrate.yml
 
 orchestrate:

@@ -1,0 +1,15 @@
+---
+include:
+  - sdf1_test_jinja.yml
+  - {% if TEST_JINJA is defined and TEST_JINJA|length > 1%}sdf3_test_jinja.yml{% endif %}
+  - sdf2_test_jinja.yml
+
+name: sdf0
+description: "Root Scenario"
+provision:
+  - name: sdf0host
+    groups: local
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+    labels: ['hello1','hello2']
