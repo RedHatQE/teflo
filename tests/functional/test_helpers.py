@@ -63,11 +63,10 @@ def task_concurrency_config():
 
 
 @pytest.fixture(scope='class')
-def template_render_config_with_jinjainclude_on():
+def template_render_config():
     config_file = '../assets/teflo.cfg'
     cfgp = ConfigParser()
     cfgp.read(config_file)
-    cfgp.set('defaults', 'toggle_jinja_include', 'True')
     with open(config_file, 'w') as cf:
         cfgp.write(cf)
     os.environ['TEFLO_SETTINGS'] = config_file
@@ -649,8 +648,7 @@ def test_check_for_var_file_with_default_path_as_dir(teflo1):
     os.system("rm -r /tmp/teflo_var_file")
 
 
-def test_template_render(template_render_config_with_jinjainclude_on):
-    rendered_text = template_render('../assets/test_template_render.yml', {},
-                                    template_render_config_with_jinjainclude_on["TOGGLE_JINJA_INCLUDE"])
+def test_template_render(template_render_config):
+    rendered_text = template_render('../assets/test_template_render.yml', {})
     result = yaml.safe_load(rendered_text)
     assert len(result["include"]) == 4
