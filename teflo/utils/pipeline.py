@@ -151,7 +151,11 @@ class PipelineBuilder(object):
                 for task in action.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         # fetch & set hosts for the given action task
-                        task = fetch_assets(scenario_graph.get_assets(), task)
+                        # filtering assets to find if there are any matching the provided label
+                        assets = filter_resources_labels(scenario_graph.get_assets(), teflo_options)
+                        if not assets:
+                            assets = scenario_graph.get_assets()
+                        task = fetch_assets(assets, task)
                         pipeline.tasks.append(set_task_class_concurrency(task, action))
 
         if self.name.lower() in ['validate', 'execute']:
@@ -160,7 +164,11 @@ class PipelineBuilder(object):
                 for task in execute.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         # fetch & set hosts for the given executes task
-                        task = fetch_assets(scenario_graph.get_assets(), task)
+                        # filtering assets to find if there are any matching the provided label
+                        assets = filter_resources_labels(scenario_graph.get_assets(), teflo_options)
+                        if not assets:
+                            assets = scenario_graph.get_assets()
+                        task = fetch_assets(assets, task)
                         pipeline.tasks.append(set_task_class_concurrency(task, execute))
 
         if self.name.lower() in ['validate', 'report']:
@@ -169,7 +177,15 @@ class PipelineBuilder(object):
                 for task in report.get_tasks():
                     if task['task'].__task_name__ == self.name:
                         # fetch & set hosts and executes for the given reports task
-                        task = fetch_executes(scenario_graph.get_executes(), scenario_graph.get_assets(), task)
+                        # filtering assets to find if there are any matching the provided label
+                        assets = filter_resources_labels(scenario_graph.get_assets(), teflo_options)
+                        if not assets:
+                            assets = scenario_graph.get_assets()
+                        # filtering executes to find if there are any matching the provided label
+                        executes = filter_resources_labels(scenario_graph.get_executes(), teflo_options)
+                        if not executes:
+                            executes = scenario_graph.get_executes()
+                        task = fetch_executes(executes, assets, task)
                         pipeline.tasks.append(set_task_class_concurrency(task, report))
 
         if self.name.lower() in ['validate']:

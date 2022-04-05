@@ -28,13 +28,13 @@
 from fixtures import action_resource, action_resource_cleanup, scenario, \
     report_resource, execute_resource, host, default_host_params, \
     scenario_resource, config, master_child_scenario, scenario1, asset1, asset3, action1,\
-    scenario_resource1, execute1, execute2, asset2, action2, scenario_labels, notification_default_resource, \
+    scenario_resource1, execute1, execute2, execute3, asset2, action2, scenario_labels, notification_default_resource, \
     notification_on_start_resource, notification_on_demand_resource, notification_on_success_resource, \
     notification_on_failure_resource, default_note_params,\
     scenario_resource1, execute1, execute2, asset2, action2, scenario_labels,\
     timeout_param_provision, timeout_param_execute,\
     timeout_param_report, timeout_param_orchestrate, \
-    basic_scenario_graph_with_provision_only, scenario_graph
+    basic_scenario_graph_with_provision_only, scenario_graph, scenario_graph1
 
 __all__ = [
     basic_scenario_graph_with_provision_only,
@@ -45,6 +45,7 @@ __all__ = [
     execute_resource,
     execute1,
     execute2,
+    execute3,
     host,
     asset1,
     asset2,
@@ -68,5 +69,6 @@ __all__ = [
     timeout_param_provision,
     timeout_param_execute,
     timeout_param_report,
-    timeout_param_orchestrate
+    timeout_param_orchestrate,
+    scenario_graph1
 ]

@@ -74,6 +74,76 @@ You can provide or skip  more than one label at a time
    teflo run -s scenario.yml -sl prod_a -sl prod_b -t provision -w . --log-level info
 
 
+Orchestrate/Execute Tasks with labels:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When running orchestrate and execute tasks if labels are used, Teflo looks for assets from the scenario_graph
+that match that label. In case if scenario_graph assets do not have any labels or there are assets
+that dont match teh given labels then all of these assets are taken into consideration.
+
+In the below example, orchestrate task if run with label 'orc' will run only on asset laptop
+because of the matching label 'orc', even if the orchestrate task has use group name '
+hypervisor' which matches both assets laptop and laptop1 hosts.
+
+.. code-block:: yaml
+
+   ---
+  provision:
+
+  - name: laptop
+    groups: hypervisor
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+    labels: 'orc'
+
+  - name: laptop1
+    groups: hypervisor
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+
+  orchestrate:
+
+  - name: orc1
+    orchestrator: ansible
+    hosts: hypervisor
+    ansible_playbook:
+      name: ansible/template_host_list_block_devices.yml
+    labels: orc1
+
+In the below example if execute task when run with label 'exe1' , then Teflo considers all the
+assets in the scenario_graph as none of them match the label .It then will only run on asset
+laptop1 which matches the host name field in the execute block
+
+.. code-block:: yaml
+
+   ---
+  provision:
+
+  - name: laptop
+    groups: hypervisor
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+
+  - name: laptop1
+    groups: hypervisor
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+
+  execute:
+
+  - name: exe1
+    orchestrator: ansible
+    hosts: laptop1
+    playbook:
+     - name: ansible/template_host_list_block_devices.yml
+    labels: exe1
+
+
+
 Examples
 ~~~~~~~~
 
