@@ -1,0 +1,18 @@
+---
+name: group_vars test
+description: provision example using local host to validate group_vars 
+
+provision:
+  - name: ans_gv
+    groups: node
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+
+orchestrate:
+  - name: orc_task1
+    description: "Print system information."
+    orchestrator: ansible
+    hosts: ans_gv
+    ansible_playbook:
+      name: ansible/system_info.yml

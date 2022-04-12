@@ -192,6 +192,16 @@ class TestTeflo(object):
                "scenario descriptor file" in ex.value.args[0]
 
     @staticmethod
+    def test_collected_group_vars(runner):
+        """This test if to verify if there are failed tasks they are not seen in passed task list"""
+        results = runner.invoke(teflo, ['run', '-s', '../localhost_scenario/s_test_gv.yml',
+                                        '-t', 'provision', '-t', 'orchestrate',
+                                        '-w', '../localhost_scenario/']
+                                )
+        assert results.exit_code == 0
+        assert "ansible_user=fedora" in results.output
+
+    @staticmethod
     def test_collect_final_passed_failed_tasks_status(runner):
         """This test is to verify if there are failed tasks they are not seen in passed task list"""
         results = runner.invoke(teflo, ['notify', '-s', '../assets/scenario_graph_basic_test/sdf8.yml',
