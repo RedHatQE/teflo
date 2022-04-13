@@ -96,7 +96,6 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
                          schema_ext_files=[self.__schema_ext_path__])
 
         # verifying when script or playbook is present in the orchestrate task, the name key provides a path that exist
-
         if self.script:
             if os.path.exists(self.script.get('name').split(' ', 1)[0]):
                 self.logger.debug('Found Action resource script %s' % self.script.get('name'))
@@ -116,9 +115,25 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
                 self.playbook["name"] = os.path.join(
                     self.config["WORKSPACE"], self.playbook.get('name').split(' ', 1)[0])
                 self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
-            else:
-                raise TefloOrchestratorError('Cannot find Action resource playbook %s' %
-                                             self.playbook.get('name'))
+            elif True:
+                # DOWNLOAD COLLECTION AND CHECK IF STRING IS VALID FQCR.
+                try:
+                    self.ans_service.download_roles()
+                except (TefloOrchestratorError, AnsibleServiceError):
+                    if 'retry' in self.galaxy_options and self.galaxy_options['retry']:
+                        self.logger.Info("Download failed.  Sleeping 5 seconds and \
+                                          trying again")
+                        time.sleep(5)
+                        self.ans_service.download_roles()
+                coll_playbook_name = self.ans_service.get_default_config(key="COLLECTIONS_PATHS")
+                if os.path.exists(coll_playbook_name[0]):
+                    new_path = self.ans_service.get_playbook_path(coll_path=coll_playbook_name[0],
+                                                                  playbook=self.playbook.get('name'))
+                    self.playbook["name"] = new_path
+                    self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
+                else:
+                    raise TefloOrchestratorError('Cannot find Action resource playbook %s' %
+                                                 self.playbook.get('name'))
 
     def __playbook__(self):
         self.logger.info('Executing playbook:')
