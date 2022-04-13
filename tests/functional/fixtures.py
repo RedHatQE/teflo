@@ -183,6 +183,13 @@ def basic_scenario_graph_with_provision_only(config):
 
 
 @pytest.fixture
+def sc_graph_for_pipeline_labels(config):
+    config['WORKSPACE'] = '../assets/scenario_graph_basic_test/'
+    scenario_graph = validate_render_scenario('../assets/scenario_graph_basic_test/pipeline_lab_test.yml', config)
+    return scenario_graph
+
+
+@pytest.fixture
 def scenario_resource():
     return Scenario(config=Config(), parameters={'k': 'v'})
 
@@ -258,7 +265,7 @@ def asset2(default_host_params, config):
 def asset3(default_host_params, config):
     param = copy.deepcopy(default_host_params)
     param.pop('groups')
-    param.update(groups='group_test')
+    param.update(groups=['client','group_test'])
     param.update(labels='label3')
     return Asset(
         name='host_3',
@@ -306,6 +313,11 @@ def execute2(config):
     params = dict(description='description', hosts='group_test', executor='runner', labels='label3')
     return Execute(name='execute2', config=config, parameters=params)
 
+@pytest.fixture
+def execute3(config):
+    params = dict(description='description', hosts='group_test', executor='runner', labels='label4')
+    return Execute(name='execute3', config=config, parameters=params)
+
 
 @pytest.fixture
 def scenario1(asset1, action1, scenario_resource1, execute1):
@@ -341,6 +353,8 @@ def report_resource(mock_plugin_class, mock_plugin_list, config):
 def scenario_graph(scenario_resource):
     sg = ScenarioGraph(root_scenario=scenario_resource, scenario_vars={'user': 'teflo_user'})
     return sg
+
+
 
 @pytest.fixture
 def scenario(action_resource, host, execute_resource, report_resource,
@@ -390,3 +404,10 @@ def scenario_labels(asset2, asset3, action1, action2, scenario_resource1, execut
     scenario_resource1.add_executes(execute1)
     scenario_resource1.add_executes(execute2)
     return scenario_resource1
+
+
+@pytest.fixture()
+def scenario_graph1(scenario_labels):
+    sg = ScenarioGraph(root_scenario=scenario_labels, assets=scenario_labels.assets, actions=scenario_labels.actions,
+                       executes=scenario_labels.executes)
+    return sg

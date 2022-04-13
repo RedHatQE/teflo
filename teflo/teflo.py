@@ -536,15 +536,18 @@ class Teflo(LoggerMixin, TimeMixin):
                 if task == 'provision':
                     all_hosts = sc.get_assets()
 
-                    for host in all_hosts:
-                        if hasattr(host, 'groups') or hasattr(host, 'ip_address'):
-                            self.logger.info('Populating inventory file with host(s) %s'
-                                                % getattr(host, 'name'))
-                    try:
-                        self.cbn_inventory.create_inventory(all_hosts=all_hosts)
+                    if all_hosts:
+                        for host in all_hosts:
+                            if hasattr(host, 'ip_address'):
+                                self.logger.info('Populating inventory file with host(s) %s'
+                                                    % getattr(host, 'name'))
+                        try:
+                            self.cbn_inventory.create_inventory(all_hosts=all_hosts)
 
-                    except Exception as ex:
-                        raise TefloError("Error while creating the inventory for scenario %s: %s" % (sc.path, ex))
+                        except Exception as ex:
+                            raise TefloError("Error while creating the inventory for scenario %s: %s" % (sc.path, ex))
+                    else:
+                        self.logger.info("No hosts provisioned to be added to the inventory")
 
                 self.logger.info("." * 50)
         except Exception as ex:

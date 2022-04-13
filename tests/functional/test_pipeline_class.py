@@ -146,6 +146,31 @@ class TestPipelineBuilder(object):
         assert isinstance(getattr(pipeline, 'tasks'), list)
         assert getattr(pipeline, 'type') is CleanupTask
 
+    @staticmethod
+    def test_build_orchestrate_task_pipeline_with_labels(scenario_labels, scenario_graph1):
+        """This is to test that orch task with  label will run on only provisioned hosts which match that label"""
+        builder = PipelineBuilder(name='orchestrate')
+        pipeline = builder.build(scenario_labels, teflo_options={'labels': ['label3']}, scenario_graph=scenario_graph1)
+        assert getattr(pipeline, 'name') == 'orchestrate'
+        assert getattr(pipeline, 'type') is OrchestrateTask
+        results = getattr(pipeline, 'tasks')
+        assert(results[0]['package'].hosts[0].name) == 'host_3'
+        assert(results[0]['package'].hosts[0].labels) == ['label3']
+
+    @staticmethod
+    def test_build_execute_task_pipeline_with_labels(scenario_labels, scenario_graph1, execute3):
+        """This is to test that execute task with a label will get all scenarrio_graph assets if the assets dont have a
+        matching labe, and will run on hosts from this list if they are present in the hosts field of the execute task
+        """
+        scenario_labels.add_executes(execute3)
+        builder = PipelineBuilder(name='execute')
+        pipeline = builder.build(scenario_labels, teflo_options={'labels': ['label4']}, scenario_graph=scenario_graph1)
+        assert getattr(pipeline, 'name') == 'execute'
+        assert getattr(pipeline, 'type') is ExecuteTask
+        results = getattr(pipeline, 'tasks')
+        assert (results[0]['package'].hosts[0].name) == 'host_3'
+        assert (results[0]['package'].hosts[0].labels) == ['label3']
+
 
 # TODO: Scenario Graph related
 # REFACTOR the tests below with scenario graph
