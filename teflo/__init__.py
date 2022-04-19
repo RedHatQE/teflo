@@ -24,5 +24,5 @@
     :license: GPLv3, see LICENSE for more details.
 """
 from .teflo import Teflo
-__version__ = '2.2.3'
+__version__ = '2.2.4'
 __author__ = 'Red Hat Inc.'
