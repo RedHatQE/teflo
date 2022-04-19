@@ -174,6 +174,40 @@ The table above describes additional key:values you can set within your
 orchestrate task. Each of those keys can accept additional key:values.
 
 
+Use Playbook Within A Collection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+We can Use playbook within a collection with Fully Qualified Collections Name.
+When running a playbook using fqcn, Teflo will first check if the collection exist
+and will try to download it if needed.
+
+Example
++++++++
+
+Lets first call the playbook in our orchestrate task:
+
+.. literalinclude:: ../../../examples/docs-usage/template.yml
+       :lines: 194-203
+
+the requirements.yml should look like:
+
+.. literalinclude:: ../../../examples/docs-usage/requirements.yml
+       :lines: 1-5
+
+
+.. note::
+    For more information read from `Ansible Docs
+    <https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#using-collections-in-playbooks>`_.
+
+    To select where we want to install the collection Or if exist we can change the path on the ansible.cfg file:
+
+        collections_paths = ./wanted_coll_path
+
+----
+
+
+
 Teflo Ansible Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

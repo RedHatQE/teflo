@@ -1535,27 +1535,29 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
             for host in sorted(all_hosts, key=lambda h: h.name):
                 section = host.name
                 section_vars = '%s:vars' % section
-                if hasattr(host, 'groups') or hasattr(host, 'ip_address'):
-                    for sect in getattr(host, 'groups', []):
-                        host_section = sect + ":children"
-                        if host_section in config.sections():
-                            config.set(host_section, host.name)
-                        else:
-                            config.add_section(host_section)
-                            config.set(host_section, host.name)
+                # just adding the assets who have valid ip address to the inventory. This will avoid empty  entries of
+                # assets with no ip_address
+                if hasattr(host, 'ip_address') and getattr(host, 'ip_address', None):
+                    if hasattr(host, 'groups'):
+                        for sect in getattr(host, 'groups', []):
+                            host_section = sect + ":children"
+                            if host_section in config.sections():
+                                config.set(host_section, host.name)
+                            else:
+                                config.add_section(host_section)
+                                config.set(host_section, host.name)
 
                     # create section(s)
                     for item in [section, section_vars]:
                         config.add_section(item)
 
                     # add ip address to group
-                    if getattr(host, 'ip_address', None):
-                        if isinstance(host.ip_address, dict):
-                            config.set(section, host.ip_address.get('public'))
-                        elif isinstance(host.ip_address, list):
-                            [config.set(section, ip) for ip in host.ip_address]
-                        elif isinstance(host.ip_address, string_types):
-                            config.set(section, host.ip_address)
+                    if isinstance(host.ip_address, dict):
+                        config.set(section, host.ip_address.get('public'))
+                    elif isinstance(host.ip_address, list):
+                        [config.set(section, ip) for ip in host.ip_address]
+                    elif isinstance(host.ip_address, string_types):
+                        config.set(section, host.ip_address)
 
                     # add host vars
                     for k, v in host.ansible_params.items():

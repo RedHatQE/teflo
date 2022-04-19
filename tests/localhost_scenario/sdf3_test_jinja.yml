@@ -1,0 +1,14 @@
+---
+name: sdf3
+include:
+  -{% if TEST_JINJA is defined and TEST_JINJA|length > 1%} sdf4_test_jinja.yml{% endif %}
+description: "Included scenario"
+
+provision:
+  - name: sdf3host
+    groups: local
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+    labels: ['hello1','hello2']
+

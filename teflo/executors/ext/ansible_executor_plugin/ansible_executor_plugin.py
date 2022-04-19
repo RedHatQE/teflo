@@ -228,8 +228,8 @@ class AnsibleExecutorPlugin(ExecutorPlugin):
         os.environ['ANSIBLE_LOCAL_TEMP'] = '$HOME/.ansible/tmp'
         os.environ['ANSIBLE_REMOTE_TEMP'] = '$HOME/.ansible/tmp'
 
-        # setting variable so to no display any skipped tasks
-        os.environ['DISPLAY_SKIPPED_HOSTS'] = 'False'
+        # setting variable so to not display any skipped tasks
+        os.environ['ANSIBLE_DISPLAY_SKIPPED_HOSTS'] = 'False'
 
         results = self.ans_service.run_artifact_playbook(destination, self.artifacts)
 
