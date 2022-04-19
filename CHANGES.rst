@@ -1,3 +1,14 @@
+Version 2.2.4 (2022-04-18)
+--------------------------
+
+Bug Fixes
+~~~~~~~~~
+* Fixed the jinja template issue
+* Upgrade Sphinx to be compatible with jinja2 v3.1.1
+* Silence notify messages when no notifications enabled
+* Fixed for Teflo does not take into account provision resources that do not match the supplied teflo label
+* Fixed for DISPLAY_SKIPPED_HOSTS option is deprecated 
+
 Version 2.2.3 (2022-03-11)
 --------------------------
 
