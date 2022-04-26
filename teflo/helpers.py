@@ -822,6 +822,11 @@ def filter_host_name(name):
     return str(result[:20]).lower()
 
 
+def is_ipv4(address):
+    ip = ipaddress.ip_address(address)
+    return isinstance(ip, ipaddress.IPv4Address)
+
+
 def ssh_retry(obj):
     """
     Decorator to check SSH Connection before method execution.
@@ -854,14 +859,6 @@ def ssh_retry(obj):
                 raise HelpersError(
                     'ERROR: Unexpected error - Group %s not found in inventory file!' % kwargs['extra_vars']['hosts']
                 )
-
-        def is_ipv4(address):
-            ip = ipaddress.ip_address(address)
-
-            if isinstance(ip, ipaddress.IPv4Address):
-                return True
-            else:
-                return False
 
         def can_connect(group):
 
