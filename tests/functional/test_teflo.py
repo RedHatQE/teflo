@@ -193,7 +193,7 @@ class TestTeflo(object):
 
     @staticmethod
     def test_collect_final_passed_failed_tasks_status(runner):
-        """This test if to verify if there are failed tasks they are not seen in passed task list"""
+        """This test is to verify if there are failed tasks they are not seen in passed task list"""
         results = runner.invoke(teflo, ['notify', '-s', '../assets/scenario_graph_basic_test/sdf8.yml',
                                         '-w', '../assets/scenario_graph_basic_test/']
                                 )
@@ -201,3 +201,29 @@ class TestTeflo(object):
         assert results.exit_code == 0
         assert "* Passed Tasks                   : ['provision']" in results.output
         assert "* Failed Tasks                   : ['execute']" in results.output
+
+    @staticmethod
+    def test_generic_notify_not_in_info_log_level(runner):
+        """
+        This test ensures there are no generic notifications
+        when there is no notification block in sdf
+        """
+        results = runner.invoke(teflo,
+                                ['notify', '--log-level', 'info', '-s', '../assets/scenario_graph_basic_test/sdf8.yml',
+                                 '-w', '../assets/scenario_graph_basic_test/']
+                                )
+        assert results.exit_code == 0
+        assert "Starting tasks on pipeline: notify" not in results.stdout
+
+    @staticmethod
+    def test_generic_notify_in_debug_log_level(runner):
+        """
+        This test ensures the generic notifications are present in debug log
+        level when there is no notification block in sdf
+        """
+        results = runner.invoke(teflo,
+                                ['notify', '--log-level', 'debug', '-s', '../assets/scenario_graph_basic_test/sdf8.yml',
+                                 '-w', '../assets/scenario_graph_basic_test/']
+                                )
+        assert results.exit_code == 0
+        assert "Starting tasks on pipeline: notify" in results.output
