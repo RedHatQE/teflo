@@ -213,7 +213,6 @@ class TestCli(object):
         assert 'is a directory' in results.output
         assert results.exit_code == 0
 
-
     @staticmethod
     @mock.patch.object(Teflo, 'run')
     def test_valid_run_multiple_nested_vars(mock_method, runner):
