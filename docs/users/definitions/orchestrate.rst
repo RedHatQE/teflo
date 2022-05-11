@@ -174,6 +174,26 @@ The table above describes additional key:values you can set within your
 orchestrate task. Each of those keys can accept additional key:values.
 
 
+Use Ansible group_vars
+~~~~~~~~~~~~~~~~~~~~~~
+
+Ansible can set variables to each host with different ways, one of them is using
+the group_vars file.
+
+.. code-block:: yaml
+
+    ---
+
+    ansible_user: fedora
+
+.. note::
+    For more information read from `Ansible Docs
+    <https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#organizing-host-and-group-variables>`_.
+
+    Teflo will look for group_vars dir inside workspace/ansible:
+
+        workspace/ansible/group_vars/example
+
 Use Playbook Within A Collection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
