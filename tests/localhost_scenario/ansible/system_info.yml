@@ -1,0 +1,6 @@
+---
+- hosts: ' {{ hosts }}'
+  tasks:
+  - name: simple playbook
+    debug:
+      msg: 'hello'

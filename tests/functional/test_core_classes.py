@@ -27,6 +27,7 @@
 
 import copy
 import random
+import shutil
 import time
 import types
 import os
@@ -42,6 +43,7 @@ from teflo.core import TefloOrchestrator, TefloProvider, \
 from teflo.resources import Asset
 from teflo.provisioners import AssetProvisioner
 from teflo.exceptions import TefloError, LoggerMixinError
+import configparser
 
 
 @pytest.fixture(scope='class')
@@ -169,6 +171,14 @@ def cleanup_master(request):
 
 
 @pytest.fixture
+def create_group_vars():
+    gv_path = os.path.join('/tmp/ws/ansible/group_vars', 'ans_gv')
+    if not os.path.exists('/tmp/ws/ansible/group_vars/'):
+        os.makedirs('/tmp/ws/ansible/group_vars/')
+        shutil.copyfile('../localhost_scenario/ansible/group_vars/ans_gv', gv_path)
+
+
+@pytest.fixture
 def inv_host(default_host_params, config):
     params = copy.deepcopy(default_host_params)
     params.update(dict(ansible_params=dict(ansible_connection='local',
@@ -177,6 +187,20 @@ def inv_host(default_host_params, config):
     config['RESULTS_FOLDER'] = '/tmp/.results'
     return Asset(
         name='host01',
+        config=config,
+        parameters=params
+    )
+
+
+@pytest.fixture
+def inv_host_2(default_host_params, config):
+    params = copy.deepcopy(default_host_params)
+    params.update(dict(ansible_params=dict(ansible_connection='local',
+                                           ansible_ssh_private_key='keys/demo'),
+                       ip_address=dict(public='10.10.10.10', private='192.168.10.10')))
+    config['RESULTS_FOLDER'] = '/tmp/.results'
+    return Asset(
+        name='ans_gv',
         config=config,
         parameters=params
     )
@@ -733,6 +757,20 @@ class TestInventory(object):
         # using inventory folder as the default created by teflo
         inventory.create_inventory(all_hosts=[inv_host])
         assert os.path.exists('/tmp/.results/inventory/inventory-xyz')
+        cleanup_master
+
+    @staticmethod
+    def test_create_inventory_group_vars(inventory: Inventory, inv_host_2, create_group_vars, cleanup_master):
+        # using inventory folder as the default created by teflo
+        create_group_vars
+        inventory.create_inventory(all_hosts=[inv_host_2])
+        config = configparser.ConfigParser(allow_no_value=True)
+        config.read('/tmp/.results/inventory/inventory-xyz')
+        group_vars = config['ans_gv:vars']
+        ans_usr = group_vars['ansible_user']
+        assert 'fedora' in ans_usr
+        if os.path.exists('/tmp/ws/ansible'):
+            shutil.rmtree('/tmp/ws/ansible')
         cleanup_master
 
     @staticmethod

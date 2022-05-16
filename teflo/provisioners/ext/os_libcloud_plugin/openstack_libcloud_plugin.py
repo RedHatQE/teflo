@@ -36,7 +36,7 @@ from libcloud.compute.types import InvalidCredsError, Provider
 from teflo._compat import string_types
 from teflo.core import ProvisionerPlugin
 from teflo.exceptions import OpenstackProviderError
-from teflo.helpers import gen_random_str, filter_host_name, schema_validator
+from teflo.helpers import gen_random_str, filter_host_name, schema_validator, is_ipv4
 
 MAX_WAIT_TIME = 100
 MAX_ATTEMPTS = 3
@@ -515,7 +515,13 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         # TODO: This might need more logic if we support a use case for more than one network specified
         if ip is None:
             node = self.driver.ex_get_node_details(node.id)
-            ip = node.private_ips[-1]
+            for pip in node.private_ips:
+                if is_ipv4(pip):
+                    ip = pip
+                    break
+            else:
+                ip = node.private_ips[-1]
+
         return ip, node.id
 
     def _delete(self, name):

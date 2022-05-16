@@ -35,7 +35,7 @@ from logging import config as log_config
 from time import time, sleep
 from collections import OrderedDict
 from .exceptions import TefloError, TefloResourceError, LoggerMixinError, TefloImporterError
-from .helpers import get_core_tasks_classes
+from .helpers import get_core_tasks_classes, file_mgmt
 from traceback import format_exc
 from ._compat import RawConfigParser, string_types
 from .constants import LOGGING_CONFIG
@@ -1566,6 +1566,23 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
                         if k == 'ansible_port':
                             v = str(v)
                         config.set(section_vars, k, v)
+
+                    # get pkey var form ansible.cfg
+                    ans_path = self.config['WORKSPACE'] + '/ansible.cfg'
+                    if os.path.exists(ans_path):
+                        ans_config = RawConfigParser(allow_no_value=True)
+                        with open(ans_path) as conf:
+                            ans_config.read_file(conf)
+
+                        for k, v in ans_config['defaults'].items():
+                            config.set(section_vars, k, v)
+
+                    # get ansible group_vars file
+                    group_vars_path = self.config['WORKSPACE'] + '/ansible/group_vars/%s' % section
+                    if os.path.exists(group_vars_path):
+                        group_vars = file_mgmt('r', group_vars_path)
+                        for k, v in group_vars.items():
+                            config.set(section_vars, k, v)
 
             # write the inventory
             self.write_inventory(config)
