@@ -1,3 +1,12 @@
+Version 2.2.5 (2022-05-16)
+--------------------------
+
+Enhancements
+~~~~~~~~~~~~
+* Added support of ansible group_vars files.
+* Add support to grab ipv4 when node has multiple addresses.
+* Add unit tests for notification problem
+
 Version 2.2.4 (2022-04-18)
 --------------------------
 
