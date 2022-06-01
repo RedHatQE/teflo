@@ -16,7 +16,7 @@ mapping:
   family:
     type: str
     required: False
-  whitboard:
+  whiteboard:
     type: str
     required: False
   kernel_options:
@@ -75,6 +75,7 @@ mapping:
   ssh_key:
     required: False
     type: str
+    func: valid_file_exist
   username:
     required: False
     type: str
@@ -92,6 +93,7 @@ mapping:
   kickstart:
     required: False
     type: str
+    func: valid_file_exist
   ksmeta:
     required: False
     type: seq
