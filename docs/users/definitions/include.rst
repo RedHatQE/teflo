@@ -139,8 +139,9 @@ by_depth
 The execution order will be
 12,13,3,8,5,1,10,11,7,4,9,6,2,0
 
+
 Remote Include
-==========================
+----------------------
 
 You can include teflo workspace from remote server(currently only support for git)
 
@@ -150,11 +151,15 @@ Example SDF
 .. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 126-158
 
+.. note::
+
+        When using ssh to clone (example above "remote"), user need to use GIT_SSH_COMMAND= in teflo.cfg.
+
 Example teflo.cfg
 +++++++++++++++++
 
 .. literalinclude:: ../../../examples/docs-usage/teflo_example.cfg
-    :lines: 1-13
+    :lines: 1-15
 
 workspace_url is the url of the git repo(your teflo workspace), alias_name is the name which you want to use in include section
 .. note::

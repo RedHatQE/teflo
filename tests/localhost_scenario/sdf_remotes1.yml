@@ -1,0 +1,19 @@
+---
+
+remote_workspace:
+  - workspace_url: git@github.com:dno-github/ssh-remote-teflo-lib1.git
+    alias_name: remote1
+
+include:
+   - "remote1/sdf_remote.yml"
+
+name: remote_include_example1
+description: include remote sdf from git server
+
+provision:
+  - name: from_local_parent
+    groups: localhost
+    ip_address: 127.0.0.1
+    ansible_params:
+      ansible_connection: local
+

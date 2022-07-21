@@ -1661,11 +1661,17 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
                     raise TefloError(
                             "Your format of the imported remote_workspace is incorrect ")
                 cmd = 'git clone ' + url + ' ' + config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"] + short_name_of_workspace
+                env_var = {}
                 if not os.path.isdir(config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"] + short_name_of_workspace):
-                    result = exec_local_cmd(cmd)
+                    get_env = os.environ.get('GIT_SSH_COMMAND')
+
+                    if get_env is not None:
+                        env_var['GIT_SSH_COMMAND'] = 'ssh -o IdentitiesOnly=yes -i ' + get_env
+                    elif 'GIT_SSH_COMMAND' in config:
+                        env_var['GIT_SSH_COMMAND'] = 'ssh -o IdentitiesOnly=yes -i ' + config['GIT_SSH_COMMAND']
+                    result = exec_local_cmd(cmd, env_var=env_var)
                     if result[0] != 0:
                         raise TefloError("Remote remote_workspaces download failed!!")
-
                 # all remote remote_workspaces should be stored in the same place
                 # (root_workspace/.teflo_remote_workspace_cache/)
                 # so we should use root_config instead of parent_scenario.config,
