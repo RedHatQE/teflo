@@ -153,6 +153,12 @@ class PipelineBuilder(object):
                         # fetch & set hosts for the given action task
                         # filtering assets to find if there are any matching the provided label
                         assets = filter_resources_labels(scenario_graph.get_assets(), teflo_options)
+                        # here we check that if filtered assets are empty then we pass all the assets from the
+                        # scenario_graph. This is done because if there are no labels on assets in the SDF it will
+                        # always return empty, and we will not get the correct assets for the orc/exe tasks
+                        # whether the assests from scenario_graphs asset belong to the orch/exe task will be
+                        # checked in the fetch_assets method based on host name or group name provided in the orch/exe
+                        # block of the SDF
                         if not assets:
                             assets = scenario_graph.get_assets()
                         task = fetch_assets(assets, task)
@@ -166,6 +172,12 @@ class PipelineBuilder(object):
                         # fetch & set hosts for the given executes task
                         # filtering assets to find if there are any matching the provided label
                         assets = filter_resources_labels(scenario_graph.get_assets(), teflo_options)
+                        # here we check that if filtered assets are empty then we pass all the assets from the
+                        # scenario_graph. This is done because if there are no labels on assets in the SDF it will
+                        # always return empty, and we will not get the correct assets for the orc/exe tasks
+                        # whether the assests from scenario_graphs asset belong to the orch/exe task will be
+                        # checked in the fetch_assets method based on host name or group name provided in the orch/exe
+                        # block of the SDF
                         if not assets:
                             assets = scenario_graph.get_assets()
                         task = fetch_assets(assets, task)
@@ -179,10 +191,22 @@ class PipelineBuilder(object):
                         # fetch & set hosts and executes for the given reports task
                         # filtering assets to find if there are any matching the provided label
                         assets = filter_resources_labels(scenario_graph.get_assets(), teflo_options)
+                        # here we check that if filtered assets are empty then we pass all the assets from the
+                        # scenario_graph. This is done because if there are no labels on assets in the SDF it will
+                        # always return empty, and we will not get the correct assets for the orc/exe tasks
+                        # whether the assests from scenario_graphs asset belong to the orch/exe task will be
+                        # checked in the fetch_assets method based on host name or group name provided in the orch/exe
+                        # block of the SDF
                         if not assets:
                             assets = scenario_graph.get_assets()
                         # filtering executes to find if there are any matching the provided label
                         executes = filter_resources_labels(scenario_graph.get_executes(), teflo_options)
+                        # here we check that if filtered executes are empty then we pass all the executes from the
+                        # scenario_graph. This is done because if there are no labels on executes in the SDF it will
+                        # always return empty, and we will not get the correct executes for the orc/exe tasks
+                        # whether the executes from scenario_graphs asset belong to the orch/exe task will be
+                        # checked in the fetch_executes method based on name provided in the report
+                        # block of the SDF
                         if not executes:
                             executes = scenario_graph.get_executes()
                         task = fetch_executes(executes, assets, task)

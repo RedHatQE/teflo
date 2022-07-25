@@ -52,6 +52,8 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
     __plugin_name__ = "beaker-client"
     __schema_file_path__ = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                         "schema.yml"))
+    __schema_ext_path__ = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                       "extensions.py"))
 
     def __init__(self, asset):
         """Constructor.
@@ -349,7 +351,8 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         self.cancel_job(getattr(self.asset, 'asset_id'))
 
     def validate(self):
-        schema_validator(schema_data=self.build_profile(self.asset), schema_files=[self.__schema_file_path__])
+        schema_validator(schema_data=self.build_profile(self.asset), schema_files=[self.__schema_file_path__],
+                         schema_ext_files=[self.__schema_ext_path__])
 
     def get_job_status(self, xmldata):
         """Parse the beaker results.

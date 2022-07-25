@@ -1,3 +1,20 @@
+Version 2.2.6 (2022-07-25)
+--------------------------
+
+Documentation
+~~~~~~~~~~~~~
+* Added comments in the pipeline.py to clarify the usage of filters.
+
+Enhancements
+~~~~~~~~~~~~
+* Added strict validation to bkr_client schema.
+* Added support of git ssh to clone remotes.
+* Added coverage xml file in Unittest
+
+Bug Fixes
+~~~~~~~~~
+* Fix running ansible collection
+
 Version 2.2.5 (2022-05-16)
 --------------------------
 

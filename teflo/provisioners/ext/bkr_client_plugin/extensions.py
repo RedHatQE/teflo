@@ -16,13 +16,23 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-    teflo
+    Pykwalify extensions module for beaker client plugin
 
-    A framework that cares about product interoperability quality.
+    Module containing custom validation functions used for beaker client schema checking.
 
     :copyright: (c) 2021 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-from .teflo import Teflo
-__version__ = '2.2.6'
-__author__ = 'Red Hat Inc.'
+
+import os
+
+
+def valid_file_exist(value, rule_obj, path):
+    """ Verify if the given file exist."""
+
+    if os.path.exists(value):
+        return True
+    else:
+        raise AssertionError(
+            '%s must be an existing file! Cannot find file: %s.' % (path.split('/')[-1], value)
+        )

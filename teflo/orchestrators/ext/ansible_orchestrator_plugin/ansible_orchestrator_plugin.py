@@ -142,6 +142,13 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
             name_split[0] = os.path.join(
                     self.config["WORKSPACE"], name_split[0])
             self.playbook["name"] = " ".join(name_split)
+        else:
+            coll_playbook_name = self.ans_service.get_default_config(key="COLLECTIONS_PATHS")
+            if os.path.exists(coll_playbook_name[0]):
+                new_path = self.ans_service.get_playbook_path(coll_path=coll_playbook_name[0],
+                                                              playbook=self.playbook.get('name'))
+                self.playbook["name"] = new_path
+                self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
         results = self.ans_service.run_playbook(self.playbook)
         if results[0] != 0:
             if results[1]:
