@@ -15,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+import os
 from ..core import LoggerMixin, TimeMixin
 from ..exceptions import TefloImporterError
 from ..helpers import find_artifacts_on_disk, DataInjector
@@ -70,7 +70,17 @@ class ArtifactImporter(LoggerMixin, TimeMixin):
             self.artifact_paths.extend(find_artifacts_on_disk(data_folder=self.report.config.get('RESULTS_FOLDER'),
                                                               report_name=self.report_name))
         if not self.artifact_paths:
-            raise TefloImporterError('No artifact could be found on the Teflo controller data folder.')
+            if 'datarouter' in self.report.importer_plugin_name and not self.report.executes:
+                plug_art_path = os.path.join(self.report.workspace, self.report.name)
+                self.artifact_paths.extend(find_artifacts_on_disk
+                                           (data_folder=self.report.config.get('RESULTS_FOLDER'),
+                                            report_name=self.report_name,
+                                            plugin_art_path=self.report.workspace))
+            else:
+                self.artifact_paths.extend(find_artifacts_on_disk(data_folder=self.report.config.get('RESULTS_FOLDER'),
+                                                                  report_name=self.report_name))
+            if not self.artifact_paths:
+                raise TefloImporterError('No artifact could be found on the Teflo controller data folder.')
 
     def import_artifacts(self):
         self.plugin.artifacts = self.artifact_paths

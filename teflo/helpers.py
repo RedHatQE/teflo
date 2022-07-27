@@ -1195,7 +1195,7 @@ def is_host_localhost(host_ip):
     return True
 
 
-def find_artifacts_on_disk(data_folder, report_name, art_location=[]):
+def find_artifacts_on_disk(data_folder, report_name, art_location=[], plugin_art_path=[]):
     """
     Used by the Artifact Importer to to search a list of paths in the results folder
     to see if they exist. If the Execute collected artifacts, it will check the
@@ -1232,6 +1232,14 @@ def find_artifacts_on_disk(data_folder, report_name, art_location=[]):
         for f in fnd_paths:
             LOG.info('Artifact %s has been found!' % os.path.basename(f))
             LOG.debug('Full path to artifact on disk: %s' % f)
+
+    # Check if using plugin to collect artifact
+    if plugin_art_path:
+        new_path = os.path.join(plugin_art_path, report_name)
+        if os.path.exists(new_path):
+            fnd_paths.append(new_path)
+            LOG.info('Artifact %s has been found!' % report_name)
+            LOG.debug('Full path to artifact on disk: %s' % new_path)
 
     if not fnd_paths:
         LOG.error('Did not find any of the artifacts on local disk. '
