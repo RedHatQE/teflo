@@ -678,7 +678,7 @@ def filter_resources_labels(res_list, teflo_options):
     """
 
     if teflo_options and teflo_options.get('labels', ()):
-        return[res for res in res_list if set(getattr(res, 'labels')).intersection(set(teflo_options.get('labels')))]
+        return [res for res in res_list if set(getattr(res, 'labels')).intersection(set(teflo_options.get('labels')))]
     elif teflo_options and teflo_options.get('skip_labels', ()):
         return [res for res in res_list
                 if not set(getattr(res, 'labels')).intersection(set(teflo_options.get('skip_labels')))]
