@@ -216,6 +216,8 @@ class Teflo(LoggerMixin, TimeMixin):
                            'TEFLO_WORKSPACE': os.path.abspath(self.config.get('WORKSPACE'))
                            })
 
+        self.current_task = None
+
     @property
     def name(self):
         """The name of the application.  This is usually the import name
@@ -513,11 +515,12 @@ class Teflo(LoggerMixin, TimeMixin):
             self.logger.info("." * 50)
         # initialize overall status
         status = 0
-        if not self.teflo_options.get('no_notify', False):
-            self.notify('on_start', status, passed_tasks, failed_tasks, scenario=sc)
-
         try:
             for task in sort_tasklist(tasklist):
+                self.current_task = task
+                if not self.teflo_options.get('no_notify', False):
+                    self.notify('on_start', status, passed_tasks, failed_tasks, scenario=sc)
+
                 self.logger.info(' * Task    : %s' % task)
 
                 # initially update list of passed tasks
@@ -688,7 +691,7 @@ class Teflo(LoggerMixin, TimeMixin):
         data = {}
 
         # create a pipeline builder object
-        pipe_builder = PipelineFactory.get_pipeline(task)
+        pipe_builder = PipelineFactory.get_pipeline(task, self.current_task)
 
         # check if teflo supports the task
         if not pipe_builder.is_task_valid():
