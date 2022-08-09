@@ -17,7 +17,7 @@
 
     Package containing teflo executor modules.
 
-    :copyright: (c) 2021 Red Hat, Inc.
+    :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 from .execute_manager import ExecuteManager
