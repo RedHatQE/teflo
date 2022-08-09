@@ -21,7 +21,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = u'Teflo'
-copyright = u'2020, Red Hat Inc.'
+copyright = u'2022, Red Hat Inc.'
 author = u'Red Hat Inc.'
 
 # The short X.Y version
