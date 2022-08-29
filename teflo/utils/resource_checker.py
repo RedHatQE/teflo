@@ -82,14 +82,7 @@ class ResourceChecker(object):
                 self.ans_service.galaxy_options = item.get('ansible_galaxy_options', None)
 
                 # downloading ansible_roles
-                try:
-                    self.ans_service.download_roles()
-                except (TefloError, AnsibleServiceError):
-                    if 'retry' in self.ans_service.galaxy_options and self.ans_service.galaxy_options['retry']:
-                        LOG.info("Download failed.  Sleeping 5 seconds and \
-                                          trying again")
-                        time.sleep(5)
-                        self.ans_service.download_roles()
+                self.ans_service.download_roles()
 
                 error_msg = ''
                 try:

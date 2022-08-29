@@ -180,3 +180,7 @@ LOGGING_CONFIG = {
                        'propagate': False},
     }
 }
+
+# Default retries for installing ansible dependencies
+ANSIBLE_GALAXY_INSTALL_DELAY = 30
+ANSIBLE_GALAXY_INSTALL_ATTEMPTS = 2
