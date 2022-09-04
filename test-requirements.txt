@@ -12,4 +12,3 @@ tox>=2.7.0
 sphinx_automodapi
 sphinxcontrib-confluencebuilder==1.1
 cryptography>=3.2
-urllib3>=1.26.0
