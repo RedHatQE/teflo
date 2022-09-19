@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 Red Hat, Inc.
+# Copyright (C) 2022 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
     methods to process ansible actions defined within the scenario descriptor
     file.
 
-    :copyright: (c) 2021 Red Hat, Inc.
+    :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 
@@ -117,14 +117,7 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
                 self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
             elif True:
                 # DOWNLOAD COLLECTION AND CHECK IF STRING IS VALID FQCR.
-                try:
-                    self.ans_service.download_roles()
-                except (TefloOrchestratorError, AnsibleServiceError):
-                    if 'retry' in self.galaxy_options and self.galaxy_options['retry']:
-                        self.logger.Info("Download failed.  Sleeping 5 seconds and \
-                                          trying again")
-                        time.sleep(5)
-                        self.ans_service.download_roles()
+                self.ans_service.download_roles()
                 coll_playbook_name = self.ans_service.get_default_config(key="COLLECTIONS_PATHS")
                 if os.path.exists(coll_playbook_name[0]):
                     new_path = self.ans_service.get_playbook_path(coll_path=coll_playbook_name[0],
@@ -202,18 +195,11 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
             # if more than one action types are declared then the first action_type found will be executed
             if getattr(self, item):
                 flag += 1
-                # Download ansible roles (if applicable)
                 if flag == 1:
                     try:
+                        # Download ansible roles/collections
                         self.ans_service.download_roles()
-                    except (TefloOrchestratorError, AnsibleServiceError):
-                        if 'retry' in self.galaxy_options and self.galaxy_options['retry']:
-                            self.logger.Info("Download failed.  Sleeping 5 seconds and \
-                                              trying again")
-                            time.sleep(5)
-                            self.ans_service.download_roles()
 
-                    try:
                         getattr(self, '__%s__' % item)()
                         # If every script/playbook/shell command within the each orchestrate has passed,
                         # mark that task as successful

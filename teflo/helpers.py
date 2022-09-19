@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 Red Hat, Inc.
+# Copyright (C) 2022 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
     Module containing classes and functions which are generic and used
     throughout the code base.
 
-    :copyright: (c) 2021 Red Hat, Inc.
+    :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 from copy import deepcopy
@@ -623,7 +623,7 @@ def filter_notifications_to_skip(notify_list, teflo_options):
         return notify_list
 
 
-def filter_notifications_on_trigger(state, notify_list, passed_tasks, failed_tasks):
+def filter_notifications_on_trigger(state, notify_list, passed_tasks, failed_tasks, current_task):
     """
     Go through the notify_list and return notifications with which were skipped.
     If no notification with on_demand is found the original list is returned
@@ -634,10 +634,10 @@ def filter_notifications_on_trigger(state, notify_list, passed_tasks, failed_tas
     else:
         # filter out all on_demand notifications
         notify_list = [res for res in notify_list if not getattr(res, 'on_demand')]
-
     if state == 'on_start':
-        return [res for res in notify_list if getattr(res, 'on_start') and len(set(getattr(res, 'on_tasks', [])).
-                                                                               intersection(passed_tasks)) != 0]
+        # filter in all on_start notifications if current task in on_tasks list
+        return [res for res in notify_list if getattr(res, 'on_start') and current_task in getattr(res, 'on_tasks')]
+
     elif state == 'on_complete':
         ocl = list()
 
@@ -678,7 +678,7 @@ def filter_resources_labels(res_list, teflo_options):
     """
 
     if teflo_options and teflo_options.get('labels', ()):
-        return[res for res in res_list if set(getattr(res, 'labels')).intersection(set(teflo_options.get('labels')))]
+        return [res for res in res_list if set(getattr(res, 'labels')).intersection(set(teflo_options.get('labels')))]
     elif teflo_options and teflo_options.get('skip_labels', ()):
         return [res for res in res_list
                 if not set(getattr(res, 'labels')).intersection(set(teflo_options.get('skip_labels')))]

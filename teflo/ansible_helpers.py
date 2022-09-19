@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 Red Hat, Inc.
+# Copyright (C) 2022 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
     Module containing helper classes and methods which will be used by the classes and methods in
     orchestrate and execute modules
 
-    :copyright: (c) 2021 Red Hat, Inc.
+    :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 
@@ -47,8 +47,9 @@ from .exceptions import AnsibleServiceError
 from ansible.parsing.vault import VaultSecret
 from .exceptions import AnsibleVaultError
 from ._compat import RawConfigParser, VaultLib, ansible_ver, is_py2
-import configparser
+from .constants import ANSIBLE_GALAXY_INSTALL_ATTEMPTS, ANSIBLE_GALAXY_INSTALL_DELAY
 import glob
+from retry import retry
 
 LOG = getLogger(__name__)
 
@@ -221,7 +222,6 @@ class AnsibleController(object):
 
 
 class AnsibleService(object):
-
     user_run_vals = ["become", "become_method", "become_user", "remote_user",
                      "connection", "forks", "tags", 'skip_tags', 'vault-password-file']
 
@@ -454,77 +454,67 @@ class AnsibleService(object):
         with open(playbook, 'w') as f:
             yaml.dump(yaml.load(playbook_str), f)
 
+    @retry(AnsibleServiceError, tries=ANSIBLE_GALAXY_INSTALL_ATTEMPTS, delay=ANSIBLE_GALAXY_INSTALL_DELAY)
     def download_roles(self):
-        """Download ansible roles and collections defined for the given action."""
-        flag = 0
+        """Download ansible dependencies (roles or collections).
 
+        Retries will be attempted in the event any error occurs
+        while trying to download dependencies.
+        """
         if self.galaxy_options is None:
             return
 
-        if 'role_file' in self.galaxy_options:
+        flag = 0
+
+        if "role_file" in self.galaxy_options:
+            requirements_file = os.path.join(self.config["WORKSPACE"], self.galaxy_options["role_file"])
+            requirements_file_content = file_mgmt("r", requirements_file)
             flag += 1
 
-            f = os.path.join(self.config['WORKSPACE'],
-                             self.galaxy_options['role_file'])
-            file_output = file_mgmt('r', f)
-            if isinstance(file_output, list):
-                cmd = 'ansible-galaxy role install -r %s' % f
-                self.logger.info('Installing roles using req. file: %s' % f)
-                results = exec_local_cmd_pipe(cmd, self.logger)
-                if results[0] != 0:
-                    raise AnsibleServiceError(
-                        'A problem occurred while installing roles using req. file'
-                        ' %s' % f)
-                self.logger.info('Roles installed successfully from: %s!' % f)
-            elif isinstance(file_output, dict):
-                if 'roles' in file_output:
-                    cmd = 'ansible-galaxy role install -r %s' % f
-                    self.logger.info('Installing roles using req. file: %s' % f)
-                    results = exec_local_cmd_pipe(cmd, self.logger)
-                    if results[0] != 0:
-                        raise AnsibleServiceError(
-                            'A problem occurred while installing roles using req. file'
-                            ' %s' % f)
-                    self.logger.info('Roles installed successfully from: %s!' % f)
-                if 'collections' in file_output:
-                    cmd = 'ansible-galaxy collection install -r %s' % f
-                    self.logger.info('Installing collections using req. file: %s' % f)
-                    results = exec_local_cmd_pipe(cmd, self.logger)
-                    if results[0] != 0:
-                        raise AnsibleServiceError(
-                            'A problem occurred while installing collections using req. file'
-                            ' %s' % f)
-                    self.logger.info('Collections installed successfully from: %s!' % f)
+            dependencies = {
+                "role": False,
+                "collection": False
+            }
 
-        if 'roles' in self.galaxy_options:
+            if isinstance(requirements_file_content, list):
+                dependencies["role"] = True
+            elif isinstance(requirements_file_content, dict):
+                dependencies["role"] = "roles" in requirements_file_content
+                dependencies["collection"] = "collections" in requirements_file_content
+
+            for key, value in dependencies.items():
+                if not key:
+                    continue
+
+                self.logger.info(f"Install {key}s using requirements file {requirements_file}")
+                results = exec_local_cmd_pipe(f"ansible-galaxy {key} install -r {requirements_file}", self.logger)
+                if results[0] != 0:
+                    message = f"Failed to install {key}s from requirements file {requirements_file}. " \
+                              f"Error: {results[1]}"
+                    self.logger.error(message)
+                    raise AnsibleServiceError(message)
+                self.logger.info(f"{key.title()}s installed from requirements file {requirements_file}!")
+
+        dependencies = {
+            "role": self.galaxy_options.get("roles", {}),
+            "collection": self.galaxy_options.get("collections", {})
+        }
+
+        for key, value in dependencies.items():
+            if not value:
+                continue
+
             if flag >= 1:
-                self.logger.warning('FYI roles were already installed using a'
-                                    ' requirements file. Problems may occur.')
+                self.logger.warning(f"Attention: {key}s were already installed using a requirements "
+                                    f"file. Potential problems may occur.")
 
-            for item in self.galaxy_options['roles']:
-                cmd = 'ansible-galaxy install %s' % item
-                results = exec_local_cmd_pipe(cmd, self.logger)
-
+            for item in value:
+                results = exec_local_cmd_pipe(f"ansible-galaxy {key} install {item}", self.logger)
                 if results[0] != 0:
-                    raise AnsibleServiceError(
-                        'A problem occurred while installing role: %s' % item
-                    )
-                self.logger.info('Role: %s successfully installed!' % item)
-
-        if 'collections' in self.galaxy_options:
-            if flag >= 1:
-                self.logger.warning('FYI collections were already installed using a'
-                                    ' requirements file. Problems may occur.')
-
-            for item in self.galaxy_options['collections']:
-                cmd = 'ansible-galaxy collection install %s' % item
-                results = exec_local_cmd_pipe(cmd, self.logger)
-
-                if results[0] != 0:
-                    raise AnsibleServiceError(
-                        'A problem occurred while installing collection: %s' % item
-                    )
-                self.logger.info('Collection: %s successfully installed!' % item)
+                    message = f"Failed to install {key}. Error: {results[1]}"
+                    self.logger.error(message)
+                    raise AnsibleServiceError(message)
+                self.logger.info(f"{key.title()} '{item}' installed!")
 
     def get_default_config(self, key=None):
         """getting the default configuration defined by ansible.cfg

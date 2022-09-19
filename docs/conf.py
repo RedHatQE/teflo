@@ -21,13 +21,13 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = u'Teflo'
-copyright = u'2020, Red Hat Inc.'
+copyright = u'2022, Red Hat Inc.'
 author = u'Red Hat Inc.'
 
 # The short X.Y version
-version = u'2.2.6'
+version = u'2.2.7'
 # The full version, including alpha/beta/rc tags
-release = u'2.2.6'
+release = u'2.2.7'
 
 
 # -- General configuration ---------------------------------------------------

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 Red Hat, Inc.
+# Copyright (C) 2022 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
     Unit tests for testing teflos pipeline builder class.
 
-    :copyright: (c) 2017 Red Hat, Inc.
+    :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 
@@ -48,24 +48,24 @@ def invalid_pipe_builder():
 
 @pytest.fixture(scope='class')
 def notify_pipe_builder():
-    return NotificationPipelineBuilder(trigger='on_start')
+    return NotificationPipelineBuilder(trigger='on_start', current_task='validate')
 
 
 @pytest.fixture(scope='class')
 def notify_invalid_pipe_builder():
-    return NotificationPipelineBuilder(trigger='null')
+    return NotificationPipelineBuilder(trigger='null', current_task='validate')
 
 
 class TestPipelineFactory(object):
 
     @staticmethod
     def test_get_default_pipeline():
-        pb = PipelineFactory.get_pipeline('validate')
+        pb = PipelineFactory.get_pipeline('validate', 'validate')
         assert isinstance(pb, PipelineBuilder)
 
     @staticmethod
     def test_get_notify_pipeline():
-        pb = PipelineFactory.get_pipeline('on_start')
+        pb = PipelineFactory.get_pipeline('on_start', 'validate')
         assert isinstance(pb, NotificationPipelineBuilder)
 
 
@@ -255,7 +255,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'overall_status', 0)
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
-        builder = NotificationPipelineBuilder(trigger='on_start')
+        builder = NotificationPipelineBuilder(trigger='on_start', current_task='provision')
         pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
@@ -267,7 +267,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'overall_status', 0)
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
-        builder = NotificationPipelineBuilder(trigger='on_complete')
+        builder = NotificationPipelineBuilder(trigger='on_complete', current_task='provision')
         pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
@@ -279,7 +279,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'overall_status', 0)
         setattr(scenario, 'passed_tasks', [])
         setattr(scenario, 'failed_tasks', ['validate'])
-        builder = NotificationPipelineBuilder(trigger='on_complete')
+        builder = NotificationPipelineBuilder(trigger='on_complete', current_task='provision')
         pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
@@ -291,7 +291,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'overall_status', 0)
         setattr(scenario, 'passed_tasks', ['provision'])
         setattr(scenario, 'failed_tasks', [])
-        builder = NotificationPipelineBuilder(trigger='on_complete')
+        builder = NotificationPipelineBuilder(trigger='on_complete', current_task='orchestrate')
         pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
@@ -303,7 +303,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'overall_status', 0)
         setattr(scenario, 'passed_tasks', ['validate', 'provision'])
         setattr(scenario, 'failed_tasks', [])
-        builder = NotificationPipelineBuilder(trigger='on_complete')
+        builder = NotificationPipelineBuilder(trigger='on_complete', current_task='orchestrate')
         pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
@@ -315,7 +315,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'overall_status', 0)
         setattr(scenario, 'passed_tasks', [])
         setattr(scenario, 'failed_tasks', ['report'])
-        builder = NotificationPipelineBuilder(trigger='on_complete')
+        builder = NotificationPipelineBuilder(trigger='on_complete', current_task='orchestrate')
         pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
@@ -327,7 +327,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'overall_status', 0)
         setattr(scenario, 'passed_tasks', [])
         setattr(scenario, 'failed_tasks', ['validate', 'report'])
-        builder = NotificationPipelineBuilder(trigger='on_complete')
+        builder = NotificationPipelineBuilder(trigger='on_complete', current_task='orchestrate')
         pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)
@@ -339,7 +339,7 @@ class TestNotificationPipelineBuilder(object):
         setattr(scenario, 'overall_status', 0)
         setattr(scenario, 'passed_tasks', ['validate'])
         setattr(scenario, 'failed_tasks', [])
-        builder = NotificationPipelineBuilder(trigger='on_demand')
+        builder = NotificationPipelineBuilder(trigger='on_demand', current_task='orchestrate')
         pipeline = builder.build(scenario, teflo_options={})
         assert getattr(pipeline, 'name') == 'notify'
         assert isinstance(getattr(pipeline, 'tasks'), list)

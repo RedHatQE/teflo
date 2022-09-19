@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 Red Hat, Inc.
+# Copyright (C) 2022 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
     Teflo's own Beaker provisioner. This module handles everything from
     authentication to creating/deleting resources in Beaker.
 
-    :copyright: (c) 2021 Red Hat, Inc.
+    :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 from __future__ import unicode_literals
@@ -469,21 +469,37 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         ssh_con.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         ssh_dir = "/root/.ssh"
+        ssh_file = f"{ssh_dir}/authorized_keys"
 
         try:
             ssh_con.connect(hostname=ip,
                             username=username,
                             password=password)
             sftp = ssh_con.open_sftp()
-
             try:
                 sftp.stat(ssh_dir)
             except FileNotFoundError:
                 self.logger.warning(f"Directory {ssh_dir} does not exist on {ip}. Creating directory "
                                     f"before sending key.")
                 sftp.mkdir(ssh_dir, mode=0o755)
+            try:
+                flag = 0
+                sftp.stat(ssh_file)
+            except FileNotFoundError:
+                # since /root/.ssh/authorized_keys file is not found, copying the public key as that file
+                self.logger.warning(f"File {ssh_file} does not exist. Copying the public key ")
+                sftp.put(public_key, ssh_file)
+                flag = 1
 
-            sftp.put(public_key, f"{ssh_dir}/authorized_keys")
+            if flag == 0:
+                # append the public key to the /root/.ssh/authorized_keys file
+                self.logger.debug("Appending the public key")
+                with open(public_key, 'r') as file:
+                    data = file.readlines()
+
+                with sftp.open(ssh_file, 'a') as file1:
+                    file1.writelines(data)
+
         except paramiko.SSHException as ex:
             raise BeakerProvisionerError(
                 'Failed to connect to remote system: %s' % ex

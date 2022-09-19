@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 Red Hat, Inc.
+# Copyright (C) 2022 Red Hat, Inc.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,13 +21,15 @@
 
     Unit tests for testing ansible_helpers.
 
-    :copyright: (c) 2017 Red Hat, Inc.
+    :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 
 import pytest
 import mock
 import os
+
+import teflo.helpers
 from teflo.ansible_helpers import AnsibleService, AnsibleController
 from teflo.exceptions import AnsibleServiceError
 
@@ -166,4 +168,32 @@ class TestAnsibleService(object):
         group = ansible_service.create_inv_group()
         assert group == 'host_0, host_1'
 
+    @staticmethod
+    def test_download_roles_empty(ansible_service):
+        assert ansible_service.download_roles() is None
 
+    @staticmethod
+    @mock.patch("teflo.ansible_helpers.file_mgmt")
+    @mock.patch("teflo.ansible_helpers.exec_local_cmd_pipe")
+    def test_download_roles_valid(exec_local_cmd_pipe, file_mgmt, ansible_service):
+        exec_local_cmd_pipe.return_value = mock.Mock()
+        exec_local_cmd_pipe.return_value = 0, "pass"
+        file_mgmt.return_value = mock.Mock()
+        file_mgmt.return_value = {
+            "roles": ["role-123"],
+            "collections": ["collection-123"]
+        }
+
+        ansible_service.galaxy_options = {
+            "role_file": "requirements.yml",
+            "roles": ["role-123"],
+            "collections": ["collection-123"]
+        }
+        assert ansible_service.download_roles() is None
+
+    @staticmethod
+    def test_download_roles_invalid(ansible_service):
+        with pytest.raises(AnsibleServiceError):
+            ansible_service.download_roles = mock.Mock()
+            ansible_service.download_roles.side_effect = AnsibleServiceError("Error")
+            ansible_service.download_roles()

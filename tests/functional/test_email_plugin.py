@@ -18,7 +18,7 @@
 
     Unit tests for testing email notifier plguin class
 
-    :copyright: (c) 2021 Red Hat, Inc.
+    :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
 import pytest

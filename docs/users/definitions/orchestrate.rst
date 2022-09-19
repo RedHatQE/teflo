@@ -583,29 +583,16 @@ Use the **file** key to pass a variable file to the playbook. This file needs to
                 playbook:
                 - name: ansible/template_host_test_playbook_tasks.yml
 
+Ansible Galaxy
+~~~~~~~~~~~~~~
 
-
-
-Ansible Galaxy Options
-~~~~~~~~~~~~~~~~~~~~~~
-
-These are additional options provided to the ansible orchestrator regarding the ansible roles and collections
-
-Retry
-+++++
-
-To make sure ansible roles and collections are downloaded correctly, 'retry' ansible galaxy option is used
-
-.. code-block:: yaml
-
-    ---
-    - name: ansible/setup-vnc.yml
-      description: "setup a vnc server on test clients"
-      orchestrator: ansible
-      hosts: vnc
-      ansible_galaxy_options:
-        role_file: roles.yml
-        retry: True
+Before teflo initiates the `ansible-playbook` command, it will attempt to download any
+roles or collections based on what is configured within the `ansible_galaxy_options`
+for the given task. Teflo downloads these dependencies using the `ansible-galaxy`
+command. In the event the command fails for any reason, teflo will retry the download.
+A maximum of `2` attempts will be made with a `30` second delay between attempts. Teflo
+will stop immediately when its unable to download the roles. Reducing potential playbook
+failures at a later point.
 
 Examples
 --------

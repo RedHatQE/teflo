@@ -185,7 +185,7 @@ class ScenarioGraph():
                         self.visited[self.stack.pop()] = True
                         self.prev = self.current
                         return self.current
-                elif(self.prev in self.current.child_scenarios and self.prev is not self.current.child_scenarios[-1]):
+                elif (self.prev in self.current.child_scenarios and self.prev is not self.current.child_scenarios[-1]):
                     if self.next_unvisited_sc(self.current.child_scenarios) is not None:
                         next_sc = self.next_unvisited_sc(self.current.child_scenarios)
                         self.stack.append(next_sc)
