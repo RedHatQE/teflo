@@ -1,3 +1,19 @@
+Version 2.2.7 (2022-09-19)
+--------------------------
+
+Documentation
+~~~~~~~~~~~~~
+* update Teflo and Teflo plugins copyright to 2022.
+
+Enhancements
+~~~~~~~~~~~~
+* Improvements to downloading ansible roles/collections
+
+Bug Fixes
+~~~~~~~~~
+* Beaker Provisioner: append to authorized_keys rather than overwrite it
+* Fix on_start trigger
+
 Version 2.2.6 (2022-07-25)
 --------------------------
 
