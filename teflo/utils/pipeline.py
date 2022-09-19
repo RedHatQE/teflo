@@ -41,11 +41,21 @@ from ..tasks import CleanupTask
 class PipelineFactory(object):
 
     @staticmethod
-    def get_pipeline(task):
+    def get_pipeline(task, current_task=None):
+        """This method used by regular pipeline and also the notification pipeline.
+        It checks the task name, to which of the objects it belongs to
+        and return the object accordingly.
+
+        :param task: task name
+        :type task: str
+        :param current_task: The current run task from the scenario tasks. Used only for notification pipeline.
+        :type current_task: str
+        :return: pipeline object
+        """
         if task in TASKLIST:
             return PipelineBuilder(task)
         else:
-            return NotificationPipelineBuilder(task)
+            return NotificationPipelineBuilder(task, current_task)
 
 
 class PipelineBuilder(object):
@@ -233,10 +243,11 @@ class NotificationPipelineBuilder(PipelineBuilder):
     The primary class for building teflos notification pipelines to execute.
     """
 
-    def __init__(self, trigger):
+    def __init__(self, trigger, current_task):
 
         super(NotificationPipelineBuilder, self).__init__('notify')
         self.trigger = trigger
+        self.current_task = current_task
 
     def is_task_valid(self):
         """Check if the pipeline task name is valid for teflo.
@@ -295,7 +306,8 @@ class NotificationPipelineBuilder(PipelineBuilder):
             scenario_notifications = [item for item in
                                         filter_notifications_on_trigger(self.trigger, scenario_notifications,
                                                                         getattr(scenario, 'passed_tasks'),
-                                                                        getattr(scenario, 'failed_tasks'))
+                                                                        getattr(scenario, 'failed_tasks'),
+                                                                        self.current_task)
                                       ]
 
             # notification resource
