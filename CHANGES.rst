@@ -8,6 +8,7 @@ Documentation
 Enhancements
 ~~~~~~~~~~~~
 * Improvements to downloading ansible roles/collections
+* Upgrade urllib3
 
 Bug Fixes
 ~~~~~~~~~
