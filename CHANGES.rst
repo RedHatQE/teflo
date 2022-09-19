@@ -12,6 +12,7 @@ Enhancements
 Bug Fixes
 ~~~~~~~~~
 * Beaker Provisioner: append to authorized_keys rather than overwrite it
+* Fix on_start trigger
 
 Version 2.2.6 (2022-07-25)
 --------------------------
