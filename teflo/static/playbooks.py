@@ -109,8 +109,16 @@ SYNCHRONIZE_PLAYBOOK = '''
           failed_when: false
           register: rsync_installed
 
-        - name: install rsync
-          package:
+        - name: Add repository
+          ansible.builtin.yum_repository:
+            name: epel
+            description: EPEL YUM repo
+            baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+          become: true
+          when: rsync_installed.rc != 0
+
+        - name: Install rsync
+          ansible.builtin.yum:
             name: rsync
             state: present
           become: true
