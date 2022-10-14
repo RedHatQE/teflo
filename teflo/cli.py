@@ -85,7 +85,7 @@ def create():
               default=None,
               metavar="",
               type=click.Choice(ITERATE_METHOD_CHOICES),
-              is_flag=True,
+              # is_flag=True,
               help="Iterate the scenario graph by_level or by_depth method",
               )
 @click.pass_context
