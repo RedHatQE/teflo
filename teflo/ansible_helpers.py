@@ -483,7 +483,7 @@ class AnsibleService(object):
                 dependencies["collection"] = "collections" in requirements_file_content
 
             for key, value in dependencies.items():
-                if not key:
+                if not value:
                     continue
 
                 self.logger.info(f"Install {key}s using requirements file {requirements_file}")
