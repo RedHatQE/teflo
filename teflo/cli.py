@@ -34,6 +34,7 @@ from . import __version__
 from .teflo import Teflo
 from .constants import TASKLIST, TASK_LOGLEVEL_CHOICES, ITERATE_METHOD_CHOICES
 from .helpers import validate_cli_scenario_option
+from .utils.config import Config
 
 
 def print_header():
@@ -388,3 +389,34 @@ def init(ctx, dirname):
     Teflo.create_teflo_workspace(Teflo, ctx, dirname)
 
     click.echo("The teflo workspace created successfully")
+
+
+@teflo.command()
+@click.argument("alias")
+@click.pass_context
+def alias(ctx, alias):
+    """Run predefined command from teflo.cfg"""
+
+    # check if user using aliases
+    if alias:
+        config = Config()
+        load_config = config.load()
+        alias_list = config.__get_aliases__()
+        if alias in alias_list[0]:
+            selected = alias_list[0].get(alias)
+            param_list = selected.split()
+            get_task = param_list[0]
+            if get_task == 'run':
+                run(param_list[1:])
+            elif get_task == 'show':
+                show(param_list[1:])
+            elif get_task == 'notify':
+                notify(param_list[1:])
+            elif get_task == 'validate':
+                validate(param_list[1:])
+            else:
+                raise TefloError(f'Error: Task - "{get_task}" is not valid task please use teflo --help')
+        else:
+            raise TefloError(f'Error: Alias name "{alias}" Not Found')
+    else:
+        raise TefloError(f'Error: Not Found aliases to search.')

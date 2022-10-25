@@ -243,6 +243,39 @@ class TestCli(object):
         assert results.exit_code == 0
 
     @staticmethod
+    @mock.patch.object(Teflo, 'run')
+    def test_run_aliases_teflo_cfg(mock_method, runner):
+        """This test will check if Aliases command provided in the teflo.cfg is used """
+        mock_method.return_value = 0
+        results = runner.invoke(
+                teflo, ['alias', 'dev_run']
+        )
+        assert 'unit_test' in results.output
+        assert results.exit_code == 0
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
+    def test_run_non_exist_aliases_teflo_cfg(mock_method, runner):
+        """This test will check if FAILED when Aliases command provided Not exist in the teflo.cfg is used """
+        mock_method.return_value = 0
+        results = runner.invoke(
+                teflo, ['alias', 'asd_run']
+        )
+        assert 'Error: Alias name "asd_run" Not Found' in results.exception.args[0]
+        assert results.exit_code == 1
+
+    @staticmethod
+    @mock.patch.object(Teflo, 'run')
+    def test_run_aliases_worng_task_teflo_cfg(mock_method, runner):
+        """This test will check if FAILED when Aliases command provided Wrong task in the teflo.cfg """
+        mock_method.return_value = 0
+        results = runner.invoke(
+                teflo, ['alias', 'prod_run']
+        )
+        assert 'Error: Task - "rshow" is not valid task please use teflo --help' in results.exception.args[0]
+        assert results.exit_code == 1
+
+    @staticmethod
     def test_run_mutually_exclusive_label_skiplabel_option(runner):
         """ this tests if cli exits in case both labels and skip labels are present during teflo run"""
         results = runner.invoke(teflo, ['run', '-s', '../assets/common.yml', '-l', 'label1', '-sl', 'label2'])

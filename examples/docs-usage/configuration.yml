@@ -98,3 +98,8 @@ testrun_results=False
 # Teflo by default will NOT exit if the collection of artifact task fails. In order to exit the run on an error during
 # collection of artifacts user can set this field to true , else False or ignore the field.
 exit_on_error=True
+
+# Teflo Alias
+[alias]
+dev_run=run -s scenario.yml --log-level debug --iterate-method by_depth
+prod_run=show -s scenario.yml --list-labels

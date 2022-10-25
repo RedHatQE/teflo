@@ -209,6 +209,25 @@ class Config(dict):
 
         self.__setitem__('PROVISIONER_OPTIONS', provisioner_options)
 
+    def __get_aliases__(self):
+        """Get the aliases from configuration settings."""
+        aliases_options = []
+
+        for section in getattr(self.parser, '_sections'):
+            if not section.startswith('alias'):
+                continue
+
+            _aliases_options = {}
+
+            for option in self.parser.options(section):
+                _aliases_options[option] = \
+                    self.parser.get(section, option)
+            _aliases_options['name'] = section.split(':')[-1]
+            aliases_options.append(_aliases_options)
+
+        self.__setitem__('ALIAS', aliases_options)
+        return aliases_options
+
     def __set_timeout__(self):
         """
         Set timeout for each tasks. The task will be terminated within the time

@@ -46,6 +46,7 @@ Once teflo is installed, you can run the teflo command to view its options:
       --help         Show this message and exit.
 
     Commands:
+      alias     Run predefined command from teflo.cfg
       init      Initializes a teflo project in your workspace.
       notify    Trigger notifications marked on demand for a scenario.
       run       Run a scenario configuration.
@@ -359,6 +360,26 @@ After you run *teflo init* command the project file tree will look like this:
         └── teflo.cfg
 
 You can use the examples using the README.rst files in the same folder.
+
+Alias
+++++++
+
+Teflo allows the use of alias to run predefined commands(Similar to git)
+To use it add alias block to the teflo.cfg file:
+
+.. code-block:: bash
+
+    [alias]
+    dev_run=run -s scenario.yml --log-level debug --iterate-method by_depth
+    prod_run=show -s scenario.yml --list-labels
+
+To run dev_run alias:
+
+.. code-block:: bash
+
+    $ Teflo alias dev_run
+
+
 
 Getting Started Examples
 ~~~~~~~~~~~~~~~~~~~~~~~~
