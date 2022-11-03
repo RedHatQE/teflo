@@ -83,10 +83,9 @@ def create():
               is_flag=True,
               help="Display the scenario structure in case of included scenarios.")
 @click.option("-im", "--iterate-method",
-              default=None,
+              default='by_level',
               metavar="",
               type=click.Choice(ITERATE_METHOD_CHOICES),
-              is_flag=True,
               help="Iterate the scenario graph by_level or by_depth method",
               )
 @click.pass_context
@@ -95,6 +94,7 @@ def show(ctx, scenario, list_labels, vars_data, show_graph, iterate_method):
     print_header()
     # Create a new teflo compound
     cbn = Teflo(__name__)
+    cbn.config['INCLUDED_SDF_ITERATE_METHOD'] = iterate_method
 
     scenario_graph: ScenarioGraph = validate_cli_scenario_option(ctx, scenario, cbn.config, vars_data)
     # Sending the list of scenario graph to the teflo object
@@ -104,7 +104,7 @@ def show(ctx, scenario, list_labels, vars_data, show_graph, iterate_method):
     if list_labels:
         cbn.list_labels()
     elif show_graph:
-        cbn.showgraph(ctx, scenario_graph)
+        cbn.showgraph(ctx, scenario_graph, iterate_method)
     else:
         click.echo('An option needs to be given. See help')
         ctx.exit()
