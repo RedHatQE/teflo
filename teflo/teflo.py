@@ -850,11 +850,11 @@ class Teflo(LoggerMixin, TimeMixin):
         copy_tree('./.teflo_cache/teflo_init/', dirname)
         shutil.rmtree('.teflo_cache')
 
-    def showgraph(self, ctx, scenario_graph: ScenarioGraph):
+    def showgraph(self, ctx, scenario_graph: ScenarioGraph, iterate_method):
         """Show scenario graph includes structure"""
         from termcolor import colored
         click.echo(colored("Below is the structure of the Scenario Definition Files", "green"))
         print('\n')
-        print('ITERATE METHOD:', scenario_graph.iterate_method)
+        print('ITERATE METHOD:', iterate_method)
         print('\n\n\n')
         print(colored(scenario_graph, "green"))

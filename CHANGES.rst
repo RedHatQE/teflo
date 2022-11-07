@@ -1,3 +1,16 @@
+Version 2.2.8 (2022-11-7)
+--------------------------
+
+Enhancements
+~~~~~~~~~~~~
+* Added Support of Teflo aliases.
+
+Bug Fixes
+~~~~~~~~~
+* Fix invalid value error for command show --show-graph -im.
+* Added repo install if failed to find rsync package.
+* Fix allow roles to be installed correctly from req files with only a list.
+
 Version 2.2.7 (2022-09-19)
 --------------------------
 

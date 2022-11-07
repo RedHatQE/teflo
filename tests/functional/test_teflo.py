@@ -237,3 +237,14 @@ class TestTeflo(object):
                                 )
         assert results.exit_code == 0
         assert "Starting tasks on pipeline: notify" in results.output
+
+    @staticmethod
+    @mock.patch.object(yaml, 'safe_load')
+    def test_show_graph_and_iterate_method(mock_method, basic_scenario_graph_with_provision_only: ScenarioGraph):
+        mock_method.return_value = {}
+        teflo = Teflo(data_folder='/tmp')
+        teflo.load_from_yaml(basic_scenario_graph_with_provision_only)
+        teflo.showgraph(mock_method, scenario_graph=basic_scenario_graph_with_provision_only, iterate_method='by_level')
+
+        assert teflo.scenario_graph and len(teflo.scenario_graph) > 0
+        assert teflo.config['INCLUDED_SDF_ITERATE_METHOD'] == 'by_depth'
