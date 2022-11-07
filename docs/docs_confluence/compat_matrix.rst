@@ -15,8 +15,10 @@ n and n-2 teflo releases
         - 2.2.5
         - 2.2.6
         - 2.2.7
+        - 2.2.8
 
     *   - Rppreproc Plugin
+        - 2.0.2
         - 2.0.2
         - 2.0.2
         - 2.0.2
@@ -25,13 +27,16 @@ n and n-2 teflo releases
         - 1.1.0
         - 1.1.0
         - 1.1.0
+        - 1.1.0
 
     *   - Linchpin Plugin
         - 1.0.2
         - 1.0.2
         - Depreciated
+        - Depreciated
 
     *   - Openstack Client Plugin
+        - 1.0.1
         - 1.0.1
         - 1.0.1
         - 1.0.1
@@ -40,8 +45,10 @@ n and n-2 teflo releases
         - 2.0.1
         - 2.0.1
         - 2.0.1
+        - 2.0.1
 
     *   - Terraform Plugin
+        - 1.0.0
         - 1.0.0
         - 1.0.0
         - 1.0.0
@@ -55,8 +62,10 @@ n and n-2 teflo releases
         - 1.2.2
         - 1.2.2
         - 1.2.2
+        - 1.2.2
 
     *   - Rp_preproc
         - 0.2.0
         - 0.3.1
         - 0.3.2
+        - 0.3.4
