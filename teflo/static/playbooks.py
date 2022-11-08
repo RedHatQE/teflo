@@ -111,18 +111,20 @@ SYNCHRONIZE_PLAYBOOK = '''
 
         - name: Add repository
           ansible.builtin.yum_repository:
-            name: epel
+            name: epel-release
+            baseurl: https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64
+            state: present
             description: EPEL YUM repo
-            baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+            gpgcheck: no
           become: true
-          when: rsync_installed.rc != 0
+          when: (rsync_installed.rc != 0 ) and (ansible_facts['os_family'] == 'RedHat')
 
         - name: Install rsync
           ansible.builtin.yum:
             name: rsync
             state: present
           become: true
-          when: rsync_installed.rc != 0
+          when: (rsync_installed.rc != 0 ) and (ansible_facts['os_family'] == 'RedHat')
 
         - name: fetch artifacts
           synchronize:
