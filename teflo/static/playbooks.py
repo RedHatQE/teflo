@@ -28,6 +28,10 @@
 SYNCHRONIZE_PLAYBOOK = '''
 - name: fetch artifacts
   hosts: "{{ hosts }}"
+  vars:
+    repo_url: >-
+            https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi{{ ansible_distribution_major_version -}}
+            /{{ ansible_distribution_major_version }}/x86_64/baseos/os
 
   tasks:
     - name: find artifacts
@@ -109,12 +113,21 @@ SYNCHRONIZE_PLAYBOOK = '''
           failed_when: false
           register: rsync_installed
 
+        - name: Update repo url for RHEL 7 OS
+          ansible.builtin.set_fact:
+            repo_url: >-
+              https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi/server/{{ ansible_distribution_major_version -}}
+              /{{ ansible_distribution_major_version }}Server/x86_64/os
+          when: >-
+              (rsync_installed.rc != 0 ) and (ansible_facts['os_family'] == 'RedHat')
+              and (ansible_distribution_major_version == "7" )
+
         - name: Add repository
           ansible.builtin.yum_repository:
-            name: epel-release
-            baseurl: https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64
+            name: ubi
+            baseurl: "{{ repo_url }}"
             state: present
-            description: EPEL YUM repo
+            description: ubi YUM repo added by teflo
             gpgcheck: no
           become: true
           when: (rsync_installed.rc != 0 ) and (ansible_facts['os_family'] == 'RedHat')
