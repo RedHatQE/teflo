@@ -1,3 +1,10 @@
+Version 2.2.9 (2022-11-15)
+--------------------------
+
+Bug Fixes
+~~~~~~~~~
+* Fix install rsync on different versions
+
 Version 2.2.8 (2022-11-7)
 --------------------------
 
