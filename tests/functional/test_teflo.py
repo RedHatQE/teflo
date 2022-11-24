@@ -191,15 +191,17 @@ class TestTeflo(object):
                "Please check the labels provided during the run match the ones in "\
                "scenario descriptor file" in ex.value.args[0]
 
-    @staticmethod
-    def test_collected_group_vars(runner):
-        """This test if to verify if there are failed tasks they are not seen in passed task list"""
-        results = runner.invoke(teflo, ['run', '-s', '../localhost_scenario/s_test_gv.yml',
-                                        '-t', 'provision', '-t', 'orchestrate',
-                                        '-w', '../localhost_scenario/']
-                                )
-        assert results.exit_code == 0
-        assert "ansible_user=fedora" in results.output
+    # @staticmethod
+    # def test_collected_group_vars(runner, cleanup_master):
+    #     """This test if to verify if there are failed tasks they are not seen in passed task list"""
+    #     # cleanup_master
+    #     results = runner.invoke(teflo, ['run', '-s', '../localhost_scenario/s_test_gv.yml',
+    #                                     '-t', 'orchestrate',
+    #                                     '-w', '../localhost_scenario/']
+    #                             )
+    #     assert results.exit_code == 0
+    #     assert "ansible_user=fedora" in results.output
+    #     cleanup_master
 
     @staticmethod
     def test_collect_final_passed_failed_tasks_status(runner):

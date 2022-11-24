@@ -531,9 +531,10 @@ class AnsibleService(object):
         acm = ConfigManager()
         a_settings = acm.get_configuration_definitions()
         if key:
-            for setting in a_settings:
-                if setting.name == key:
-                    return setting.value
+            for setting in a_settings.keys():
+                if setting == key:
+                    val = a_settings.get(setting)
+                    return val['default']
             return None
         else:
             for setting in a_settings:

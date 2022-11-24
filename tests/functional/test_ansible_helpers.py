@@ -90,8 +90,8 @@ class TestAnsibleService(object):
     def test_run_playbook_name_as_fqcn(mock_method, ansible_service):
         playbook = 'coll.project.hello'
         coll_playbook_name = ansible_service.get_default_config(key="COLLECTIONS_PATHS")
-        test_run = ansible_service.get_playbook_path(coll_playbook_name[0], playbook)
-        assert '/collections/ansible_collections/coll/project' in test_run
+        test_run = ansible_service.get_playbook_path(coll_playbook_name, playbook)
+        assert 'ansible_collections/coll/project' in test_run
 
 
     @staticmethod

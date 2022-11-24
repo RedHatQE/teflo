@@ -1578,7 +1578,7 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
                             config.set(section_vars, k, v)
 
                     # get ansible group_vars file
-                    group_vars_path = self.config['WORKSPACE'] + '/ansible/group_vars/%s' % section
+                    group_vars_path = self.config['WORKSPACE'] + '/ansible/group_vars/%s.yml' % section
                     if os.path.exists(group_vars_path):
                         group_vars = file_mgmt('r', group_vars_path)
                         for k, v in group_vars.items():
