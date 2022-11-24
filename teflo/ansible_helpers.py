@@ -529,7 +529,7 @@ class AnsibleService(object):
         """
         returndict = {}
         acm = ConfigManager()
-        a_settings = acm.data.get_settings()
+        a_settings = acm.get_configuration_definitions()
         if key:
             for setting in a_settings:
                 if setting.name == key:
