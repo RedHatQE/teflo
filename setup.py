@@ -48,9 +48,9 @@ setup(
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=3.6",
+    python_requires=">=3.9",
     install_requires=[
-        'ansible>=2.5.0',
+        'ansible>=2.14.0',
         'apache-libcloud==2.2.0',
         "blaster>=0.3.0",
         'Click>=6.7',
@@ -81,7 +81,7 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.9',
     ],
     entry_points={
         'console_scripts': ['teflo=teflo.cli:teflo'],
