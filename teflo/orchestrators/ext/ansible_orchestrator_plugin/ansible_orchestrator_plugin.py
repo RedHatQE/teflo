@@ -117,16 +117,20 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
                 self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
             elif True:
                 # DOWNLOAD COLLECTION AND CHECK IF STRING IS VALID FQCR.
-                self.ans_service.download_roles()
-                coll_playbook_name = self.ans_service.get_default_config(key="COLLECTIONS_PATHS")
-                if os.path.exists(coll_playbook_name[0]):
-                    new_path = self.ans_service.get_playbook_path(coll_path=coll_playbook_name[0],
-                                                                  playbook=self.playbook.get('name'))
-                    self.playbook["name"] = new_path
-                    self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
-                else:
-                    raise TefloOrchestratorError('Cannot find Action resource playbook %s' %
-                                                 self.playbook.get('name'))
+                coll_playbook_path = self.ans_service.get_user_ansiblg_config(key="COLLECTIONS_PATHS")
+                if len(coll_playbook_path) > 1:
+                    ws_coll_path = os.path.join(self.config["WORKSPACE"], 'collections')
+                    self.ans_service.download_roles(ws_coll_path)
+                    if os.path.exists(ws_coll_path):
+                        self.logger.debug('Found Action resource playbook %s' % ws_coll_path)
+                elif True:
+                    self.ans_service.download_roles()
+                    new_path = self.ans_service.get_playbook_path(self.workspace, playbook=self.playbook.get('name'))
+                    if os.path.exists(new_path):
+                        self.playbook["name"] = new_path
+                        self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
+                    else:
+                        raise TefloOrchestratorError('Cannot find Action resource playbook %s' % coll_playbook_path)
 
     def __playbook__(self):
         self.logger.info('Executing playbook:')
@@ -136,10 +140,8 @@ class AnsibleOrchestratorPlugin(OrchestratorPlugin):
                     self.config["WORKSPACE"], name_split[0])
             self.playbook["name"] = " ".join(name_split)
         else:
-            coll_playbook_name = self.ans_service.get_default_config(key="COLLECTIONS_PATHS")
-            if os.path.exists(coll_playbook_name[0]):
-                new_path = self.ans_service.get_playbook_path(coll_path=coll_playbook_name[0],
-                                                              playbook=self.playbook.get('name'))
+            new_path = self.ans_service.get_playbook_path(self.workspace, playbook=self.playbook.get('name'))
+            if os.path.exists(new_path):
                 self.playbook["name"] = new_path
                 self.logger.debug('Found Action resource playbook %s' % self.playbook.get('name'))
         results = self.ans_service.run_playbook(self.playbook)
