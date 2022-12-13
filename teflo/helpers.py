@@ -1683,7 +1683,7 @@ def build_scenario_graph(root_scenario_path: str, config, root_scenario_temp_dat
 
         workspace_info = None
         if 'remote_workspace' in data.keys() and data['remote_workspace'] is not None \
-                and len(data['remote_workspace']) is not 0:
+                and len(data['remote_workspace']) != 0:
             remote_workspaces = data['remote_workspace']
             workspace_info = process_remote_workspace(remote_workspaces)
 

@@ -9,8 +9,7 @@ include:
 
 provision:
   - name: {{ asset_name | default('test') }}
-    provider:
-      name: openstack
+    provisioner: openstack
 
 orchestrate:
 
