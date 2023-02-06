@@ -455,7 +455,7 @@ class AnsibleService(object):
             yaml.dump(yaml.load(playbook_str), f)
 
     @retry(AnsibleServiceError, tries=ANSIBLE_GALAXY_INSTALL_ATTEMPTS, delay=ANSIBLE_GALAXY_INSTALL_DELAY)
-    def download_roles(self):
+    def download_roles(self, u_path=None):
         """Download ansible dependencies (roles or collections).
 
         Retries will be attempted in the event any error occurs
@@ -481,16 +481,22 @@ class AnsibleService(object):
             elif isinstance(requirements_file_content, dict):
                 dependencies["role"] = "roles" in requirements_file_content
                 dependencies["collection"] = "collections" in requirements_file_content
-
             for key, value in dependencies.items():
                 if not value:
                     continue
 
                 self.logger.info(f"Install {key}s using requirements file {requirements_file}")
-                results = exec_local_cmd_pipe(f"ansible-galaxy {key} install -r {requirements_file}", self.logger)
+
+                if key == 'collection' and u_path:
+                    # check if user select different path to install collection.
+                    results = exec_local_cmd_pipe(f"ansible-galaxy {key} install -r {requirements_file} -p {u_path}",
+                                                  self.logger)
+                else:
+                    results = exec_local_cmd_pipe(f"ansible-galaxy {key} install -r {requirements_file}", self.logger)
+
                 if results[0] != 0:
                     message = f"Failed to install {key}s from requirements file {requirements_file}. " \
-                              f"Error: {results[1]}"
+                                f"Error: {results[1]}"
                     self.logger.error(message)
                     raise AnsibleServiceError(message)
                 self.logger.info(f"{key.title()}s installed from requirements file {requirements_file}!")
@@ -516,6 +522,19 @@ class AnsibleService(object):
                     raise AnsibleServiceError(message)
                 self.logger.info(f"{key.title()} '{item}' installed!")
 
+    def get_user_ansiblg_config(self, key=None):
+        """getting the user configuration defined by ansible.cfg
+
+        :param key: get a value of a specific key of the ansible.cfg file
+        :type key: str
+
+        :return: value of the ansible config
+        :rtype:  string
+        """
+        acm = ConfigManager()
+        u_settings = acm.get_config_value(config=key)
+        return u_settings
+
     def get_default_config(self, key=None):
         """getting the default configuration defined by ansible.cfg
         (Uses default values if there is no ansible.cfg).
@@ -529,11 +548,12 @@ class AnsibleService(object):
         """
         returndict = {}
         acm = ConfigManager()
-        a_settings = acm.data.get_settings()
+        a_settings = acm.get_configuration_definitions()
         if key:
-            for setting in a_settings:
-                if setting.name == key:
-                    return setting.value
+            for setting in a_settings.keys():
+                if setting == key:
+                    val = a_settings.get(setting)
+                    return val['default']
             return None
         else:
             for setting in a_settings:
@@ -558,15 +578,22 @@ class AnsibleService(object):
         """
         if coll_path and playbook:
             fqcn_playbook_path = playbook.split('.')
-            coll_dir_path = coll_path + '/ansible_collections/' + '%s/%s' % (fqcn_playbook_path[0],
-                                                                             fqcn_playbook_path[1])
+            con_coll_path = self.get_user_ansiblg_config("COLLECTIONS_PATHS")
+            coll_dir_path = os.path.join(coll_path, 'collections/ansible_collections/', fqcn_playbook_path[0],
+                                         fqcn_playbook_path[1])
+            if not os.path.exists(coll_dir_path):
+                if not len(con_coll_path) > 1:
+                    coll_dir_path = con_coll_path[0]
+                    self.logger.debug('Found Action resource playbook %s' % con_coll_path)
+
             files = glob.glob(coll_dir_path + '/**/*.yml', recursive=True)
             if files:
                 for path in files:
                     if fqcn_playbook_path[-1] in path:
                         self.logger.debug('Found Collections at: %s' % path)
                         return path
-            return coll_dir_path
+            else:
+                self.logger.error(f'Playbook {coll_dir_path} Not Found!')
 
     def alog_update(self, folder_name=None):
         """move ansible logs to data folder/folder_name(if provided)

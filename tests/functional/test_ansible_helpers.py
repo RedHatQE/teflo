@@ -89,10 +89,11 @@ class TestAnsibleService(object):
     @mock.patch.object(AnsibleController, 'run_playbook')
     def test_run_playbook_name_as_fqcn(mock_method, ansible_service):
         playbook = 'coll.project.hello'
-        coll_playbook_name = ansible_service.get_default_config(key="COLLECTIONS_PATHS")
-        test_run = ansible_service.get_playbook_path(coll_playbook_name[0], playbook)
-        assert '/collections/ansible_collections/coll/project' in test_run
-
+        os.system('mkdir -p /tmp/ws/collections/ansible_collections/coll/project/playbooks')
+        os.system('touch /tmp/ws/collections/ansible_collections/coll/project/playbooks/hello.yml')
+        test_run = ansible_service.get_playbook_path(ansible_service.config.get('WORKSPACE'), playbook)
+        os.system('rm -rf /tmp/ws/collections')
+        assert 'ansible_collections/coll/project/playbooks/hello.yml' in test_run
 
     @staticmethod
     @mock.patch.object(AnsibleController, 'run_playbook', run_playbook)

@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         container:
-        - 'centos:7'
+        - 'quay.io/centos/centos:stream9'
         - 'quay.io/centos/centos:stream'
         - 'quay.io/shshevac/teflo_ubi8'
       fail-fast: false
@@ -26,25 +26,33 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: cat /etc/os-release
 
       # Runs a single command using the runners shell
       - name: install required packages
         run: |
-          yum install -y gcc python3 python3-devel python3-pip krb5-workstation krb5-devel git
+          dnf install -y glibc-langpack-en gcc python3 python3-devel python3-pip krb5-workstation krb5-devel git
+
+#      - name: update locale
+#        run: localectl set-locale LANG=en_US.utf8
 
       - name: install pip virtualenv and tox
+        env:
+          LANG: en_US.UTF-8
+          LC_ALL: en_US.UTF-8
         run: pip3 install virtualenv tox
 
       # Runs a set of commands using the runners shell
       - name: Run functional unit tests
         env:
-          LANG: en_US.utf8
+          LANG: en_US.UTF-8
+          LC_ALL: en_US.UTF-8
         run: tox -e py3-unit
 
       # Runs a set of commands using the runners shell
       - name: Run local scenario unit test
         env:
-          LANG: en_US.utf8
+          LANG: en_US.UTF-8
+          LC_ALL: en_US.UTF-8
         run: tox -e py3-scenario

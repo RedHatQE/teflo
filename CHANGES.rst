@@ -1,3 +1,11 @@
+Version 2.3.0 (2023-02-06)
+--------------------------
+
+Bug Fixes
+~~~~~~~~~
+* Changed min python to v3.9 and ansible version to 2.14.0
+* fix to get collection playbook installed in default path
+
 Version 2.2.9 (2022-11-15)
 --------------------------
 

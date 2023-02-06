@@ -220,7 +220,7 @@ the requirements.yml should look like:
     For more information read from `Ansible Docs
     <https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#using-collections-in-playbooks>`_.
 
-    To select where we want to install the collection Or if exist we can change the path on the ansible.cfg file:
+    By defualt Teflo will install collections under "workspace/collections/" To change default use the ansible.cfg file:
 
         collections_paths = ./wanted_coll_path
 

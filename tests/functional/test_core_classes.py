@@ -172,10 +172,10 @@ def cleanup_master(request):
 
 @pytest.fixture
 def create_group_vars():
-    gv_path = os.path.join('/tmp/ws/ansible/group_vars', 'ans_gv')
+    gv_path = '/tmp/ws/ansible/group_vars/ans_gv.yml'
     if not os.path.exists('/tmp/ws/ansible/group_vars/'):
         os.makedirs('/tmp/ws/ansible/group_vars/')
-        shutil.copyfile('../localhost_scenario/ansible/group_vars/ans_gv', gv_path)
+        shutil.copy('../localhost_scenario/ansible/group_vars/all.yml', gv_path)
 
 
 @pytest.fixture
@@ -199,6 +199,7 @@ def inv_host_2(default_host_params, config):
                                            ansible_ssh_private_key='keys/demo'),
                        ip_address=dict(public='10.10.10.10', private='192.168.10.10')))
     config['RESULTS_FOLDER'] = '/tmp/.results'
+    config['WORKSPACE'] = '/tmp/ws'
     return Asset(
         name='ans_gv',
         config=config,
@@ -212,6 +213,12 @@ def inventory(inv_host):
     inventory = Inventory(inv_host.config, 'xyz')
     return inventory
 
+
+@pytest.fixture
+def inventory2(inv_host_2):
+    inv_host_2.config['INVENTORY_FOLDER'] = '/tmp/.results/'
+    inventory = Inventory(inv_host_2.config, 'xyz')
+    return inventory
 
 @pytest.fixture
 def notifier_plugin(notification_default_resource):
@@ -760,7 +767,8 @@ class TestInventory(object):
         cleanup_master
 
     @staticmethod
-    def test_create_inventory_group_vars(inventory: Inventory, inv_host_2, create_group_vars, cleanup_master):
+    def test_create_inventory_group_vars(inventory: Inventory, inv_host_2, create_group_vars,
+                                         cleanup_master):
         # using inventory folder as the default created by teflo
         create_group_vars
         inventory.create_inventory(all_hosts=[inv_host_2])
@@ -769,9 +777,10 @@ class TestInventory(object):
         group_vars = config['ans_gv:vars']
         ans_usr = group_vars['ansible_user']
         assert 'fedora' in ans_usr
-        if os.path.exists('/tmp/ws/ansible'):
-            shutil.rmtree('/tmp/ws/ansible')
+        if os.path.exists('/tmp/.results/'):
+            shutil.rmtree('/tmp/.results/')
         cleanup_master
+
 
     @staticmethod
     def test_create_inventory_inv_err(inventory: Inventory, inv_host, cleanup_master):
