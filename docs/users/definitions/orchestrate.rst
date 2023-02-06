@@ -220,7 +220,7 @@ the requirements.yml should look like:
     For more information read from `Ansible Docs
     <https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#using-collections-in-playbooks>`_.
 
-    By defualt Teflo will install collections under "workspace/collections/" To change default use the ansible.cfg file:
+    By default Teflo will install collections under "workspace/collections/" To change default use the ansible.cfg file:
 
         collections_paths = ./wanted_coll_path
 
@@ -712,9 +712,8 @@ ansible roles to be downloaded and requires additional extra variables.
     portions of ansible.
 
     If you are using the ability to download roles or collections by teflo, you need to set
-    the *roles_path* or the *collections_paths* within your ansible.cfg. If this is not set, problems will
-    occur and teflo will fail. Due to being unable to locate the roles and collections within
-    the playbook its executing.
+    the *roles_path* or the *collections_paths* within your ansible.cfg. If this is not set, the
+    default collections path  "<your workspace>/collections/" will be selected.
 
     Here is an example ansible.cfg setting the roles_path and collections_paths to a relative path
     within the scenario directory.
