@@ -192,10 +192,10 @@ n and n-2 teflo releases
     :header-rows: 1
 
     *   - Teflo Release
-        - 2.2.6
         - 2.2.7
         - 2.2.8
         - 2.2.9
+        - 2.3.0
 
     *   - Rppreproc Plugin
         - 2.0.2
@@ -246,7 +246,7 @@ n and n-2 teflo releases
         - 1.2.2
 
     *   - Rp_preproc
-        - 0.2.0
         - 0.3.1
         - 0.3.2
         - 0.3.4
+        - 0.3.5
