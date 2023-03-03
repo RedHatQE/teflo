@@ -15,7 +15,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 """
     tests.test_misc
 
@@ -24,9 +23,9 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-
 from teflo._compat import string_types
-from teflo.static.playbooks import GIT_CLONE_PLAYBOOK, SYNCHRONIZE_PLAYBOOK
+from teflo.static.playbooks import GIT_CLONE_PLAYBOOK
+from teflo.static.playbooks import SYNCHRONIZE_PLAYBOOK
 
 
 def test_import_synchronize_pb():

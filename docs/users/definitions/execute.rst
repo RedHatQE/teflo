@@ -21,19 +21,19 @@ The execution is further broken down into 3 different types:
 The following is the basic structure that defines an execution task, using a
 command for execution:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 1-18
 
 The following is the basic structure that defines an execution task, using a
 user defined script for execution:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 20-37
 
 The following is the basic structure that defines an exectuion task, using a
 user defined playbook for execution:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 40-57
 
 
@@ -164,7 +164,7 @@ This means users can set ansible options to be used by the runner executor.
 In this case, the options should mostly be used for defining the user that is
 performing the execution. Please see the following example for more details:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 59-64
 
 .. note::
@@ -193,13 +193,13 @@ For this case, teflo has two options to handle these situations:
  #.  ignore the return code for the test execution
  #.  give list of valid return codes that will not flag failure
 
-Option 1 to handle non-zero return codes is called **ignore_rc**, this option 
+Option 1 to handle non-zero return codes is called **ignore_rc**, this option
 can be used at the top level key of execute or can also be used for each
 specific call.  The following shows an example, where it is defined in both
 areas.  The top level is set to False, which is the default, then it is used
 only for the 2nd pytest execution call, where there are failures:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 66-85
 
 Options 2 to handle non-zero return codes is called **valid_rc**, this option
@@ -208,7 +208,7 @@ specific call. If **ignore_rc** is set it takes precedence. The following shows
 an example, where it is defined in both areas. The top level is set to one value
 and the call overides it:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 187-207
 
 .. _using_shell:
@@ -325,7 +325,7 @@ are executed in the Orchestration phase. The only thing not supported is the
 ability to download roles using the *ansible_galaxy_option*. The following
 is an example of how run test playbooks.
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 209-223
 
 
@@ -347,7 +347,7 @@ allows you to substitute the information from the dynamically created hosts.
 Let's first take a look at some example data of key/values a user may use
 for provisioning a host:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 106-119
 
 After the machines are provsioned, we have more information in the host object,
@@ -355,7 +355,7 @@ and this can be seen by the results.yml file after a provision is successful.
 Some basic information that is added is the machine's actual name and ip
 address.  The following is what the data looks like after provisioning:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 122-144
 
 Looking at the data presented above, there is a lot of information about the
@@ -367,7 +367,7 @@ The following is an example, where the user plans to use the ip address in an
 execution command.  From the data above, you can see the user is accessing the
 data from **test_client_a** -> **ip_address**.
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 87-103
 
 
@@ -385,37 +385,37 @@ file.
 
 The following is a simple example of the data gathering (defining artifacts):
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 146-153
 
 Going through the basics of artifacts, the user can archive individual files,
 as shown by the following example:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 156-160
 
 The user can also collect artifact files using wildcards as shown in the following
 example:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 162-165
 
 The user can also archive a directory using either of the following two
 examples:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 167-170
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 172-175
 
 Finally, the user can archive a directory using a wildcard using either
 of the following two examples:
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
    :lines: 177-180
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
    :lines: 182-185
 
 Teflo by default will **NOT** exit if the collection of artifact task fails. In order to exit the run on an error during
@@ -443,12 +443,12 @@ as well
 
 In the below example, the payload_dir is the name of the directory  which is present under the .results folder
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 226-245
 
 In the below example, the payload_dir  and dir1 are placed in the artifacts folder created by teflo.
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 248-267
 
 Testrun Results for Artifacts collected during the Execute block:
@@ -533,7 +533,7 @@ Using environment variables:
 In the below example the environment variables data_dir and uname are made available during
 the playbook execution
 
-.. literalinclude:: ../../../examples/docs-usage/execute.yml
+.. literalinclude:: ../../../examples/docs-usage/execute.txt
     :lines: 271-288
 
 Common Examples

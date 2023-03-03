@@ -15,7 +15,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 """
     tests.test_core_classes
 
@@ -24,51 +23,62 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-
+import configparser
 import copy
+import glob
+import os
 import random
 import shutil
 import time
 import types
-import os
-import glob
 
 import mock
 import pytest
 
-from teflo.core import TefloOrchestrator, TefloProvider, \
-    TefloResource, TefloTask, LoggerMixin, TimeMixin, TefloExecutor, \
-    TefloPlugin, ProvisionerPlugin, ExecutorPlugin, ImporterPlugin, OrchestratorPlugin, FileLockMixin, \
-    Inventory, NotificationPlugin
-from teflo.resources import Asset
+from teflo.core import ExecutorPlugin
+from teflo.core import FileLockMixin
+from teflo.core import ImporterPlugin
+from teflo.core import Inventory
+from teflo.core import LoggerMixin
+from teflo.core import NotificationPlugin
+from teflo.core import OrchestratorPlugin
+from teflo.core import ProvisionerPlugin
+from teflo.core import TefloExecutor
+from teflo.core import TefloOrchestrator
+from teflo.core import TefloPlugin
+from teflo.core import TefloProvider
+from teflo.core import TefloResource
+from teflo.core import TefloTask
+from teflo.core import TimeMixin
+from teflo.exceptions import LoggerMixinError
+from teflo.exceptions import TefloError
 from teflo.provisioners import AssetProvisioner
-from teflo.exceptions import TefloError, LoggerMixinError
-import configparser
+from teflo.resources import Asset
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def time_mixin():
     return TimeMixin()
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def logger_mixin():
     return LoggerMixin()
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def teflo_task_unamed():
     return TefloTask()
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def teflo_task_named():
-    return TefloTask(name='orchestrate')
+    return TefloTask(name="orchestrate")
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def teflo_resource():
-    return TefloResource(name='action', config={})
+    return TefloResource(name="action", config={})
 
 
 @pytest.fixture
@@ -76,37 +86,39 @@ def teflo_provisioner(host):
     return AssetProvisioner(host)
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def teflo_provider():
     return TefloProvider()
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def teflo_orchestrator():
     return TefloOrchestrator()
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def teflo_executor():
     return TefloExecutor()
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def teflo_plugin():
     return TefloPlugin()
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def report_profile():
-    profile = dict(name='test.xml',
-                   description='testing',
-                   importer='polarion',
-                   data_folder='/tmp',
-                   workspace='/tmp',
-                   artifacts=[],
-                   provider_credentials={},
-                   config_params={},
-                   provider={'name': 'test'})
+    profile = dict(
+        name="test.xml",
+        description="testing",
+        importer="polarion",
+        data_folder="/tmp",
+        workspace="/tmp",
+        artifacts=[],
+        provider_credentials={},
+        config_params={},
+        provider={"name": "test"},
+    )
     return profile
 
 
@@ -118,8 +130,8 @@ def provisioner_plugin(host):
 @pytest.fixture
 def provisioner_plugin_no_provider(default_host_params):
     params = copy.deepcopy(default_host_params)
-    params.pop('provider')
-    host = Asset(name='test', parameters=params)
+    params.pop("provider")
+    host = Asset(name="test", parameters=params)
     return ProvisionerPlugin(host)
 
 
@@ -138,87 +150,93 @@ def orchestrator_plugin(action_resource):
     return OrchestratorPlugin(action_resource)
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def lock_mixin():
     return FileLockMixin()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def create_dummy_lock_file():
-    open('/tmp/cbn_xyz.lock', 'w').close()
+    open("/tmp/cbn_xyz.lock", "w").close()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def cleanup_lock(request):
     def cleanup():
-        os.remove('/tmp/cbn_test.lock')
+        os.remove("/tmp/cbn_test.lock")
+
     request.addfinalizer(cleanup)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def cleanup_unique_inv(request):
     def cleanup_unique():
-        for u in glob.glob('/tmp/.results/inventory/unique*'):
+        for u in glob.glob("/tmp/.results/inventory/unique*"):
             os.remove(u)
+
     request.addfinalizer(cleanup_unique)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def cleanup_master(request):
     def cleanup_master():
-        os.system('rm /tmp/.results/inventory/ -rf')
+        os.system("rm /tmp/.results/inventory/ -rf")
+
     request.addfinalizer(cleanup_master)
 
 
 @pytest.fixture
 def create_group_vars():
-    gv_path = '/tmp/ws/ansible/group_vars/ans_gv.yml'
-    if not os.path.exists('/tmp/ws/ansible/group_vars/'):
-        os.makedirs('/tmp/ws/ansible/group_vars/')
-        shutil.copy('../localhost_scenario/ansible/group_vars/all.yml', gv_path)
+    gv_path = "/tmp/ws/ansible/group_vars/ans_gv.yml"
+    if not os.path.exists("/tmp/ws/ansible/group_vars/"):
+        os.makedirs("/tmp/ws/ansible/group_vars/")
+        shutil.copy("../localhost_scenario/ansible/group_vars/all.yml", gv_path)
 
 
 @pytest.fixture
 def inv_host(default_host_params, config):
     params = copy.deepcopy(default_host_params)
-    params.update(dict(ansible_params=dict(ansible_connection='local',
-                                           ansible_ssh_private_key='keys/demo'),
-                       ip_address=dict(public='10.10.10.10', private='192.168.10.10')))
-    config['RESULTS_FOLDER'] = '/tmp/.results'
-    return Asset(
-        name='host01',
-        config=config,
-        parameters=params
+    params.update(
+        dict(
+            ansible_params=dict(
+                ansible_connection="local", ansible_ssh_private_key="keys/demo"
+            ),
+            ip_address=dict(public="10.10.10.10", private="192.168.10.10"),
+        )
     )
+    config["RESULTS_FOLDER"] = "/tmp/.results"
+    return Asset(name="host01", config=config, parameters=params)
 
 
 @pytest.fixture
 def inv_host_2(default_host_params, config):
     params = copy.deepcopy(default_host_params)
-    params.update(dict(ansible_params=dict(ansible_connection='local',
-                                           ansible_ssh_private_key='keys/demo'),
-                       ip_address=dict(public='10.10.10.10', private='192.168.10.10')))
-    config['RESULTS_FOLDER'] = '/tmp/.results'
-    config['WORKSPACE'] = '/tmp/ws'
-    return Asset(
-        name='ans_gv',
-        config=config,
-        parameters=params
+    params.update(
+        dict(
+            ansible_params=dict(
+                ansible_connection="local", ansible_ssh_private_key="keys/demo"
+            ),
+            ip_address=dict(public="10.10.10.10", private="192.168.10.10"),
+        )
     )
+    config["RESULTS_FOLDER"] = "/tmp/.results"
+    config["WORKSPACE"] = "/tmp/ws"
+    return Asset(name="ans_gv", config=config, parameters=params)
 
 
 @pytest.fixture
 def inventory(inv_host):
-    inv_host.config['INVENTORY_FOLDER'] = '/tmp/.results/inventory'
-    inventory = Inventory(inv_host.config, 'xyz')
+    inv_host.config["INVENTORY_FOLDER"] = "/tmp/.results/inventory"
+    inventory = Inventory(inv_host.config, "xyz")
     return inventory
 
 
 @pytest.fixture
 def inventory2(inv_host_2):
-    inv_host_2.config['INVENTORY_FOLDER'] = '/tmp/.results/'
-    inventory = Inventory(inv_host_2.config, 'xyz')
+    inv_host_2.config["INVENTORY_FOLDER"] = "/tmp/.results/"
+    inventory = Inventory(inv_host_2.config, "xyz")
     return inventory
+
 
 @pytest.fixture
 def notifier_plugin(notification_default_resource):
@@ -228,46 +246,46 @@ def notifier_plugin(notification_default_resource):
 class TestFileLockMixin(object):
     @staticmethod
     def test_default_lock_file(lock_mixin):
-        assert getattr(lock_mixin, 'lock_file') == '/tmp/cbn.lock'
+        assert getattr(lock_mixin, "lock_file") == "/tmp/cbn.lock"
 
     @staticmethod
     def test_default_lock_timeout(lock_mixin):
-        assert getattr(lock_mixin, 'lock_timeout') == 120
+        assert getattr(lock_mixin, "lock_timeout") == 120
 
     @staticmethod
     def test_default_lock_sleep(lock_mixin):
-        assert getattr(lock_mixin, 'lock_sleep') == 5
+        assert getattr(lock_mixin, "lock_sleep") == 5
 
     @staticmethod
     def test_setting_lock_file(lock_mixin):
-        setattr(lock_mixin, 'lock_file', '/tmp/cbn_test.lock')
-        assert getattr(lock_mixin, 'lock_file') == '/tmp/cbn_test.lock'
+        setattr(lock_mixin, "lock_file", "/tmp/cbn_test.lock")
+        assert getattr(lock_mixin, "lock_file") == "/tmp/cbn_test.lock"
 
     @staticmethod
     def test_setting_lock_timeout(lock_mixin):
-        setattr(lock_mixin, 'lock_timeout', 2)
-        assert getattr(lock_mixin, 'lock_timeout') == 2
+        setattr(lock_mixin, "lock_timeout", 2)
+        assert getattr(lock_mixin, "lock_timeout") == 2
 
     @staticmethod
     def test_setting_lock_sleep(lock_mixin):
-        setattr(lock_mixin, 'lock_sleep', 1)
-        assert getattr(lock_mixin, 'lock_sleep') == 1
+        setattr(lock_mixin, "lock_sleep", 1)
+        assert getattr(lock_mixin, "lock_sleep") == 1
 
     @staticmethod
     def test_default_lock_cleanup(create_dummy_lock_file, lock_mixin):
         create_dummy_lock_file
         lock_mixin.cleanup_locks()
-        assert not os.path.exists('/tmp/cbn_xyz.lock')
+        assert not os.path.exists("/tmp/cbn_xyz.lock")
 
     @staticmethod
     def test_lock_aqcuire(lock_mixin):
         lock_mixin.acquire()
-        assert os.path.exists('/tmp/cbn_test.lock')
+        assert os.path.exists("/tmp/cbn_test.lock")
 
     @staticmethod
     def test_lock_release(lock_mixin):
         lock_mixin.release()
-        assert not os.path.exists('/tmp/cbn_test.lock')
+        assert not os.path.exists("/tmp/cbn_test.lock")
 
     @staticmethod
     def test_lock_timeout(cleanup_lock, lock_mixin):
@@ -280,23 +298,23 @@ class TestFileLockMixin(object):
 class TestTimeMixin(object):
     @staticmethod
     def test_default_start_time(time_mixin):
-        assert getattr(time_mixin, '_start_time') is None
+        assert getattr(time_mixin, "_start_time") is None
 
     @staticmethod
     def test_default_end_time(time_mixin):
-        assert getattr(time_mixin, '_end_time') is None
+        assert getattr(time_mixin, "_end_time") is None
 
     @staticmethod
     def test_default_hours(time_mixin):
-        assert getattr(time_mixin, '_hours') == 0
+        assert getattr(time_mixin, "_hours") == 0
 
     @staticmethod
     def test_default_minutes(time_mixin):
-        assert getattr(time_mixin, '_minutes') == 0
+        assert getattr(time_mixin, "_minutes") == 0
 
     @staticmethod
     def test_default_seconds(time_mixin):
-        assert getattr(time_mixin, '_secounds') == 0
+        assert getattr(time_mixin, "_secounds") == 0
 
     @staticmethod
     def test_start_time(time_mixin):
@@ -314,12 +332,12 @@ class TestTimeMixin(object):
     @staticmethod
     def test_start_time_setter(time_mixin):
         with pytest.raises(TefloError):
-            setattr(time_mixin, 'start_time', 0)
+            setattr(time_mixin, "start_time", 0)
 
     @staticmethod
     def test_end_time_setter(time_mixin):
         with pytest.raises(TefloError):
-            setattr(time_mixin, 'end_time', 0)
+            setattr(time_mixin, "end_time", 0)
 
     @staticmethod
     def test_properties(time_mixin):
@@ -336,7 +354,7 @@ class TestTefloTask(object):
 
     @staticmethod
     def test_constructor_w_name(teflo_task_named):
-        assert teflo_task_named.name == 'orchestrate'
+        assert teflo_task_named.name == "orchestrate"
 
     @staticmethod
     def test_run(teflo_task_named):
@@ -344,7 +362,7 @@ class TestTefloTask(object):
 
     @staticmethod
     def test_str(teflo_task_named):
-        assert teflo_task_named.__str__() == 'orchestrate'
+        assert teflo_task_named.__str__() == "orchestrate"
 
 
 class TestLoggerMixin(object):
@@ -370,7 +388,7 @@ class TestLoggerMixin(object):
     def test_create_logger_dir(logger_mixin, config):
         logger_mixin.logger.handlers = []
         cfg = copy.copy(config)
-        cfg['DATA_FOLDER'] = '/tmp/%s' % random.randint(0, 1000)
+        cfg["DATA_FOLDER"] = "/tmp/%s" % random.randint(0, 1000)
         logger_mixin.create_logger(name=__name__, config=cfg)
 
     # TODO commented the following test, as it is failing on github action env. Need to investigate this and uncomment
@@ -392,12 +410,12 @@ class TestTefloResource(object):
 
     @staticmethod
     def test_name_property(teflo_resource):
-        assert teflo_resource.name == 'action'
+        assert teflo_resource.name == "action"
 
     @staticmethod
     def test_name_setter(teflo_resource):
         with pytest.raises(AttributeError):
-            teflo_resource.name = 'execute'
+            teflo_resource.name = "execute"
 
     @staticmethod
     def test_config_property(teflo_resource, config):
@@ -406,7 +424,7 @@ class TestTefloResource(object):
     @staticmethod
     def test_config_setter(teflo_resource):
         with pytest.raises(AttributeError):
-            teflo_resource.config = 'null'
+            teflo_resource.config = "null"
 
     @staticmethod
     def test_description_property(teflo_resource):
@@ -415,27 +433,27 @@ class TestTefloResource(object):
     @staticmethod
     def test_description_setter(teflo_resource):
         with pytest.raises(AttributeError):
-            teflo_resource.description = 'null'
+            teflo_resource.description = "null"
 
     @staticmethod
     def test_workspace_property(config):
         teflo_resource = TefloResource(config=config)
-        assert teflo_resource.workspace == config['WORKSPACE']
+        assert teflo_resource.workspace == config["WORKSPACE"]
 
     @staticmethod
     def test_workspace_setter(teflo_resource):
         with pytest.raises(AttributeError):
-            teflo_resource.workspace = 'null'
+            teflo_resource.workspace = "null"
 
     @staticmethod
     def test_data_folder_property(config):
         teflo_resource = TefloResource(config=config)
-        assert teflo_resource.data_folder == config['DATA_FOLDER']
+        assert teflo_resource.data_folder == config["DATA_FOLDER"]
 
     @staticmethod
     def test_data_folder_setter(teflo_resource):
         with pytest.raises(AttributeError):
-            teflo_resource.data_folder = 'null'
+            teflo_resource.data_folder = "null"
 
     @staticmethod
     def test_validate(teflo_resource):
@@ -461,14 +479,14 @@ class TestTefloResource(object):
     @staticmethod
     def test_set_labels_single_string(teflo_resource):
         """To test if single string values get set as an array"""
-        setattr(teflo_resource, 'labels', ' label1')
-        assert teflo_resource.labels == ['label1']
+        setattr(teflo_resource, "labels", " label1")
+        assert teflo_resource.labels == ["label1"]
 
     @staticmethod
     def test_set_labels(teflo_resource):
         """To test if comma separated string get set as an array"""
-        setattr(teflo_resource, 'labels', 'label1,label2')
-        assert teflo_resource.labels == ['label1', 'label2']
+        setattr(teflo_resource, "labels", "label1,label2")
+        assert teflo_resource.labels == ["label1", "label2"]
 
 
 class TestTefloProvider(object):
@@ -488,8 +506,8 @@ class TestTefloProvider(object):
     @staticmethod
     def test_name_setter(teflo_provider):
         with pytest.raises(AttributeError) as ex:
-            teflo_provider.name = 'null'
-        assert 'You cannot set provider name.' in ex.value.args[0]
+            teflo_provider.name = "null"
+        assert "You cannot set provider name." in ex.value.args[0]
 
     @staticmethod
     def test_credentials_property(teflo_provider):
@@ -498,16 +516,18 @@ class TestTefloProvider(object):
     @staticmethod
     def test_credentials_setter(teflo_provider):
         with pytest.raises(ValueError) as ex:
-            teflo_provider.credentials = 'null'
-        assert 'You cannot set provider credentials directly. Use ' \
-               'function ~TefloProvider.set_credentials' in ex.value.args[0]
+            teflo_provider.credentials = "null"
+        assert (
+            "You cannot set provider credentials directly. Use "
+            "function ~TefloProvider.set_credentials" in ex.value.args[0]
+        )
 
     @staticmethod
     def test_set_credentials(teflo_provider):
         provider = copy.deepcopy(teflo_provider)
-        provider.req_credential_params = [('name', [str])]
-        provider.opt_credential_params = [('region', [str])]
-        provider.set_credentials({'name': 'v1', 'region': 'v1'})
+        provider.req_credential_params = [("name", [str])]
+        provider.opt_credential_params = [("region", [str])]
+        provider.set_credentials({"name": "v1", "region": "v1"})
 
     @staticmethod
     def test_get_mandatory_parameters(teflo_provider):
@@ -548,8 +568,8 @@ class TestTefloOrchestrator(object):
     @staticmethod
     def test_name_setter(teflo_orchestrator):
         with pytest.raises(AttributeError) as ex:
-            teflo_orchestrator.name = 'null'
-        assert 'You cannot set name for the orchestrator.' in ex.value.args
+            teflo_orchestrator.name = "null"
+        assert "You cannot set name for the orchestrator." in ex.value.args
 
     @staticmethod
     def test_action_property(teflo_orchestrator):
@@ -558,9 +578,11 @@ class TestTefloOrchestrator(object):
     @staticmethod
     def tests_action_setter(teflo_orchestrator):
         with pytest.raises(AttributeError) as ex:
-            teflo_orchestrator.action = 'null'
-        assert 'You cannot set the action the orchestrator will perform.' in \
-            ex.value.args[0]
+            teflo_orchestrator.action = "null"
+        assert (
+            "You cannot set the action the orchestrator will perform."
+            in ex.value.args[0]
+        )
 
     @staticmethod
     def test_hosts_property(teflo_orchestrator):
@@ -569,9 +591,8 @@ class TestTefloOrchestrator(object):
     @staticmethod
     def test_hosts_setter(teflo_orchestrator):
         with pytest.raises(AttributeError) as ex:
-            teflo_orchestrator.hosts = 'null'
-        assert 'Hosts cannot be set once the object is created.' in \
-               ex.value.args[0]
+            teflo_orchestrator.hosts = "null"
+        assert "Hosts cannot be set once the object is created." in ex.value.args[0]
 
     @staticmethod
     def test_get_mandatory_parameters(teflo_orchestrator):
@@ -589,9 +610,9 @@ class TestTefloOrchestrator(object):
         assert isinstance(data, types.GeneratorType)
 
     @staticmethod
-    @mock.patch.object(TefloOrchestrator, 'get_all_parameters')
+    @mock.patch.object(TefloOrchestrator, "get_all_parameters")
     def test_build_profile(mock_01, teflo_orchestrator):
-        mock_01.return_value = ('name',)
+        mock_01.return_value = ("name",)
         action = mock.MagicMock()
         profile = teflo_orchestrator.build_profile(action)
         assert isinstance(profile, dict)
@@ -619,8 +640,8 @@ class TestTefloExecutor(object):
     @staticmethod
     def test_name_setter(teflo_executor):
         with pytest.raises(AttributeError) as ex:
-            teflo_executor.name = 'null'
-        assert 'You cannot set name for the executor.' in ex.value.args[0]
+            teflo_executor.name = "null"
+        assert "You cannot set name for the executor." in ex.value.args[0]
 
     @staticmethod
     def test_execute_property(teflo_executor):
@@ -629,8 +650,8 @@ class TestTefloExecutor(object):
     @staticmethod
     def tests_execute_setter(teflo_executor):
         with pytest.raises(AttributeError) as ex:
-            teflo_executor.execute = 'null'
-        assert 'You cannot set the execute to run.' in ex.value.args[0]
+            teflo_executor.execute = "null"
+        assert "You cannot set the execute to run." in ex.value.args[0]
 
     @staticmethod
     def test_hosts_property(teflo_executor):
@@ -639,9 +660,8 @@ class TestTefloExecutor(object):
     @staticmethod
     def test_hosts_setter(teflo_executor):
         with pytest.raises(AttributeError) as ex:
-            teflo_executor.hosts = 'null'
-        assert 'Hosts cannot be set once the object is created.' in \
-               ex.value.args[0]
+            teflo_executor.hosts = "null"
+        assert "Hosts cannot be set once the object is created." in ex.value.args[0]
 
     @staticmethod
     def test_get_mandatory_parameters(teflo_executor):
@@ -659,16 +679,15 @@ class TestTefloExecutor(object):
         assert isinstance(data, types.GeneratorType)
 
     @staticmethod
-    @mock.patch.object(TefloExecutor, 'get_all_parameters')
+    @mock.patch.object(TefloExecutor, "get_all_parameters")
     def test_build_profile(mock_01, teflo_executor):
-        mock_01.return_value = ('name',)
+        mock_01.return_value = ("name",)
         execute = mock.MagicMock()
         profile = teflo_executor.build_profile(execute)
         assert isinstance(profile, dict)
 
 
 class TestTefloCorePlugins(object):
-
     @staticmethod
     def test_constructor(teflo_plugin):
         assert isinstance(teflo_plugin, TefloPlugin)
@@ -754,7 +773,6 @@ class TestTefloCorePlugins(object):
 
 
 class TestInventory(object):
-
     @staticmethod
     def test_inventory(inventory):
         assert isinstance(inventory, Inventory)
@@ -763,24 +781,24 @@ class TestInventory(object):
     def test_create_inventory(inventory: Inventory, inv_host, cleanup_master):
         # using inventory folder as the default created by teflo
         inventory.create_inventory(all_hosts=[inv_host])
-        assert os.path.exists('/tmp/.results/inventory/inventory-xyz')
+        assert os.path.exists("/tmp/.results/inventory/inventory-xyz")
         cleanup_master
 
     @staticmethod
-    def test_create_inventory_group_vars(inventory: Inventory, inv_host_2, create_group_vars,
-                                         cleanup_master):
+    def test_create_inventory_group_vars(
+        inventory: Inventory, inv_host_2, create_group_vars, cleanup_master
+    ):
         # using inventory folder as the default created by teflo
         create_group_vars
         inventory.create_inventory(all_hosts=[inv_host_2])
         config = configparser.ConfigParser(allow_no_value=True)
-        config.read('/tmp/.results/inventory/inventory-xyz')
-        group_vars = config['ans_gv:vars']
-        ans_usr = group_vars['ansible_user']
-        assert 'fedora' in ans_usr
-        if os.path.exists('/tmp/.results/'):
-            shutil.rmtree('/tmp/.results/')
+        config.read("/tmp/.results/inventory/inventory-xyz")
+        group_vars = config["ans_gv:vars"]
+        ans_usr = group_vars["ansible_user"]
+        assert "fedora" in ans_usr
+        if os.path.exists("/tmp/.results/"):
+            shutil.rmtree("/tmp/.results/")
         cleanup_master
-
 
     @staticmethod
     def test_create_inventory_inv_err(inventory: Inventory, inv_host, cleanup_master):
@@ -791,28 +809,34 @@ class TestInventory(object):
 
     @staticmethod
     def test_static_dir_create_master_inv(inv_host, cleanup_master):
-        inv_host_2 = Asset(name='dummy', parameters=dict(ip_address=['1.3.5.7', '2.4.5.6'],
-                                                         groups='dummy-role'))
-        inv_host_3 = Asset(name='nummy', parameters=dict(ip_address='2.4.5.6',
-                                                         groups='nummy-role'))
-        inv = Inventory(inv_host.config, 'm6fmviqq51')
+        inv_host_2 = Asset(
+            name="dummy",
+            parameters=dict(ip_address=["1.3.5.7", "2.4.5.6"], groups="dummy-role"),
+        )
+        inv_host_3 = Asset(
+            name="nummy", parameters=dict(ip_address="2.4.5.6", groups="nummy-role")
+        )
+        inv = Inventory(inv_host.config, "m6fmviqq51")
         inv.create_inventory(all_hosts=[inv_host, inv_host_2, inv_host_3])
-        assert os.path.exists('/tmp/inventory/inventory-m6fmviqq51')
+        assert os.path.exists("/tmp/inventory/inventory-m6fmviqq51")
         cleanup_master
 
     @staticmethod
     def test_create_master_inv_with_dump_layout(inv_host, cleanup_master):
-        inv = Inventory(inv_host.config, 'm6fmviqq51',
-                        inv_dump="""
+        inv = Inventory(
+            inv_host.config,
+            "m6fmviqq51",
+            inv_dump="""
                         [example]
                         10.0.154.237 hostname=10.0.154.237 ansible_ssh_private_key_file=/tmp/demo
 
                         [all]
                         10.0.154.237 hostname=10.0.154.237 ansible_ssh_private_key_file=/tmp/demo
-                        """)
+                        """,
+        )
         inv.create_inventory(all_hosts=[])
-        for i in glob.glob('/tmp/inventory/inventory-*'):
+        for i in glob.glob("/tmp/inventory/inventory-*"):
             with open(i) as f:
                 data = f.read()
-        assert data.find('example') != -1
+        assert data.find("example") != -1
         cleanup_master

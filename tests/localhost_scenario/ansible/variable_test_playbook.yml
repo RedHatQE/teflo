@@ -15,4 +15,3 @@
 
   - name: get env vars
     shell: "echo {{ lookup('env', 'uname') }}, {{ lookup('env', 'project') }} "
-

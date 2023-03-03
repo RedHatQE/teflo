@@ -126,9 +126,9 @@ and cleanup task, for which the entire scenario graph is considered together and
    **For version 1.2.5 and below**
 
    If 'Include' section is present in the scenario file, teflo will aggregate and execute
-   the selected tasks from both, main/parent and the included scenario file. e.g. 
+   the selected tasks from both, main/parent and the included scenario file. e.g.
    if common.yml is the included scenario file, scenario.yml is the main scenario file
-   and task selected is provision,the provision pipeline is created with provision tasks 
+   and task selected is provision,the provision pipeline is created with provision tasks
    from included scenario followed by the provision tasks from main scenario.
 
 .. note::

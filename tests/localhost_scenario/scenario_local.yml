@@ -180,4 +180,3 @@ execute:
       - artifacts/SampleTest_{ dummy.ip_address }.xml
 
 report:
-

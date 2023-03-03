@@ -29,7 +29,8 @@ from teflo.orchestrators import ActionOrchestrator
 
 class OrchestrateTask(TefloTask):
     """Orchestrate task."""
-    __task_name__ = 'orchestrate'
+
+    __task_name__ = "orchestrate"
     __concurrent__ = False
 
     def __init__(self, msg, package, **kwargs):
@@ -58,7 +59,7 @@ class OrchestrateTask(TefloTask):
             # run the configuration with the given orchestrator
             self.orchestrator.run()
         except Exception as ex:
-            self.logger.error('Failed to run orchestration %s ' % self.name)
+            self.logger.error("Failed to run orchestration %s " % self.name)
             stackmsg = self.get_formatted_traceback()
             self.logger.error(ex)
             self.logger.error(stackmsg)

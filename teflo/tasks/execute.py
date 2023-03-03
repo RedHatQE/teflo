@@ -29,7 +29,8 @@ from teflo.executors import ExecuteManager
 
 class ExecuteTask(TefloTask):
     """Execute task."""
-    __task_name__ = 'execute'
+
+    __task_name__ = "execute"
     __concurrent__ = False
 
     def __init__(self, msg, package, **kwargs):
@@ -56,7 +57,7 @@ class ExecuteTask(TefloTask):
             # run the configuration with the given executor
             self.executor.run()
         except Exception as ex:
-            self.logger.error('Failed to execute %s' % self.name)
+            self.logger.error("Failed to execute %s" % self.name)
             stackmsg = self.get_formatted_traceback()
             self.logger.error(ex)
             self.logger.error(stackmsg)

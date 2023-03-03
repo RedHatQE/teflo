@@ -24,19 +24,23 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+import os
 import random
 import time
-import os
 
 import libcloud.security
 import urllib3
 from libcloud.compute.providers import get_driver
-from libcloud.compute.types import InvalidCredsError, Provider
+from libcloud.compute.types import InvalidCredsError
+from libcloud.compute.types import Provider
 
 from teflo._compat import string_types
 from teflo.core import ProvisionerPlugin
 from teflo.exceptions import OpenstackProviderError
-from teflo.helpers import gen_random_str, filter_host_name, schema_validator, is_ipv4
+from teflo.helpers import filter_host_name
+from teflo.helpers import gen_random_str
+from teflo.helpers import is_ipv4
+from teflo.helpers import schema_validator
 
 MAX_WAIT_TIME = 100
 MAX_ATTEMPTS = 3
@@ -48,9 +52,11 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
     This class is a base which calls openstack provider methods to perform
     the actions to create and delete resources.
     """
-    __plugin_name__ = 'openstack-libcloud'
-    __schema_file_path__ = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                        "schema.yml"))
+
+    __plugin_name__ = "openstack-libcloud"
+    __schema_file_path__ = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "schema.yml")
+    )
 
     def __init__(self, asset):
         """Constructor.
@@ -91,37 +97,35 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
 
         # determine region
         try:
-            if not credentials['region']:
+            if not credentials["region"]:
                 # set default region if no region is defined
-                credentials['region'] = 'regionOne'
+                credentials["region"] = "regionOne"
         except KeyError:
-            credentials['region'] = 'regionOne'
+            credentials["region"] = "regionOne"
 
         # determine domain
         try:
-            if not credentials['domain_name']:
+            if not credentials["domain_name"]:
                 # set the default domain if no domain is defined
-                credentials['domain_name'] = 'default'
+                credentials["domain_name"] = "default"
         except KeyError:
-            credentials['domain_name'] = 'default'
+            credentials["domain_name"] = "default"
 
         # create libcloud driver object
         self._driver = get_driver(Provider.OPENSTACK)(
-            credentials['username'],
-            credentials['password'],
-            ex_tenant_name=credentials['tenant_name'],
-            ex_force_auth_url=credentials['auth_url'].split('/v')[0],
-            ex_force_auth_version='3.x_password',
-            ex_domain_name=credentials['domain_name'],
-            ex_force_service_region=credentials['region']
+            credentials["username"],
+            credentials["password"],
+            ex_tenant_name=credentials["tenant_name"],
+            ex_force_auth_url=credentials["auth_url"].split("/v")[0],
+            ex_force_auth_version="3.x_password",
+            ex_domain_name=credentials["domain_name"],
+            ex_force_service_region=credentials["region"],
         )
         # test authentication
         try:
             self._driver.ex_list_networks()
         except InvalidCredsError as ex:
-            raise OpenstackProviderError(
-                'Authentication failed: %s' % ex
-            )
+            raise OpenstackProviderError("Authentication failed: %s" % ex)
 
     def unset_driver(self):
         """Unset libcloud driver object.
@@ -204,7 +208,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         elif len(by_id) != 0:
             return by_id[0]
         else:
-            raise OpenstackProviderError('Image %s not found!' % name)
+            raise OpenstackProviderError("Image %s not found!" % name)
 
     def size_lookup(self, name):
         """Get the libcloud size object based on the size provided.
@@ -239,7 +243,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         elif len(by_id) != 0:
             return by_id[0]
         else:
-            raise OpenstackProviderError('Flavor %s not found!' % name)
+            raise OpenstackProviderError("Flavor %s not found!" % name)
 
     def network_lookup(self, name):
         """Get the libcloud network object based on the network provided.
@@ -268,7 +272,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
 
         # process results
         if len(nets) == 0:
-            raise OpenstackProviderError('Network(s) %s not found!' % name)
+            raise OpenstackProviderError("Network(s) %s not found!" % name)
         else:
             return nets[0]
 
@@ -289,7 +293,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
 
         # process results
         if len(data) == 0:
-            raise OpenstackProviderError('Node %s not found!' % name)
+            raise OpenstackProviderError("Node %s not found!" % name)
         else:
             return data[0]
 
@@ -306,12 +310,11 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         :rtype: object
         """
         # filter floating ip pools
-        data = list(filter(lambda elm: elm.name == name,
-                           self.floating_ip_pools))
+        data = list(filter(lambda elm: elm.name == name, self.floating_ip_pools))
 
         # process results
         if len(data) == 0:
-            raise OpenstackProviderError('FIP %s not found!' % name)
+            raise OpenstackProviderError("FIP %s not found!" % name)
         else:
             return data[0]
 
@@ -332,7 +335,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
 
         # process results
         if len(data) == 0:
-            raise OpenstackProviderError('Keypair %s not found!' % name)
+            raise OpenstackProviderError("Keypair %s not found!" % name)
         else:
             return data[0]
 
@@ -347,14 +350,14 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         :return: Floating ip object.
         :rtype: object
         """
-        for key in node.extra['addresses']:
-            for network in node.extra['addresses'][key]:
+        for key in node.extra["addresses"]:
+            for network in node.extra["addresses"][key]:
                 # skip if network is not type floating
-                if network['OS-EXT-IPS:type'] != 'floating':
+                if network["OS-EXT-IPS:type"] != "floating":
                     continue
-                return network['addr']
+                return network["addr"]
 
-        raise OpenstackProviderError('Unable to get FIP for node!')
+        raise OpenstackProviderError("Unable to get FIP for node!")
 
     def create_node(self, name, image, size, network, key_pair, metadata):
         """Create node.
@@ -381,10 +384,12 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         """
         attempt = 1
 
-        self.logger.debug('Creating node %s.' % name)
-        self.logger.debug('Node details:\n * keypair=%s\n * image=%s\n '
-                          '* flavor=%s\n * networks=%s\n * metadata=%s' %
-                          (key_pair, image, size, network, metadata))
+        self.logger.debug("Creating node %s." % name)
+        self.logger.debug(
+            "Node details:\n * keypair=%s\n * image=%s\n "
+            "* flavor=%s\n * networks=%s\n * metadata=%s"
+            % (key_pair, image, size, network, metadata)
+        )
 
         # cache image object
         _image = self.image_lookup(image)
@@ -404,24 +409,24 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
                     size=_size,
                     networks=_network,
                     ex_keyname=key_pair,
-                    ex_metadata=metadata
+                    ex_metadata=metadata,
                 )
-                self.logger.info('Successfully booted node %s.' % name)
+                self.logger.info("Successfully booted node %s." % name)
                 return node
             except Exception as ex:
                 self.logger.error(ex)
                 wait_time = random.randint(10, MAX_WAIT_TIME)
-                self.logger.info('Attempt %s of %s: retrying in %s seconds' %
-                                 (attempt, MAX_ATTEMPTS, wait_time))
+                self.logger.info(
+                    "Attempt %s of %s: retrying in %s seconds"
+                    % (attempt, MAX_ATTEMPTS, wait_time)
+                )
                 time.sleep(wait_time)
                 attempt += 1
             finally:
                 self.unset_driver()
 
         # reach this point, maximum attempts to create node reached
-        raise OpenstackProviderError(
-            'Maximum attempts reached to boot node %s.' % name
-        )
+        raise OpenstackProviderError("Maximum attempts reached to boot node %s." % name)
 
     def delete_node(self, node):
         """Delete node.
@@ -439,13 +444,15 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         while attempt <= MAX_ATTEMPTS:
             try:
                 self.driver.destroy_node(node)
-                self.logger.info('Successfully deleted node %s.' % node.name)
+                self.logger.info("Successfully deleted node %s." % node.name)
                 return
             except Exception as ex:
                 self.logger.error(ex)
                 wait_time = random.randint(10, MAX_WAIT_TIME)
-                self.logger.info('Attempt %s of %s: retrying in %s seconds' %
-                                 (attempt, MAX_ATTEMPTS, wait_time))
+                self.logger.info(
+                    "Attempt %s of %s: retrying in %s seconds"
+                    % (attempt, MAX_ATTEMPTS, wait_time)
+                )
                 time.sleep(wait_time)
                 attempt += 1
             finally:
@@ -453,7 +460,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
 
         # reach this point, maximum attempts to delete node reached
         raise OpenstackProviderError(
-            'Maximum attempts reached to delete node %s.' % node.name
+            "Maximum attempts reached to delete node %s." % node.name
         )
 
     def _create(self, name, image, size, network, key_pair, fip, metadata):
@@ -482,7 +489,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         :return: Node fip. id.
         :rtype: str(s)
         """
-        self.logger.info('Provisioning node %s.' % name)
+        self.logger.info("Provisioning node %s." % name)
 
         # create node
         try:
@@ -496,20 +503,20 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
             self.wait_for_building_finish(node)
         except Exception as ex:
             self.logger.error(ex)
-            self.logger.error('Node %s did not finish building.' % node.name)
+            self.logger.error("Node %s did not finish building." % node.name)
             self.delete_node(node)
-            raise OpenstackProviderError('Node did not finish building.')
+            raise OpenstackProviderError("Node did not finish building.")
 
         # attach floating ip to node
         try:
             ip = self.attach_floating_ip(node, fip)
         except Exception as ex:
             self.logger.error(ex)
-            self.logger.error('Failed to attach fip to node %s.' % node.name)
+            self.logger.error("Failed to attach fip to node %s." % node.name)
             self.delete_node(node)
-            raise OpenstackProviderError('Failed to attach fip.')
+            raise OpenstackProviderError("Failed to attach fip.")
 
-        self.logger.info('Successfully provisioned node %s.' % name)
+        self.logger.info("Successfully provisioned node %s." % name)
 
         # if no floating ip is assigned get updated node details and look for private_ip
         # TODO: This might need more logic if we support a use case for more than one network specified
@@ -534,7 +541,7 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         :param name: Node name.
         :type name: str
         """
-        self.logger.info('Tearing down node %s.' % name)
+        self.logger.info("Tearing down node %s." % name)
 
         try:
             # cache node
@@ -547,48 +554,44 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
             self.delete_node(_node)
         except Exception as ex:
             self.logger.error(ex)
-            raise OpenstackProviderError('Unable to delete node %s' % ex)
+            raise OpenstackProviderError("Unable to delete node %s" % ex)
         finally:
             self.unset_driver()
 
-        self.logger.info('Successfully teared down node %s.' % name)
+        self.logger.info("Successfully teared down node %s." % name)
 
     def wait_for_building_finish(self, node):
         """Wait until a node is finished building.
 
         :param node: node object
         """
-        self.logger.info('Wait for node %s to finish building.' % node.name)
+        self.logger.info("Wait for node %s to finish building." % node.name)
 
         status = 0
         attempt = 1
         while attempt <= 30:
             node = self.driver.ex_get_node_details(node.id)
-            state = getattr(node, 'state')
-            msg = '%s. VM %s, STATE=%s' % (attempt, node.name, state)
+            state = getattr(node, "state")
+            msg = "%s. VM %s, STATE=%s" % (attempt, node.name, state)
 
-            if state.lower() == 'error':
+            if state.lower() == "error":
                 self.logger.info(msg)
-                self.logger.error('VM %s got an into an error state!' %
-                                  node.name)
+                self.logger.error("VM %s got an into an error state!" % node.name)
                 break
-            elif state.lower() == 'running':
+            elif state.lower() == "running":
                 self.logger.info(msg)
-                self.logger.info('VM %s successfully finished building!' %
-                                 node.name)
+                self.logger.info("VM %s successfully finished building!" % node.name)
                 status = 1
                 break
             else:
-                self.logger.info('%s, rechecking in 20 seconds.', msg)
+                self.logger.info("%s, rechecking in 20 seconds.", msg)
                 time.sleep(20)
 
         self.unset_driver()
         if status:
-            self.logger.info('Node %s successfully finished building.' %
-                             node.name)
+            self.logger.info("Node %s successfully finished building." % node.name)
         else:
-            raise OpenstackProviderError('Node was unable to build, %s' %
-                                         node.name)
+            raise OpenstackProviderError("Node was unable to build, %s" % node.name)
 
     def attach_floating_ip(self, node, fip):
         """Attach a floating ip address to a node.
@@ -603,10 +606,10 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         """
         # do not attach floating ip if variable has None value
         if not fip:
-            self.logger.warning('Node %s does not require fip.' % node.name)
+            self.logger.warning("Node %s does not require fip." % node.name)
             return
 
-        self.logger.info('Attaching fip to node %s.' % node.name)
+        self.logger.info("Attaching fip to node %s." % node.name)
 
         try:
             # cache floating ip pool object
@@ -619,12 +622,13 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
             self.driver.ex_attach_floating_ip_to_node(node, _ip)
         except Exception as ex:
             self.logger.error(ex)
-            raise OpenstackProviderError('Unable to attach FIP to %s' % node)
+            raise OpenstackProviderError("Unable to attach FIP to %s" % node)
         finally:
             self.unset_driver()
 
-        self.logger.info('FIP %s successfully attached to node %s.' %
-                         (_ip.ip_address, node.name))
+        self.logger.info(
+            "FIP %s successfully attached to node %s." % (_ip.ip_address, node.name)
+        )
         return _ip.ip_address
 
     def detach_floating_ip(self, node):
@@ -650,10 +654,10 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
             # delete ip
             self.driver.ex_delete_floating_ip(_fip_obj)
         except OpenstackProviderError:
-            self.logger.warning('Node %s does not have fip.' % node.name)
+            self.logger.warning("Node %s does not have fip." % node.name)
         except Exception as ex:
             self.logger.error(ex)
-            raise OpenstackProviderError('Unable to detach FIP from %s' % node)
+            raise OpenstackProviderError("Unable to detach FIP from %s" % node)
         finally:
             self.unset_driver()
 
@@ -663,30 +667,34 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         This method will call the openstack provider create method. The
         provider class handles all interactions with the provider.
         """
-        self.logger.info('Provisioning machines from %s', self.__class__)
+        self.logger.info("Provisioning machines from %s", self.__class__)
 
         # ignore if count is given as provider parameter
         try:
-            if self.provider_params.get('count', False):
-                self.logger.warn('Count parameter is found for host %s '
-                                 'Count is not supported with openstack_libcloud as provisioner and will be ignored.'
-                                 % getattr(self.asset, 'name'))
+            if self.provider_params.get("count", False):
+                self.logger.warn(
+                    "Count parameter is found for host %s "
+                    "Count is not supported with openstack_libcloud as provisioner and will be ignored."
+                    % getattr(self.asset, "name")
+                )
         except KeyError:
             pass
 
         # determine hostname for the host
-        hostname = self.provider_params.get('hostname', None)
+        hostname = self.provider_params.get("hostname", None)
         if not hostname:
-            hostname = filter_host_name(getattr(self.asset, 'name')) + '_%s' % gen_random_str(5)
+            hostname = filter_host_name(
+                getattr(self.asset, "name")
+            ) + "_%s" % gen_random_str(5)
 
         _ip, _id = self._create(
             hostname,
-            self.provider_params.get('image'),
-            self.provider_params.get('flavor'),
-            self.provider_params.get('networks'),
-            self.provider_params.get('keypair'),
-            self.provider_params.get('floating_ip_pool', None),
-            self.provider_params.get('server_metadata', {})
+            self.provider_params.get("image"),
+            self.provider_params.get("flavor"),
+            self.provider_params.get("networks"),
+            self.provider_params.get("keypair"),
+            self.provider_params.get("floating_ip_pool", None),
+            self.provider_params.get("server_metadata", {}),
         )
 
         return [dict(hostname=hostname, asset_id=_id, ip=_ip)]
@@ -697,10 +705,13 @@ class OpenstackLibCloudProvisionerPlugin(ProvisionerPlugin):
         This method will call the openstack provider delete method. The
         provider class handles all interactions with the provider.
         """
-        self.logger.info('Tearing down machines from %s', self.__class__)
+        self.logger.info("Tearing down machines from %s", self.__class__)
         # using hostname attribute of the asset to perform delete operation
-        self._delete(getattr(self.asset, 'hostname', None))
+        self._delete(getattr(self.asset, "hostname", None))
 
     def validate(self):
 
-        schema_validator(schema_data=self.build_profile(self.asset), schema_files=[self.__schema_file_path__])
+        schema_validator(
+            schema_data=self.build_profile(self.asset),
+            schema_files=[self.__schema_file_path__],
+        )

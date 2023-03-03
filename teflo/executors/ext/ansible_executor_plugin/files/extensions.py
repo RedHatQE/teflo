@@ -26,10 +26,10 @@
 
 
 def valid_execute_types(value, rule_obj, path):
-    """ Verify if only one execute type is set for a execute task"""
+    """Verify if only one execute type is set for a execute task"""
     match = list()
 
-    types = ['script', 'playbook', 'shell']
+    types = ["script", "playbook", "shell"]
 
     for item in types:
         if item in value.keys() and value[item]:
@@ -37,9 +37,9 @@ def valid_execute_types(value, rule_obj, path):
 
     if match.__len__() > 1:
         raise AssertionError(
-            'Only one execute type can be set for executor ~ %s.\n'
-            'Available types: %s\n'
-            'Set types: %s' % (value['executor'], types, match)
+            "Only one execute type can be set for executor ~ %s.\n"
+            "Available types: %s\n"
+            "Set types: %s" % (value["executor"], types, match)
         )
     return True
 
@@ -48,12 +48,13 @@ def type_int_list(value, rule_obj, path):
     """Verfiy a key's value is either a int or list."""
     if not isinstance(value, (int, list)):
         raise AssertionError(
-            '%s must be either a integer or list of integers.' % path.split('/')[-1]
+            "%s must be either a integer or list of integers." % path.split("/")[-1]
         )
     if isinstance(value, list):
         for x in value:
             if not isinstance(x, int):
                 raise AssertionError(
-                    '%s must be either a integer or list of integers.' % path.split('/')[-1]
+                    "%s must be either a integer or list of integers."
+                    % path.split("/")[-1]
                 )
     return True

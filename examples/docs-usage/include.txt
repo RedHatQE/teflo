@@ -18,12 +18,13 @@ execute:
 report:
    .
    .
-   .     
----
+   .
+
+
 name: Include_example2
 description: Descriptor file with include section
 
-include: 
+include:
     - provision.yml
     - orchestrate.yml
 
@@ -37,7 +38,8 @@ report:
    .
    .
 
----
+
+
 name: Include_example3
 description: Descriptor file with include section
 
@@ -128,7 +130,7 @@ name: remote_include_example
 description: include remote sdf from git server
 
 remote_workspace:
-  - workspace_url: git@github.com:dno-github/remote-teflo-lib1.git 
+  - workspace_url: git@github.com:dno-github/remote-teflo-lib1.git
     alias_name: remote
     # the alias_name should not be the same as local folder, it will collide
   - workspace_url: https://github.com/dno-github/remote-teflo-lib1.git

@@ -22,4 +22,3 @@ mapping:
       password:
         type: str
         required: True
-

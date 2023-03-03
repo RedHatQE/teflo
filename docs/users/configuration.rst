@@ -22,7 +22,7 @@ Where it is loaded from (using precedence low to high):
 
 Configuration example (with all options):
 
-.. literalinclude:: ../../examples/docs-usage/configuration.yml
+.. literalinclude:: ../../examples/docs-usage/configuration.txt
 
 
 .. note::
@@ -127,4 +127,3 @@ proper sequential order.
 There could be a case where you would like to execute two different test suites concurrently because they have
 no dependency on each other or there is no affect to each other. In that case, set the **execute=True** to have
 them running concurrently.
-

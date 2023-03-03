@@ -15,7 +15,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 """
     teflo.provisioners.host_provisioner
 
@@ -25,13 +24,13 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-
-from pprint import pformat
-
-from teflo.core import LoggerMixin, TimeMixin
-from teflo.helpers import mask_credentials_password
 import copy
 import json
+from pprint import pformat
+
+from teflo.core import LoggerMixin
+from teflo.core import TimeMixin
+from teflo.helpers import mask_credentials_password
 
 
 class Notifier(LoggerMixin, TimeMixin):
@@ -40,7 +39,8 @@ class Notifier(LoggerMixin, TimeMixin):
     This class is the generic interface that sends out notifications
 
     """
-    __notification_name__ = 'notifier'
+
+    __notification_name__ = "notifier"
 
     def __init__(self, notification):
         """Constructor.
@@ -51,7 +51,7 @@ class Notifier(LoggerMixin, TimeMixin):
         :type notification: object
         """
 
-        self.plugin = getattr(notification, 'notifier')(notification)
+        self.plugin = getattr(notification, "notifier")(notification)
 
     def validate(self):
         """
@@ -64,16 +64,17 @@ class Notifier(LoggerMixin, TimeMixin):
         except Exception:
             raise
         else:
-            self.logger.info('successfully validated scenario Notification against the schema!')
+            self.logger.info(
+                "successfully validated scenario Notification against the schema!"
+            )
 
     def notify(self):
-        """Notify method. Calls the plugin notify method
-        """
-        name = getattr(getattr(self.plugin, 'notification'), 'name')
+        """Notify method. Calls the plugin notify method"""
+        name = getattr(getattr(self.plugin, "notification"), "name")
         try:
-            self.logger.info('Triggering notification %s.' % name)
+            self.logger.info("Triggering notification %s." % name)
             self.plugin.notify()
-            self.logger.info('Successfully triggered notification %s.' % name)
+            self.logger.info("Successfully triggered notification %s." % name)
 
         except Exception as ex:
             self.logger.error(ex)

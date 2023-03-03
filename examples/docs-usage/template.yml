@@ -105,7 +105,7 @@ provision:
     networks:                                   # instance internal network
       - <internal-network>
     floating_ip_pool: "10.8.240.0"              # instance external network
-      keypair: <keypair>                        # instance ssh key pair
+    keypair: <keypair>                          # instance ssh key pair
     groups: testclient                          # host group
     ansible_params:                             # defines ansible parameters for connection
       ansible_user: root

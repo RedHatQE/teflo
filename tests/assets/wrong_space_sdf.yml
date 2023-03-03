@@ -1,7 +1,7 @@
 ---
 
 name: test unnecessary space
-description: 
+description:
 
 provision:
   - name: localhost

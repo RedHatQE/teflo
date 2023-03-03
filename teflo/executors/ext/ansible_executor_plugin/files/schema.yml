@@ -105,4 +105,3 @@ mapping:
   environment_vars:
     allowempty: True
     type: map
-

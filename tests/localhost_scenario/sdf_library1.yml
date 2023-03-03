@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 ---
 remote_workspace:
-  - workspace_url: https://github.com/dno-github/remote-teflo-lib1.git 
+  - workspace_url: https://github.com/dno-github/remote-teflo-lib1.git
     alias_name: remote
-  - workspace_url: https://github.com/dno-github/remote-teflo-lib1.git 
+  - workspace_url: https://github.com/dno-github/remote-teflo-lib1.git
     alias_name: remote2
 
 include:
@@ -18,4 +18,3 @@ provision:
     ip_address: 127.0.0.1
     ansible_params:
       ansible_connection: local
-

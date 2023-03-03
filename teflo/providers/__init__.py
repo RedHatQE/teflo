@@ -15,7 +15,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 """
     teflo.providers
 
@@ -24,8 +23,7 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-
-from .beaker import BeakerProvider
-from .openstack import OpenstackProvider
-from .libvirt import LibvirtProvider
 from .aws import AwsProvider
+from .beaker import BeakerProvider
+from .libvirt import LibvirtProvider
+from .openstack import OpenstackProvider
