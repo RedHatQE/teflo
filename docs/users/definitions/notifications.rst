@@ -10,7 +10,7 @@ is :ref:`email<email_notify>`.
 
 First lets go over the basic structure that defines a notification task.
 
-.. literalinclude:: ../../../examples/docs-usage/notification.yml
+.. literalinclude:: ../../../examples/docs-usage/notification.txt
     :lines: 1-9
 
 The above code snippet is the minimal structure that is required to create a
@@ -223,7 +223,7 @@ Example 1
 
 You want to trigger a notification on all successful tasks using the default template
 
-.. literalinclude:: ../../../examples/docs-usage/notification.yml
+.. literalinclude:: ../../../examples/docs-usage/notification.txt
     :lines: 1-9
 
 
@@ -232,7 +232,7 @@ Example 2
 
 You want to trigger a notification before the start of all tasks using a messaging template
 
-.. literalinclude:: ../../../examples/docs-usage/notification.yml
+.. literalinclude:: ../../../examples/docs-usage/notification.txt
     :lines: 12-23
 
 Teflo's scenario data could be used to format the template email_templ.txt as shown in the examples below:
@@ -323,7 +323,7 @@ Example 3
 You want to trigger a notification regardless on failures of the Validate and Provision task
 but you want to include a multiline string in the descriptor file.
 
-.. literalinclude:: ../../../examples/docs-usage/notification.yml
+.. literalinclude:: ../../../examples/docs-usage/notification.txt
     :lines: 25-44
 
 
@@ -333,7 +333,7 @@ Example 4
 You want to trigger a notification regardless only on failures of all tasks
 using the default template message but you want to include a file as an attachment.
 
-.. literalinclude:: ../../../examples/docs-usage/notification.yml
+.. literalinclude:: ../../../examples/docs-usage/notification.txt
     :lines: 46-56
 
 
@@ -342,7 +342,7 @@ Example 5
 
 You don't want a notification to trigger automatically.
 
-.. literalinclude:: ../../../examples/docs-usage/notification.yml
+.. literalinclude:: ../../../examples/docs-usage/notification.txt
     :lines: 58-66
 
 Example 6
@@ -350,7 +350,7 @@ Example 6
 
 Using custom template and using teflo's data for formatting
 
-.. literalinclude:: ../../../examples/docs-usage/notification.yml
+.. literalinclude:: ../../../examples/docs-usage/notification.txt
     :lines: 68-79
 
 Example 7
@@ -394,7 +394,7 @@ The template template.jinja will look like this
 
 Scenario file notification block
 
-.. literalinclude:: ../../../examples/docs-usage/notification.yml
+.. literalinclude:: ../../../examples/docs-usage/notification.txt
     :lines: 81-92
 
 The above example post run will be seen as following in the results.yml file,

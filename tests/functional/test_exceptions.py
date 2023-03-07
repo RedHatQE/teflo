@@ -15,7 +15,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 """
     tests.test_exceptions
 
@@ -24,97 +23,107 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-
 import pytest
 
-from teflo.exceptions import TefloError, TefloTaskError, \
-    TefloResourceError, TefloProvisionerError, TefloProviderError, \
-    TefloOrchestratorError, HelpersError, LoggerMixinError, \
-    TefloActionError, TefloExecuteError, TefloHostError, TefloReportError, \
-    ScenarioError, BeakerProvisionerError, OpenstackProviderError, \
-    OpenshiftProvisionerError, ArchiveArtifactsError
+from teflo.exceptions import ArchiveArtifactsError
+from teflo.exceptions import BeakerProvisionerError
+from teflo.exceptions import HelpersError
+from teflo.exceptions import LoggerMixinError
+from teflo.exceptions import OpenshiftProvisionerError
+from teflo.exceptions import OpenstackProviderError
+from teflo.exceptions import ScenarioError
+from teflo.exceptions import TefloActionError
+from teflo.exceptions import TefloError
+from teflo.exceptions import TefloExecuteError
+from teflo.exceptions import TefloHostError
+from teflo.exceptions import TefloOrchestratorError
+from teflo.exceptions import TefloProviderError
+from teflo.exceptions import TefloProvisionerError
+from teflo.exceptions import TefloReportError
+from teflo.exceptions import TefloResourceError
+from teflo.exceptions import TefloTaskError
 
 
 def test_teflo_error():
     with pytest.raises(TefloError):
-        raise TefloError('error message')
+        raise TefloError("error message")
 
 
 def test_teflo_task_error():
     with pytest.raises(TefloTaskError):
-        raise TefloTaskError('error message')
+        raise TefloTaskError("error message")
 
 
 def test_teflo_resource_error():
     with pytest.raises(TefloResourceError):
-        raise TefloResourceError('error message')
+        raise TefloResourceError("error message")
 
 
 def test_teflo_provisioner_error():
     with pytest.raises(TefloProvisionerError):
-        raise TefloProvisionerError('error message')
+        raise TefloProvisionerError("error message")
 
 
 def test_teflo_provider_error():
     with pytest.raises(TefloProviderError):
-        raise TefloProviderError('error message')
+        raise TefloProviderError("error message")
 
 
 def test_teflo_orchestrator_error():
     with pytest.raises(TefloOrchestratorError):
-        raise TefloOrchestratorError('error message')
+        raise TefloOrchestratorError("error message")
 
 
 def test_teflo_helpers_error():
     with pytest.raises(HelpersError):
-        raise HelpersError('error message')
+        raise HelpersError("error message")
 
 
 def test_teflo_logger_mixin_error():
     with pytest.raises(LoggerMixinError):
-        raise LoggerMixinError('error message')
+        raise LoggerMixinError("error message")
 
 
 def test_teflo_action_error():
     with pytest.raises(TefloActionError):
-        raise TefloActionError('error message')
+        raise TefloActionError("error message")
 
 
 def test_teflo_execute_error():
     with pytest.raises(TefloExecuteError):
-        raise TefloExecuteError('error message')
+        raise TefloExecuteError("error message")
 
 
 def test_teflo_host_error():
     with pytest.raises(TefloHostError):
-        raise TefloHostError('error message')
+        raise TefloHostError("error message")
 
 
 def test_teflo_report_error():
     with pytest.raises(TefloReportError):
-        raise TefloReportError('error message')
+        raise TefloReportError("error message")
 
 
 def test_scenario_error():
     with pytest.raises(ScenarioError):
-        raise ScenarioError('error message')
+        raise ScenarioError("error message")
 
 
 def test_beaker_provisioner_error():
     with pytest.raises(BeakerProvisionerError):
-        raise BeakerProvisionerError('error message')
+        raise BeakerProvisionerError("error message")
 
 
 def test_openstack_provider_error():
     with pytest.raises(OpenstackProviderError):
-        raise OpenstackProviderError('error message')
+        raise OpenstackProviderError("error message")
 
 
 def test_openshift_provisioner_error():
     with pytest.raises(OpenshiftProvisionerError):
-        raise OpenshiftProvisionerError('error message')
+        raise OpenshiftProvisionerError("error message")
 
 
 def test_archive_artifacts_error():
     with pytest.raises(ArchiveArtifactsError):
-        raise ArchiveArtifactsError('error message')
+        raise ArchiveArtifactsError("error message")

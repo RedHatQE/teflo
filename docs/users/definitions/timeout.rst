@@ -24,7 +24,7 @@ This feature will allow users to set  a time limit for all the teflo tasks. This
         ---
         name: example
         description: An example scenario for timeout
-            
+
         provision:
         - name: test
             group: client
@@ -35,7 +35,7 @@ This feature will allow users to set  a time limit for all the teflo tasks. This
             image: rhel-7.4-server-x86_64-released
             flavor: m1.small
             keypair: {{ key }}
-            networks: 
+            networks:
                 - provider_net_cci_4
             ansible_params:
             ansible_user: cloud-user
@@ -56,6 +56,6 @@ This feature will allow users to set  a time limit for all the teflo tasks. This
                 polarion-testrun-title: e2e-tests
             report_timeout: 120
 
-.. note:: **If the timeout values are defined from SDF, it 
-            will overwrite the timeout values defined from 
+.. note:: **If the timeout values are defined from SDF, it
+            will overwrite the timeout values defined from
             teflo.cfg**

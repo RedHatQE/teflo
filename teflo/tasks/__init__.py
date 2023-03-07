@@ -23,11 +23,10 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-
 from .cleanup import CleanupTask
 from .execute import ExecuteTask
+from .notification import NotificationTask
 from .orchestrate import OrchestrateTask
 from .provision import ProvisionTask
 from .report import ReportTask
 from .validate import ValidateTask
-from .notification import NotificationTask

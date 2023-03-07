@@ -24,16 +24,17 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+from collections import OrderedDict
 
 from .._compat import string_types
-from ..core import TefloResource
 from ..constants import EXECUTOR
-from ..helpers import get_executor_plugin_class, \
-    get_executors_plugin_list
-from ..tasks import ExecuteTask, ValidateTask
+from ..core import TefloResource
 from ..exceptions import TefloExecuteError
-from collections import OrderedDict
 from ..executors import ExecuteManager
+from ..helpers import get_executor_plugin_class
+from ..helpers import get_executors_plugin_list
+from ..tasks import ExecuteTask
+from ..tasks import ValidateTask
 
 
 class Execute(TefloResource):
@@ -41,36 +42,38 @@ class Execute(TefloResource):
     The execute resource class.
     """
 
-    _valid_tasks_types = ['validate', 'execute']
+    _valid_tasks_types = ["validate", "execute"]
     # The fields (ansible_options, git, shell, and script) could have been
     # optional parameters for the runner executor; however, since this is
     # planned to be the main executor, it made sense to define them here
     # and not appending runner to those keys.  This can be changed if
     # there are more executors added.
     _fields = [
-        'name',
-        'description',
-        'hosts',
-        'ansible_options',
-        'git',
-        'ignore_rc',
-        'valid_rc',
-        'artifacts',
-        'artifact_locations',
-        'labels',
-        'testrun_results',
-        'artifacts_location',
+        "name",
+        "description",
+        "hosts",
+        "ansible_options",
+        "git",
+        "ignore_rc",
+        "valid_rc",
+        "artifacts",
+        "artifact_locations",
+        "labels",
+        "testrun_results",
+        "artifacts_location",
         "execute_timeout",
-        "validate_timeout"
+        "validate_timeout",
     ]
 
-    def __init__(self,
-                 config=None,
-                 name=None,
-                 parameters: dict = {},
-                 execute_task_cls=ExecuteTask,
-                 validate_task_cls=ValidateTask,
-                 **kwargs):
+    def __init__(
+        self,
+        config=None,
+        name=None,
+        parameters: dict = {},
+        execute_task_cls=ExecuteTask,
+        validate_task_cls=ValidateTask,
+        **kwargs
+    ):
         """Constructor.
 
         :param config: teflo configuration
@@ -90,7 +93,7 @@ class Execute(TefloResource):
 
         # set the timeout for VALIDATE
         try:
-            if parameters.get('validate_timeout') is not None:
+            if parameters.get("validate_timeout") is not None:
                 self._validate_timeout = parameters.pop("validate_timeout")
             else:
                 self._validate_timeout = config["TIMEOUT"]["VALIDATE"]
@@ -100,7 +103,7 @@ class Execute(TefloResource):
 
         # set the timeout for execution
         try:
-            if parameters.get('execute_timeout') is not None:
+            if parameters.get("execute_timeout") is not None:
                 self._execute_timeout = parameters.pop("execute_timeout")
             else:
                 self._execute_timeout = config["TIMEOUT"]["EXECUTE"]
@@ -110,22 +113,22 @@ class Execute(TefloResource):
 
         # set the execute resource name
         if name is None:
-            self._name = parameters.pop('name', None)
+            self._name = parameters.pop("name", None)
             if self._name is None:
-                raise TefloExecuteError('Unable to build execute object. Name'
-                                         ' field missing!')
+                raise TefloExecuteError(
+                    "Unable to build execute object. Name" " field missing!"
+                )
         else:
             self._name = name
 
         # set the execute description
-        self._description = parameters.pop('description', None)
+        self._description = parameters.pop("description", None)
 
         # every execute has a mandatory executor, lets set it
-        executor_name = parameters.pop('executor', EXECUTOR)
+        executor_name = parameters.pop("executor", EXECUTOR)
 
         if executor_name not in get_executors_plugin_list():
-            raise TefloExecuteError('Executor: %s is not supported!' %
-                                     executor_name)
+            raise TefloExecuteError("Executor: %s is not supported!" % executor_name)
 
         # get the executor class
         self._executor = get_executor_plugin_class(executor_name)
@@ -133,34 +136,37 @@ class Execute(TefloResource):
         # using plugin's method to get the schema keys and check if they are present in the parameters and then
         # set them as executor's parameters
         if self.executor:
-            for p in getattr(self.executor, 'get_schema_keys')():
+            for p in getattr(self.executor, "get_schema_keys")():
                 if parameters.get(p, None):
                     setattr(self, p, parameters.get(p))
         else:
-            raise TefloExecuteError('Executor: %s plugin was not found!' %
-                                     executor_name)
+            raise TefloExecuteError(
+                "Executor: %s plugin was not found!" % executor_name
+            )
 
-        self.hosts = parameters.pop('hosts')
+        self.hosts = parameters.pop("hosts")
         if self.hosts is None:
-            raise TefloExecuteError('Unable to associate hosts to executor:'
-                                     '%s. No hosts defined!' % self._name)
+            raise TefloExecuteError(
+                "Unable to associate hosts to executor:"
+                "%s. No hosts defined!" % self._name
+            )
 
         # convert the hosts into list format if hosts defined as str format
         if isinstance(self.hosts, string_types):
-            self.hosts = self.hosts.replace(' ', '').split(',')
+            self.hosts = self.hosts.replace(" ", "").split(",")
 
         # set labels
-        setattr(self, 'labels', parameters.pop('labels', []))
+        setattr(self, "labels", parameters.pop("labels", []))
 
         # set up status code
-        self._status = parameters.pop('status', 0)
+        self._status = parameters.pop("status", 0)
 
-        self.artifacts = parameters.pop('artifacts', [])
+        self.artifacts = parameters.pop("artifacts", [])
         if self.artifacts:
             if isinstance(self.artifacts, string_types):
-                self.artifacts = self.artifacts.replace(' ', '').split(',')
+                self.artifacts = self.artifacts.replace(" ", "").split(",")
 
-        self.artifact_locations = parameters.pop('artifact_locations', [])
+        self.artifact_locations = parameters.pop("artifact_locations", [])
 
         self.testrun_results = dict()
 
@@ -187,7 +193,7 @@ class Execute(TefloResource):
     @executor.setter
     def executor(self, value):
         """Set executor property."""
-        raise AttributeError('Executor class property cannot be set.')
+        raise AttributeError("Executor class property cannot be set.")
 
     @property
     def status(self):
@@ -204,12 +210,12 @@ class Execute(TefloResource):
         :rtype: OrderedDict
         """
         profile = OrderedDict()
-        profile.update({'name': self.name})
-        profile.update({'description': self.description})
+        profile.update({"name": self.name})
+        profile.update({"description": self.description})
         if isinstance(self.executor, string_types):
-            profile.update({'executor': self.executor})
+            profile.update({"executor": self.executor})
         else:
-            profile.update({'executor': getattr(self.executor, '__executor_name__')})
+            profile.update({"executor": getattr(self.executor, "__executor_name__")})
 
         # set the execute's hosts
         if all(isinstance(item, string_types) for item in self.hosts):
@@ -219,21 +225,21 @@ class Execute(TefloResource):
 
         # update the profile with executor properties
         if not isinstance(self.executor, string_types):
-            profile.update(getattr(self.executor, 'build_profile')(self))
+            profile.update(getattr(self.executor, "build_profile")(self))
 
-        for item in getattr(self, '_fields'):
-            if item == 'hosts':
+        for item in getattr(self, "_fields"):
+            if item == "hosts":
                 continue
             elif getattr(self, item, None):
                 profile.update({item: getattr(self, item)})
 
-        profile.update({'status': self.status})
+        profile.update({"status": self.status})
 
         return profile
 
     def validate(self):
         """Validate the action object using the orchestrator plugin's validate method."""
-        getattr(ExecuteManager(self), 'validate')()
+        getattr(ExecuteManager(self), "validate")()
 
     def _construct_validate_task(self):
         """Constructs the validate task associated to the execute resource.
@@ -242,11 +248,11 @@ class Execute(TefloResource):
         :rtype: dict
         """
         task = {
-            'task': self._validate_task_cls,
-            'name': str(self.name),
-            'resource': self,
-            'methods': self._req_tasks_methods,
-            "timeout": self._validate_timeout
+            "task": self._validate_task_cls,
+            "name": str(self.name),
+            "resource": self,
+            "methods": self._req_tasks_methods,
+            "timeout": self._validate_timeout,
         }
         return task
 
@@ -257,11 +263,11 @@ class Execute(TefloResource):
         :rtype: dict
         """
         task = {
-            'task': self._execute_task_cls,
-            'name': str(self.name),
-            'package': self,
-            'msg': '   executing %s' % self.name,
-            'methods': self._req_tasks_methods,
-            "timout": self._execute_timeout
+            "task": self._execute_task_cls,
+            "name": str(self.name),
+            "package": self,
+            "msg": "   executing %s" % self.name,
+            "methods": self._req_tasks_methods,
+            "timout": self._execute_timeout,
         }
         return task

@@ -102,7 +102,7 @@ executing teflo.
         - Yes
 
     *   - common_scenario.yml
-        - This is the scenario file used in the include section of the scenario.yml. 
+        - This is the scenario file used in the include section of the scenario.yml.
         - No
 
     *   - tests
@@ -152,5 +152,3 @@ If this is not an option, the user would have to
 redefine each of their systems with the correct keys for the provisioning
 system they plan to use.  Please see the `provisioning
 <definitions/provision.html#provision>`_ documentation for all options.
-
-

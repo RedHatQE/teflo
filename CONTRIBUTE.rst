@@ -93,6 +93,16 @@ You can verify teflo is installed by running the following commands.
 
 You can now make changes/do feature development in this branch
 
+The project follow [Black](https://black.readthedocs.io/en/stable/) code style with config in pre-commit, please make sure pre-commit is installed with:
+
+.. code-block:: bash
+
+    (teflo) $ pip install pre-commit
+    (teflo) $ pre-commit install
+    (teflo) $ pre-commit run --all-files
+
+Then the git pre commit hook will be enabled for code style check and apply.
+
 How to run tests locally
 ------------------------
 
@@ -589,4 +599,3 @@ Example for plugin:
 
         def import_artifacts(self):
             # Your code
-

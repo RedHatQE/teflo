@@ -25,17 +25,20 @@
     :license: GPLv3, see LICENSE for more details.
 """
 from __future__ import unicode_literals
-import socket
-import time
-from xml.dom.minidom import parse, parseString
 
 import os
-import paramiko
+import socket
 import stat
+import time
+from xml.dom.minidom import parse
+from xml.dom.minidom import parseString
+
+import paramiko
 
 from teflo.core import ProvisionerPlugin
 from teflo.exceptions import BeakerProvisionerError
-from teflo.helpers import exec_local_cmd, schema_validator
+from teflo.helpers import exec_local_cmd
+from teflo.helpers import schema_validator
 
 
 class BeakerClientProvisionerPlugin(ProvisionerPlugin):
@@ -49,11 +52,14 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         multiple requests with different authentication in the same namespace
         (with same config file).
     """
+
     __plugin_name__ = "beaker-client"
-    __schema_file_path__ = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                        "schema.yml"))
-    __schema_ext_path__ = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                       "extensions.py"))
+    __schema_file_path__ = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "schema.yml")
+    )
+    __schema_ext_path__ = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "extensions.py")
+    )
 
     def __init__(self, asset):
         """Constructor.
@@ -63,11 +69,11 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         """
         super(BeakerClientProvisionerPlugin, self).__init__(asset)
 
-        self.job_xml = 'bkrjob_%s.xml' % getattr(self.asset, 'name')
+        self.job_xml = "bkrjob_%s.xml" % getattr(self.asset, "name")
         self.bkr_xml = BeakerXML()
-        self.conf_dir = '%s/.beaker_client' % os.path.expanduser('~')
-        self.conf = '%s/config' % self.conf_dir
-        self.url = ''
+        self.conf_dir = "%s/.beaker_client" % os.path.expanduser("~")
+        self.conf = "%s/config" % self.conf_dir
+        self.url = ""
 
         # configure beaker conf
         self._build_config()
@@ -82,52 +88,68 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         if not os.path.isdir(self.conf_dir):
             os.makedirs(self.conf_dir)
 
-        if 'hub_url' in self.provider_credentials and self.provider_credentials['hub_url']:
-            self.url = self.provider_credentials['hub_url']
+        if (
+            "hub_url" in self.provider_credentials
+            and self.provider_credentials["hub_url"]
+        ):
+            self.url = self.provider_credentials["hub_url"]
 
         if os.path.isfile(self.conf):
-            self.logger.info('Beaker config already exists, skip creation.')
+            self.logger.info("Beaker config already exists, skip creation.")
             return
 
         # open conf file for writing
-        conf_obj = open(self.conf, 'w')
+        conf_obj = open(self.conf, "w")
 
         conf_obj.write('HUB_URL = "%s"\n' % self.url)
 
         # write the path to beaker trusted ssl certs if specified.
-        if 'ca_cert' in self.provider_credentials and self.provider_credentials['ca_cert']:
-            self.logger.debug('ca_cert was provided %s' % self.provider_credentials['ca_cert'])
-            conf_obj.write('CA_CERT = "%s"\n' % self.provider_credentials['ca_cert'])
+        if (
+            "ca_cert" in self.provider_credentials
+            and self.provider_credentials["ca_cert"]
+        ):
+            self.logger.debug(
+                "ca_cert was provided %s" % self.provider_credentials["ca_cert"]
+            )
+            conf_obj.write('CA_CERT = "%s"\n' % self.provider_credentials["ca_cert"])
 
-        if 'username' in self.provider_credentials and self.provider_credentials['username'] \
-                and 'password' in self.provider_credentials and self.provider_credentials['password']:
-            self.logger.debug('Authentication by username/password.')
+        if (
+            "username" in self.provider_credentials
+            and self.provider_credentials["username"]
+            and "password" in self.provider_credentials
+            and self.provider_credentials["password"]
+        ):
+            self.logger.debug("Authentication by username/password.")
 
             conf_obj.write('AUTH_METHOD = "password"\n')
-            conf_obj.write('USERNAME = "%s"\n' % self.provider_credentials['username'])
-            conf_obj.write('PASSWORD = "%s"\n' % self.provider_credentials['password'])
-        elif 'keytab' in self.provider_credentials and self.provider_credentials['keytab'] \
-                and 'keytab_principal' in self.provider_credentials \
-                and self.provider_credentials["keytab_principal"]:
-            self.logger.debug('Authentication by keytab.')
+            conf_obj.write('USERNAME = "%s"\n' % self.provider_credentials["username"])
+            conf_obj.write('PASSWORD = "%s"\n' % self.provider_credentials["password"])
+        elif (
+            "keytab" in self.provider_credentials
+            and self.provider_credentials["keytab"]
+            and "keytab_principal" in self.provider_credentials
+            and self.provider_credentials["keytab_principal"]
+        ):
+            self.logger.debug("Authentication by keytab.")
 
             conf_obj.write('AUTH_METHOD = "krbv"\n')
 
-            keytab = os.path.join(self.workspace, self.provider_credentials['keytab'])
+            keytab = os.path.join(self.workspace, self.provider_credentials["keytab"])
 
             conf_obj.write('KRB_KEYTAB = "%s"\n' % keytab)
-            conf_obj.write('KRB_PRINCIPAL = "%s"\n' % self.provider_credentials[
-                'keytab_principal'])
+            conf_obj.write(
+                'KRB_PRINCIPAL = "%s"\n' % self.provider_credentials["keytab_principal"]
+            )
             conf_obj.write('KRB_REALM = "REDHAT.COM"\n')
         conf_obj.close()
 
     def _connect(self):
         """Connect to beaker."""
-        data = exec_local_cmd('bkr whoami')
+        data = exec_local_cmd("bkr whoami")
         if data[0] != 0:
             self.logger.error(data[2])
-            raise BeakerProvisionerError('Connection to beaker failed!')
-        self.logger.info('Connected to beaker!')
+            raise BeakerProvisionerError("Connection to beaker failed!")
+        self.logger.info("Connected to beaker!")
 
     def authenticate(self):
         """Authenticate with beaker."""
@@ -143,7 +165,7 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
 
         # set attributes for beaker xml object
         for key, value in self.provider_params.items():
-            if key != 'name':
+            if key != "name":
                 if value:
                     setattr(self.bkr_xml, key, value)
 
@@ -152,28 +174,30 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
             bkr_xml_file, kickstart_path=self.workspace, savefile=True
         )
 
-        if 'force' in self.bkr_xml.hrname:
-            self.logger.warning('Force was specified as a host_require_option. '
-                                'Any other host_require_options will be ignored since '
-                                'force is a mutually exclusive option in beaker.')
+        if "force" in self.bkr_xml.hrname:
+            self.logger.warning(
+                "Force was specified as a host_require_option. "
+                "Any other host_require_options will be ignored since "
+                "force is a mutually exclusive option in beaker."
+            )
         # format beaker client command to run
         # Latest version of beaker client fails to generate xml with this
         # replacement
         # _cmd = self.bkr_xml.cmd.replace('=', "\=")
 
-        self.logger.info('Generating beaker job XML..')
-        self.logger.debug('Command to be run: %s' % self.bkr_xml.cmd)
+        self.logger.info("Generating beaker job XML..")
+        self.logger.debug("Command to be run: %s" % self.bkr_xml.cmd)
 
         # generate beaker job XML
         results = exec_local_cmd(self.bkr_xml.cmd)
         if results[0] != 0:
             self.logger.error(results[2])
-            raise BeakerProvisionerError('Failed to generate beaker job XML!')
+            raise BeakerProvisionerError("Failed to generate beaker job XML!")
         output = results[1]
 
         # generate complete beaker job XML
         self.bkr_xml.generate_xml_dom(bkr_xml_file, output, savefile=True)
-        self.logger.info('Successfully generated beaker job XML!')
+        self.logger.info("Successfully generated beaker job XML!")
 
     def submit_bkr_xml(self):
         """Submit a beaker job XML to Beaker.
@@ -182,32 +206,30 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         job was successfully uploaded, the beaker job id will be returned.
         """
         # setup beaker client job submit commnand
-        _cmd = "bkr job-submit --xml %s" % os.path.join(
-            self.data_folder, self.job_xml)
+        _cmd = "bkr job-submit --xml %s" % os.path.join(self.data_folder, self.job_xml)
 
-        self.logger.info('Submitting beaker job XML..')
-        self.logger.debug('Command to be run: %s' % _cmd)
+        self.logger.info("Submitting beaker job XML..")
+        self.logger.debug("Command to be run: %s" % _cmd)
 
         # submit beaker XML
         results = exec_local_cmd(_cmd)
         if results[0] != 0:
             self.logger.error(results[2])
-            raise BeakerProvisionerError('Failed to submit beaker job XML!')
+            raise BeakerProvisionerError("Failed to submit beaker job XML!")
         output = results[1]
 
         # post results tasks
         if output.find("Submitted:") != "-1":
-            mod_output = output[output.find("Submitted:"):]
+            mod_output = output[output.find("Submitted:") :]
 
             # set the result as ascii instead of unicode
-            job_id = mod_output[mod_output.find(
-                "[") + 2:mod_output.find("]") - 1]
-            job_url = os.path.join(self.url, 'jobs', job_id[2:])
+            job_id = mod_output[mod_output.find("[") + 2 : mod_output.find("]") - 1]
+            job_url = os.path.join(self.url, "jobs", job_id[2:])
 
-            self.logger.info('Beaker job ID: %s.' % job_id)
-            self.logger.info('Beaker job URL: %s.' % job_url)
+            self.logger.info("Beaker job ID: %s." % job_id)
+            self.logger.info("Beaker job URL: %s." % job_url)
 
-            self.logger.info('Successfully submitted beaker XML!')
+            self.logger.info("Successfully submitted beaker XML!")
 
             return job_id, job_url
 
@@ -219,11 +241,11 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         wait indefinitely for the machine to be provisioned.
         """
         # set max wait time (default is 8 hours)
-        wait = self.provider_params.get('bkr_timeout', None)
+        wait = self.provider_params.get("bkr_timeout", None)
         if wait is None:
             wait = 28800
 
-        self.logger.debug('Beaker timeout limit: %s.' % wait)
+        self.logger.debug("Beaker timeout limit: %s." % wait)
 
         # check Beaker status every 60 seconds
         total_attempts = int(wait / 60)
@@ -231,56 +253,54 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         attempt = 0
         while wait > 0:
             attempt += 1
-            self.logger.info('Waiting for machine to be ready, attempt %s of '
-                             '%s.' % (attempt, total_attempts))
+            self.logger.info(
+                "Waiting for machine to be ready, attempt %s of "
+                "%s." % (attempt, total_attempts)
+            )
 
             # setup beaker job results command
             _cmd = "bkr job-results %s" % job_id
 
-            self.logger.debug('Fetching beaker job status..')
+            self.logger.debug("Fetching beaker job status..")
 
             # fetch beaker job status
             results = exec_local_cmd(_cmd)
             if results[0] != 0:
                 self.logger.error(results[2])
-                raise BeakerProvisionerError('Failed to fetch job status!')
+                raise BeakerProvisionerError("Failed to fetch job status!")
             xml_output = results[1]
 
-            self.logger.debug('Successfully fetched beaker job status!')
+            self.logger.debug("Successfully fetched beaker job status!")
 
             bkr_job_status_dict = self.get_job_status(xml_output)
             self.logger.debug("Beaker job status: %s" % bkr_job_status_dict)
             status = self.analyze_results(bkr_job_status_dict)
 
-            self.logger.info('Beaker Job: id: %s status: %s.' %
-                             (job_id, status))
+            self.logger.info("Beaker Job: id: %s status: %s." % (job_id, status))
 
             if status == "wait":
                 wait -= 60
                 time.sleep(60)
                 continue
             elif status == "success":
-                self.logger.info("Machine is successfully provisioned from "
-                                 "Beaker!")
+                self.logger.info("Machine is successfully provisioned from " "Beaker!")
                 # get machine info
                 return self.get_machine_info(xml_output)
             elif status == "fail":
-                raise BeakerProvisionerError(
-                    'Beaker job %s provision failed!' % job_id
-                )
+                raise BeakerProvisionerError("Beaker job %s provision failed!" % job_id)
             else:
                 raise BeakerProvisionerError(
-                    'Beaker job %s has unknown status!' % job_id
+                    "Beaker job %s has unknown status!" % job_id
                 )
 
         # timeout reached for Beaker job
-        self.logger.error('Maximum number of attempts reached!')
+        self.logger.error("Maximum number of attempts reached!")
 
         # cancel job
         self.cancel_job(job_id)
 
         raise BeakerProvisionerError(
-            'Timeout reached waiting for beaker job to finish!'
+            "Timeout reached waiting for beaker job to finish!"
         )
 
     def create(self):
@@ -289,7 +309,7 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         This method will create a Beaker job xml based on host information,
         submit the job to Beaker and wait for the job to be complete.
         """
-        self.logger.debug('Provisioning machines from %s', self.__class__)
+        self.logger.debug("Provisioning machines from %s", self.__class__)
 
         # authenticate with beaker
         self.authenticate()
@@ -304,11 +324,13 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         hostname, ip = self.wait_for_bkr_job(job_id)
 
         # copy ssh key to remote system
-        if 'ssh_key' in self.provider_params and self.provider_params.get('ssh_key', None):
-            self.logger.info('Inject SSH key into remote machine.')
+        if "ssh_key" in self.provider_params and self.provider_params.get(
+            "ssh_key", None
+        ):
+            self.logger.info("Inject SSH key into remote machine.")
             self.copy_ssh_key(hostname, ip)
         else:
-            self.logger.warning('No SSH key defined, skip injecting key.')
+            self.logger.warning("No SSH key defined, skip injecting key.")
 
         return [dict(asset_id=job_id, job_url=job_url, hostname=hostname, ip=ip)]
 
@@ -321,38 +343,41 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         # setup beaker job cancel command
         _cmd = "bkr job-cancel {0}".format(job_id)
 
-        self.logger.info('Canceling beaker job..')
+        self.logger.info("Canceling beaker job..")
 
         # cancel beaker job
         results = exec_local_cmd(_cmd)
         if results[0] != 0:
             self.logger.error(results[2])
-            raise BeakerProvisionerError('Failed to cancel job.')
+            raise BeakerProvisionerError("Failed to cancel job.")
         output = results[1]
 
         if "Cancelled" in output:
             self.logger.info("Job %s cancelled." % job_id)
         else:
-            raise BeakerProvisionerError('Failed to cancel beaker job!')
+            raise BeakerProvisionerError("Failed to cancel beaker job!")
 
-        self.logger.info('Successfully cancelled beaker job!')
+        self.logger.info("Successfully cancelled beaker job!")
 
     def delete(self):
         """Delete a beaker job to release system back to the pool.
 
         This method will cancel a existing beaker job based on beaker job id.
         """
-        self.logger.info('Tearing down machines from %s', self.__class__)
+        self.logger.info("Tearing down machines from %s", self.__class__)
 
         # authenticate with beaker
         self.authenticate()
 
         # cancel beaker job
-        self.cancel_job(getattr(self.asset, 'asset_id'))
+        self.cancel_job(getattr(self.asset, "asset_id"))
 
     def validate(self):
-        schema_validator(schema_data=self.build_profile(self.asset), schema_files=[self.__schema_file_path__],
-                         schema_ext_files=[self.__schema_ext_path__])
+        schema_validator(
+            schema_data=self.build_profile(self.asset),
+            schema_files=[self.__schema_file_path__],
+            schema_ext_files=[self.__schema_ext_path__],
+        )
 
     def get_job_status(self, xmldata):
         """Parse the beaker results.
@@ -367,34 +392,36 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         try:
             dom = parseString(xmldata)
         except Exception as ex:
-            raise BeakerProvisionerError(
-                'Failed reading XML data: %s.' % ex
-            )
+            raise BeakerProvisionerError("Failed reading XML data: %s." % ex)
 
         # check job status
-        joblist = dom.getElementsByTagName('job')
+        joblist = dom.getElementsByTagName("job")
 
         # verify it is a length of 1 else exception
         if len(joblist) != 1:
             raise BeakerProvisionerError(
-                'Unable to parse job results from %s.' % self.provider_params.get('job_id')
+                "Unable to parse job results from %s."
+                % self.provider_params.get("job_id")
             )
 
         mydict["job_result"] = joblist[0].getAttribute("result")
         mydict["job_status"] = joblist[0].getAttribute("status")
 
-        tasklist = dom.getElementsByTagName('task')
+        tasklist = dom.getElementsByTagName("task")
 
         for task in tasklist:
-            cname = task.getAttribute('name')
-            if cname == '/distribution/install' or cname == '/distribution/check-install':
-                mydict["install_result"] = task.getAttribute('result')
-                mydict["install_status"] = task.getAttribute('status')
+            cname = task.getAttribute("name")
+            if (
+                cname == "/distribution/install"
+                or cname == "/distribution/check-install"
+            ):
+                mydict["install_result"] = task.getAttribute("result")
+                mydict["install_status"] = task.getAttribute("status")
 
         if "install_status" in mydict and mydict["install_status"]:
             return mydict
         else:
-            raise BeakerProvisionerError('Could not find install task status!')
+            raise BeakerProvisionerError("Could not find install task status!")
 
     def get_machine_info(self, xmldata):
         """Get the remote system information from the beaker results XML.
@@ -408,20 +435,20 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         try:
             dom = parseString(xmldata)
         except Exception as ex:
-            raise BeakerProvisionerError(
-                'Failed reading XML data: %s.' % ex
-            )
+            raise BeakerProvisionerError("Failed reading XML data: %s." % ex)
 
-        tasklist = dom.getElementsByTagName('task')
+        tasklist = dom.getElementsByTagName("task")
         for task in tasklist:
-            cname = task.getAttribute('name')
+            cname = task.getAttribute("name")
 
-            if cname == '/distribution/install' or cname == '/distribution/check-install':
-                hostname = task.getElementsByTagName('system')[0]. \
-                    getAttribute("value")
+            if (
+                cname == "/distribution/install"
+                or cname == "/distribution/check-install"
+            ):
+                hostname = task.getElementsByTagName("system")[0].getAttribute("value")
                 addr = socket.gethostbyname(hostname)
                 try:
-                    hostname = hostname.split('.')[0]
+                    hostname = hostname.split(".")[0]
                 except Exception:
                     pass
 
@@ -434,9 +461,9 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         will create the public key content from the private key given.
         """
 
-        ssh_key = self.provider_params.get('ssh_key')
-        username = self.provider_params.get('username')
-        password = self.provider_params.get('password')
+        ssh_key = self.provider_params.get("ssh_key")
+        username = self.provider_params.get("username")
+        password = self.provider_params.get("password")
 
         # setup absolute path for private key
         private_key = os.path.join(self.workspace, ssh_key)
@@ -446,23 +473,20 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
             os.chmod(private_key, stat.S_IRUSR | stat.S_IWUSR)
         except OSError as ex:
             raise BeakerProvisionerError(
-                'Error setting private key file permissions: %s' % ex
+                "Error setting private key file permissions: %s" % ex
             )
 
-        self.logger.info('Generating SSH public key from private..')
+        self.logger.info("Generating SSH public key from private..")
 
         # generate public key from private
-        public_key = os.path.join(
-            self.workspace, ssh_key + ".pub"
-        )
+        public_key = os.path.join(self.workspace, ssh_key + ".pub")
         rsa_key = paramiko.RSAKey(filename=private_key)
-        with open(public_key, 'w') as f:
-            f.write('%s %s\n' % (rsa_key.get_name(), rsa_key.get_base64()))
+        with open(public_key, "w") as f:
+            f.write("%s %s\n" % (rsa_key.get_name(), rsa_key.get_base64()))
 
-        self.logger.info('Successfully generated SSH public key from private!')
+        self.logger.info("Successfully generated SSH public key from private!")
 
-        self.logger.info('Send SSH key to remote system %s:%s' %
-                         (hostname, ip))
+        self.logger.info("Send SSH key to remote system %s:%s" % (hostname, ip))
 
         # send the key to the beaker machine
         ssh_con = paramiko.SSHClient()
@@ -472,48 +496,44 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         ssh_file = f"{ssh_dir}/authorized_keys"
 
         try:
-            ssh_con.connect(hostname=ip,
-                            username=username,
-                            password=password)
+            ssh_con.connect(hostname=ip, username=username, password=password)
             sftp = ssh_con.open_sftp()
             try:
                 sftp.stat(ssh_dir)
             except FileNotFoundError:
-                self.logger.warning(f"Directory {ssh_dir} does not exist on {ip}. Creating directory "
-                                    f"before sending key.")
+                self.logger.warning(
+                    f"Directory {ssh_dir} does not exist on {ip}. Creating directory "
+                    f"before sending key."
+                )
                 sftp.mkdir(ssh_dir, mode=0o755)
             try:
                 flag = 0
                 sftp.stat(ssh_file)
             except FileNotFoundError:
                 # since /root/.ssh/authorized_keys file is not found, copying the public key as that file
-                self.logger.warning(f"File {ssh_file} does not exist. Copying the public key ")
+                self.logger.warning(
+                    f"File {ssh_file} does not exist. Copying the public key "
+                )
                 sftp.put(public_key, ssh_file)
                 flag = 1
 
             if flag == 0:
                 # append the public key to the /root/.ssh/authorized_keys file
                 self.logger.debug("Appending the public key")
-                with open(public_key, 'r') as file:
+                with open(public_key, "r") as file:
                     data = file.readlines()
 
-                with sftp.open(ssh_file, 'a') as file1:
+                with sftp.open(ssh_file, "a") as file1:
                     file1.writelines(data)
 
         except paramiko.SSHException as ex:
-            raise BeakerProvisionerError(
-                'Failed to connect to remote system: %s' % ex
-            )
+            raise BeakerProvisionerError("Failed to connect to remote system: %s" % ex)
         except IOError as ex:
-            raise BeakerProvisionerError(
-                'Failed sending public key: %s' % ex
-            )
+            raise BeakerProvisionerError("Failed sending public key: %s" % ex)
         finally:
             ssh_con.close()
 
-        self.logger.debug("Successfully sent key: {0}, "
-                          "{1}".format(ip,
-                                       hostname))
+        self.logger.debug("Successfully sent key: {0}, " "{1}".format(ip, hostname))
 
     def analyze_results(self, resultsdict):
         """Analyze the beaker job install task status.
@@ -526,42 +546,59 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
         """
         # when is the job complete
         # TODO: explain what each beaker results analysis means
-        if resultsdict["job_result"].strip().lower() == "new" and \
-                resultsdict["job_status"].strip().lower() in \
-                ["new", "waiting", "queued", "scheduled", "processed",
-                 "installing"]:
+        if resultsdict["job_result"].strip().lower() == "new" and resultsdict[
+            "job_status"
+        ].strip().lower() in [
+            "new",
+            "waiting",
+            "queued",
+            "scheduled",
+            "processed",
+            "installing",
+        ]:
             return "wait"
-        elif resultsdict["install_result"].strip().lower() == "new" and \
-                resultsdict["install_status"].strip().lower() in \
-                ["new", "waiting", "queued", "scheduled", "running",
-                 "processed"]:
+        elif resultsdict["install_result"].strip().lower() == "new" and resultsdict[
+            "install_status"
+        ].strip().lower() in [
+            "new",
+            "waiting",
+            "queued",
+            "scheduled",
+            "running",
+            "processed",
+        ]:
             return "wait"
-        elif resultsdict["job_status"].strip().lower() == "waiting" or \
-                resultsdict["install_status"].strip().lower() == "waiting":
+        elif (
+            resultsdict["job_status"].strip().lower() == "waiting"
+            or resultsdict["install_status"].strip().lower() == "waiting"
+        ):
             return "wait"
-        elif resultsdict["job_result"].strip().lower() == "pass" and \
-                resultsdict["job_status"].strip().lower() == "running" and \
-                resultsdict["install_result"].strip().lower() == "pass" and \
-                resultsdict["install_status"].strip().lower() == "completed":
+        elif (
+            resultsdict["job_result"].strip().lower() == "pass"
+            and resultsdict["job_status"].strip().lower() == "running"
+            and resultsdict["install_result"].strip().lower() == "pass"
+            and resultsdict["install_status"].strip().lower() == "completed"
+        ):
             return "success"
-        elif resultsdict["job_result"].strip().lower() == "new" and \
-                resultsdict["job_status"].strip().lower() == "running" and \
-                resultsdict["install_result"].strip().lower() == "new" and \
-                resultsdict["install_status"].strip().lower() == "completed":
+        elif (
+            resultsdict["job_result"].strip().lower() == "new"
+            and resultsdict["job_status"].strip().lower() == "running"
+            and resultsdict["install_result"].strip().lower() == "new"
+            and resultsdict["install_status"].strip().lower() == "completed"
+        ):
             return "success"
         elif resultsdict["job_result"].strip().lower() == "warn":
             return "fail"
         elif resultsdict["job_result"].strip().lower() == "fail":
             return "fail"
         else:
-            raise BeakerProvisionerError(
-                'Unexpected job status: %s!' % resultsdict
-            )
+            raise BeakerProvisionerError("Unexpected job status: %s!" % resultsdict)
 
 
 class BeakerXML(object):
-    """ Class to generate Beaker XML file from input host yaml"""
-    _op_list = ['like', '==', '!=', '<=', '>=', '=', '<', '>']
+    """Class to generate Beaker XML file from input host yaml"""
+
+    _op_list = ["like", "==", "!=", "<=", ">=", "=", "<", ">"]
 
     def __init__(self):
         """Intialization of BeakerXML"""
@@ -602,23 +639,23 @@ class BeakerXML(object):
         self._virtcapable = False
         self._ignore_panic = False
 
-    def generate_beaker_xml(self, x, kickstart_path='/tmp', savefile=False):
+    def generate_beaker_xml(self, x, kickstart_path="/tmp", savefile=False):
 
         xmlfile = x
 
         # How will we generate the XML dom
         # Step 1: take all the values and pass it to bkr workflow simple to create a xml for us.
-        with open(xmlfile, 'w+') as fp:
+        with open(xmlfile, "w+") as fp:
             fp.write("<?xml version='1.0' ?>\n")
 
         # Set virtual machine if configured
         if self.virtual_machine:
-            self.sethostrequires('hypervisor', '!=', "")
+            self.sethostrequires("hypervisor", "!=", "")
 
         # Set virtual capable if configured
         if self.virt_capable:
-            self.sethostrequires('system_type', '=', "Machine")
-            self.setdistrorequires('distro_virt', '=', "")
+            self.sethostrequires("system_type", "=", "Machine")
+            self.setdistrorequires("distro_virt", "=", "")
 
         # Set User supplied host requires
         if self.host_requires_options:
@@ -626,8 +663,9 @@ class BeakerXML(object):
                 for hro_op in self._op_list:
                     if hro_op in hro:
                         hr_values = hro.split(hro_op)
-                        self.sethostrequires(hr_values[0].strip(),
-                                             hro_op, hr_values[1].strip())
+                        self.sethostrequires(
+                            hr_values[0].strip(), hro_op, hr_values[1].strip()
+                        )
                         break
 
         # Set User supplied host requires
@@ -636,8 +674,9 @@ class BeakerXML(object):
                 for dro_op in self._op_list:
                     if dro_op in dro:
                         dr_values = dro.split(dro_op)
-                        self.setdistrorequires(dr_values[0].strip(),
-                                               dro_op, dr_values[1].strip())
+                        self.setdistrorequires(
+                            dr_values[0].strip(), dro_op, dr_values[1].strip()
+                        )
                         break
 
         # Set User supplied taskparam Only valid option currently is reservetime
@@ -647,13 +686,14 @@ class BeakerXML(object):
                     if tp_op in taskparam:
                         tp_values = taskparam.split(tp_op)
                         tp_key = str(tp_values[0]).lower()
-                        if tp_key == 'reservetime':
+                        if tp_key == "reservetime":
                             self.reservetime = tp_values[1]
                             break
                         else:
                             raise AttributeError(
-                                "taskparam setting of %s not currently supported." %
-                                tp_key)
+                                "taskparam setting of %s not currently supported."
+                                % tp_key
+                            )
 
         # Set arch
         self.cmd += "bkr workflow-simple --arch " + self.arch
@@ -689,13 +729,13 @@ class BeakerXML(object):
 
         # Set kernel options
         if self.kernel_options != "":
-            self.cmd += " --kernel_options '" + " ".join(
-                self.kernel_options) + "'"
+            self.cmd += " --kernel_options '" + " ".join(self.kernel_options) + "'"
 
         # Set post kernel options
         if self.kernel_post_options != "":
-            self.cmd += " --kernel_options_post '" + " ".join(
-                self.kernel_post_options) + "'"
+            self.cmd += (
+                " --kernel_options_post '" + " ".join(self.kernel_post_options) + "'"
+            )
 
         # Set kickstart file
         if self.kickstart != "":
@@ -746,7 +786,7 @@ class BeakerXML(object):
 
         xmlfile = x
 
-        with open(xmlfile, 'w+') as fp:
+        with open(xmlfile, "w+") as fp:
             for xmlline in xmldata:
                 fp.write(xmlline)
 
@@ -761,10 +801,10 @@ class BeakerXML(object):
         # If there were no tasks added delete the one placeholder task, which
         # was added because one task must be passed to simple workflow
         if self._remove_task:
-            recipe_parent = dom1.getElementsByTagName('recipe')[0]
-            tasklength = dom1.getElementsByTagName('task').length
+            recipe_parent = dom1.getElementsByTagName("recipe")[0]
+            tasklength = dom1.getElementsByTagName("task").length
             delete_index = tasklength - 1
-            delete_element = dom1.getElementsByTagName('task')[delete_index]
+            delete_element = dom1.getElementsByTagName("task")[delete_index]
             # print tasklength
             # print delete_index
             # print delete_element
@@ -772,22 +812,22 @@ class BeakerXML(object):
 
         # Step 2: Take the xml generated by beaker-workflow and put it into a DOM
         # Create host requires  elementi
-        if len(dom1.getElementsByTagName('and')) > 1:
-            hre_parent = dom1.getElementsByTagName('and')[1]
-        elif 'force' not in self.hrname:
-            temp_parent = dom1.getElementsByTagName('hostRequires')[0]
+        if len(dom1.getElementsByTagName("and")) > 1:
+            hre_parent = dom1.getElementsByTagName("and")[1]
+        elif "force" not in self.hrname:
+            temp_parent = dom1.getElementsByTagName("hostRequires")[0]
             # print temp_parent
-            temp_parent.appendChild(dom1.createElement('and'))
+            temp_parent.appendChild(dom1.createElement("and"))
             # print dom1.toprettyxml()
-            hre_parent = dom1.getElementsByTagName('and')[1]
+            hre_parent = dom1.getElementsByTagName("and")[1]
 
-        dre_parent = dom1.getElementsByTagName('and')[0]
+        dre_parent = dom1.getElementsByTagName("and")[0]
 
         # should check for an empty host requires first
         if self.hrname:
-            if 'force' in self.hrname:
-                index = self.hrname.index('force')
-                hre = dom1.getElementsByTagName('hostRequires')[0]
+            if "force" in self.hrname:
+                index = self.hrname.index("force")
+                hre = dom1.getElementsByTagName("hostRequires")[0]
                 hre.attributes[str(self.hrname[index])] = str(self.hrvalue[index])
             else:
                 for index, value in enumerate(self.hrname):
@@ -797,8 +837,8 @@ class BeakerXML(object):
                     # print str(self.hrvalue[index])
                     # Add all host requires here
                     hre = dom1.createElement(str(self.hrname[index]))
-                    hre.attributes['op'] = str(self.hrop[index])
-                    hre.attributes['value'] = str(self.hrvalue[index])
+                    hre.attributes["op"] = str(self.hrop[index])
+                    hre.attributes["value"] = str(self.hrvalue[index])
 
                     hre_parent.appendChild(hre)
 
@@ -808,25 +848,25 @@ class BeakerXML(object):
                 # parse the value hostrequires key, first is op the rest is the value
                 # Add all distro requires here
                 dre = dom1.createElement(str(self.drname[index]))
-                dre.attributes['op'] = str(self.drop[index])
-                dre.attributes['value'] = str(self.drvalue[index])
+                dre.attributes["op"] = str(self.drop[index])
+                dre.attributes["value"] = str(self.drvalue[index])
 
                 dre_parent.appendChild(dre)
 
         # Reserve if it fails
-        te = dom1.createElement('task')
-        te.attributes['name'] = "/distribution/reservesys"
-        te.attributes['role'] = "STANDALONE"
+        te = dom1.createElement("task")
+        te.attributes["name"] = "/distribution/reservesys"
+        te.attributes["role"] = "STANDALONE"
 
-        tpe = dom1.createElement('params')
+        tpe = dom1.createElement("params")
 
-        tpce = dom1.createElement('param')
+        tpce = dom1.createElement("param")
         # tpce.attributes['name'] = "RESERVE_IF_FAIL"
         # tpce.attributes['value'] = "true"
 
-        tpce2 = dom1.createElement('param')
-        tpce2.attributes['name'] = "RESERVETIME"
-        tpce2.attributes['value'] = str(self.reservetime)
+        tpce2 = dom1.createElement("param")
+        tpce2.attributes["name"] = "RESERVETIME"
+        tpce2.attributes["value"] = str(self.reservetime)
 
         te_parent = dom1.getElementsByTagName("recipe")[0]
 
@@ -993,7 +1033,7 @@ class BeakerXML(object):
 
     @method.setter
     def method(self, method):
-        """ Set the method.
+        """Set the method.
         :param method: Method to set"""
         self._method = method
 
@@ -1054,8 +1094,9 @@ class BeakerXML(object):
     def paramlist(self, paramdict):
         """Set parameter list.
         :param paramdict: Paramerters to be used by tasklist (dict)."""
-        raise AttributeError('You cannot set paramlist directly. '
-                             'Use settaskparam().')
+        raise AttributeError(
+            "You cannot set paramlist directly. " "Use settaskparam()."
+        )
 
     @property
     def key_values(self):
@@ -1071,7 +1112,7 @@ class BeakerXML(object):
     @property
     def taskparam(self):
         """Return the taskparam list. Its a list of task parameters
-           that will be applied to all tasks"""
+        that will be applied to all tasks"""
         return self._taskparam
 
     @taskparam.setter
@@ -1089,8 +1130,7 @@ class BeakerXML(object):
     def tasklist(self, task):
         """Set List of tasks for job.
         :param task: List of tasks"""
-        raise AttributeError('You cannot set tasklist directly. '
-                             'Use settaskparam().')
+        raise AttributeError("You cannot set tasklist directly. " "Use settaskparam().")
 
     @property
     def host_requires_options(self):
@@ -1125,8 +1165,9 @@ class BeakerXML(object):
         directly. Must use sethostrequires.
         :param hr_name: The host requires name.
         """
-        raise AttributeError('You cannot set Hostrequires name directly. '
-                             'Use sethostrequires().')
+        raise AttributeError(
+            "You cannot set Hostrequires name directly. " "Use sethostrequires()."
+        )
 
     @property
     def hrop(self):
@@ -1139,8 +1180,9 @@ class BeakerXML(object):
         directly. Must use sethostrequires.
         :param hr_op: The host requires operation.
         """
-        raise AttributeError('You cannot set Hostrequires operation directly. '
-                             'Use sethostrequires().')
+        raise AttributeError(
+            "You cannot set Hostrequires operation directly. " "Use sethostrequires()."
+        )
 
     @property
     def hrvalue(self):
@@ -1153,8 +1195,9 @@ class BeakerXML(object):
         directly. Must use sethostrequires.
         :param hr_value: The host requires value.
         """
-        raise AttributeError('You cannot set Hostrequires value directly. '
-                             'Use sethostrequires().')
+        raise AttributeError(
+            "You cannot set Hostrequires value directly. " "Use sethostrequires()."
+        )
 
     @property
     def drname(self):
@@ -1167,8 +1210,9 @@ class BeakerXML(object):
         directly. Must use setdistrorequires.
         :param dr_name: The disto requires name.
         """
-        raise AttributeError('You cannot set Distrorequires name directly. '
-                             'Use setdistrorequires().')
+        raise AttributeError(
+            "You cannot set Distrorequires name directly. " "Use setdistrorequires()."
+        )
 
     @property
     def drop(self):
@@ -1182,8 +1226,9 @@ class BeakerXML(object):
         :param dr_op: The distro requires operation.
         """
         raise AttributeError(
-            'You cannot set Distrorequires operation directly. '
-            'Use setdistrorequires().')
+            "You cannot set Distrorequires operation directly. "
+            "Use setdistrorequires()."
+        )
 
     @property
     def drvalue(self):
@@ -1196,8 +1241,9 @@ class BeakerXML(object):
         directly. Must use setdistrorequires.
         :param dr_value: The distro requires value.
         """
-        raise AttributeError('You cannot set Distroequires value directly. '
-                             'Use setdistrorequires().')
+        raise AttributeError(
+            "You cannot set Distroequires value directly. " "Use setdistrorequires()."
+        )
 
     @property
     def cmd(self):

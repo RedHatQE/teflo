@@ -15,7 +15,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 """
     tests.test_action_orchestrator
 
@@ -24,18 +23,18 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-
-import pytest
 import mock
-from teflo.orchestrators.action_orchestrator import ActionOrchestrator
+import pytest
+
 from teflo.core import OrchestratorPlugin
 from teflo.exceptions import TefloOrchestratorError
+from teflo.orchestrators.action_orchestrator import ActionOrchestrator
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def plugin():
-    pg = mock.MagicMock(spec=OrchestratorPlugin, __plugin_name__='ansible')
-    pg.action_name = 'action1'
+    pg = mock.MagicMock(spec=OrchestratorPlugin, __plugin_name__="ansible")
+    pg.action_name = "action1"
     pg.run = mock.MagicMock(return_value=0)
     pg.validate = mock.MagicMock(return_value=[])
     return pg
@@ -48,7 +47,6 @@ def action_orchestrator(action_resource):
 
 
 class TestActionOrchestrator(object):
-
     @staticmethod
     def test_task_orchestrator_constructor(action_orchestrator):
         assert isinstance(action_orchestrator, ActionOrchestrator)
@@ -72,7 +70,3 @@ class TestActionOrchestrator(object):
         with pytest.raises(TefloOrchestratorError) as ex:
             action_orchestrator.run()
         assert "Orchestration failed : Failed to perform  action1" in ex.value.args[0]
-
-
-
-

@@ -1,25 +1,33 @@
-from teflo.resources.actions import Action
 from teflo.resources import Notification
-from teflo.resources.reports import Report
-from teflo.resources.executes import Execute
+from teflo.resources.actions import Action
 from teflo.resources.assets import Asset
+from teflo.resources.executes import Execute
+from teflo.resources.reports import Report
 from teflo.resources.scenario import Scenario
 
 
-class ScenarioGraph():
-
-    def __init__(self, root_scenario: Scenario = None, iterate_method: str = "by_level", scenario_vars: dict = {},
-                 assets: list = [], executes: list = [],
-                 reports: list = [], notifications: list = [], actions: list = [],
-                 passed_tasks: list = [], failed_tasks: list = []):
-        '''
+class ScenarioGraph:
+    def __init__(
+        self,
+        root_scenario: Scenario = None,
+        iterate_method: str = "by_level",
+        scenario_vars: dict = {},
+        assets: list = [],
+        executes: list = [],
+        reports: list = [],
+        notifications: list = [],
+        actions: list = [],
+        passed_tasks: list = [],
+        failed_tasks: list = [],
+    ):
+        """
         Initialization of a Sceanario Graph
         :param root_scenario: root teflo scenario object containing
         all scenario data and included scenarios
         :type root_scenario: scenario object
         :param iterate_method: iterate method for the graph traversal
         :type iterate_method: str
-        '''
+        """
         self._root = root_scenario
         self._stack = []
         if iterate_method == "by_depth":
@@ -27,7 +35,10 @@ class ScenarioGraph():
         elif iterate_method == "by_level":
             self._stack.append([self.root])
         else:
-            raise ValueError("the iterate method value set in teflo.cfg is incorrect %s" % iterate_method)
+            raise ValueError(
+                "the iterate method value set in teflo.cfg is incorrect %s"
+                % iterate_method
+            )
         self._prev = None
         self._current = None
         self._visited = {}
@@ -44,7 +55,7 @@ class ScenarioGraph():
         self._failed_tasks = failed_tasks
         self._scenario_vars = scenario_vars
 
-# root
+    # root
     @property
     def root(self):
         return self._root
@@ -53,7 +64,7 @@ class ScenarioGraph():
     def root(self, root):
         self.__init__(root, self.iterate_method)
 
-# stack
+    # stack
     @property
     def stack(self):
         return self._stack
@@ -62,7 +73,7 @@ class ScenarioGraph():
     def stack(self, stack):
         self._stack = stack
 
-# prev
+    # prev
     @property
     def prev(self):
         return self._prev
@@ -71,7 +82,7 @@ class ScenarioGraph():
     def prev(self, prev):
         self._prev = prev
 
-# current
+    # current
     @property
     def current(self):
         return self._current
@@ -80,7 +91,7 @@ class ScenarioGraph():
     def current(self, current):
         self._current = current
 
-# visited
+    # visited
     @property
     def visited(self):
         return self._visited
@@ -89,7 +100,7 @@ class ScenarioGraph():
     def visited(self, visited):
         self._visited = visited
 
-# iterate_method
+    # iterate_method
     @property
     def iterate_method(self):
         return self._iterate_method
@@ -103,11 +114,11 @@ class ScenarioGraph():
     def scenario_vars(self):
         return self._scenario_vars
 
-# iteration implemetation
+    # iteration implemetation
     def is_visited(self, sc):
-        '''
+        """
         Check if a scenario object has been visited or not
-        '''
+        """
         return self.visited.get(sc, False)
 
     def next_unvisited_sc(self, sc_list):
@@ -116,7 +127,7 @@ class ScenarioGraph():
                 return sc
         return None
 
-# size
+    # size
     @property
     def size(self):
         return self._root.children_size + 1
@@ -129,17 +140,17 @@ class ScenarioGraph():
         return self.size
 
     def hasChild(self, sc_list):
-        '''
+        """
         Check if any scenario obejct in a list of scenarios
         contains a child
-        '''
+        """
         return True in [len(sc.child_scenarios) != 0 for sc in sc_list]
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        '''
+        """
         The iterator method of Scenario Graph
         It is also the most important place of the ScenarioGraph Class
         It has two `iterate_method` way of traversal order
@@ -166,7 +177,7 @@ class ScenarioGraph():
             3,12,13,8,5,1,10,11,7,4,9,6,2,0
         if iterate_method is by_level: the traversal order will be:
             12,13,3,8,5,10,11,4,9,6,1,7,2,0
-        '''
+        """
 
         if self.root is None:
             raise StopIteration
@@ -185,7 +196,10 @@ class ScenarioGraph():
                         self.visited[self.stack.pop()] = True
                         self.prev = self.current
                         return self.current
-                elif (self.prev in self.current.child_scenarios and self.prev is not self.current.child_scenarios[-1]):
+                elif (
+                    self.prev in self.current.child_scenarios
+                    and self.prev is not self.current.child_scenarios[-1]
+                ):
                     if self.next_unvisited_sc(self.current.child_scenarios) is not None:
                         next_sc = self.next_unvisited_sc(self.current.child_scenarios)
                         self.stack.append(next_sc)
@@ -218,7 +232,9 @@ class ScenarioGraph():
                 self.current = self.stack[-1]
 
                 # From top to down
-                top_down = self.prev is not None and True in [(self.current == sc.child_scenarios) for sc in self.prev]
+                top_down = self.prev is not None and True in [
+                    (self.current == sc.child_scenarios) for sc in self.prev
+                ]
                 if self.prev is None or top_down:
                     # current is a list of scenario
                     if self.hasChild(self.current):
@@ -242,9 +258,9 @@ class ScenarioGraph():
             raise StopIteration
 
     def __str__(self):
-        '''
+        """
         This will return a string containing the structure of the scenario graph
-        '''
+        """
         return self.root.graph_str()
 
     def get_assets(self):
@@ -425,7 +441,15 @@ class ScenarioGraph():
         holds
         """
 
-        self.__init__(self.root, self.iterate_method, scenario_vars=self.scenario_vars, assets=self.get_assets(),
-                      executes=self.get_executes(), notifications=self.get_notifications(), reports=self.get_reports(),
-                      actions=self.get_actions(), failed_tasks=self.get_failed_tasks(),
-                      passed_tasks=self.get_passed_tasks())
+        self.__init__(
+            self.root,
+            self.iterate_method,
+            scenario_vars=self.scenario_vars,
+            assets=self.get_assets(),
+            executes=self.get_executes(),
+            notifications=self.get_notifications(),
+            reports=self.get_reports(),
+            actions=self.get_actions(),
+            failed_tasks=self.get_failed_tasks(),
+            passed_tasks=self.get_passed_tasks(),
+        )

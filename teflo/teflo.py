@@ -23,30 +23,47 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-from copy import deepcopy
 import errno
-from logging import root
 import os
-from re import L
-import sys
-from teflo.exceptions import TefloScenarioFailure
-import blaster
-import termcolor
-from contextlib import ExitStack
-from functools import partial
-import yaml
-import click
 import shutil
+import sys
+from contextlib import ExitStack
+from copy import deepcopy
+from functools import partial
+from logging import root
+from re import L
+
+import blaster
+import click
+import termcolor
+import yaml
 from distutils.dir_util import copy_tree
-from teflo.helpers import exec_local_cmd
+
 from . import __name__ as __teflo_name__
-from .constants import NOTIFYSTATES, TASKLIST, RESULTS_FILE, DATA_FOLDER, DEFAULT_INVENTORY
-from .core import TefloError, LoggerMixin, TimeMixin, Inventory
-from .helpers import file_mgmt, gen_random_str, sort_tasklist, preproc_path
-from .resources import Scenario, Asset, Action, Report, Execute, Notification
+from .constants import DATA_FOLDER
+from .constants import DEFAULT_INVENTORY
+from .constants import NOTIFYSTATES
+from .constants import RESULTS_FILE
+from .constants import TASKLIST
+from .core import Inventory
+from .core import LoggerMixin
+from .core import TefloError
+from .core import TimeMixin
+from .helpers import file_mgmt
+from .helpers import gen_random_str
+from .helpers import preproc_path
+from .helpers import sort_tasklist
+from .resources import Action
+from .resources import Asset
+from .resources import Execute
+from .resources import Notification
+from .resources import Report
+from .resources import Scenario
 from .utils.config import Config
-from .utils.scenario_graph import ScenarioGraph
 from .utils.pipeline import PipelineFactory
+from .utils.scenario_graph import ScenarioGraph
+from teflo.exceptions import TefloScenarioFailure
+from teflo.helpers import exec_local_cmd
 
 
 class Teflo(LoggerMixin, TimeMixin):
@@ -82,8 +99,14 @@ class Teflo(LoggerMixin, TimeMixin):
 
     config = Config()
 
-    def __init__(self, import_name=__teflo_name__, log_level=None,
-                 data_folder=None, workspace=None, **kwargs):
+    def __init__(
+        self,
+        import_name=__teflo_name__,
+        log_level=None,
+        data_folder=None,
+        workspace=None,
+        **kwargs
+    ):
         """Constructor.
 
         :param import_name: module name
@@ -107,49 +130,56 @@ class Teflo(LoggerMixin, TimeMixin):
         # assigning cli options to teflo_options property
         self._teflo_options = dict()
         for key, value in kwargs.items():
-            if key == 'labels' and value:
-                self._teflo_options['labels'] = value
-            if key == 'skip_labels' and value:
-                self._teflo_options['skip_labels'] = value
-            if key == 'skip_notify' and value:
-                self._teflo_options['skip_notify'] = value
-            if key == 'no_notify' and value:
-                self._teflo_options['no_notify'] = value
+            if key == "labels" and value:
+                self._teflo_options["labels"] = value
+            if key == "skip_labels" and value:
+                self._teflo_options["skip_labels"] = value
+            if key == "skip_notify" and value:
+                self._teflo_options["skip_notify"] = value
+            if key == "no_notify" and value:
+                self._teflo_options["no_notify"] = value
             # assigning cli iterate_method value to self.config['INCLUDED_SDF_ITERATE_METHOD']
-            if key == 'iterate_method' and value:
-                self.config['INCLUDED_SDF_ITERATE_METHOD'] = value
-            if key == 'skip_fail':
-                self._teflo_options['skip_fail'] = value
+            if key == "iterate_method" and value:
+                self.config["INCLUDED_SDF_ITERATE_METHOD"] = value
+            if key == "skip_fail":
+                self._teflo_options["skip_fail"] = value
 
         if log_level:
-            self.config['LOG_LEVEL'] = log_level
+            self.config["LOG_LEVEL"] = log_level
 
         # Set custom data folder, if data_folder is pass as parameter to Teflo
         if data_folder:
-            self.config['DATA_FOLDER'] = data_folder
+            self.config["DATA_FOLDER"] = data_folder
 
         # define the results folder
-        self.config['RESULTS_FOLDER'] = os.path.join(
-            self.config['DATA_FOLDER'], '.results')
+        self.config["RESULTS_FOLDER"] = os.path.join(
+            self.config["DATA_FOLDER"], ".results"
+        )
 
         # define the artifacts folder under the results folder
-        self.config['ARTIFACT_FOLDER'] = os.path.join(self.config.get('RESULTS_FOLDER'), 'artifacts')
+        self.config["ARTIFACT_FOLDER"] = os.path.join(
+            self.config.get("RESULTS_FOLDER"), "artifacts"
+        )
 
         # create artifacts location
-        if not os.path.exists(self.config['ARTIFACT_FOLDER']):
-            os.makedirs(self.config['ARTIFACT_FOLDER'])
+        if not os.path.exists(self.config["ARTIFACT_FOLDER"]):
+            os.makedirs(self.config["ARTIFACT_FOLDER"])
 
         self.static_inv_dir = False
         # Put inventory under teflo's result folder if data folder has the default config value
-        if self.config['DATA_FOLDER'] != DATA_FOLDER and self.config['INVENTORY_FOLDER'] == DEFAULT_INVENTORY:
-            self.config['INVENTORY_FOLDER'] = os.path.join(self.config['RESULTS_FOLDER'], 'inventory')
+        if (
+            self.config["DATA_FOLDER"] != DATA_FOLDER
+            and self.config["INVENTORY_FOLDER"] == DEFAULT_INVENTORY
+        ):
+            self.config["INVENTORY_FOLDER"] = os.path.join(
+                self.config["RESULTS_FOLDER"], "inventory"
+            )
         else:
             # set the user defined static inventory path
             self.static_inv_dir = True
 
         # Generate the UID for the teflo life-cycle based on data_folder
-        self.config['DATA_FOLDER'] = os.path.join(self.config['DATA_FOLDER'],
-                                                  self.uid)
+        self.config["DATA_FOLDER"] = os.path.join(self.config["DATA_FOLDER"], self.uid)
 
         # Why a results folder and a data folder? The data folder is a unique
         # folder that is created for each teflo execution. This folder will
@@ -165,7 +195,7 @@ class Teflo(LoggerMixin, TimeMixin):
         #       - teflo run -s scenario.yml -t provision
         #       - teflo run -s /tmp/.results/results.yml -t orchestrate
 
-        for f in [self.config['DATA_FOLDER'], self.config['RESULTS_FOLDER']]:
+        for f in [self.config["DATA_FOLDER"], self.config["RESULTS_FOLDER"]]:
             try:
                 if not os.path.exists(f):
                     os.makedirs(f)
@@ -174,17 +204,17 @@ class Teflo(LoggerMixin, TimeMixin):
                 # if a static inventory folder is specified to avoid complexity
                 # copying the inventory directory data
 
-                if '.results' in f and self.static_inv_dir:
-                    res_inv_dir = os.path.join(f, 'inventory')
+                if ".results" in f and self.static_inv_dir:
+                    res_inv_dir = os.path.join(f, "inventory")
                     if not os.path.exists(res_inv_dir):
                         os.makedirs(res_inv_dir)
             except (OSError, IOError) as ex:
                 if ex.errno == errno.EACCES:
-                    raise TefloError("You don't have permission to create '"
-                                      "the data folder.")
+                    raise TefloError(
+                        "You don't have permission to create '" "the data folder."
+                    )
                 else:
-                    raise TefloError('Error creating data folder - '
-                                      '{0}'.format(ex))
+                    raise TefloError("Error creating data folder - " "{0}".format(ex))
 
         # configure loggers
         self.create_logger(__teflo_name__, self.config)
@@ -197,13 +227,13 @@ class Teflo(LoggerMixin, TimeMixin):
         else:
             self.workspace = os.getcwd()
             self.logger.warning(
-                'Scenario workspace was not set, therefore the workspace is '
-                'automatically assigned to the current working directory. You '
-                'may experience problems if files needed by teflo do not '
-                'exists in the scenario workspace.'
+                "Scenario workspace was not set, therefore the workspace is "
+                "automatically assigned to the current working directory. You "
+                "may experience problems if files needed by teflo do not "
+                "exists in the scenario workspace."
             )
 
-        self.config['WORKSPACE'] = self.workspace
+        self.config["WORKSPACE"] = self.workspace
 
         # creating one time inventory object
         self.cbn_inventory: Inventory = Inventory.get_instance(self.config, self._uid)
@@ -211,10 +241,15 @@ class Teflo(LoggerMixin, TimeMixin):
         self.scenario_graph = ScenarioGraph()
 
         # Updating the os.environ variables with TEFLO_DATA_FOLDER and TEFLO_RESULTS_FOLDER
-        os.environ.update({'TEFLO_DATA_FOLDER': os.path.abspath(self.config.get('DATA_FOLDER')),
-                           'TEFLO_RESULTS_FOLDER': os.path.abspath(self.config.get('RESULTS_FOLDER')),
-                           'TEFLO_WORKSPACE': os.path.abspath(self.config.get('WORKSPACE'))
-                           })
+        os.environ.update(
+            {
+                "TEFLO_DATA_FOLDER": os.path.abspath(self.config.get("DATA_FOLDER")),
+                "TEFLO_RESULTS_FOLDER": os.path.abspath(
+                    self.config.get("RESULTS_FOLDER")
+                ),
+                "TEFLO_WORKSPACE": os.path.abspath(self.config.get("WORKSPACE")),
+            }
+        )
 
         self.current_task = None
 
@@ -226,10 +261,10 @@ class Teflo(LoggerMixin, TimeMixin):
         Teflo needs the name of the scenario.  It can be set and overridden
         to change the value.
         """
-        if self.import_name == '__main__':
-            fn = getattr(sys.modules['__main__'], '__file__', None)
+        if self.import_name == "__main__":
+            fn = getattr(sys.modules["__main__"], "__file__", None)
             if fn is None:
-                return '__main__'
+                return "__main__"
             return os.path.splitext(os.path.basename(fn))[0]
         return self.import_name
 
@@ -239,7 +274,7 @@ class Teflo(LoggerMixin, TimeMixin):
 
     @property
     def data_folder(self):
-        return self.config['DATA_FOLDER']
+        return self.config["DATA_FOLDER"]
 
     @property
     def results_file(self):
@@ -252,11 +287,11 @@ class Teflo(LoggerMixin, TimeMixin):
     def _populate_scenario_resources(self, scenario_obj: Scenario, scenario_stream):
 
         scenario_data = yaml.safe_load(scenario_stream)
-        pro_items = scenario_data.pop('provision', None)
-        orc_items = scenario_data.pop('orchestrate', None)
-        exe_items = scenario_data.pop('execute', None)
-        rpt_items = scenario_data.pop('report', None)
-        notify_items = scenario_data.pop('notifications', None)
+        pro_items = scenario_data.pop("provision", None)
+        orc_items = scenario_data.pop("orchestrate", None)
+        exe_items = scenario_data.pop("execute", None)
+        rpt_items = scenario_data.pop("report", None)
+        notify_items = scenario_data.pop("notifications", None)
 
         scenario_obj.load(scenario_data)
 
@@ -282,7 +317,7 @@ class Teflo(LoggerMixin, TimeMixin):
             self._populate_scenario_resources(sc, sc.yaml_data)
             self.scenario_graph.reload_resources_from_scenario(sc)
             # setting scenario_graph property to each scenario in the scenario_graph
-            sc.__setattr__('scenario_graph', self.scenario_graph)
+            sc.__setattr__("scenario_graph", self.scenario_graph)
 
         self._validate_labels()
 
@@ -291,42 +326,44 @@ class Teflo(LoggerMixin, TimeMixin):
         res_label_dict = dict()
         # getting all labels from all resources in the scenario
         for res in self.scenario_graph.get_all_resources():
-            res_label_dict[res] = dict(name=getattr(res, 'name'),
-                                        labels=[lab for lab in getattr(res, 'labels')])
-        self.logger.info('-' * 79)
-        self.logger.info('SCENARIO LABELS'.center(79))
-        self.logger.info('-' * 79)
-        self.logger.info('PROVISION SECTION')
-        self.logger.info('-' * 79)
-        self.logger.info("{:<20} | {}".format('Resource Name', 'Labels'))
-        self.logger.info('-' * 79)
+            res_label_dict[res] = dict(
+                name=getattr(res, "name"),
+                labels=[lab for lab in getattr(res, "labels")],
+            )
+        self.logger.info("-" * 79)
+        self.logger.info("SCENARIO LABELS".center(79))
+        self.logger.info("-" * 79)
+        self.logger.info("PROVISION SECTION")
+        self.logger.info("-" * 79)
+        self.logger.info("{:<20} | {}".format("Resource Name", "Labels"))
+        self.logger.info("-" * 79)
         for key, value in res_label_dict.items():
             if isinstance(key, Asset):
-                self.logger.info("{:<20} | {}".format(value['name'], value['labels']))
-        self.logger.info('-' * 79)
-        self.logger.info('ORCHESTRATE SECTION')
-        self.logger.info('-' * 79)
-        self.logger.info("{:<20} | {}".format('Resource Name', 'Labels'))
-        self.logger.info('-' * 79)
+                self.logger.info("{:<20} | {}".format(value["name"], value["labels"]))
+        self.logger.info("-" * 79)
+        self.logger.info("ORCHESTRATE SECTION")
+        self.logger.info("-" * 79)
+        self.logger.info("{:<20} | {}".format("Resource Name", "Labels"))
+        self.logger.info("-" * 79)
         for key, value in res_label_dict.items():
             if isinstance(key, Action):
-                self.logger.info("{:<20} | {}".format(value['name'], value['labels']))
-        self.logger.info('-' * 79)
-        self.logger.info('EXECUTE SECTION')
-        self.logger.info('-' * 79)
-        self.logger.info("{:<20} | {}".format('Resource Name', 'Labels'))
-        self.logger.info('-' * 79)
+                self.logger.info("{:<20} | {}".format(value["name"], value["labels"]))
+        self.logger.info("-" * 79)
+        self.logger.info("EXECUTE SECTION")
+        self.logger.info("-" * 79)
+        self.logger.info("{:<20} | {}".format("Resource Name", "Labels"))
+        self.logger.info("-" * 79)
         for key, value in res_label_dict.items():
             if isinstance(key, Execute):
-                self.logger.info("{:<20} | {}".format(value['name'], value['labels']))
-        self.logger.info('-' * 79)
-        self.logger.info('REPORT SECTION')
-        self.logger.info('-' * 79)
-        self.logger.info("{:<20} | {}".format('Resource Name', 'Labels'))
-        self.logger.info('-' * 79)
+                self.logger.info("{:<20} | {}".format(value["name"], value["labels"]))
+        self.logger.info("-" * 79)
+        self.logger.info("REPORT SECTION")
+        self.logger.info("-" * 79)
+        self.logger.info("{:<20} | {}".format("Resource Name", "Labels"))
+        self.logger.info("-" * 79)
         for key, value in res_label_dict.items():
             if isinstance(key, Report):
-                self.logger.info("{:<20} | {}".format(value['name'], value['labels']))
+                self.logger.info("{:<20} | {}".format(value["name"], value["labels"]))
 
     def _validate_labels(self):
         """This method validates that the labels provided by the users are mentioned withing the SDF. If no labels match
@@ -337,17 +374,30 @@ class Teflo(LoggerMixin, TimeMixin):
             user_labels = list()
             # labels present in all res
             res_label_list.extend(
-                [lab for sc in self.scenario_graph for res in sc.get_all_resources() for lab in getattr(res, 'labels')])
+                [
+                    lab
+                    for sc in self.scenario_graph
+                    for res in sc.get_all_resources()
+                    for lab in getattr(res, "labels")
+                ]
+            )
             # labels provided by user at cli
-            user_labels.extend([lab for lab in
-                                self.teflo_options.get('labels', []) or self.teflo_options.get('skip_labels', [])])
+            user_labels.extend(
+                [
+                    lab
+                    for lab in self.teflo_options.get("labels", [])
+                    or self.teflo_options.get("skip_labels", [])
+                ]
+            )
             for label in user_labels:
                 if label in res_label_list:
                     continue
                 else:
-                    raise TefloError("No resources were found corresponding to the label/skip_label %s."
-                                      " Please check the labels provided during the run match the ones in "
-                                      "scenario descriptor file" % label)
+                    raise TefloError(
+                        "No resources were found corresponding to the label/skip_label %s."
+                        " Please check the labels provided during the run match the ones in "
+                        "scenario descriptor file" % label
+                    )
         return
 
     def run_all_validate_helper(self, final_passed_tasks, final_failed_tasks, status):
@@ -355,22 +405,37 @@ class Teflo(LoggerMixin, TimeMixin):
         This is a helper method for running validate task for the whole scenario graph
         """
         do_validate = True
-        self.logger.info(termcolor.colored("Validating against all scenarios!", "green"))
+        self.logger.info(
+            termcolor.colored("Validating against all scenarios!", "green")
+        )
         self.logger.info("." * 50)
         sc: Scenario
         for sc in self.scenario_graph:
             if do_validate:
                 self.logger.info("." * 50)
-                self.logger.info(termcolor.colored('\'%s\' is validated from the scenario file: %s' %
-                                                    (sc.name, sc.path), "green"))
+                self.logger.info(
+                    termcolor.colored(
+                        "'%s' is validated from the scenario file: %s"
+                        % (sc.name, sc.path),
+                        "green",
+                    )
+                )
                 self.logger.info("." * 50)
                 self.run_helper(sc=sc, tasklist=["validate"])
             if getattr(sc, "overall_status", None) is not None:
                 if getattr(sc, "overall_status") == 1:
                     do_validate = False
-        self.collect_final_passed_failed_tasks_status(final_passed_tasks, final_failed_tasks, status)
+        self.collect_final_passed_failed_tasks_status(
+            final_passed_tasks, final_failed_tasks, status
+        )
 
-    def run_all_helper(self, tasklist: list, final_passed_tasks: list, final_failed_tasks: list, status: list):
+    def run_all_helper(
+        self,
+        tasklist: list,
+        final_passed_tasks: list,
+        final_failed_tasks: list,
+        status: list,
+    ):
         """
         This is a helper method for running all tasks for the whole scenario graph
         it will update final_passed_tasks, final_failed_tasks and status after it
@@ -382,12 +447,21 @@ class Teflo(LoggerMixin, TimeMixin):
             tasklist_run: list = deepcopy(tasklist)
             if "validate" in tasklist:
                 tasklist_run.remove("validate")
-                self.run_all_validate_helper(final_passed_tasks, final_failed_tasks, status)
+                self.run_all_validate_helper(
+                    final_passed_tasks, final_failed_tasks, status
+                )
                 if status[0] == 1:
                     return
             if "cleanup" in tasklist:
                 tasklist_run.remove("cleanup")
-                stack.callback(partial(self.cleanup_helper, final_passed_tasks, final_failed_tasks, status))
+                stack.callback(
+                    partial(
+                        self.cleanup_helper,
+                        final_passed_tasks,
+                        final_failed_tasks,
+                        status,
+                    )
+                )
 
             sc: Scenario
             for sc in self.scenario_graph:
@@ -397,7 +471,9 @@ class Teflo(LoggerMixin, TimeMixin):
                     self.scenario_graph.reinit()
                     self.logger.error(ex)
                     break
-            self.collect_final_passed_failed_tasks_status(final_passed_tasks, final_failed_tasks, status)
+            self.collect_final_passed_failed_tasks_status(
+                final_passed_tasks, final_failed_tasks, status
+            )
 
     def run(self, tasklist: list = TASKLIST):
         """
@@ -434,7 +510,7 @@ class Teflo(LoggerMixin, TimeMixin):
         self.end()
         # determine state
         # 0 is false here
-        state = 'FAILED' if status[0] else 'PASSED'
+        state = "FAILED" if status[0] else "PASSED"
 
         self._write_out_results()
 
@@ -451,7 +527,9 @@ class Teflo(LoggerMixin, TimeMixin):
         if os.path.isdir(self.config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"]):
             shutil.rmtree(self.config["REMOTE_WORKSPACE_DOWNLOAD_LOCATION"])
 
-    def cleanup_helper(self, final_passed_tasks: list, final_failed_tasks: list, status: list):
+    def cleanup_helper(
+        self, final_passed_tasks: list, final_failed_tasks: list, status: list
+    ):
         """
         This is a helper method for cleanup. It does cleanup for all scenarios in
         the scenario graph. It does cleanup in a reverse order to the provisoin/
@@ -466,8 +544,13 @@ class Teflo(LoggerMixin, TimeMixin):
         for sc in cleanup_sc:
             try:
                 self.logger.info("." * 50)
-                self.logger.info(termcolor.colored('\'%s\' is running from the scenario file: %s' %
-                                                   (sc.name, sc.path), "green"))
+                self.logger.info(
+                    termcolor.colored(
+                        "'%s' is running from the scenario file: %s"
+                        % (sc.name, sc.path),
+                        "green",
+                    )
+                )
                 self.logger.info("." * 50)
                 self.run_helper(sc=sc, tasklist=["cleanup"])
             except TefloScenarioFailure as ex:
@@ -475,10 +558,13 @@ class Teflo(LoggerMixin, TimeMixin):
                 self.logger.error(ex)
                 break
 
-        self.collect_final_passed_failed_tasks_status(final_passed_tasks, final_failed_tasks, status)
+        self.collect_final_passed_failed_tasks_status(
+            final_passed_tasks, final_failed_tasks, status
+        )
 
-    def collect_final_passed_failed_tasks_status(self, final_passed_tasks: list,
-                                                 final_failed_tasks: list, status: list):
+    def collect_final_passed_failed_tasks_status(
+        self, final_passed_tasks: list, final_failed_tasks: list, status: list
+    ):
         """
         This method collects all failed and passed tasks from all scenarios in
         the self.scenario_graph
@@ -495,7 +581,10 @@ class Teflo(LoggerMixin, TimeMixin):
 
             if getattr(sc, "passed_tasks", None) is not None:
                 for task in sc.passed_tasks:
-                    if task not in final_passed_tasks and task not in final_failed_tasks:
+                    if (
+                        task not in final_passed_tasks
+                        and task not in final_failed_tasks
+                    ):
                         final_passed_tasks.append(task)
 
             if getattr(sc, "overall_status", None) is not None:
@@ -510,18 +599,24 @@ class Teflo(LoggerMixin, TimeMixin):
         failed_tasks = list()
         if len(tasklist) != 0:
             self.logger.info("." * 50)
-            self.logger.info(termcolor.colored('\'%s\' is running from the scenario file: %s' %
-                                               (sc.name, sc.path), "green"))
+            self.logger.info(
+                termcolor.colored(
+                    "'%s' is running from the scenario file: %s" % (sc.name, sc.path),
+                    "green",
+                )
+            )
             self.logger.info("." * 50)
         # initialize overall status
         status = 0
         try:
             for task in sort_tasklist(tasklist):
                 self.current_task = task
-                if not self.teflo_options.get('no_notify', False):
-                    self.notify('on_start', status, passed_tasks, failed_tasks, scenario=sc)
+                if not self.teflo_options.get("no_notify", False):
+                    self.notify(
+                        "on_start", status, passed_tasks, failed_tasks, scenario=sc
+                    )
 
-                self.logger.info(' * Task    : %s' % task)
+                self.logger.info(" * Task    : %s" % task)
 
                 # initially update list of passed tasks
                 passed_tasks.append(task)
@@ -536,21 +631,28 @@ class Teflo(LoggerMixin, TimeMixin):
                 sc.reload_resources(data)
                 self.scenario_graph.reload_resources_from_scenario(sc)
                 # Creating inventory only when task is provision
-                if task == 'provision':
+                if task == "provision":
                     all_hosts = sc.get_assets()
 
                     if all_hosts:
                         for host in all_hosts:
-                            if hasattr(host, 'ip_address'):
-                                self.logger.info('Populating inventory file with host(s) %s'
-                                                    % getattr(host, 'name'))
+                            if hasattr(host, "ip_address"):
+                                self.logger.info(
+                                    "Populating inventory file with host(s) %s"
+                                    % getattr(host, "name")
+                                )
                         try:
                             self.cbn_inventory.create_inventory(all_hosts=all_hosts)
 
                         except Exception as ex:
-                            raise TefloError("Error while creating the inventory for scenario %s: %s" % (sc.path, ex))
+                            raise TefloError(
+                                "Error while creating the inventory for scenario %s: %s"
+                                % (sc.path, ex)
+                            )
                     else:
-                        self.logger.info("No hosts provisioned to be added to the inventory")
+                        self.logger.info(
+                            "No hosts provisioned to be added to the inventory"
+                        )
 
                 self.logger.info("." * 50)
         except Exception as ex:
@@ -570,12 +672,17 @@ class Teflo(LoggerMixin, TimeMixin):
             sc.reload_resources(ex.results)
             self.scenario_graph.reload_resources_from_scenario(sc)
             # roll back by cleaning up any resources that might have been provisioned
-            if "cleanup" in tasklist and [item for item in failed_tasks if item != 'cleanup']:
-                if [item for item in passed_tasks if item == 'provision'] \
-                        or [item for item in failed_tasks if item == 'provision']:
+            if "cleanup" in tasklist and [
+                item for item in failed_tasks if item != "cleanup"
+            ]:
+                if [item for item in passed_tasks if item == "provision"] or [
+                    item for item in failed_tasks if item == "provision"
+                ]:
                     self.logger.info("\n\n")
-                    self.logger.warning("A failure occurred before running the cleanup task. "
-                                        "Attempting to run the cleanup task to roll back all provisioned resources.")
+                    self.logger.warning(
+                        "A failure occurred before running the cleanup task. "
+                        "Attempting to run the cleanup task to roll back all provisioned resources."
+                    )
 
                     try:
                         data = self._run_pipeline("cleanup", sc)
@@ -586,47 +693,66 @@ class Teflo(LoggerMixin, TimeMixin):
                         passed_tasks.append(task)
                     except Exception as ex:
                         self.logger.error(ex)
-                        self.logger.error("There was a problem running the cleanup task to roll back the "
-                                          "resources. You may need to manually cleanup any provisioned resources")
+                        self.logger.error(
+                            "There was a problem running the cleanup task to roll back the "
+                            "resources. You may need to manually cleanup any provisioned resources"
+                        )
                         failed_tasks.append(task)
-                        raise TefloScenarioFailure("`%s` failed during running cleanup rollback" % sc.name)
+                        raise TefloScenarioFailure(
+                            "`%s` failed during running cleanup rollback" % sc.name
+                        )
         finally:
-            setattr(sc, 'overall_status', status)
-            setattr(sc, 'passed_tasks', passed_tasks)
-            setattr(sc, 'failed_tasks', failed_tasks)
+            setattr(sc, "overall_status", status)
+            setattr(sc, "passed_tasks", passed_tasks)
+            setattr(sc, "failed_tasks", failed_tasks)
             self.scenario_graph.reload_resources_from_scenario(sc)
-            if not self.teflo_options.get('no_notify', False):
-                self.notify('on_complete', status, passed_tasks, failed_tasks, sc)
+            if not self.teflo_options.get("no_notify", False):
+                self.notify("on_complete", status, passed_tasks, failed_tasks, sc)
 
             def exit_on_status():
 
-                state = 'FAILED' if status else 'PASSED'
+                state = "FAILED" if status else "PASSED"
 
-                if str(self.config.get("SKIP_FAIL")).lower() != 'true' and \
-                        str(self.config.get("SKIP_FAIL")).lower() != 'false' and \
-                        self.config.get("SKIP_FAIL") is not None:
-                    self.logger.error('The skip_fail variable can be true or false only. Running'
-                                      ' as default value which is False')
-                    self.config["SKIP_FAIL"] = 'False'
+                if (
+                    str(self.config.get("SKIP_FAIL")).lower() != "true"
+                    and str(self.config.get("SKIP_FAIL")).lower() != "false"
+                    and self.config.get("SKIP_FAIL") is not None
+                ):
+                    self.logger.error(
+                        "The skip_fail variable can be true or false only. Running"
+                        " as default value which is False"
+                    )
+                    self.config["SKIP_FAIL"] = "False"
 
-                if str(self.config.get("SKIP_FAIL")).lower() != 'true' \
-                        and self._teflo_options.get('skip_fail') is not True and state is 'FAILED':
+                if (
+                    str(self.config.get("SKIP_FAIL")).lower() != "true"
+                    and self._teflo_options.get("skip_fail") is not True
+                    and state is "FAILED"
+                ):
                     raise TefloScenarioFailure(
-                        "Scenario `%s` failed during the Teflo run" % sc.name)
+                        "Scenario `%s` failed during the Teflo run" % sc.name
+                    )
 
             exit_on_status()
 
-    def notify(self, task, status=0, passed_tasks=None, failed_tasks=None, scenario: Scenario = None):
+    def notify(
+        self,
+        task,
+        status=0,
+        passed_tasks=None,
+        failed_tasks=None,
+        scenario: Scenario = None,
+    ):
         """
         This method handle all notifications
         """
 
-        self.logger.debug('Sending out any notifications that are registered.')
+        self.logger.debug("Sending out any notifications that are registered.")
 
-        if task == 'on_demand':
+        if task == "on_demand":
             self.start()
-            self._print_header(['notify'])
-            self.logger.info(' * Task    : notify')
+            self._print_header(["notify"])
+            self.logger.info(" * Task    : notify")
             sc: Scenario
             for sc in self.scenario_graph:
                 try:
@@ -637,33 +763,39 @@ class Teflo(LoggerMixin, TimeMixin):
                 except Exception as ex:
                     status = 1
                     self.logger.error(ex)
-                    self.logger.error(termcolor.colored(
-                        'One or more notifications failed. Refer to the scenario.log', "red"))
+                    self.logger.error(
+                        termcolor.colored(
+                            "One or more notifications failed. Refer to the scenario.log",
+                            "red",
+                        )
+                    )
                     self.scenario_graph.remove_resources_from_scenario(sc)
                     sc.reload_resources(ex.results)
                     self.scenario_graph.reload_resources_from_scenario(sc)
                     # save end time
             self.end()
             # determine state
-            state = 'FAILED' if status else 'PASSED'
+            state = "FAILED" if status else "PASSED"
 
             self._write_out_results()
             final_passed_tasks = []
             final_failed_tasks = []
-            self.collect_final_passed_failed_tasks_status(final_passed_tasks, final_failed_tasks, [status])
+            self.collect_final_passed_failed_tasks_status(
+                final_passed_tasks, final_failed_tasks, [status]
+            )
 
             self._print_footer(final_passed_tasks, final_failed_tasks, state)
 
             self._archive_results()
             sys.exit(status)
         else:
-            setattr(scenario, 'overall_status', status)
+            setattr(scenario, "overall_status", status)
 
             if passed_tasks:
-                setattr(scenario, 'passed_tasks', passed_tasks)
+                setattr(scenario, "passed_tasks", passed_tasks)
 
             if failed_tasks:
-                setattr(scenario, 'failed_tasks', failed_tasks)
+                setattr(scenario, "failed_tasks", failed_tasks)
 
             # blast off the pipeline list of tasks
             try:
@@ -674,7 +806,9 @@ class Teflo(LoggerMixin, TimeMixin):
             except Exception as ex:
                 status = 1
                 self.logger.error(ex)
-                self.logger.error('One or more notifications failed. Refer to the scenario.log')
+                self.logger.error(
+                    "One or more notifications failed. Refer to the scenario.log"
+                )
                 self.scenario_graph.remove_resources_from_scenario(scenario)
                 scenario.reload_resources(ex.results)
                 self.scenario_graph.reload_resources_from_scenario(scenario)
@@ -695,31 +829,30 @@ class Teflo(LoggerMixin, TimeMixin):
 
         # check if teflo supports the task
         if not pipe_builder.is_task_valid():
-            self.logger.warning('Task %s is not valid by teflo.', task)
+            self.logger.warning("Task %s is not valid by teflo.", task)
             return data
 
-        pipeline = pipe_builder.build(scenario, self.teflo_options, scenario_graph=self.scenario_graph)
-        if pipeline.name == 'notify' and not scenario.notifications:
-            self.logger.debug('.' * 50)
-            self.logger.debug('Starting tasks on pipeline: %s',
-                              pipeline.name)
-            self.logger.debug('... no tasks to be executed ...')
+        pipeline = pipe_builder.build(
+            scenario, self.teflo_options, scenario_graph=self.scenario_graph
+        )
+        if pipeline.name == "notify" and not scenario.notifications:
+            self.logger.debug("." * 50)
+            self.logger.debug("Starting tasks on pipeline: %s", pipeline.name)
+            self.logger.debug("... no tasks to be executed ...")
             return data
         else:
-            self.logger.info('.' * 50)
-            self.logger.info('Starting tasks on pipeline: %s',
-                             pipeline.name)
+            self.logger.info("." * 50)
+            self.logger.info("Starting tasks on pipeline: %s", pipeline.name)
             # check if pipeline has tasks to be run
             if not pipeline.tasks:
-                self.logger.warning('... no tasks to be executed ...')
+                self.logger.warning("... no tasks to be executed ...")
                 return data
 
         # create blaster object with pipeline to run
         blast = blaster.Blaster(pipeline.tasks)
         # blast off the pipeline list of tasks reload_resources
         data = blast.blastoff(
-            serial=not pipeline.type.__concurrent__,
-            raise_on_failure=True
+            serial=not pipeline.type.__concurrent__, raise_on_failure=True
         )
 
         return data
@@ -746,31 +879,44 @@ class Teflo(LoggerMixin, TimeMixin):
 
         if self._data_folder_resultsyml_exist():
             return
-        if preproc_path(self.config["RESULTS_FOLDER"]) in self.root_scenario_fullpath or \
-            preproc_path(self.data_folder) in self.root_scenario_fullpath or \
-                self.root_scenario_filename == "results.yml":
-            root_scenario_results_path = os.path.join(self.data_folder, self.root_scenario_filename)
+        if (
+            preproc_path(self.config["RESULTS_FOLDER"]) in self.root_scenario_fullpath
+            or preproc_path(self.data_folder) in self.root_scenario_fullpath
+            or self.root_scenario_filename == "results.yml"
+        ):
+            root_scenario_results_path = os.path.join(
+                self.data_folder, self.root_scenario_filename
+            )
         else:
             root_scenario_results_path = os.path.join(
-                self.data_folder, self.root_scenario_filename.split(".")[0] + "_results.yml")
-        if root_scenario_results_path != self.final_results_yml_path and self.root_scenario_filename != "results.yml":
+                self.data_folder,
+                self.root_scenario_filename.split(".")[0] + "_results.yml",
+            )
+        if (
+            root_scenario_results_path != self.final_results_yml_path
+            and self.root_scenario_filename != "results.yml"
+        ):
             if self._final_results_yml_exists():
                 os.remove(self.final_results_yml_path)
-        os.system("cp %s %s" % (root_scenario_results_path, self.data_folder_results_yml_path))
+        os.system(
+            "cp %s %s" % (root_scenario_results_path, self.data_folder_results_yml_path)
+        )
 
     def _print_header(self, tasklist):
 
-        self.logger.info('\n')
-        self.logger.info('TEFLO RUN (START)'.center(79))
-        self.logger.info('-' * 79)
-        self.logger.info(' * Data Folder           : %s' % self.data_folder)
-        self.logger.info(' * Workspace             : %s' % self.workspace)
-        self.logger.info(' * Log Level             : %s' % self.config['LOG_LEVEL'])
-        self.logger.info(' * Tasks                 : %s' % tasklist)
-        self.logger.info(' * Iterate Method        : %s' % self.scenario_graph.iterate_method)
+        self.logger.info("\n")
+        self.logger.info("TEFLO RUN (START)".center(79))
+        self.logger.info("-" * 79)
+        self.logger.info(" * Data Folder           : %s" % self.data_folder)
+        self.logger.info(" * Workspace             : %s" % self.workspace)
+        self.logger.info(" * Log Level             : %s" % self.config["LOG_LEVEL"])
+        self.logger.info(" * Tasks                 : %s" % tasklist)
+        self.logger.info(
+            " * Iterate Method        : %s" % self.scenario_graph.iterate_method
+        )
         for sc in self.scenario_graph:
-            self.logger.info(' * Scenario              : %s' % getattr(sc, 'name'))
-        self.logger.info('-' * 79 + '\n')
+            self.logger.info(" * Scenario              : %s" % getattr(sc, "name"))
+        self.logger.info("-" * 79 + "\n")
 
     def _write_out_results(self):
         """
@@ -784,38 +930,47 @@ class Teflo(LoggerMixin, TimeMixin):
             # use filename because the scenario name could
             # contain some special characters, which is not good for
             # file generation
-            if preproc_path(self.config["RESULTS_FOLDER"]) in sc.fullpath or \
-                preproc_path(self.data_folder) in sc.fullpath \
-                    or sc.path == "results.yml":
+            if (
+                preproc_path(self.config["RESULTS_FOLDER"]) in sc.fullpath
+                or preproc_path(self.data_folder) in sc.fullpath
+                or sc.path == "results.yml"
+            ):
                 ch_result_abs_name = os.path.join(self.data_folder, sc.path)
             else:
-                ch_result_abs_name = os.path.join(self.data_folder, sc.path.split(".")[0] + '_results.yml')
-            file_mgmt('w', ch_result_abs_name, sc.profile())
+                ch_result_abs_name = os.path.join(
+                    self.data_folder, sc.path.split(".")[0] + "_results.yml"
+                )
+            file_mgmt("w", ch_result_abs_name, sc.profile())
             # Adding child_result_list with results file in the RESULTS_FOLDER instead of absolute path
         self._create_final_result_yml()
 
     def _print_footer(self, passed_tasks, failed_tasks, state):
 
-        self.logger.info('\n')
-        self.logger.info('SCENARIO RUN (END)'.center(79))
-        self.logger.info('-' * 79)
-        self.logger.info(' * Duration                       : %dh:%dm:%ds' %
-                         (self.hours, self.minutes, self.seconds))
+        self.logger.info("\n")
+        self.logger.info("SCENARIO RUN (END)".center(79))
+        self.logger.info("-" * 79)
+        self.logger.info(
+            " * Duration                       : %dh:%dm:%ds"
+            % (self.hours, self.minutes, self.seconds)
+        )
         if passed_tasks.__len__() > 0:
-            self.logger.info(' * Passed Tasks                   : %s' %
-                             passed_tasks)
+            self.logger.info(" * Passed Tasks                   : %s" % passed_tasks)
         if failed_tasks.__len__() > 0:
-            self.logger.info(' * Failed Tasks                   : %s' %
-                             failed_tasks)
-        self.logger.info(' * Results Folder                 : %s' %
-                         self.config['RESULTS_FOLDER'])
-        self.logger.info(' * Iterate Method                 : %s' %
-                         self.scenario_graph.iterate_method)
+            self.logger.info(" * Failed Tasks                   : %s" % failed_tasks)
+        self.logger.info(
+            " * Results Folder                 : %s" % self.config["RESULTS_FOLDER"]
+        )
+        self.logger.info(
+            " * Iterate Method                 : %s"
+            % self.scenario_graph.iterate_method
+        )
         for sc in self.scenario_graph:
-            self.logger.info(' * Scenario Definition            : %s' % sc.name)
-        self.logger.info(' * Final Scenario Definition      : %s' % self.final_results_yml_path)
-        self.logger.info('-' * 79)
-        self.logger.info('TEFLO RUN (RESULT=%s)' % state)
+            self.logger.info(" * Scenario Definition            : %s" % sc.name)
+        self.logger.info(
+            " * Final Scenario Definition      : %s" % self.final_results_yml_path
+        )
+        self.logger.info("-" * 79)
+        self.logger.info("TEFLO RUN (RESULT=%s)" % state)
 
     def _archive_results(self):
         """
@@ -824,22 +979,29 @@ class Teflo(LoggerMixin, TimeMixin):
         """
 
         # archive everything from the data folder into the results folder
-        os.system('cp -r %s/* %s' % (self.data_folder, self.config['RESULTS_FOLDER']))
+        os.system("cp -r %s/* %s" % (self.data_folder, self.config["RESULTS_FOLDER"]))
 
         # also archive the inventory file if a static inventory directory differnt thant default inventory dir
         # is specified
         if self.static_inv_dir:
-            if os.listdir(self.config['INVENTORY_FOLDER']):
-                inv_results_dir = os.path.join(self.config['RESULTS_FOLDER'], 'inventory')
-                if not os.path.samefile(self.config['INVENTORY_FOLDER'], inv_results_dir):
-                    os.system('cp -r %s/* %s' % (self.config['INVENTORY_FOLDER'], inv_results_dir))
+            if os.listdir(self.config["INVENTORY_FOLDER"]):
+                inv_results_dir = os.path.join(
+                    self.config["RESULTS_FOLDER"], "inventory"
+                )
+                if not os.path.samefile(
+                    self.config["INVENTORY_FOLDER"], inv_results_dir
+                ):
+                    os.system(
+                        "cp -r %s/* %s"
+                        % (self.config["INVENTORY_FOLDER"], inv_results_dir)
+                    )
 
     def create_teflo_workspace(self, ctx, dirname):
         """Clones the teflo examples git repo and copy the workspace files."""
 
         # Download the teflo examples repo to cache folder
-        url = 'https://github.com/redhatqe/teflo_examples.git'
-        cmd = 'git clone ' + url + ' .teflo_cache'
+        url = "https://github.com/redhatqe/teflo_examples.git"
+        cmd = "git clone " + url + " .teflo_cache"
         result = exec_local_cmd(cmd)
 
         if result[0] != 0:
@@ -847,14 +1009,17 @@ class Teflo(LoggerMixin, TimeMixin):
             ctx.exit()
 
         # Copy the files to the new directory and clean cache
-        copy_tree('./.teflo_cache/teflo_init/', dirname)
-        shutil.rmtree('.teflo_cache')
+        copy_tree("./.teflo_cache/teflo_init/", dirname)
+        shutil.rmtree(".teflo_cache")
 
     def showgraph(self, ctx, scenario_graph: ScenarioGraph, iterate_method):
         """Show scenario graph includes structure"""
         from termcolor import colored
-        click.echo(colored("Below is the structure of the Scenario Definition Files", "green"))
-        print('\n')
-        print('ITERATE METHOD:', iterate_method)
-        print('\n\n\n')
+
+        click.echo(
+            colored("Below is the structure of the Scenario Definition Files", "green")
+        )
+        print("\n")
+        print("ITERATE METHOD:", iterate_method)
+        print("\n\n\n")
         print(colored(scenario_graph, "green"))

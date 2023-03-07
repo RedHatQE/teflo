@@ -15,7 +15,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 """
     tests.test_config_class
 
@@ -24,17 +23,16 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-
 import copy
 import os
-import mock
 
+import mock
 import pytest
 
 from teflo.utils.config import Config
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def config():
     return Config()
 
@@ -53,13 +51,14 @@ class TestConfig(object):
 
     @staticmethod
     def test_load_config_by_env_var(config):
-        os.environ['TEFLO_SETTINGS'] = '../assets/teflo.cfg'
+        os.environ["TEFLO_SETTINGS"] = "../assets/teflo.cfg"
         config.load()
 
     @staticmethod
     def test_load_config_jinja_template(config):
-        os.environ['TEFLO_SETTINGS'] = '../assets/teflo.cfg'
-        os.environ['TEFLO_EMAIL_SERVER'] = 'smtp.teflo.server.com'
+        os.environ["TEFLO_SETTINGS"] = "../assets/teflo.cfg"
+        os.environ["TEFLO_EMAIL_SERVER"] = "smtp.teflo.server.com"
         config.load()
-        assert 'smtp.teflo.server.com' in config.parser.get('credentials:email', 'smtp_host')
-
+        assert "smtp.teflo.server.com" in config.parser.get(
+            "credentials:email", "smtp_host"
+        )

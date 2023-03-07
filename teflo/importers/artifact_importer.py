@@ -15,26 +15,29 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-from ..core import LoggerMixin, TimeMixin
+from ..core import LoggerMixin
+from ..core import TimeMixin
 from ..exceptions import TefloImporterError
-from ..helpers import find_artifacts_on_disk, DataInjector
+from ..helpers import DataInjector
+from ..helpers import find_artifacts_on_disk
 
 
 class ArtifactImporter(LoggerMixin, TimeMixin):
 
-    __importer_name__ = 'artifact-importer'
+    __importer_name__ = "artifact-importer"
 
     def __init__(self, report):
 
         self.report = report
         self.artifact_paths = []
-        self.plugin = getattr(self.report, 'importer_plugin')(report)
+        self.plugin = getattr(self.report, "importer_plugin")(report)
 
         # check if user specified data pass-through injection
         if self.report.executes:
             # report.executes exist then look for host_list
-            host_list = [host for execute in self.report.executes for host in execute.all_hosts]
+            host_list = [
+                host for execute in self.report.executes for host in execute.all_hosts
+            ]
             self.injector = DataInjector(host_list)
         else:
             # Assume no executes is assigned, so the helper
@@ -50,41 +53,59 @@ class ArtifactImporter(LoggerMixin, TimeMixin):
         # to walk the data directory on disk.
         art_paths = []
         self.logger.debug(self.report_name)
-        if getattr(self.report, 'executes'):
-            for execute in getattr(self.report, 'executes'):
+        if getattr(self.report, "executes"):
+            for execute in getattr(self.report, "executes"):
                 # check that the execute object collected artifacts
                 if not execute.artifact_locations:
-                    self.logger.warning('The specified execute, %s, does not have any artifacts '
-                                        'with it.' % execute.name)
-                    self.artifact_paths.extend(find_artifacts_on_disk
-                                               (data_folder=self.report.config.get('RESULTS_FOLDER'),
-                                                report_name=self.report_name))
+                    self.logger.warning(
+                        "The specified execute, %s, does not have any artifacts "
+                        "with it." % execute.name
+                    )
+                    self.artifact_paths.extend(
+                        find_artifacts_on_disk(
+                            data_folder=self.report.config.get("RESULTS_FOLDER"),
+                            report_name=self.report_name,
+                        )
+                    )
                 else:
-                    self.artifact_paths.extend(find_artifacts_on_disk
-                                               (data_folder=self.report.config.get('RESULTS_FOLDER'),
-                                                report_name=self.report_name,
-                                                art_location=self.injector.inject_list(execute.artifact_locations)
-                                                )
-                                               )
+                    self.artifact_paths.extend(
+                        find_artifacts_on_disk(
+                            data_folder=self.report.config.get("RESULTS_FOLDER"),
+                            report_name=self.report_name,
+                            art_location=self.injector.inject_list(
+                                execute.artifact_locations
+                            ),
+                        )
+                    )
         else:
-            self.artifact_paths.extend(find_artifacts_on_disk(data_folder=self.report.config.get('RESULTS_FOLDER'),
-                                                              report_name=self.report_name))
+            self.artifact_paths.extend(
+                find_artifacts_on_disk(
+                    data_folder=self.report.config.get("RESULTS_FOLDER"),
+                    report_name=self.report_name,
+                )
+            )
         if not self.artifact_paths:
-            raise TefloImporterError('No artifact could be found on the Teflo controller data folder.')
+            raise TefloImporterError(
+                "No artifact could be found on the Teflo controller data folder."
+            )
 
     def import_artifacts(self):
         self.plugin.artifacts = self.artifact_paths
         try:
             results = self.plugin.import_artifacts()
             if results:
-                setattr(self.report, 'import_results', results)
+                setattr(self.report, "import_results", results)
         except Exception as ex:
             self.logger.error(ex)
-            if getattr(self.plugin, 'import_results') == [None]:
-                setattr(self.report, 'import_results', [])
+            if getattr(self.plugin, "import_results") == [None]:
+                setattr(self.report, "import_results", [])
             else:
-                setattr(self.report, 'import_results', getattr(self.plugin, 'import_results'))
-            raise TefloImporterError('Failed to import artifact %s' % self.report.name)
+                setattr(
+                    self.report,
+                    "import_results",
+                    getattr(self.plugin, "import_results"),
+                )
+            raise TefloImporterError("Failed to import artifact %s" % self.report.name)
 
     def validate(self):
         """
@@ -96,4 +117,6 @@ class ArtifactImporter(LoggerMixin, TimeMixin):
         except Exception:
             raise
         else:
-            self.logger.info('successfully validated scenario Report against the schema!')
+            self.logger.info(
+                "successfully validated scenario Report against the schema!"
+            )

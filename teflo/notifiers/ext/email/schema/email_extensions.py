@@ -27,7 +27,9 @@
 
 def valid_email_combos(value, rule_obj, path):
     """Verify valid combinations of email parameters."""
-    if set(['message_template', 'message_body']).issubset(value.keys()):
-        raise AssertionError('Message_body and message_template are mutually exclusive.')
+    if set(["message_template", "message_body"]).issubset(value.keys()):
+        raise AssertionError(
+            "Message_body and message_template are mutually exclusive."
+        )
 
     return True
