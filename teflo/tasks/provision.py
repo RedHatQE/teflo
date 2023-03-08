@@ -29,8 +29,7 @@ from ..provisioners import AssetProvisioner
 
 class ProvisionTask(TefloTask):
     """Provision task."""
-
-    __task_name__ = "provision"
+    __task_name__ = 'provision'
     __concurrent__ = True
 
     def __init__(self, msg, asset, **kwargs):
@@ -51,10 +50,8 @@ class ProvisionTask(TefloTask):
             self.provisioner = AssetProvisioner(asset)
         else:
             self.provision = False
-            self.logger.warning(
-                "Asset %s is static, provision will be "
-                "skipped." % getattr(asset, "name")
-            )
+            self.logger.warning('Asset %s is static, provision will be '
+                                'skipped.' % getattr(asset, 'name'))
 
     def run(self):
         """Run.
@@ -67,7 +64,7 @@ class ProvisionTask(TefloTask):
             try:
                 return self.provisioner.create()
             except Exception as ex:
-                self.logger.error("Failed to provision asset %s" % self.name)
+                self.logger.error('Failed to provision asset %s' % self.name)
                 stackmsg = self.get_formatted_traceback()
                 self.logger.error(ex)
                 self.logger.error(stackmsg)

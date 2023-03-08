@@ -153,7 +153,7 @@ You can
 #. Use nested variable in a list or dict
     .. code-block:: yaml
 
-        name:
+        name: 
             Tom: {{ TomName }}
             Jack: {{ JackName }}
         TomName: "Tom Biden"

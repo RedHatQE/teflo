@@ -78,7 +78,7 @@ Bug Fixes
 * Upgrade Sphinx to be compatible with jinja2 v3.1.1
 * Silence notify messages when no notifications enabled
 * Fixed for Teflo does not take into account provision resources that do not match the supplied teflo label
-* Fixed for DISPLAY_SKIPPED_HOSTS option is deprecated
+* Fixed for DISPLAY_SKIPPED_HOSTS option is deprecated 
 
 Version 2.2.3 (2022-03-11)
 --------------------------
@@ -112,13 +112,13 @@ Features
 
 Enhancements
 ~~~~~~~~~~~~
-* Make env variables available during Orchestrate and execute stage of Teflo run
+* Make env variables available during Orchestrate and execute stage of Teflo run 
 * Added __hash__ and __eq__ for Teflo Resource class
 
 Bug Fixes
 ~~~~~~~~~
-* Fixed notification to display passed and failed tasks for the entire scenario_graph
-* Fixed "for running You have to provide a valid scenario file. fails with 'skip-fail' KeyError"
+* Fixed notification to display passed and failed tasks for the entire scenario_graph 
+* Fixed "for running You have to provide a valid scenario file. fails with 'skip-fail' KeyError" 
 
 
 Version 2.1.0 (2021-11-05)
@@ -130,18 +130,18 @@ Documentation
 
 Enhancements
 ~~~~~~~~~~~~
-* Make the data folder and results folder available to users in the form of environment variables
+* Make the data folder and results folder available to users in the form of environment variables 
 * Added support usage of variables in the variables files in message notification templating
-* Add skip failures ability during the graph run
-* Allow iterate_method from cli
-* Added check for installing ansible roles when running ansible playbooks under resource_check method
+* Add skip failures ability during the graph run 
+* Allow iterate_method from cli 
+* Added check for installing ansible roles when running ansible playbooks under resource_check method 
 
 Bug Fixes
 ~~~~~~~~~
 * Fixed syntax warnings in CI
-* Fix same file error
-* Fixed test result summary does not take into account error test case elements
-* Fixed the ansible nested var issue
+* Fix same file error 
+* Fixed test result summary does not take into account error test case elements 
+* Fixed the ansible nested var issue 
 * Fix issues of jinja templating in include
 
 
@@ -189,14 +189,14 @@ Version 1.2.4 (2021-09-23)
 
 Enhancements
 ~~~~~~~~~~~~
-* beaker provisioner total attempts to an integer data type
-* add space to beaker warning
-* Allow users to set ansible verbosity using ansible environment variable
+* beaker provisioner total attempts to an integer data type 
+* add space to beaker warning 
+* Allow users to set ansible verbosity using ansible environment variable 
 
 Bug Fixes
 ~~~~~~~~~
 * invalid inventory generated when groups contains the machine name \
-* Report task fails when executes attribute is used and No asset is present
+* Report task fails when executes attribute is used and No asset is present 
 
 Version 1.2.3 (2021-08-02)
 --------------------------
@@ -270,7 +270,7 @@ Enhancements
 
 Bug Fixes
 ~~~~~~~~~
-* Hosts are not correctly resolved when groups are mentioned in the orchestrate task
+* Hosts are not correctly resolved when groups are mentioned in the orchestrate task 
 * Change the copyright license to 2021
 * Fix the ansible stderr issue
 

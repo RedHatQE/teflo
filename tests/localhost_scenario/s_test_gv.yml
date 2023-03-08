@@ -1,6 +1,6 @@
 ---
 name: group_vars test
-description: provision example using local host to validate group_vars
+description: provision example using local host to validate group_vars 
 
 provision:
   - name: ans_gv

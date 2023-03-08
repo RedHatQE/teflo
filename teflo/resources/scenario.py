@@ -26,27 +26,23 @@
 """
 import errno
 import os
-from collections import OrderedDict
-
 import yaml
-from pykwalify.errors import CoreError
-from pykwalify.errors import SchemaError
+from collections import OrderedDict
+from pykwalify.errors import CoreError, SchemaError
 
-from ..constants import SCENARIO_SCHEMA
-from ..constants import SCHEMA_EXT
-from ..constants import SET_CREDENTIALS_OPTIONS
-from ..core import Inventory
-from ..core import TefloResource
+from .actions import Action
+from .executes import Execute
+from .assets import Asset
+from .reports import Report
+from .notification import Notification
+from ..constants import SCENARIO_SCHEMA, SCHEMA_EXT, \
+    SET_CREDENTIALS_OPTIONS
+from ..core import Inventory, TefloResource
 from ..exceptions import ScenarioError
-from ..helpers import gen_random_str
-from ..helpers import schema_validator
+
+from ..helpers import gen_random_str, schema_validator
 from ..tasks import ValidateTask
 from ..utils.resource_checker import ResourceChecker
-from .actions import Action
-from .assets import Asset
-from .executes import Execute
-from .notification import Notification
-from .reports import Report
 
 
 class Scenario(TefloResource):
@@ -57,28 +53,26 @@ class Scenario(TefloResource):
     to be processed.
     """
 
-    _valid_tasks_types = ["validate"]
+    _valid_tasks_types = ['validate']
 
     _fields = [
-        "name",  # the name of the scenario
-        "description",  # a brief description of what the scenario is,
-        "resource_check",  # external dependency check resources
-        "overall_status",
-        "passed_tasks",
-        "failed_tasks",
-        "remote_workspace",
+        'name',         # the name of the scenario
+        'description',  # a brief description of what the scenario is,
+        'resource_check',    # external dependency check resources
+        'overall_status',
+        'passed_tasks',
+        'failed_tasks',
+        'remote_workspace'
     ]
 
-    def __init__(
-        self,
-        config=None,
-        name=None,
-        parameters={},
-        validate_task_cls=ValidateTask,
-        path: str = "",
-        inventory_object: Inventory = Inventory,
-        **kwargs
-    ):
+    def __init__(self,
+                 config=None,
+                 name=None,
+                 parameters={},
+                 validate_task_cls=ValidateTask,
+                 path: str = "",
+                 inventory_object: Inventory = Inventory,
+                 **kwargs):
         """Constructor.
 
         :param config: teflo configuration
@@ -105,10 +99,10 @@ class Scenario(TefloResource):
             self._name = name
 
         # set the scenario description attribute
-        self._description = parameters.pop("description", None)
+        self._description = parameters.pop('description', None)
 
         # resource check dictionary , for external dependency checks, or custom validation scripts and playbooks
-        self.resource_check = parameters.pop("resource_check", {})
+        self.resource_check = parameters.pop('resource_check', {})
 
         # set resource attributes
         self._assets = list()
@@ -139,11 +133,11 @@ class Scenario(TefloResource):
                 os.makedirs(self.data_folder)
         except OSError as ex:
             if ex.errno == errno.EACCES:
-                raise ScenarioError(
-                    "You do not have permission to create" " the workspace."
-                )
+                raise ScenarioError('You do not have permission to create'
+                                    ' the workspace.')
             else:
-                raise ScenarioError("Error creating scenario workspace: " "%s" % ex)
+                raise ScenarioError('Error creating scenario workspace: '
+                                    '%s' % ex)
 
         # reload construct task methods
         self.reload_tasks()
@@ -153,7 +147,7 @@ class Scenario(TefloResource):
             self.load(parameters)
 
     def __str__(self) -> str:
-        return 'Scenario("%s")' % self.name
+        return "Scenario(\"%s\")" % self.name
 
     def get_all_resources(self):
         all_resources = list()
@@ -168,19 +162,19 @@ class Scenario(TefloResource):
         return all_resources
 
     def get_assets(self):
-        return getattr(self, "assets")
+        return getattr(self, 'assets')
 
     def get_actions(self):
-        return getattr(self, "actions")
+        return getattr(self, 'actions')
 
     def get_executes(self):
-        return getattr(self, "executes")
+        return getattr(self, 'executes')
 
     def get_reports(self):
-        return getattr(self, "reports")
+        return getattr(self, 'reports')
 
     def get_notifications(self):
-        return getattr(self, "notifications")
+        return getattr(self, 'notifications')
 
     def get_resource_idx(self, item):
         """
@@ -214,19 +208,17 @@ class Scenario(TefloResource):
             else:
                 return None
         else:
-            raise ValueError(
-                "Resource must be of a valid Resource type."
-                "Check the type of the given item: %s" % item
-            )
+            raise ValueError('Resource must be of a valid Resource type.'
+                             'Check the type of the given item: %s' % item)
 
     def replace_resource(self, item, idx):
         """replace a scenario resource in its corresponding list.
 
-        :param item: resource
-        :type item: object
-        :param idx: index of resource list
-        :type idx: int
-        """
+      :param item: resource
+      :type item: object
+      :param idx: index of resource list
+      :type idx: int
+      """
         if isinstance(item, Asset):
             self._assets[idx] = item
         elif isinstance(item, Action):
@@ -238,10 +230,8 @@ class Scenario(TefloResource):
         elif isinstance(item, Notification):
             self._notifications[idx] = item
         else:
-            raise ValueError(
-                "Resource must be of a valid Resource type."
-                "Check the type of the given item: %s" % item
-            )
+            raise ValueError('Resource must be of a valid Resource type.'
+                             'Check the type of the given item: %s' % item)
 
     def add_resource(self, item, idx=None):
         """Add a scenario resource to its corresponding list.
@@ -307,10 +297,8 @@ class Scenario(TefloResource):
             else:
                 self._notifications.append(item)
         else:
-            raise ValueError(
-                "Resource must be of a valid Resource type."
-                "Check the type of the given item: %s" % item
-            )
+            raise ValueError('Resource must be of a valid Resource type.'
+                             'Check the type of the given item: %s' % item)
 
     def initialize_resource(self, item):
         """Initialize resource list.
@@ -337,10 +325,8 @@ class Scenario(TefloResource):
         elif isinstance(item, Notification):
             self._notifications = list()
         else:
-            raise ValueError(
-                "Resource must be of a valid Resource type."
-                "Check the type of the given item: %s" % item
-            )
+            raise ValueError('Resource must be of a valid Resource type.'
+                             'Check the type of the given item: %s' % item)
 
     def reload_resources(self, tasks):
         """Reload scenario resources.
@@ -385,55 +371,31 @@ class Scenario(TefloResource):
 
         # TODO: Simplify the filtering of resources when resources implement __eq__/__hash__
         filtered_task_list.extend(
-            [
-                (task, self.get_resource_idx(task.get("asset")))
-                for task in tasks
-                if task.get("asset")
-                and getattr(task.get("asset"), "name") in [h.name for h in self.assets]
-            ]
+            [(task, self.get_resource_idx(task.get('asset')))
+             for task in tasks if task.get('asset') and getattr(task.get('asset'), 'name')
+             in [h.name for h in self.assets]]
         )
         filtered_task_list.extend(
-            [
-                (task, self.get_resource_idx(task.get("package")))
-                for task in tasks
-                if isinstance(task.get("package"), Report)
-                and (
-                    getattr(task.get("package"), "name")
-                    in [r.name for r in self.reports]
-                )
-            ]
+            [(task, self.get_resource_idx(task.get('package')))
+             for task in tasks if isinstance(task.get('package'), Report) and (getattr(task.get('package'), 'name')
+                                                                               in [r.name for r in self.reports])]
         )
 
         filtered_task_list.extend(
-            [
-                (task, self.get_resource_idx(task.get("package")))
-                for task in tasks
-                if isinstance(task.get("package"), Execute)
-                and (
-                    getattr(task.get("package"), "name")
-                    in [r.name for r in self.executes]
-                )
-            ]
+            [(task, self.get_resource_idx(task.get('package'))) for task in tasks if
+             isinstance(task.get('package'), Execute) and (getattr(task.get('package'), 'name')
+                                                           in [r.name for r in self.executes])]
         )
 
         filtered_task_list.extend(
-            [
-                (task, self.get_resource_idx(task.get("package")))
-                for task in tasks
-                if isinstance(task.get("package"), Action)
-                and (
-                    getattr(task.get("package"), "name")
-                    in [r.name for r in self.actions]
-                )
-            ]
+            [(task, self.get_resource_idx(task.get('package')))
+             for task in tasks if isinstance(task.get('package'), Action) and (getattr(task.get('package'), 'name')
+                                                                               in [r.name for r in self.actions])]
         )
 
-        for res, rvalue, idx in [
-            (res, item["rvalue"], idx)
-            for task, idx in filtered_task_list
-            for res in [task.get(r) for r in ["asset", "package"] if r in task.keys()]
-            for item in task.get("methods")
-        ]:
+        for res, rvalue, idx in [(res, item['rvalue'], idx) for task, idx in filtered_task_list
+                                 for res in [task.get(r) for r in ['asset', 'package'] if r in task.keys()]
+                                 for item in task.get('methods')]:
             if rvalue is not None:
                 self.load_resources(Asset, rvalue, idx)
             else:
@@ -479,9 +441,8 @@ class Scenario(TefloResource):
     @assets.setter
     def assets(self, value):
         """Set asset property."""
-        raise ValueError(
-            "You can not set assets directly." "Use function ~Scenario.add_assets"
-        )
+        raise ValueError('You can not set assets directly.'
+                         'Use function ~Scenario.add_assets')
 
     def add_assets(self, host):
         """Add host resources to the scenario.
@@ -490,7 +451,7 @@ class Scenario(TefloResource):
         :type host: object
         """
         if not isinstance(host, Asset):
-            raise ValueError("Asset must be of type %s " % type(Asset))
+            raise ValueError('Asset must be of type %s ' % type(Asset))
         self._assets.append(host)
 
     @property
@@ -505,9 +466,8 @@ class Scenario(TefloResource):
     @actions.setter
     def actions(self, value):
         """Set actions property."""
-        raise ValueError(
-            "You can not set actions directly." "Use function ~Scenario.add_actions"
-        )
+        raise ValueError('You can not set actions directly.'
+                         'Use function ~Scenario.add_actions')
 
     def add_actions(self, action):
         """Add action resources to the scenario.
@@ -516,7 +476,7 @@ class Scenario(TefloResource):
         :type action: object
         """
         if not isinstance(action, Action):
-            raise ValueError("Action must be of type %s " % type(Action))
+            raise ValueError('Action must be of type %s ' % type(Action))
         self._actions.append(action)
 
     @property
@@ -531,9 +491,8 @@ class Scenario(TefloResource):
     @executes.setter
     def executes(self, value):
         """Set executes property."""
-        raise ValueError(
-            "You can not set executes directly." "Use function ~Scenario.add_executes"
-        )
+        raise ValueError('You can not set executes directly.'
+                         'Use function ~Scenario.add_executes')
 
     def add_executes(self, execute):
         """Add execute resources to the scenario.
@@ -542,7 +501,7 @@ class Scenario(TefloResource):
         :type execute: object
         """
         if not isinstance(execute, Execute):
-            raise ValueError("Execute must be of type %s " % type(Execute))
+            raise ValueError('Execute must be of type %s ' % type(Execute))
         self._executes.append(execute)
 
     @property
@@ -585,9 +544,8 @@ class Scenario(TefloResource):
     @reports.setter
     def reports(self, value):
         """Set report property."""
-        raise ValueError(
-            "You can not set reports directly." "Use function ~Scenario.add_reports"
-        )
+        raise ValueError('You can not set reports directly.'
+                         'Use function ~Scenario.add_reports')
 
     @property
     def path(self):
@@ -640,10 +598,8 @@ class Scenario(TefloResource):
     @child_scenarios.setter
     def child_scenarios(self, value):
         """Set child_scenarios property."""
-        raise ValueError(
-            "You can not set child_scenarios directly."
-            "Use function ~Scenario.add_child_scenario"
-        )
+        raise ValueError('You can not set child_scenarios directly.'
+                         'Use function ~Scenario.add_child_scenario')
 
     def add_child_scenario(self, scenario):
         """Add child/included scenarios to the master scenario resource.
@@ -651,7 +607,7 @@ class Scenario(TefloResource):
         :type scenario: object
         """
         if not isinstance(scenario, Scenario):
-            raise ValueError("scenario must be of type %s " % type(Scenario))
+            raise ValueError('scenario must be of type %s ' % type(Scenario))
         self._child_scenarios.append(scenario)
 
     def add_reports(self, report):
@@ -661,7 +617,7 @@ class Scenario(TefloResource):
         :type report: object
         """
         if not isinstance(report, Report):
-            raise ValueError("Execute must be of type %s " % type(Execute))
+            raise ValueError('Execute must be of type %s ' % type(Execute))
         self._reports.append(report)
 
     @property
@@ -676,10 +632,8 @@ class Scenario(TefloResource):
     @notifications.setter
     def notifications(self, value):
         """Set executes property."""
-        raise ValueError(
-            "You can not set notifications directly."
-            "Use function ~Scenario.add_notifications"
-        )
+        raise ValueError('You can not set notifications directly.'
+                         'Use function ~Scenario.add_notifications')
 
     @property
     def scenario_graph(self):
@@ -726,29 +680,27 @@ class Scenario(TefloResource):
         :type notification: object
         """
         if not isinstance(notification, Notification):
-            raise ValueError("Notification must be of type %s " % type(Notification))
+            raise ValueError('Notification must be of type %s ' % type(Notification))
         self._notifications.append(notification)
 
     def validate(self):
         """Validate the scenario based on the default schema."""
-        self.logger.debug("Validating scenario YAML file")
+        self.logger.debug('Validating scenario YAML file')
 
         if self.resource_check:
-            self.logger.debug("Validating resource check section")
+            self.logger.debug('Validating resource check section')
             rs = ResourceChecker(self, self.config)
             rs.validate_resources()
 
-        msg = "validated scenario YAML file against the schema!"
+        msg = 'validated scenario YAML file against the schema!'
 
         try:
-            schema_validator(
-                schema_data=yaml.safe_load(self.yaml_data),
-                schema_files=[SCENARIO_SCHEMA],
-                schema_ext_files=[SCHEMA_EXT],
-            )
-            self.logger.debug("Successfully %s" % msg)
+            schema_validator(schema_data=yaml.safe_load(self.yaml_data),
+                             schema_files=[SCENARIO_SCHEMA],
+                             schema_ext_files=[SCHEMA_EXT])
+            self.logger.debug('Successfully %s' % msg)
         except (CoreError, SchemaError) as ex:
-            self.logger.error("Unsuccessfully %s" % msg)
+            self.logger.error('Unsuccessfully %s' % msg)
             raise ScenarioError(ex.msg)
 
     def profile(self):
@@ -758,20 +710,18 @@ class Scenario(TefloResource):
         :rtype: OrderedDict
         """
         profile = OrderedDict()
-        profile["name"] = self.name
-        profile["description"] = self.description
-        profile["remote_workspace"] = self.remote_workspace
+        profile['name'] = self.name
+        profile['description'] = self.description
+        profile['remote_workspace'] = self.remote_workspace
         if self.child_scenarios:
-            profile["include"] = self.included_scenario_path
-        profile["resource_check"] = self.resource_check
-        profile["provision"] = [asset.profile() for asset in self.assets]
-        profile["orchestrate"] = [action.profile() for action in self.actions]
-        profile["execute"] = [execute.profile() for execute in self.executes]
-        profile["report"] = [report.profile() for report in self.reports]
-        profile["notifications"] = [
-            notification.profile() for notification in self.notifications
-        ]
-        for prop in ["overall_status", "passed_tasks", "failed_tasks"]:
+            profile['include'] = self.included_scenario_path
+        profile['resource_check'] = self.resource_check
+        profile['provision'] = [asset.profile() for asset in self.assets]
+        profile['orchestrate'] = [action.profile() for action in self.actions]
+        profile['execute'] = [execute.profile() for execute in self.executes]
+        profile['report'] = [report.profile() for report in self.reports]
+        profile['notifications'] = [notification.profile() for notification in self.notifications]
+        for prop in ['overall_status', 'passed_tasks', 'failed_tasks']:
             if hasattr(self, prop):
                 profile[prop] = getattr(self, prop)
         return profile
@@ -783,10 +733,10 @@ class Scenario(TefloResource):
         :rtype: dict
         """
         task = {
-            "task": self._validate_task_cls,
-            "name": str(self.name),
-            "resource": self,
-            "methods": self._req_tasks_methods,
+            'task': self._validate_task_cls,
+            'name': str(self.name),
+            'resource': self,
+            'methods': self._req_tasks_methods
         }
         return task
 
@@ -816,16 +766,12 @@ class Scenario(TefloResource):
         increment = False
         for item in res_list:
             if idx is not None and not increment:
-                self.replace_resource(
-                    item=res_type(config=self.config, parameters=item), idx=idx
-                )
+                self.replace_resource(item=res_type(config=self.config, parameters=item), idx=idx)
                 increment = True
                 continue
             if idx is not None and increment:
                 idx += 1
-            self.add_resource(
-                item=res_type(config=self.config, parameters=item), idx=idx
-            )
+            self.add_resource(item=res_type(config=self.config, parameters=item), idx=idx)
 
     def graph_str(self, level=0):
         ret = "   " * level + "->" + self.path + "\n"

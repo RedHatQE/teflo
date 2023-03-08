@@ -15,6 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 """
     teflo.static.playbooks
 
@@ -24,7 +25,7 @@
     :license: GPLv3, see LICENSE for more details.
 """
 
-SYNCHRONIZE_PLAYBOOK = """
+SYNCHRONIZE_PLAYBOOK = '''
 - name: fetch artifacts
   hosts: "{{ hosts }}"
   vars:
@@ -179,9 +180,9 @@ SYNCHRONIZE_PLAYBOOK = """
           with_items:
             - "{{ sync_output.results }}"
       when: not localhost
-"""
+'''
 
-GIT_CLONE_PLAYBOOK = """
+GIT_CLONE_PLAYBOOK = '''
 - name: clone git repositories
   hosts: "{{ hosts }}"
 
@@ -206,9 +207,9 @@ GIT_CLONE_PLAYBOOK = """
       {{ options }}
       with_items:
         - "{{ gits }}"
-"""
+'''
 
-ADHOC_SHELL_PLAYBOOK = """
+ADHOC_SHELL_PLAYBOOK = '''
 - name: run shell and fetch results
   hosts: "{{ hosts }}"
 
@@ -235,9 +236,9 @@ ADHOC_SHELL_PLAYBOOK = """
         dest: ./{{ 'shell-results-' + uuid }}.json
       run_once: true
       delegate_to: localhost
-"""
+'''
 
-ADHOC_SCRIPT_PLAYBOOK = """
+ADHOC_SCRIPT_PLAYBOOK = '''
 - name: run script and fetch results
   hosts: "{{ hosts }}"
 
@@ -264,4 +265,4 @@ ADHOC_SCRIPT_PLAYBOOK = """
         dest: ./{{ 'script-results-' + uuid }}.json
       run_once: true
       delegate_to: localhost
-"""
+'''

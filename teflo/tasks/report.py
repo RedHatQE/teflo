@@ -23,15 +23,14 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-from .._compat import string_types
 from ..core import TefloTask
+from .._compat import string_types
 from ..importers import ArtifactImporter
 
 
 class ReportTask(TefloTask):
     """Report task."""
-
-    __task_name__ = "report"
+    __task_name__ = 'report'
 
     def __init__(self, msg, package, **kwargs):
         """Constructor.
@@ -62,7 +61,7 @@ class ReportTask(TefloTask):
             # check if the artifacts are on disk.
             self.importer.validate_artifacts()
         except Exception as ex:
-            self.logger.error("Failed to run report %s " % self.name)
+            self.logger.error('Failed to run report %s ' % self.name)
             stackmsg = self.get_formatted_traceback()
             self.logger.error(ex)
             self.logger.error(stackmsg)
@@ -73,7 +72,7 @@ class ReportTask(TefloTask):
                 # run the configuration with the given importer
                 self.importer.import_artifacts()
             except Exception as ex:
-                self.logger.error("Failed to run report %s " % self.name)
+                self.logger.error('Failed to run report %s ' % self.name)
                 stackmsg = self.get_formatted_traceback()
                 self.logger.error(ex)
                 self.logger.error(stackmsg)

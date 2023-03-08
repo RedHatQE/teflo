@@ -1,7 +1,7 @@
 ---
 
 name: test missing colon
-description:
+description: 
 
 provision
   - name: localhost

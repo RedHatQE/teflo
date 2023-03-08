@@ -31,9 +31,8 @@ from teflo.orchestrators import ActionOrchestrator
 
 class CleanupTask(TefloTask):
     """Cleanup task."""
-
     __concurrent__ = False
-    __task_name__ = "cleanup"
+    __task_name__ = 'cleanup'
 
     def __init__(self, msg, asset=None, package=None, **kwargs):
         """Constructor.
@@ -61,9 +60,9 @@ class CleanupTask(TefloTask):
         :rtype: object
         """
         # set package attributes to get actual asset objects over strings
-        cleanup = getattr(self.package, "cleanup")
-        setattr(cleanup, "all_hosts", getattr(self.package, "all_hosts"))
-        setattr(cleanup, "hosts", getattr(self.package, "hosts"))
+        cleanup = getattr(self.package, 'cleanup')
+        setattr(cleanup, 'all_hosts', getattr(self.package, 'all_hosts'))
+        setattr(cleanup, 'hosts', getattr(self.package, 'hosts'))
 
         # create the orchestrator plugin object
         return ActionOrchestrator(cleanup)
@@ -76,28 +75,26 @@ class CleanupTask(TefloTask):
         self.logger.info(self.msg)
 
         # **** TASKS BELOW ONLY SHOULD BE RELATED TO THE ORCHESTRATOR ****
-        if self.package and getattr(self.package, "cleanup") is not None:
+        if self.package and getattr(self.package, 'cleanup') is not None:
             # get the orchestrator to invoke
             orchestrator = self._get_orchestrator_instance()
 
             # perform final system configuration against test systems
             try:
-                getattr(orchestrator, "run")()
+                getattr(orchestrator, 'run')()
             except TefloOrchestratorError:
                 self.logger.warning(
-                    "Errors raised during cleanup orchestrate tasks are "
-                    "silenced. This allows all tasks to run through their "
-                    "cleanup tasks."
+                    'Errors raised during cleanup orchestrate tasks are '
+                    'silenced. This allows all tasks to run through their '
+                    'cleanup tasks.'
                 )
 
         # **** TASKS BELOW ONLY SHOULD BE RELATED TO THE PROVISIONER ****
         if self.asset:
-            if not getattr(self.asset, "is_static"):
+            if not getattr(self.asset, 'is_static'):
                 provisioner = AssetProvisioner(self.asset)
                 # teardown the asset
-                getattr(provisioner, "delete")()
+                getattr(provisioner, 'delete')()
             else:
-                self.logger.warning(
-                    "Asset %s is static, skipping teardown."
-                    % getattr(self.asset, "name")
-                )
+                self.logger.warning('Asset %s is static, skipping teardown.' %
+                                    getattr(self.asset, 'name'))

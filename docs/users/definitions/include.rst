@@ -9,9 +9,9 @@ This reduces the redundancy of putting the same set of steps in every scenario f
 scenario file is a single node of the whole __*Scenario Graph*__
 
 When running a scenario that is using the include option, several results files will be generated.
-One for each of the scenarios. the included scenario will use the scenario's name as a prefix.
-e.g. common_scenario_results.yml where common_scenario is the name of the included scenario file.
-All these files will be stored in the same location. This allows users to run common.yml(s) once
+One for each of the scenarios. the included scenario will use the scenario's name as a prefix. 
+e.g. common_scenario_results.yml where common_scenario is the name of the included scenario file. 
+All these files will be stored in the same location. This allows users to run common.yml(s) once 
 and their result(s) can be included in other scenario files saving time on test executions.
 Also see `Teflo Output <../output.html>`_
 
@@ -27,12 +27,12 @@ Example 1
 You want to separate out provision of a set of resources because this is a common resource
 used in all of your scenarios.
 
-.. literalinclude:: ../../../examples/docs-usage/include.txt
+.. literalinclude:: ../../../examples/docs-usage/include.yml
        :lines: 1-21
 
 The provision.yml could look like below
 
-.. literalinclude:: ../../../examples/docs-usage/provision.txt
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 23-32
 
 Example 2
@@ -40,12 +40,12 @@ Example 2
 You want to separate out provision and orchestrate because this is common configuration across all your
 scenarios.
 
-.. literalinclude:: ../../../examples/docs-usage/include.txt
+.. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 22-38
 
 The orchstrate.yml could look like below
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 193-205
 
 Example 3
@@ -53,12 +53,12 @@ Example 3
 You've already provisioned a resource from a scenario that contained just the provision
 and you want to include it's results.yml in another scenario.
 
-.. literalinclude:: ../../../examples/docs-usage/include.txt
+.. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 40-60
 
 The common-provision_results.yml could look like below
 
-.. literalinclude:: ../../../examples/docs-usage/provision.txt
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 34-65
 
 Example 4
@@ -66,7 +66,7 @@ Example 4
 You want to separate out provision and orchestrate because this is common configuration across all your
 scenarios but with this particular scenario you want to also a run a non-common orchestration task.
 
-.. literalinclude:: ../../../examples/docs-usage/include.txt
+.. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 62-92
 
 Example 5
@@ -74,7 +74,7 @@ Example 5
 
 You can use jinja templating like below
 
-.. literalinclude:: ../../../examples/docs-usage/include.txt
+.. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 93-125
 
 
@@ -121,7 +121,7 @@ Example
 
                 /    \
 
-            sdf12 sdf13
+            sdf12 sdf13              
 
 The above is an complex include usage. Consider sdf1-sdf13 are different included scenarios
 and sdf is the main scenario
@@ -148,7 +148,7 @@ You can include teflo workspace from remote server(currently only support for gi
 Example SDF
 +++++++++++
 
-.. literalinclude:: ../../../examples/docs-usage/include.txt
+.. literalinclude:: ../../../examples/docs-usage/include.yml
     :lines: 126-158
 
 .. note::

@@ -24,19 +24,18 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-from collections import OrderedDict
+
 from copy import copy
 
 from .._compat import string_types
 from ..constants import ORCHESTRATOR
 from ..core import TefloResource
-from ..exceptions import TefloActionError
-from ..helpers import get_orchestrator_plugin_class
-from ..helpers import get_orchestrators_plugin_list
 from ..orchestrators import ActionOrchestrator
-from ..tasks import CleanupTask
-from ..tasks import OrchestrateTask
-from ..tasks import ValidateTask
+from ..helpers import get_orchestrator_plugin_class, \
+    get_orchestrators_plugin_list
+from ..exceptions import TefloActionError
+from ..tasks import OrchestrateTask, ValidateTask, CleanupTask
+from collections import OrderedDict
 
 
 class Action(TefloResource):
@@ -53,28 +52,18 @@ class Action(TefloResource):
     processes (completes) the given action.
     """
 
-    _valid_tasks_types = ["validate", "orchestrate", "cleanup"]
-    _fields = [
-        "name",
-        "description",
-        "orchestrator",
-        "hosts",
-        "labels",
-        "status" "orchestrate_timeout",
-        "cleanup_timeout",
-        "validate_timeout",
-    ]
+    _valid_tasks_types = ['validate', 'orchestrate', 'cleanup']
+    _fields = ['name', 'description', 'orchestrator', 'hosts', 'labels', 'status' 'orchestrate_timeout',
+               'cleanup_timeout', 'validate_timeout']
 
-    def __init__(
-        self,
-        config=None,
-        name=None,
-        parameters=dict,
-        validate_task_cls=ValidateTask,
-        orchestrate_task_cls=OrchestrateTask,
-        cleanup_task_cls=CleanupTask,
-        **kwargs
-    ):
+    def __init__(self,
+                 config=None,
+                 name=None,
+                 parameters=dict,
+                 validate_task_cls=ValidateTask,
+                 orchestrate_task_cls=OrchestrateTask,
+                 cleanup_task_cls=CleanupTask,
+                 **kwargs):
         """Constructor.
 
         The primary focus of the constructor is to build the action object
@@ -99,17 +88,16 @@ class Action(TefloResource):
 
         # set the action resource name
         if name is None:
-            self._name = parameters.pop("name", None)
+            self._name = parameters.pop('name', None)
             if self._name is None:
-                raise TefloActionError(
-                    "Unable to build action object. Name" " field missing!"
-                )
+                raise TefloActionError('Unable to build action object. Name'
+                                        ' field missing!')
         else:
             self._name = name
 
         # set the timeout for VALIDATE
         try:
-            if parameters.get("validate_timeout") is not None:
+            if parameters.get('validate_timeout') is not None:
                 self._validate_timeout = parameters.pop("validate_timeout")
             else:
                 self._validate_timeout = config["TIMEOUT"]["VALIDATE"]
@@ -119,7 +107,7 @@ class Action(TefloResource):
 
         # set the timeout for ORCHESTRATE
         try:
-            if parameters.get("orchestrate_timeout") is not None:
+            if parameters.get('orchestrate_timeout') is not None:
                 self._orchestrate_timeout = parameters.pop("orchestrate_timeout")
             else:
                 self._orchestrate_timeout = config["TIMEOUT"]["ORCHESTRATE"]
@@ -129,7 +117,7 @@ class Action(TefloResource):
 
         # set the timeout for cleanup
         try:
-            if parameters.get("cleanup_timeout") is not None:
+            if parameters.get('cleanup_timeout') is not None:
                 self._cleanup_timeout = parameters.pop("cleanup_timeout")
             else:
                 self._cleanup_timeout = config["TIMEOUT"]["CLEANUP"]
@@ -138,30 +126,27 @@ class Action(TefloResource):
             self._cleanup_timeout = 0
 
         # set the action description
-        self._description = parameters.pop("description", None)
+        self._description = parameters.pop('description', None)
 
         # each action will have x number of hosts associated to it. lets
         # associate the list of hosts to the action object itself. currently
         # the hosts are strings, when teflo builds the pipeline, they will
         # be updated with their corresponding host object.
-        self.hosts = parameters.pop("hosts")
+        self.hosts = parameters.pop('hosts')
         if self.hosts is None:
-            raise TefloActionError(
-                "Unable to associate hosts to action: %s."
-                "No hosts defined!" % self._name
-            )
+            raise TefloActionError('Unable to associate hosts to action: %s.'
+                                    'No hosts defined!' % self._name)
 
         # convert the hosts into list format if hosts defined as str format
         if isinstance(self.hosts, string_types):
-            self.hosts = self.hosts.replace(" ", "").split(",")
+            self.hosts = self.hosts.replace(' ', '').split(',')
 
         # every action has a mandatory orchestrator, lets set it
-        orchestrator_name = parameters.pop("orchestrator", ORCHESTRATOR)
+        orchestrator_name = parameters.pop('orchestrator', ORCHESTRATOR)
 
         if orchestrator_name not in get_orchestrators_plugin_list():
-            raise TefloActionError(
-                "Orchestrator: %s is not supported!" % orchestrator_name
-            )
+            raise TefloActionError('Orchestrator: %s is not supported!' %
+                                    orchestrator_name)
 
         # now that we know the orchestrator, lets get the class
         self._orchestrator = get_orchestrator_plugin_class(orchestrator_name)
@@ -169,29 +154,31 @@ class Action(TefloResource):
         # using plugin's method to get the schema keys and check if they are present in the parameters and then
         # set them as action's parameters
         if self.orchestrator:
-            for p in getattr(self.orchestrator, "get_schema_keys")():
+            for p in getattr(self.orchestrator, 'get_schema_keys')():
                 if parameters.get(p, None):
                     setattr(self, p, parameters.get(p))
         else:
-            raise TefloActionError(
-                "Orchestrator: %s plugin was not found!" % orchestrator_name
-            )
+            raise TefloActionError('Orchestrator: %s plugin was not found!' %
+                                    orchestrator_name)
 
         # set up status code
-        self._status = parameters.pop("status", 0)
+        self._status = parameters.pop('status', 0)
 
         # set labels
-        setattr(self, "labels", parameters.pop("labels", []))
+        setattr(self, 'labels', parameters.pop('labels', []))
 
         # ******** CLEANUP ACTIONS ******** #
         # check if the action requires any cleanup actions prior to host
         # deletion
         self.cleanup = None
-        self.cleanup_def = parameters.pop("cleanup", None)
+        self.cleanup_def = parameters.pop('cleanup', None)
 
         if self.cleanup_def:
             # create the cleanup sub-action for this parent action
-            self.cleanup = Action(config=self.config, parameters=copy(self.cleanup_def))
+            self.cleanup = Action(
+                config=self.config,
+                parameters=copy(self.cleanup_def)
+            )
 
         # set the teflo task classes for the resource
         self._validate_task_cls = validate_task_cls
@@ -217,7 +204,7 @@ class Action(TefloResource):
     @orchestrator.setter
     def orchestrator(self, value):
         """Set orchestrator property."""
-        raise AttributeError("Orchestrator class property cannot be set.")
+        raise AttributeError('Orchestrator class property cannot be set.')
 
     @property
     def status(self):
@@ -234,12 +221,13 @@ class Action(TefloResource):
         :rtype: OrderedDict
         """
         profile = OrderedDict()
-        profile["name"] = self.name
-        profile["description"] = self.description
+        profile['name'] = self.name
+        profile['description'] = self.description
         if isinstance(self.orchestrator, string_types):
-            profile["orchestrator"] = self.orchestrator
+            profile['orchestrator'] = self.orchestrator
         else:
-            profile["orchestrator"] = getattr(self.orchestrator, "__plugin_name__")
+            profile['orchestrator'] = getattr(
+                    self.orchestrator, '__plugin_name__')
             #
         # set the action's hosts
         if all(isinstance(item, string_types) for item in self.hosts):
@@ -249,20 +237,20 @@ class Action(TefloResource):
 
         # Update profile with all the parameters for the orchestrator
         if not isinstance(self.orchestrator, string_types):
-            profile.update(getattr(self.orchestrator, "build_profile")(self))
+            profile.update(getattr(self.orchestrator, 'build_profile')(self))
 
         if self.cleanup_def:
-            profile.update({"cleanup": self.cleanup_def})
+            profile.update({'cleanup': self.cleanup_def})
 
         # set labels
-        profile.update({"labels": self.labels})
-        profile.update({"status": self.status})
+        profile.update({'labels': self.labels})
+        profile.update({'status': self.status})
 
         return profile
 
     def validate(self):
         """Validate the action object using the orchestrator plugin's validate method."""
-        getattr(ActionOrchestrator(self), "validate")()
+        getattr(ActionOrchestrator(self), 'validate')()
 
     def _construct_validate_task(self):
         """Constructs the validate task associated to the action resource.
@@ -271,11 +259,11 @@ class Action(TefloResource):
         :rtype: dict
         """
         task = {
-            "task": self._validate_task_cls,
-            "name": str(self.name),
-            "resource": self,
-            "methods": self._req_tasks_methods,
-            "timeout": self._validate_timeout,
+            'task': self._validate_task_cls,
+            'name': str(self.name),
+            'resource': self,
+            'methods': self._req_tasks_methods,
+            'timeout': self._validate_timeout
         }
         return task
 
@@ -286,12 +274,13 @@ class Action(TefloResource):
         :rtype: dict
         """
         task = {
-            "task": self._orchestrate_task_cls,
-            "name": str(self.name),
-            "package": self,
-            "msg": "   running orchestration %s for %s" % (self.name, self.hosts),
-            "methods": self._req_tasks_methods,
-            "time_out": self._orchestrate_timeout,
+            'task': self._orchestrate_task_cls,
+            'name': str(self.name),
+            'package': self,
+            'msg': '   running orchestration %s for %s' % (
+                self.name, self.hosts),
+            'methods': self._req_tasks_methods,
+            "time_out": self._orchestrate_timeout
         }
         return task
 
@@ -302,11 +291,13 @@ class Action(TefloResource):
         :rtype: dict
         """
         task = {
-            "task": self._cleanup_task_cls,
-            "name": str(self.name),
-            "package": self,
-            "msg": "   running clean up %s for %s" % (self.name, self.hosts),
-            "methods": self._req_tasks_methods,
-            "timeout": self._cleanup_timeout,
+            'task': self._cleanup_task_cls,
+            'name': str(self.name),
+            'package': self,
+            'msg': '   running clean up %s for %s' % (
+                self.name, self.hosts),
+            'methods': self._req_tasks_methods,
+            "timeout": self._cleanup_timeout
+
         }
         return task

@@ -48,7 +48,7 @@ Example 1
 
 Using service, playbook, script
 
-.. literalinclude:: ../../../examples/docs-usage/resource_check.txt
+.. literalinclude:: ../../../examples/docs-usage/resource_check.yml
     :lines: 2-43
 
 Example 2
@@ -56,5 +56,7 @@ Example 2
 
 Using service
 
-.. literalinclude:: ../../../examples/docs-usage/resource_check.txt
+.. literalinclude:: ../../../examples/docs-usage/resource_check.yml
     :lines: 46-61
+
+

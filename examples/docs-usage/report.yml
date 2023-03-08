@@ -211,7 +211,7 @@ execute:
          payload_teflo :
            - tempest-results-all.1.xml
            - junit_example.xml
-           - MyTest.test_method3
+           - MyTest.test_method3 
 
 report:
   - name: '*.xml'

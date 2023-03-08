@@ -6,7 +6,7 @@ order to test the systems properly.
 
 First lets go over the basic structure that defines a configuration task.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 1-6
 
 The above code snippet is the minimal structure that is required to create a
@@ -62,12 +62,12 @@ Hosts
 You can associate hosts to a given orchestrate task a couple of different ways.
 First is to define your hosts in a comma separated string.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 9-14
 
 You can also define your hosts as a list.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 16-23
 
 It can become tedious if an orchestrate task needs to be performed on multiple
@@ -78,10 +78,10 @@ your hosts or use **all** to run against all hosts.  This eliminates the need
 to define every host per multiple tasks. It can be either in string or list
 format.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 25-30
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 32-37
 
 
@@ -605,7 +605,7 @@ Example 1
 You have a playbook which needs to run against x number of hosts and does not
 require any additional extra variables.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 40-49
 
 .. _eg_2:
@@ -616,7 +616,7 @@ Example 2
 You have a playbook which needs to run against x number of hosts and requires
 additional extra variables.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 52-67
 
 Example 3
@@ -625,7 +625,7 @@ Example 3
 You have a playbook which needs to run against x number of hosts and requires
 only tasks with a tag set to prod.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 70-81
 
 Example 4
@@ -634,7 +634,7 @@ Example 4
 You have a playbook which needs to run against x number of hosts and requires
 only tasks with a tag set to prod and requires connection settings that conflicts with your ansible.cfg.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 84-101
 
 
@@ -647,7 +647,7 @@ an ansible role to be downloaded.
 .. note::
          Although the option is called *role_file:* but it relates both, roles and collections.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 104-115
 
 Content of requirements.yml as a dictionary, suitable for both roles and collections:
@@ -683,7 +683,7 @@ Content of requirements.yml file as a list, only suitable for roles:
 An alternative to using the requirements file is you can directly define them using
 the roles or collections key.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 118-134
 
 It is possible to define both role_file and direct definitions. Teflo will install the
@@ -702,7 +702,7 @@ Example 6
 You have a playbook which needs to run against x number of hosts, requires
 ansible roles to be downloaded and requires additional extra variables.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 137-154
 
 .. attention::
@@ -733,7 +733,7 @@ You have a playbook which needs to run against x number of hosts. Prior to
 deleting the configured hosts. You want to run a playbook to do some post
 tasks.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 157-181
 
 
@@ -744,7 +744,7 @@ The following is an example of running a script.  The following is an
 example of a script running on the localhost. For localhost usage refer
 to the`localhost <../localhost.html>`_ page.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 184-191
 
 Example 9
@@ -754,7 +754,7 @@ The following builds on the previous example, by showing how a user
 can add options to the script they are executing (In the example below,
 the script is run with options as **create_dir.sh -c -e 12**).
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 194-203
 
 Example 10
@@ -769,7 +769,7 @@ example below sets the **remote_user** option.
 To see all script options see ansible's documentation `here
 <https://docs.ansible.com/ansible/latest/modules/script_module.html>`_.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 206-216
 
 Example 11
@@ -778,7 +778,7 @@ Example 11
 You have a playbook which needs to run against x number of hosts and requires
 skipping tasks with a tag set to ssh_auth and requires extra variables.
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 219-234
 
 .. _eg_12:
@@ -788,7 +788,7 @@ Example 12
 
 Example to run playbooks, scripts and shell command as a part of orchestrate task
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 237-261
 
 .. _Example_13:
@@ -799,7 +799,7 @@ Example 13
 Example to use ansible_script with extra arags with in the ansible_script
 list of dictionary and its paramter in the name field
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 265-272
 
 
@@ -810,7 +810,7 @@ Example 14
 
 Example to use ansible_script with extra arags as a part of ansible_options
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 275-283
 
 .. _Example_15:
@@ -821,7 +821,7 @@ Example 15
 Example to use ansible_script and using ansible_options: extra_args to
 provide the script parameters
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 286-294
 
 Example 16
@@ -831,7 +831,7 @@ Example to use environment_vars to be passed to the ansible playbook/script/comm
 Variables X and Y are available during the script execution and can be retrieved
 for additional logic within the script
 
-.. literalinclude:: ../../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../../examples/docs-usage/orchestrate.yml
     :lines: 366-375
 
 Resources

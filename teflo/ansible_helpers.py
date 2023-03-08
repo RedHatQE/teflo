@@ -24,45 +24,32 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-import collections
-import copy
-import glob
-import json
-import os
-from collections import namedtuple
-from logging import getLogger
-from shutil import copyfile
-from string import Template
 
-from ansible.config.manager import ConfigManager
+import collections
+import os
+import copy
+import json
+from string import Template
+from logging import getLogger
+from ruamel.yaml import YAML
+from collections import namedtuple
 from ansible.inventory.manager import InventoryManager
 from ansible.parsing.dataloader import DataLoader
-from ansible.parsing.vault import VaultSecret
 from ansible.vars.manager import VariableManager
-from retry import retry
-from ruamel.yaml import YAML
-
-from ._compat import ansible_ver
-from ._compat import is_py2
-from ._compat import RawConfigParser
+from shutil import copyfile
+from ansible.config.manager import ConfigManager
 from ._compat import string_types
-from ._compat import VaultLib
-from .constants import ANSIBLE_GALAXY_INSTALL_ATTEMPTS
-from .constants import ANSIBLE_GALAXY_INSTALL_DELAY
+from .helpers import ssh_retry, exec_local_cmd_pipe, DataInjector, get_ans_verbosity, is_host_localhost, file_mgmt, \
+    gen_random_str, check_for_var_file
+from .static.playbooks import GIT_CLONE_PLAYBOOK, SYNCHRONIZE_PLAYBOOK, \
+    ADHOC_SHELL_PLAYBOOK, ADHOC_SCRIPT_PLAYBOOK
 from .exceptions import AnsibleServiceError
+from ansible.parsing.vault import VaultSecret
 from .exceptions import AnsibleVaultError
-from .helpers import check_for_var_file
-from .helpers import DataInjector
-from .helpers import exec_local_cmd_pipe
-from .helpers import file_mgmt
-from .helpers import gen_random_str
-from .helpers import get_ans_verbosity
-from .helpers import is_host_localhost
-from .helpers import ssh_retry
-from .static.playbooks import ADHOC_SCRIPT_PLAYBOOK
-from .static.playbooks import ADHOC_SHELL_PLAYBOOK
-from .static.playbooks import GIT_CLONE_PLAYBOOK
-from .static.playbooks import SYNCHRONIZE_PLAYBOOK
+from ._compat import RawConfigParser, VaultLib, ansible_ver, is_py2
+from .constants import ANSIBLE_GALAXY_INSTALL_ATTEMPTS, ANSIBLE_GALAXY_INSTALL_DELAY
+import glob
+from retry import retry
 
 LOG = getLogger(__name__)
 
@@ -89,40 +76,30 @@ class AnsibleController(object):
 
         # module options
         self.module_options = namedtuple(
-            "Options",
-            [
-                "connection",
-                "module_path",
-                "forks",
-                "become",
-                "become_method",
-                "become_user",
-                "check",
-                "remote_user",
-                "private_key_file",
-                "diff",
-            ],
+            'Options', ['connection',
+                        'module_path',
+                        'forks',
+                        'become',
+                        'become_method',
+                        'become_user',
+                        'check',
+                        'remote_user',
+                        'private_key_file',
+                        'diff']
         )
 
     def set_inventory(self):
         """Create the ansible inventory object with the supplied inventory."""
         self.variable_manager = VariableManager(loader=self.loader)
         self.inventory = InventoryManager(
-            loader=self.loader, sources=self.ansible_inventory
+            loader=self.loader,
+            sources=self.ansible_inventory
         )
         self.variable_manager.set_inventory(self.inventory)
 
     @ssh_retry
-    def run_module(
-        self,
-        module,
-        logger,
-        script=None,
-        run_options={},
-        extra_args=None,
-        extra_vars=None,
-        ans_verbosity=None,
-    ):
+    def run_module(self, module, logger, script=None, run_options={},
+                   extra_args=None, extra_vars=None, ans_verbosity=None):
         """
 
         :param module: Name of the ansible module to run.
@@ -145,11 +122,8 @@ class AnsibleController(object):
         if "localhost" in extra_vars and extra_vars["localhost"]:
             module_call = "ansible localhost -m %s" % (module)
         else:
-            module_call = "ansible -i %s %s -m %s" % (
-                self.ansible_inventory,
-                extra_vars["hosts"],
-                module,
-            )
+            module_call = "ansible -i %s %s -m %s" % \
+                          (self.ansible_inventory, extra_vars["hosts"], module)
 
         # add extra arguments
         if module == "script" or module == "shell":
@@ -168,13 +142,10 @@ class AnsibleController(object):
                     if run_options[key]:
                         module_call += " --%s" % key
                 elif key == "tags":
-                    taglist = ",".join(run_options[key])
+                    taglist = ','.join(run_options[key])
                     module_call += " --tags %s" % taglist
                 else:
-                    module_call += " --%s %s" % (
-                        key.replace("_", "-"),
-                        run_options[key],
-                    )
+                    module_call += " --%s %s" % (key.replace('_', '-'), run_options[key])
 
         if ans_verbosity:
             module_call += " -%s" % ans_verbosity
@@ -188,15 +159,8 @@ class AnsibleController(object):
         return output
 
     @ssh_retry
-    def run_playbook(
-        self,
-        playbook,
-        logger,
-        extra_vars=None,
-        run_options=None,
-        ans_verbosity=None,
-        env_var=None,
-    ):
+    def run_playbook(self, playbook, logger, extra_vars=None, run_options=None,
+                     ans_verbosity=None, env_var=None):
         """Run an Ansible playbook.
 
         :param playbook: Playbook to call
@@ -212,10 +176,11 @@ class AnsibleController(object):
         :return: A tuple (rc, sterr)
         """
 
-        playbook_call = "ansible-playbook -i %s %s" % (self.ansible_inventory, playbook)
+        playbook_call = "ansible-playbook -i %s %s" % \
+                        (self.ansible_inventory, playbook)
         if extra_vars is not None:
             for key in extra_vars:
-                if not isinstance(extra_vars[key], string_types) and key != "file":
+                if not isinstance(extra_vars[key], string_types) and key != 'file':
                     extra_var_dict = dict()
                     extra_var_dict[key] = extra_vars[key]
                     playbook_call += ' -e "%s" ' % extra_var_dict
@@ -237,19 +202,16 @@ class AnsibleController(object):
                     if run_options[key]:
                         playbook_call += " --%s" % key
                 elif key == "tags":
-                    taglist = ",".join(run_options[key])
+                    taglist = ','.join(run_options[key])
                     playbook_call += " --tags %s" % taglist
                 elif key == "skip_tags":
-                    taglist = ",".join(run_options[key])
+                    taglist = ','.join(run_options[key])
                     playbook_call += " --skip-tags %s" % taglist
                 elif key == "vault-password-file":
-                    taglist = ",".join(run_options[key])
+                    taglist = ','.join(run_options[key])
                     playbook_call += " --vault-password-file %s" % taglist
                 else:
-                    playbook_call += " --%s %s" % (
-                        key.replace("_", "-"),
-                        run_options[key],
-                    )
+                    playbook_call += " --%s %s" % (key.replace('_', '-'), run_options[key])
 
         if ans_verbosity:
             playbook_call += " -%s" % ans_verbosity
@@ -260,30 +222,12 @@ class AnsibleController(object):
 
 
 class AnsibleService(object):
-    user_run_vals = [
-        "become",
-        "become_method",
-        "become_user",
-        "remote_user",
-        "connection",
-        "forks",
-        "tags",
-        "skip_tags",
-        "vault-password-file",
-    ]
+    user_run_vals = ["become", "become_method", "become_user", "remote_user",
+                     "connection", "forks", "tags", 'skip_tags', 'vault-password-file']
 
     playbook_name = Template("cbn_execute_$type$uid.yml")
 
-    def __init__(
-        self,
-        config,
-        hosts,
-        all_hosts,
-        ansible_options,
-        galaxy_options=None,
-        concurrency=None,
-        env_var={},
-    ):
+    def __init__(self, config, hosts, all_hosts, ansible_options, galaxy_options=None, concurrency=None, env_var={}):
         self.hosts = hosts
         self.all_hosts = all_hosts
         self.config = config
@@ -300,25 +244,21 @@ class AnsibleService(object):
             # Adding any user defined env var to the os.environ
             self.env_var = self.env_var.update(env_var)
 
-        self.ans_log_path = ""
+        self.ans_log_path = ''
 
         # Setting ANSIBLE_LOG_PATH env variable when running actions concurrently, so each action logs gets
         # collected in a separate file
-        if concurrency == "true":
-            ans_log = "ansible_" + self.uid + ".log"
-            self.ans_log_path = os.path.join(self.config["WORKSPACE"], ans_log)
-            self.env_var.update({"ANSIBLE_LOG_PATH": self.ans_log_path})
+        if concurrency == 'true':
+            ans_log = 'ansible_' + self.uid + '.log'
+            self.ans_log_path = os.path.join(self.config['WORKSPACE'], ans_log)
+            self.env_var.update({'ANSIBLE_LOG_PATH': self.ans_log_path})
 
         # passing the teflo's inventory directory to the Ansible Controller
-        self.ans_controller = AnsibleController(
-            os.path.abspath(self.config["INVENTORY_FOLDER"])
-        )
+        self.ans_controller = AnsibleController(os.path.abspath(self.config['INVENTORY_FOLDER']))
 
         # pass the uid as an extra variable to the playbooks so they can save
         # output uniquely to disk in case of concurrent execution
-        self.ans_extra_vars = collections.OrderedDict(
-            hosts=self.create_inv_group(), uuid=self.uid
-        )
+        self.ans_extra_vars = collections.OrderedDict(hosts=self.create_inv_group(), uuid=self.uid)
         self.ans_verbosity = get_ans_verbosity(self.config)
 
     def create_inv_group(self):
@@ -327,14 +267,14 @@ class AnsibleService(object):
         # defines the custom group to run the play against
         # This is what handles the core of the logic now to pass
         # to the ansible-playbook command the -e hosts=<hosts>
-        group = "hosts"
+        group = 'hosts'
         if self.hosts:
             join = False
             for host in self.hosts:
                 if isinstance(host, string_types):
                     if len(self.hosts) > 1:
                         if join:
-                            group += ", %s" % host
+                            group += ', %s' % host
                         else:
                             group = host
                             join = True
@@ -346,7 +286,7 @@ class AnsibleService(object):
                     # If the hosts are Asset objects
                     if len(self.hosts) > 1:
                         if join:
-                            group += ", %s" % host.name
+                            group += ', %s' % host.name
                         else:
                             group = host.name
                             join = True
@@ -376,52 +316,35 @@ class AnsibleService(object):
         # The parameters provided for the shell command/script to run
 
         # list of params taken by the ansible script and shell module
-        params = [
-            "chdir",
-            "creates",
-            "decrypt",
-            "executable",
-            "removes",
-            "warn",
-            "stdin",
-            "stdin_add_newline",
-        ]
+        params = ['chdir', 'creates', 'decrypt', 'executable', 'removes', 'warn', 'stdin', 'stdin_add_newline']
 
         extra_args = "args:"
         for item in params:
             if item in attr and attr[item]:
-                extra_args += "\n        %s: %s" % (item, attr[item])
+                extra_args += '\n        %s: %s' % (item, attr[item])
 
-        if self.options and "extra_args" in self.options and self.options["extra_args"]:
-            self.logger.warning(
-                "Deprecated way of providing extra_args under ansible_options is being used"
-            )
+        if self.options and 'extra_args' in self.options and self.options['extra_args']:
+            self.logger.warning('Deprecated way of providing extra_args under ansible_options is being used')
 
             # inject extra_args string with any data that might require data pass-thru
-            self.options["extra_args"] = self.injector.inject(
-                self.options["extra_args"]
-            )
+            self.options['extra_args'] = self.injector.inject(self.options['extra_args'])
 
-            arg_list = self.options["extra_args"].split()
+            arg_list = self.options['extra_args'].split()
             for item in arg_list:
-                if "=" in item:
-                    param, val = item.split("=")
+                if '=' in item:
+                    param, val = item.split('=')
                     if param in params:
-                        extra_args += "\n        %s: %s" % (param, val)
+                        extra_args += '\n        %s: %s' % (param, val)
                     else:
-                        attr["name"] = attr["name"] + " " + item
-                        self.logger.debug(
-                            "Using deprecated way of assigning script params using extra args with in "
-                            "ansible_options. Appending it to the script name to be used as "
-                            "script params %s" % attr["name"]
-                        )
+                        attr['name'] = attr['name'] + ' ' + item
+                        self.logger.debug('Using deprecated way of assigning script params using extra args with in '
+                                          'ansible_options. Appending it to the script name to be used as '
+                                          'script params %s' % attr['name'])
                 else:
-                    attr["name"] = attr["name"] + " " + item
-                    self.logger.debug(
-                        "Using deprecated way of assigning script params using extra args with in "
-                        "ansible_options. Appending it to the script name to be used as "
-                        "script params %s" % attr["name"]
-                    )
+                    attr['name'] = attr['name'] + ' ' + item
+                    self.logger.debug('Using deprecated way of assigning script params using extra args with in '
+                                      'ansible_options. Appending it to the script name to be used as '
+                                      'script params %s' % attr['name'])
         return extra_args
 
     def build_run_options(self):
@@ -453,18 +376,18 @@ class AnsibleService(object):
         :rtype: str
 
         """
-        run_options_str = ""
+        run_options_str = ''
 
         first = True
         for opt in run_options:
             if first:
-                run_options_str += "%s: %s\n" % (opt, run_options[opt])
+                run_options_str += '%s: %s\n' % (opt, run_options[opt])
                 first = False
             else:
                 if block_options:
-                    run_options_str += "          %s: %s\n" % (opt, run_options[opt])
+                    run_options_str += '          %s: %s\n' % (opt, run_options[opt])
                 else:
-                    run_options_str += "      %s: %s\n" % (opt, run_options[opt])
+                    run_options_str += '      %s: %s\n' % (opt, run_options[opt])
 
         return run_options_str
 
@@ -476,33 +399,31 @@ class AnsibleService(object):
         """
 
         extra_vars = {}
-        if self.options and "extra_vars" in self.options and self.options["extra_vars"]:
-            extra_vars.update(self.options["extra_vars"])
+        if self.options and 'extra_vars' in self.options and self.options['extra_vars']:
+            extra_vars.update(self.options['extra_vars'])
             # inject data into extra_vars
             extra_vars = self.injector.inject_dictionary(extra_vars)
-        extra_vars["localhost"] = False
+        extra_vars['localhost'] = False
         if self.hosts:
             for h in self.hosts:
-                if not isinstance(h, string_types) and hasattr(h, "ip_address"):
+                if not isinstance(h, string_types) and hasattr(h, 'ip_address'):
                     if is_host_localhost(h.ip_address):
-                        extra_vars["localhost"] = True
-                elif isinstance(h, string_types) and h == "localhost":
-                    extra_vars["localhost"] = True
+                        extra_vars['localhost'] = True
+                elif isinstance(h, string_types) and h == 'localhost':
+                    extra_vars['localhost'] = True
         # Looking for all the variable files that teflo finds and add them as extra_vars for the ansible playbooks
-        if (
-            self.config.get("ANSIBLE_EXTRA_VARS_FILES")
-            and self.config.get("ANSIBLE_EXTRA_VARS_FILES").lower() == "true"
-        ):
-            var_files_list = self.config.get("EXTRA_VARS_FILES")
-            file = extra_vars.get("file")
+        if self.config.get('ANSIBLE_EXTRA_VARS_FILES') and \
+                self.config.get('ANSIBLE_EXTRA_VARS_FILES').lower() == 'true':
+            var_files_list = self.config.get('EXTRA_VARS_FILES')
+            file = extra_vars.get('file')
             if file:
                 if not isinstance(file, str):
-                    extra_vars["file"].extend(var_files_list)
+                    extra_vars['file'].extend(var_files_list)
                 else:
                     var_files_list.append(file)
-                    extra_vars["file"] = var_files_list
+                    extra_vars['file'] = var_files_list
             else:
-                extra_vars["file"] = var_files_list
+                extra_vars['file'] = var_files_list
 
         return extra_vars
 
@@ -530,14 +451,10 @@ class AnsibleService(object):
         """
         yaml = YAML()
         yaml.default_flow_style = False
-        with open(playbook, "w") as f:
+        with open(playbook, 'w') as f:
             yaml.dump(yaml.load(playbook_str), f)
 
-    @retry(
-        AnsibleServiceError,
-        tries=ANSIBLE_GALAXY_INSTALL_ATTEMPTS,
-        delay=ANSIBLE_GALAXY_INSTALL_DELAY,
-    )
+    @retry(AnsibleServiceError, tries=ANSIBLE_GALAXY_INSTALL_ATTEMPTS, delay=ANSIBLE_GALAXY_INSTALL_DELAY)
     def download_roles(self, u_path=None):
         """Download ansible dependencies (roles or collections).
 
@@ -550,13 +467,14 @@ class AnsibleService(object):
         flag = 0
 
         if "role_file" in self.galaxy_options:
-            requirements_file = os.path.join(
-                self.config["WORKSPACE"], self.galaxy_options["role_file"]
-            )
+            requirements_file = os.path.join(self.config["WORKSPACE"], self.galaxy_options["role_file"])
             requirements_file_content = file_mgmt("r", requirements_file)
             flag += 1
 
-            dependencies = {"role": False, "collection": False}
+            dependencies = {
+                "role": False,
+                "collection": False
+            }
 
             if isinstance(requirements_file_content, list):
                 dependencies["role"] = True
@@ -567,36 +485,25 @@ class AnsibleService(object):
                 if not value:
                     continue
 
-                self.logger.info(
-                    f"Install {key}s using requirements file {requirements_file}"
-                )
+                self.logger.info(f"Install {key}s using requirements file {requirements_file}")
 
-                if key == "collection" and u_path:
+                if key == 'collection' and u_path:
                     # check if user select different path to install collection.
-                    results = exec_local_cmd_pipe(
-                        f"ansible-galaxy {key} install -r {requirements_file} -p {u_path}",
-                        self.logger,
-                    )
+                    results = exec_local_cmd_pipe(f"ansible-galaxy {key} install -r {requirements_file} -p {u_path}",
+                                                  self.logger)
                 else:
-                    results = exec_local_cmd_pipe(
-                        f"ansible-galaxy {key} install -r {requirements_file}",
-                        self.logger,
-                    )
+                    results = exec_local_cmd_pipe(f"ansible-galaxy {key} install -r {requirements_file}", self.logger)
 
                 if results[0] != 0:
-                    message = (
-                        f"Failed to install {key}s from requirements file {requirements_file}. "
-                        f"Error: {results[1]}"
-                    )
+                    message = f"Failed to install {key}s from requirements file {requirements_file}. " \
+                                f"Error: {results[1]}"
                     self.logger.error(message)
                     raise AnsibleServiceError(message)
-                self.logger.info(
-                    f"{key.title()}s installed from requirements file {requirements_file}!"
-                )
+                self.logger.info(f"{key.title()}s installed from requirements file {requirements_file}!")
 
         dependencies = {
             "role": self.galaxy_options.get("roles", {}),
-            "collection": self.galaxy_options.get("collections", {}),
+            "collection": self.galaxy_options.get("collections", {})
         }
 
         for key, value in dependencies.items():
@@ -604,15 +511,11 @@ class AnsibleService(object):
                 continue
 
             if flag >= 1:
-                self.logger.warning(
-                    f"Attention: {key}s were already installed using a requirements "
-                    f"file. Potential problems may occur."
-                )
+                self.logger.warning(f"Attention: {key}s were already installed using a requirements "
+                                    f"file. Potential problems may occur.")
 
             for item in value:
-                results = exec_local_cmd_pipe(
-                    f"ansible-galaxy {key} install {item}", self.logger
-                )
+                results = exec_local_cmd_pipe(f"ansible-galaxy {key} install {item}", self.logger)
                 if results[0] != 0:
                     message = f"Failed to install {key}. Error: {results[1]}"
                     self.logger.error(message)
@@ -650,14 +553,12 @@ class AnsibleService(object):
             for setting in a_settings.keys():
                 if setting == key:
                     val = a_settings.get(setting)
-                    return val["default"]
+                    return val['default']
             return None
         else:
             for setting in a_settings:
                 if setting.name == "CONFIG_FILE":
-                    self.logger.debug(
-                        "Using %s for default configuration" % setting.value
-                    )
+                    self.logger.debug("Using %s for default configuration" % setting.value)
                 elif setting.name == "DEFAULT_BECOME":
                     returndict["become"] = setting.value
                 elif setting.name == "DEFAULT_BECOME_METHOD":
@@ -668,65 +569,48 @@ class AnsibleService(object):
                     returndict["remote_user"] = setting.value
                 elif setting.name == "DEFAULT_FORKS":
                     returndict["forks"] = setting.value
-                elif setting.name == "DEFAULT_TRANSPORT":
+                elif setting.name == 'DEFAULT_TRANSPORT':
                     returndict["connection"] = setting.value
             return returndict
 
     def get_playbook_path(self, coll_path=None, playbook=None):
-        """This method is used while looking for the playbook path using fqcn"""
+        """ This method is used while looking for the playbook path using fqcn
+        """
         if coll_path and playbook:
-            fqcn_playbook_path = playbook.split(".")
+            fqcn_playbook_path = playbook.split('.')
             con_coll_path = self.get_user_ansiblg_config("COLLECTIONS_PATHS")
-            coll_dir_path = os.path.join(
-                coll_path,
-                "collections/ansible_collections/",
-                fqcn_playbook_path[0],
-                fqcn_playbook_path[1],
-            )
+            coll_dir_path = os.path.join(coll_path, 'collections/ansible_collections/', fqcn_playbook_path[0],
+                                         fqcn_playbook_path[1])
             if not os.path.exists(coll_dir_path):
                 if not len(con_coll_path) > 1:
                     coll_dir_path = con_coll_path[0]
-                    self.logger.debug(
-                        "Found Action resource playbook %s" % con_coll_path
-                    )
+                    self.logger.debug('Found Action resource playbook %s' % con_coll_path)
 
-            files = glob.glob(coll_dir_path + "/**/*.yml", recursive=True)
+            files = glob.glob(coll_dir_path + '/**/*.yml', recursive=True)
             if files:
                 for path in files:
                     if fqcn_playbook_path[-1] in path:
-                        self.logger.debug("Found Collections at: %s" % path)
+                        self.logger.debug('Found Collections at: %s' % path)
                         return path
             else:
-                self.logger.error(f"Playbook {coll_dir_path} Not Found!")
+                self.logger.error(f'Playbook {coll_dir_path} Not Found!')
 
     def alog_update(self, folder_name=None):
         """move ansible logs to data folder/folder_name(if provided)
         :param folder_name: name of the folder under data folder to move the ansible logs
         :type folder_name: str
         """
-        ans_logfile = (
-            self.ans_log_path
-            if self.ans_log_path
-            else self.get_default_config(key="DEFAULT_LOG_PATH")
-        )
+        ans_logfile = self.ans_log_path if self.ans_log_path else self.get_default_config(key="DEFAULT_LOG_PATH")
         self.logger.debug("The ansible log file being used is : %s" % ans_logfile)
         if ans_logfile:
             if folder_name:
                 # Putting ansible logs in specific folders
-                log_folder = "logs/" + folder_name
-                if not os.path.isdir(
-                    os.path.join(self.config["DATA_FOLDER"], log_folder)
-                ):
-                    os.makedirs(
-                        os.path.abspath(
-                            os.path.join(self.config["DATA_FOLDER"], log_folder)
-                        )
-                    )
-                dest = os.path.join(
-                    self.config["DATA_FOLDER"], log_folder, "ansible.log"
-                )
+                log_folder = 'logs/' + folder_name
+                if not os.path.isdir(os.path.join(self.config['DATA_FOLDER'], log_folder)):
+                    os.makedirs(os.path.abspath(os.path.join(self.config['DATA_FOLDER'], log_folder)))
+                dest = os.path.join(self.config['DATA_FOLDER'], log_folder, "ansible.log")
             else:
-                dest = os.path.join(self.config["DATA_FOLDER"], "logs", "ansible.log")
+                dest = os.path.join(self.config['DATA_FOLDER'], 'logs', "ansible.log")
             # if user wishes to keep the ansible log copy the log file
             if os.path.isfile(dest) and not self.config["ANSIBLE_LOG_REMOVE"]:
                 copyfile(ans_logfile, dest)
@@ -748,7 +632,7 @@ class AnsibleService(object):
 
         if isinstance(playbook, dict):
             # This is when orchestrator/executor send the playbook dict
-            playbook_name = playbook.get("name")
+            playbook_name = playbook.get('name')
             # update extra vars
             self.ans_extra_vars.update(self.build_extra_vars())
             extra_vars = copy.deepcopy(self.ans_extra_vars)
@@ -757,11 +641,9 @@ class AnsibleService(object):
         elif isinstance(playbook, str):
             playbook_name = playbook
         else:
-            raise AnsibleServiceError(
-                "Playbook parameter can be a string or dictionary"
-            )
+            raise AnsibleServiceError('Playbook parameter can be a string or dictionary')
 
-        self.logger.info("Executing playbook : %s" % playbook_name)
+        self.logger.info('Executing playbook : %s' % playbook_name)
 
         # Calling ansible controller run playbook method
         results = self.ans_controller.run_playbook(
@@ -770,7 +652,7 @@ class AnsibleService(object):
             extra_vars=extra_vars,
             run_options=run_options,
             ans_verbosity=self.ans_verbosity,
-            env_var=self.env_var,
+            env_var=self.env_var
         )
         return results
 
@@ -780,28 +662,22 @@ class AnsibleService(object):
         # update and set extra vars
         self.ans_extra_vars.update(self.build_extra_vars())
         extra_vars = copy.deepcopy(self.ans_extra_vars)
-        extra_vars["dest"] = destination
-        extra_vars["artifacts"] = artifacts
+        extra_vars['dest'] = destination
+        extra_vars['artifacts'] = artifacts
 
         # dynamic playbook
-        playbook = self.playbook_name.safe_substitute(type="synchronize_", uid=self.uid)
+        playbook = self.playbook_name.safe_substitute(type='synchronize_', uid=self.uid)
 
         # build run options
         run_options = self.build_run_options()
         run_options_str = self.convert_run_options(run_options)
-        run_block_options_str = self.convert_run_options(
-            run_options, block_options=True
-        )
+        run_block_options_str = self.convert_run_options(run_options, block_options=True)
 
         # update dynamic playbook synchronize task with options
-        playbook_str = self.update_playbook_str(
-            SYNCHRONIZE_PLAYBOOK, "{{ options }}", run_options_str
-        )
+        playbook_str = self.update_playbook_str(SYNCHRONIZE_PLAYBOOK, "{{ options }}", run_options_str)
 
         # update dynamic playbook synchronize task with options in the block
-        playbook_str = self.update_playbook_str(
-            playbook_str, "{{ block_options }}", run_block_options_str
-        )
+        playbook_str = self.update_playbook_str(playbook_str, "{{ block_options }}", run_block_options_str)
 
         # create dynamic playbook
         self.create_playbook(playbook, playbook_str)
@@ -818,11 +694,11 @@ class AnsibleService(object):
         """Execute the shell command supplied."""
 
         # dynamic playbook
-        playbook = self.playbook_name.safe_substitute(type="shell_", uid=self.uid)
+        playbook = self.playbook_name.safe_substitute(type='shell_', uid=self.uid)
 
-        shell["command"] = self.evaluate_string(shell["command"])
+        shell['command'] = self.evaluate_string(shell['command'])
 
-        self.logger.info("Executing shell command %s" % (shell["command"]))
+        self.logger.info('Executing shell command %s' % (shell['command']))
 
         extra_args = self.build_ans_extra_args(shell)
 
@@ -835,17 +711,13 @@ class AnsibleService(object):
 
         # set playbook variables
         extra_vars = copy.deepcopy(self.ans_extra_vars)
-        extra_vars["xcmd"] = shell["command"]
+        extra_vars['xcmd'] = shell['command']
 
         # update dynamic playbook shell task with extra args
-        playbook_str = self.update_playbook_str(
-            ADHOC_SHELL_PLAYBOOK, "{{ args }}", extra_args
-        )
+        playbook_str = self.update_playbook_str(ADHOC_SHELL_PLAYBOOK, "{{ args }}", extra_args)
 
         # update dynamic playbook shell task with options
-        playbook_str = self.update_playbook_str(
-            playbook_str, "{{ options }}", run_options_str
-        )
+        playbook_str = self.update_playbook_str(playbook_str, "{{ options }}", run_options_str)
 
         # create dynamic playbook
         self.create_playbook(playbook, playbook_str)
@@ -858,24 +730,22 @@ class AnsibleService(object):
         # Get results from the json file and build results in sh_results
         try:
             sh_results = dict()
-            with open("shell-results-" + self.uid + ".json") as f:
+            with open('shell-results-' + self.uid + '.json') as f:
 
                 my_json = json.load(f)
                 for item in my_json:
-                    sh_results["host"] = item["host_name"]
-                    sh_results["rc"] = int(item["rc"])
-                    sh_results["err"] = item["err"]
+                    sh_results['host'] = item['host_name']
+                    sh_results['rc'] = int(item['rc'])
+                    sh_results['err'] = item['err']
         except (IOError, OSError) as ex:
             self.logger.error(ex)
-            raise AnsibleServiceError(
-                "Failed to find the shell-results.json file "
-                "which means there was an uncaught failure running "
-                "the dynamic playbook. Please enable verbose Ansible "
-                "logging in the teflo.cfg file and try again."
-            )
+            raise AnsibleServiceError('Failed to find the shell-results.json file '
+                                      'which means there was an uncaught failure running '
+                                      'the dynamic playbook. Please enable verbose Ansible '
+                                      'logging in the teflo.cfg file and try again.')
 
         # remove Shell Results file
-        os.remove("shell-results-" + self.uid + ".json")
+        os.remove('shell-results-' + self.uid + '.json')
 
         return sh_results
 
@@ -889,22 +759,20 @@ class AnsibleService(object):
         """
 
         # dynamic playbook
-        playbook = self.playbook_name.safe_substitute(type="clone_", uid=self.uid)
+        playbook = self.playbook_name.safe_substitute(type='clone_', uid=self.uid)
 
-        self.logger.info("Cloning git repositories.")
+        self.logger.info('Cloning git repositories.')
 
         # set playbook variables
         extra_vars = copy.deepcopy(self.ans_extra_vars)
-        extra_vars["gits"] = git_dict
+        extra_vars['gits'] = git_dict
 
         # build run options
         run_options = self.build_run_options()
         run_options_str = self.convert_run_options(run_options)
 
         # update dynamic playbook git task with options
-        playbook_str = self.update_playbook_str(
-            GIT_CLONE_PLAYBOOK, "{{ options }}", run_options_str
-        )
+        playbook_str = self.update_playbook_str(GIT_CLONE_PLAYBOOK, "{{ options }}", run_options_str)
 
         # create dynamic playbook
         self.create_playbook(playbook, playbook_str)
@@ -921,9 +789,9 @@ class AnsibleService(object):
         """Execute the script supplied."""
 
         # dynamic playbook
-        playbook = self.playbook_name.safe_substitute(type="script_", uid=self.uid)
+        playbook = self.playbook_name.safe_substitute(type='script_', uid=self.uid)
 
-        self.logger.info("Executing script %s:" % script["name"])
+        self.logger.info('Executing script %s:' % script['name'])
 
         extra_args = self.build_ans_extra_args(script)
 
@@ -936,17 +804,13 @@ class AnsibleService(object):
 
         # set playbook variables
         extra_vars = copy.deepcopy(self.ans_extra_vars)
-        extra_vars["xscript"] = script["name"]
+        extra_vars['xscript'] = script['name']
 
         # update dynamic playbook shell task with args
-        playbook_str = self.update_playbook_str(
-            ADHOC_SCRIPT_PLAYBOOK, "{{ args }}", extra_args
-        )
+        playbook_str = self.update_playbook_str(ADHOC_SCRIPT_PLAYBOOK, "{{ args }}", extra_args)
 
         # update dynamic playbook shell task with options
-        playbook_str = self.update_playbook_str(
-            playbook_str, "{{ options }}", run_options_str
-        )
+        playbook_str = self.update_playbook_str(playbook_str, "{{ options }}", run_options_str)
 
         # create dynamic playbook
         self.create_playbook(playbook, playbook_str)
@@ -960,24 +824,22 @@ class AnsibleService(object):
         # Get results from the json file and build results in script_results
         script_results = dict()
         try:
-            with open("script-results-" + self.uid + ".json") as f:
+            with open('script-results-' + self.uid + '.json') as f:
                 my_json = json.load(f)
 
                 for item in my_json:
-                    script_results["host"] = item["host_name"]
-                    script_results["rc"] = int(item["rc"])
-                    script_results["err"] = item["err"]
+                    script_results['host'] = item['host_name']
+                    script_results['rc'] = int(item['rc'])
+                    script_results['err'] = item['err']
         except (IOError, OSError) as ex:
             self.logger.error(ex)
-            raise AnsibleServiceError(
-                "Failed to find the script-results.json file "
-                "which means there was an uncaught failure running "
-                "the dynamic playbook. Please enable verbose Ansible "
-                "logging in the teflo.cfg file and try again."
-            )
+            raise AnsibleServiceError('Failed to find the script-results.json file '
+                                      'which means there was an uncaught failure running '
+                                      'the dynamic playbook. Please enable verbose Ansible '
+                                      'logging in the teflo.cfg file and try again.')
 
         # remove Script Results file
-        os.remove("script-results-" + self.uid + ".json")
+        os.remove('script-results-' + self.uid + '.json')
         return script_results
 
 
@@ -1004,14 +866,14 @@ class AnsibleCredentialManager(object):
 
     def populate_credetials(self, config, credentials_path, vaultpass):
         if ansible_ver < 4 or is_py2:
-            secret = [("default", VaultSecret(bytes(vaultpass.encode("utf-8"))))]
+            secret = [("default", VaultSecret(bytes(vaultpass.encode('utf-8'))))]
             vault = VaultLib(secret)
             cred = open(credentials_path, "rb").read()
             cred = vault.decrypt(cred)
             ret_str = ""
             for asc in cred:
                 ret_str += asc
-            tmpf = open("tmppass", "w")
+            tmpf = open("tmppass", 'w')
             tmpf.write(ret_str)
             tmpf.close()
             tmpparser = RawConfigParser()
@@ -1024,24 +886,18 @@ class AnsibleCredentialManager(object):
             cred = vault.decrypt(cred)
             ret_str = ""
             for asc in cred:
-                ret_str += chr(int(asc))
+                ret_str += (chr(int(asc)))
             tmpparser = RawConfigParser()
             tmpparser.read_string(ret_str)
         config.__set_credentials__(parser=tmpparser)
 
     def populate_teflo_cfg_credentials(self):
-        if not self.__config.get("CREDENTIALS") and self.__config.get(
-            "CREDENTIAL_PATH"
-        ):
+        if not self.__config.get("CREDENTIALS") and self.__config.get("CREDENTIAL_PATH"):
             if os.getenv("VAULTPASS"):
                 vaultpass = os.getenv("VAULTPASS")
             else:
                 vaultpass = self.__config.get("VAULTPASS", "")
             if vaultpass == "":
-                raise AnsibleVaultError(
-                    "No vaultpass was found, please set the \
-                vaultpass in teflo.cfg or in environment variable."
-                )
-            self.populate_credetials(
-                self.__config, self.__config["CREDENTIAL_PATH"], vaultpass
-            )
+                raise AnsibleVaultError('No vaultpass was found, please set the \
+                vaultpass in teflo.cfg or in environment variable.')
+            self.populate_credetials(self.__config, self.__config["CREDENTIAL_PATH"], vaultpass)

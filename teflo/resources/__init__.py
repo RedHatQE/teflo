@@ -23,9 +23,10 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+
 from .actions import Action
-from .assets import Asset
 from .executes import Execute
-from .notification import Notification
+from .assets import Asset
 from .reports import Report
 from .scenario import Scenario
+from .notification import Notification

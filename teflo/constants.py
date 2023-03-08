@@ -28,28 +28,45 @@ import os
 import re
 import tempfile
 
-TEFLO_ROOT = os.path.join("/".join(os.path.dirname(__file__).split("/")[0:-2]))
+TEFLO_ROOT = os.path.join("/".join(os.path.dirname(__file__).split('/')[0:-2]))
 SCENARIO_SCHEMA = os.path.join(os.path.dirname(__file__), "files", "schema.yml")
-SCHEMA_EXT = os.path.join(os.path.dirname(__file__), "files/extensions.py")
+SCHEMA_EXT = os.path.join(os.path.dirname(__file__), 'files/extensions.py')
 DATA_FOLDER = tempfile.gettempdir()
-DEFAULT_INVENTORY = os.path.join(DATA_FOLDER, ".results/inventory")
-DEFAULT_ARTIFACT = os.path.join(DATA_FOLDER, ".results/artifacts")
+DEFAULT_INVENTORY = os.path.join(DATA_FOLDER, '.results/inventory')
+DEFAULT_ARTIFACT = os.path.join(DATA_FOLDER, '.results/artifacts')
 EXTRA_VARS_FILES = []
 
-TASKLIST = ["validate", "provision", "orchestrate", "execute", "report", "cleanup"]
+TASKLIST = [
+    "validate",
+    "provision",
+    "orchestrate",
+    "execute",
+    "report",
+    "cleanup"
+]
 
-NOTIFYSTATES = ["on_start", "on_complete", "on_demand"]
+NOTIFYSTATES = [
+    'on_start',
+    'on_complete',
+    'on_demand'
+]
 
-TASK_LOGLEVEL_CHOICES = ["debug", "info"]
+TASK_LOGLEVEL_CHOICES = [
+    "debug",
+    "info"
+]
 
-ITERATE_METHOD_CHOICES = ["by_level", "by_depth"]
+ITERATE_METHOD_CHOICES = [
+    "by_level",
+    "by_depth"
+]
 
 PROVISIONERS = {
     "beaker": ["beaker-client", "linchpin-wrapper"],
     "openstack": ["openstack-libcloud", "linchpin-wrapper"],
     "aws": "linchpin-wrapper",
     "libvirt": "linchpin-wrapper",
-    "asset": "asset-provisioner",
+    "asset": "asset-provisioner"
 }
 
 HOST_UPDATE_FIELDS = ["app_name", "routes", "ip_address", "hostname"]
@@ -57,23 +74,21 @@ HOST_UPDATE_FIELDS = ["app_name", "routes", "ip_address", "hostname"]
 RESULTS_FILE = "results.yml"
 
 # Rule for Teflo hosts naming convention
-RULE_HOST_NAMING = re.compile("[\\W]+")
+RULE_HOST_NAMING = re.compile('[\\W]+')
 
 # Default orchestrator
-ORCHESTRATOR = "ansible"
+ORCHESTRATOR = 'ansible'
 
 # Default executor
-EXECUTOR = "runner"
+EXECUTOR = 'runner'
 
 # Default task concurrency settings
-DEFAULT_TASK_CONCURRENCY = dict(
-    VALIDATE="True",
-    PROVISION="True",
-    ORCHESTRATE="False",
-    EXECUTE="False",
-    REPORT="False",
-    CLEANUP="False",
-)
+DEFAULT_TASK_CONCURRENCY = dict(VALIDATE='True',
+                                PROVISION='True',
+                                ORCHESTRATE='False',
+                                EXECUTE='False',
+                                REPORT='False',
+                                CLEANUP='False')
 
 # This is the default timeout for each tasks,
 # set to be 0 when nothing defined in teflo.cfg,
@@ -85,24 +100,24 @@ DEFAULT_TIMEOUT = {
     "REPORT": 0,
     "EXECUTE": 0,
     "VALIDATE": 0,
-    "NOTIFICATION": 0,
+    "NOTIFICATION": 0
 }
 
 # Default config
 DEFAULT_CONFIG = {
-    "ANSIBLE_LOG_REMOVE": True,
-    "DATA_FOLDER": DATA_FOLDER,
-    "LOG_LEVEL": "info",
-    "RESOURCE_CHECK_ENDPOINT": "",
-    "INVENTORY_FOLDER": DEFAULT_INVENTORY,
-    "RESULTS_FOLDER": os.path.join(DATA_FOLDER, ".results"),
-    "ARTIFACT_FOLDER": DEFAULT_ARTIFACT,
-    "TASK_CONCURRENCY": DEFAULT_TASK_CONCURRENCY,
-    "TOGGLES": [],
-    "CREDENTIALS": [],
-    "SETUP_LOGGER": [],
-    "NOTIFICATIONS": [],
-    "ALIAS": [],
+    'ANSIBLE_LOG_REMOVE': True,
+    'DATA_FOLDER': DATA_FOLDER,
+    'LOG_LEVEL': 'info',
+    'RESOURCE_CHECK_ENDPOINT': '',
+    'INVENTORY_FOLDER': DEFAULT_INVENTORY,
+    'RESULTS_FOLDER': os.path.join(DATA_FOLDER, '.results'),
+    'ARTIFACT_FOLDER': DEFAULT_ARTIFACT,
+    'TASK_CONCURRENCY': DEFAULT_TASK_CONCURRENCY,
+    'TOGGLES': [],
+    'CREDENTIALS': [],
+    'SETUP_LOGGER': [],
+    'NOTIFICATIONS': [],
+    'ALIAS': [],
     "TIMEOUT": DEFAULT_TIMEOUT,
     "PROVISIONER_OPTIONS": [],
     "INCLUDED_SDF_ITERATE_METHOD": "by_level",
@@ -112,69 +127,59 @@ DEFAULT_CONFIG = {
 }
 
 # Default config sections
-DEFAULT_CONFIG_SECTIONS = [
-    "defaults",
-    "credentials",
-    "orchestrator",
-    "feature_toggles",
-    "importer",
-    "task_concurrency",
-    "setup_logger",
-    "executor",
-    "timeout",
-    "provisioner",
-]
+DEFAULT_CONFIG_SECTIONS = ['defaults', 'credentials', 'orchestrator', 'feature_toggles', 'importer',
+                           'task_concurrency', 'setup_logger', 'executor', 'timeout', 'provisioner']
 
 # options on how credentials can be set
-SET_CREDENTIALS_OPTIONS = ["config", "scenario"]
+SET_CREDENTIALS_OPTIONS = ['config', 'scenario']
 
 # Default importer
-IMPORTER = "artifact-importer"
+IMPORTER = 'artifact-importer'
 
 # Default feature toggle for provisioner plugins
-DEFAULT_FEATURE_TOGGLE_HOST_PLUGIN = dict(name="host", plugin_implementation="True")
+DEFAULT_FEATURE_TOGGLE_HOST_PLUGIN = dict(name='host', plugin_implementation='True')
 
 # Default logging config for teflo
 # Need this because ansible 2.9 setups a logging basicConfig which 'hijacks' the teflo loggers
 LOGGING_CONFIG = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "default": {"format": ""},
-        "debug": {"format": ""},
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            'format': ''
+        },
+        'debug': {
+            'format': ''
+        },
     },
-    "filters": {
-        "exception": {
-            "()": "teflo.core.LoggerMixin.ExceptionFilter",
+    'filters': {
+        'exception': {
+            '()': 'teflo.core.LoggerMixin.ExceptionFilter',
         }
     },
-    "handlers": {
-        "file": {
-            "class": "logging.FileHandler",
-            "level": "INFO",
-            "formatter": "default",
-            "filename": "",
-            "encoding": "utf-8",
+    'handlers': {
+        'file': {
+            'class': 'logging.FileHandler',
+            'level': 'INFO',
+            'formatter': 'default',
+            'filename': '',
+            'encoding': 'utf-8',
         },
-        "console": {
-            "level": "INFO",
-            "class": "logging.StreamHandler",
-            "formatter": "default",
-            "filters": ["exception"],
-        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+            'filters': ['exception']
+        }
     },
-    "loggers": {
-        "blaster": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "lp_console": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-    },
+    'loggers': {
+        'blaster': {'handlers': ['console', 'file'],
+                    'level': 'INFO',
+                    'propagate': False},
+        'lp_console': {'handlers': ['console', 'file'],
+                       'level': 'INFO',
+                       'propagate': False},
+    }
 }
 
 # Default retries for installing ansible dependencies

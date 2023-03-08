@@ -29,8 +29,7 @@ from ..notifiers import Notifier
 
 class NotificationTask(TefloTask):
     """Notification task."""
-
-    __task_name__ = "notify"
+    __task_name__ = 'notify'
 
     def __init__(self, msg, resource, **kwargs):
         """Constructor.
@@ -56,7 +55,7 @@ class NotificationTask(TefloTask):
             self.logger.info(self.msg)
             self.notifier.notify()
         except Exception:
-            self.logger.error("Notification failed.")
+            self.logger.error('Notification failed.')
             stackmsg = self.get_formatted_traceback()
             self.logger.error(stackmsg)
             raise

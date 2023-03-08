@@ -15,6 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 """
     tests.test_ansible_vault
 
@@ -23,37 +24,27 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-import os
 
 import mock
 import pytest
-
+import os
 from teflo._compat import ConfigParser
 from teflo.utils.config import Config
 
-
-@pytest.fixture(scope="class")
+@pytest.fixture(scope='class')
 def test_vault_config():
-    config_file = "../assets/testvault.cfg"
+    config_file = '../assets/testvault.cfg'
     config = Config()
-    os.environ["TEFLO_SETTINGS"] = config_file
+    os.environ['TEFLO_SETTINGS'] = config_file
     config.load()
     return config
 
-
 @pytest.fixture
 def creds_expected():
-    return [
-        {
-            "hub_url": "null",
-            "keytab": "null",
-            "keytab_principal": "null",
-            "name": "beaker",
-        }
-    ]
-
+    return [{'hub_url': 'null', 'keytab': 'null', 'keytab_principal': 'null', 'name': 'beaker'}]
 
 class TestAnsibleVault(object):
+
     @staticmethod
     def test_ansible_vault_from_cfg(test_vault_config, creds_expected):
         assert test_vault_config.get("CREDENTIALS") == creds_expected
