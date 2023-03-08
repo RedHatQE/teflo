@@ -98,12 +98,12 @@ with empty groups.
 You can associate a number of groups to a host in a couple of different ways.
 First is to define your groups in a comma separated string
 
-.. literalinclude:: ../../../examples/docs-usage/provision.txt
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 1-5
 
 Here we have defined a list of groups.
 
-.. literalinclude:: ../../../examples/docs-usage/provision.txt
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 15-21
 
 .. _beaker_provisioning:
@@ -303,7 +303,7 @@ provisioning resource for Beaker using the **beaker-client** provisioner:
 Example
 +++++++
 
-.. literalinclude:: ../../../examples/docs-usage/provision.txt
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 68-95
 
 .. _openstack_provisioning:
@@ -389,7 +389,7 @@ resource for OpenStack using the **openstack-libcloud** provisioner:
 Example
 +++++++
 
-.. literalinclude:: ../../../examples/docs-usage/provision.txt
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 98-119
 
 Provisioning Openstack Assets using teflo_openstack_client_plugin
@@ -556,7 +556,7 @@ This example will provision 2 resources *openstack-node_0* and *openstack-node_1
 By default count value is 1.
 
 .. code-block:: yaml
-
+   
     provision:
     - name: openstack-node
       groups: node
@@ -638,9 +638,10 @@ The following is an example of a statically defined machine:
 Example
 +++++++
 
-.. literalinclude:: ../../../examples/docs-usage/provision.txt
+.. literalinclude:: ../../../examples/docs-usage/provision.yml
     :lines: 122-132
 
 There may also be a scenario where you want to run cmds or scripts on the
 local system instead of the provisioned resources.  Refer to the
 `localhost <../localhost.html>`_ page for more details.
+

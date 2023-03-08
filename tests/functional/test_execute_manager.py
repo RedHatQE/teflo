@@ -15,6 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 """
     tests.test_execute_manager
 
@@ -23,21 +24,23 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-import mock
-import pytest
 
-from teflo.core import ExecutorPlugin
-from teflo.core import OrchestratorPlugin
-from teflo.exceptions import TefloExecuteError
-from teflo.exceptions import TefloOrchestratorError
-from teflo.executors.execute_manager import ExecuteManager
+import pytest
+import mock
 from teflo.orchestrators.action_orchestrator import ActionOrchestrator
 
+from teflo.executors.execute_manager import ExecuteManager
+from teflo.core import ExecutorPlugin
+from teflo.exceptions import TefloExecuteError
 
-@pytest.fixture(scope="class")
+from teflo.core import OrchestratorPlugin
+from teflo.exceptions import TefloOrchestratorError
+
+
+@pytest.fixture(scope='class')
 def plugin():
-    pg = mock.MagicMock(spec=ExecutorPlugin, __plugin_name__="runner")
-    pg.execute_name = "execute1"
+    pg = mock.MagicMock(spec=ExecutorPlugin, __plugin_name__='runner')
+    pg.execute_name = 'execute1'
     pg.run = mock.MagicMock(return_value=0)
     pg.validate = mock.MagicMock(return_value=[])
     return pg
@@ -50,6 +53,7 @@ def execute_manager(execute_resource):
 
 
 class TestExecuteManager(object):
+
     @staticmethod
     def test_task_executor_constructor(execute_manager):
         assert isinstance(execute_manager, ExecuteManager)
@@ -73,3 +77,7 @@ class TestExecuteManager(object):
         with pytest.raises(TefloExecuteError) as ex:
             execute_manager.run()
         assert "Execute stage failed : Failed to perform execute1" in ex.value.args[0]
+
+
+
+

@@ -25,35 +25,22 @@
     :license: GPLv3, see LICENSE for more details.
 """
 import errno
-import inspect
 import os
-import threading
-from collections import OrderedDict
-from glob import glob
-from logging import config as log_config
-from logging import CRITICAL
-from logging import DEBUG
-from logging import ERROR
-from logging import Filter
-from logging import getLogger
-from logging import INFO
-from logging import WARNING
-from time import sleep
-from time import time
-from traceback import format_exc
-
 import yaml
-
-from ._compat import RawConfigParser
-from ._compat import string_types
+import inspect
+from glob import glob
+from logging import CRITICAL, DEBUG, ERROR, INFO, WARNING
+from logging import getLogger, Filter
+from logging import config as log_config
+from time import time, sleep
+from collections import OrderedDict
+from .exceptions import TefloError, TefloResourceError, LoggerMixinError, TefloImporterError
+from .helpers import get_core_tasks_classes, file_mgmt
+from traceback import format_exc
+from ._compat import RawConfigParser, string_types
 from .constants import LOGGING_CONFIG
-from .exceptions import LoggerMixinError
-from .exceptions import TefloError
-from .exceptions import TefloImporterError
-from .exceptions import TefloResourceError
-from .helpers import file_mgmt
+import threading
 from .helpers import gen_random_str
-from .helpers import get_core_tasks_classes
 
 
 class LoggerMixin(object):
@@ -86,72 +73,52 @@ class LoggerMixin(object):
     a property to return that specific logger for easy access.
     """
 
-    _DEBUG_LOG_FORMAT = (
-        "%(asctime)s %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s"
-    )
-    _INFO_LOG_FORMAT = "%(asctime)s %(levelname)s %(message)s"
+    _DEBUG_LOG_FORMAT = ("%(asctime)s %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s")
+    _INFO_LOG_FORMAT = ("%(asctime)s %(levelname)s %(message)s")
 
     _LOG_LEVELS = {
-        "debug": DEBUG,
-        "info": INFO,
-        "warning": WARNING,
-        "error": ERROR,
-        "critical": CRITICAL,
+        'debug': DEBUG,
+        'info': INFO,
+        'warning': WARNING,
+        'error': ERROR,
+        'critical': CRITICAL
     }
 
     @classmethod
     def setup_logger(cls, name, file_path, config=None):
 
         # Setting up handlers
-        LOGGING_CONFIG["handlers"]["file"].update({"filename": file_path})
+        LOGGING_CONFIG['handlers']['file'].update({'filename': file_path})
 
         # setup logging formatters
-        LOGGING_CONFIG["formatters"]["default"].update({"format": cls._INFO_LOG_FORMAT})
-        LOGGING_CONFIG["formatters"]["debug"].update({"format": cls._DEBUG_LOG_FORMAT})
+        LOGGING_CONFIG['formatters']['default'].update({'format': cls._INFO_LOG_FORMAT})
+        LOGGING_CONFIG['formatters']['debug'].update({'format': cls._DEBUG_LOG_FORMAT})
 
         if config:
             # setup any other loggers that might have been specified in the teflo.cfg
             # For now this might suffice but if the teflo community changes we can look
             # at a better way through the plugins
-            for logger in config["SETUP_LOGGER"]:
-                LOGGING_CONFIG["loggers"].update(
-                    {
-                        logger: {
-                            "handlers": ["console", "file"],
-                            "level": cls._LOG_LEVELS[config["LOG_LEVEL"]],
-                            "propagate": False,
-                        }
-                    }
-                )
-            log_level = config["LOG_LEVEL"]
+            for logger in config['SETUP_LOGGER']:
+                LOGGING_CONFIG['loggers'].update({logger: {'handlers': ['console', 'file'],
+                                                           'level': cls._LOG_LEVELS[config['LOG_LEVEL']],
+                                                           'propagate': False}})
+            log_level = config['LOG_LEVEL']
         else:
-            log_level = (
-                "info" if getLogger("teflo").getEffectiveLevel() == 20 else "debug"
-            )
+            log_level = 'info' if getLogger('teflo').getEffectiveLevel() == 20 else 'debug'
 
-        if log_level == "debug":
+        if log_level == 'debug':
 
-            for handler in LOGGING_CONFIG["handlers"]:
-                LOGGING_CONFIG["handlers"][handler].update({"formatter": "debug"})
-                LOGGING_CONFIG["handlers"][handler].update(
-                    {"level": cls._LOG_LEVELS[log_level]}
-                )
+            for handler in LOGGING_CONFIG['handlers']:
+                LOGGING_CONFIG['handlers'][handler].update({'formatter': 'debug'})
+                LOGGING_CONFIG['handlers'][handler].update({'level': cls._LOG_LEVELS[log_level]})
 
-            for logger in LOGGING_CONFIG["loggers"]:
-                LOGGING_CONFIG["loggers"][logger].update(
-                    {"level": cls._LOG_LEVELS[log_level]}
-                )
+            for logger in LOGGING_CONFIG['loggers']:
+                LOGGING_CONFIG['loggers'][logger].update({'level': cls._LOG_LEVELS[log_level]})
 
         # Configure the individual logger, name is the logger name provided during creation
-        LOGGING_CONFIG["loggers"].update(
-            {
-                name: {
-                    "handlers": ["console", "file"],
-                    "level": cls._LOG_LEVELS[log_level],
-                    "propagate": False,
-                }
-            }
-        )
+        LOGGING_CONFIG['loggers'].update({name: {'handlers': ['console', 'file'],
+                                                 'level': cls._LOG_LEVELS[log_level],
+                                                 'propagate': False}})
 
         # Init the logging config
         log_config.dictConfig(LOGGING_CONFIG)
@@ -173,23 +140,23 @@ class LoggerMixin(object):
 
         # create log directory
         if config:
-            log_dir = os.path.join(config["DATA_FOLDER"], "logs")
+            log_dir = os.path.join(config['DATA_FOLDER'], 'logs')
         else:
-            log_dir = os.path.join(data_folder, "logs")
+            log_dir = os.path.join(data_folder, 'logs')
 
         try:
 
             if not os.path.exists(log_dir):
                 os.makedirs(log_dir)
         except OSError as ex:
-            msg = "Unable to create %s directory" % log_dir
+            msg = 'Unable to create %s directory' % log_dir
             if ex.errno == errno.EACCES:
-                msg += ", permission defined."
+                msg += ', permission defined.'
             else:
-                msg += ", %s." % ex
+                msg += ', %s.' % ex
             raise LoggerMixinError(msg)
 
-        full_path = os.path.join(log_dir, "teflo_scenario.log")
+        full_path = os.path.join(log_dir, 'teflo_scenario.log')
 
         # setup and initialize LOGGING_CONFIG
         cls.setup_logger(name, full_path, config)
@@ -200,8 +167,9 @@ class LoggerMixin(object):
         return getLogger(inspect.getmodule(inspect.stack()[1][0]).__name__)
 
     class ExceptionFilter(Filter):
+
         def filter(self, record):
-            if record.getMessage().find("Traceback") != -1:
+            if record.getMessage().find('Traceback') != -1:
                 return False
             else:
                 return True
@@ -214,7 +182,6 @@ class TimeMixin(object):
     a start and end time. Once times are saved they can calculate the time
     delta between the two points in time.
     """
-
     _start_time = None
     _end_time = None
     _hours = 0
@@ -248,7 +215,7 @@ class TimeMixin(object):
         :param value: Start time.
         :type value: int
         """
-        raise TefloError("You cannot set the start time.")
+        raise TefloError('You cannot set the start time.')
 
     @property
     def end_time(self):
@@ -262,7 +229,7 @@ class TimeMixin(object):
         :param value: End time.
         :type value: int
         """
-        raise TefloError("You cannot set the end time.")
+        raise TefloError('You cannot set the end time.')
 
     @property
     def hours(self):
@@ -315,8 +282,7 @@ class FileLockMixin(object):
     to a file when multipleprocesses need to
     access the same file.
     """
-
-    _lock_file = "/tmp/cbn.lock"
+    _lock_file = '/tmp/cbn.lock'
     _lock_sleep = 5
     _lock_timeout = 120
 
@@ -347,7 +313,7 @@ class FileLockMixin(object):
     def acquire(self):
         self.cleanup_locks()
         if self._check_and_sleep():
-            open(self._lock_file, "w").close()
+            open(self._lock_file, 'w').close()
 
     def release(self):
         try:
@@ -365,12 +331,12 @@ class FileLockMixin(object):
                 sleep(self.lock_sleep)
                 attempts += 1
             else:
-                raise TefloError("Timed out waiting for the lock to release")
+                raise TefloError('Timed out waiting for the lock to release')
         return True
 
     def cleanup_locks(self):
-        if glob(os.path.join(os.path.dirname(self.lock_file), "cbn_*")):
-            for f in glob(os.path.join(os.path.dirname(self.lock_file), "cbn_*")):
+        if glob(os.path.join(os.path.dirname(self.lock_file), 'cbn_*')):
+            for f in glob(os.path.join(os.path.dirname(self.lock_file), 'cbn_*')):
                 if f != self.lock_file:
                     os.remove(f)
 
@@ -384,7 +350,7 @@ class TefloTask(LoggerMixin, TimeMixin):
 
     __task_name__ = None
     __concurrent__ = True
-    __task_id__ = ""
+    __task_id__ = ''
 
     def __init__(self, name=None, **kwargs):
         if name is not None:
@@ -412,9 +378,8 @@ class TefloResource(LoggerMixin, TimeMixin):
     All instances of this class can be found within ~teflo.resources
     package.
     """
-
     _valid_tasks_types = []
-    _req_tasks_methods = ["run"]
+    _req_tasks_methods = ['run']
     _fields = []
 
     def __init__(self, config=None, name=None, **kwargs):
@@ -447,7 +412,7 @@ class TefloResource(LoggerMixin, TimeMixin):
 
     @resource_id.setter
     def resource_id(self, id):
-        raise AttributeError("You cannot set resource_id after class is instantiated.")
+        raise AttributeError('You cannot set resource_id after class is instantiated.')
 
     @property
     def name(self):
@@ -455,7 +420,7 @@ class TefloResource(LoggerMixin, TimeMixin):
 
     @name.setter
     def name(self, value):
-        raise AttributeError("You can set name after class is instantiated.")
+        raise AttributeError('You can set name after class is instantiated.')
 
     @property
     def config(self):
@@ -463,7 +428,7 @@ class TefloResource(LoggerMixin, TimeMixin):
 
     @config.setter
     def config(self, value):
-        raise AttributeError("You can set config after resource is created.")
+        raise AttributeError('You can set config after resource is created.')
 
     @property
     def description(self):
@@ -471,10 +436,8 @@ class TefloResource(LoggerMixin, TimeMixin):
 
     @description.setter
     def description(self, value):
-        raise AttributeError(
-            "You cannot set the resource description after "
-            "its class is instantiated."
-        )
+        raise AttributeError('You cannot set the resource description after '
+                             'its class is instantiated.')
 
     @property
     def workspace(self):
@@ -483,14 +446,13 @@ class TefloResource(LoggerMixin, TimeMixin):
         :return: scenario workspace folder
         :rtype: str
         """
-        return str(self.config["WORKSPACE"])
+        return str(self.config['WORKSPACE'])
 
     @workspace.setter
     def workspace(self, value):
         """Set workspace."""
-        raise AttributeError(
-            "You cannot set the workspace directly. Only " "the teflo object can."
-        )
+        raise AttributeError('You cannot set the workspace directly. Only '
+                             'the teflo object can.')
 
     @property
     def data_folder(self):
@@ -499,14 +461,13 @@ class TefloResource(LoggerMixin, TimeMixin):
         :return: resource data folder
         :rtype: str
         """
-        return str(self.config["DATA_FOLDER"])
+        return str(self.config['DATA_FOLDER'])
 
     @data_folder.setter
     def data_folder(self, value):
         """Set data folder."""
-        raise AttributeError(
-            "You cannot set the data folder directly. Only " "the teflo object can."
-        )
+        raise AttributeError('You cannot set the data folder directly. Only '
+                             'the teflo object can.')
 
     @property
     def labels(self):
@@ -533,16 +494,16 @@ class TefloResource(LoggerMixin, TimeMixin):
         :rtype: list
         """
         if isinstance(labels, string_types):
-            labels = labels.replace(" ", "").split(",")
+            labels = labels.replace(' ', '').split(',')
         return labels
 
     def _add_task(self, t):
         """
         Add a task to the list of tasks for the resource
         """
-        if t["task"] not in set(get_core_tasks_classes()):
+        if t['task'] not in set(get_core_tasks_classes()):
             raise TefloResourceError(
-                'The task class "%s" used is not valid.' % t["task"]
+                'The task class "%s" used is not valid.' % t['task']
             )
         self._tasks.append(t)
 
@@ -572,19 +533,17 @@ class TefloResource(LoggerMixin, TimeMixin):
                 # name has precedence when coming from a YAML file
                 # if name is set through name=, it will be overwritten
                 # by the YAML file properties.
-                if key == "name":
+                if key == 'name':
                     self._name = value
-                elif key == "description":
+                elif key == 'description':
                     self._description = value
                 elif key in self._fields:
                     setattr(self, key, value)
             self.reload_tasks()
 
     def _get_task_constructors(self):
-        return [
-            getattr(self, "_construct_%s_task" % task_type)
-            for task_type in self._valid_tasks_types
-        ]
+        return [getattr(self, "_construct_%s_task" % task_type)
+                for task_type in self._valid_tasks_types]
 
     def reload_tasks(self):
         self._tasks = []
@@ -606,7 +565,6 @@ class TefloResource(LoggerMixin, TimeMixin):
 
 class TefloProvider(LoggerMixin, TimeMixin):
     """Teflo Provider."""
-
     __provider_name__ = None
 
     def __init__(self):
@@ -627,7 +585,7 @@ class TefloProvider(LoggerMixin, TimeMixin):
         """Raises an exception when trying to set the name for the provider
         :param value: name
         """
-        raise AttributeError("You cannot set provider name.")
+        raise AttributeError('You cannot set provider name.')
 
     @property
     def req_params(self):
@@ -681,10 +639,8 @@ class TefloProvider(LoggerMixin, TimeMixin):
         set_credentials method to set credentials.
         :param value: The provider credentials
         """
-        raise ValueError(
-            "You cannot set provider credentials directly. Use "
-            "function ~TefloProvider.set_credentials"
-        )
+        raise ValueError('You cannot set provider credentials directly. Use '
+                         'function ~TefloProvider.set_credentials')
 
     def set_credentials(self, cdata):
         """Set the provider credentials.
@@ -706,24 +662,23 @@ class TefloProvider(LoggerMixin, TimeMixin):
         :type host: object
         """
         for item in self.req_params:
-            name = getattr(resource, "name")
+            name = getattr(resource, 'name')
             param, param_type = item[0], item[1]
             msg = "Resource %s : required param '%s' " % (name, param)
             try:
-                param_value = getattr(resource, "provider_params")[param]
-                self.logger.info(msg + "exists.")
+                param_value = getattr(resource, 'provider_params')[param]
+                self.logger.info(msg + 'exists.')
 
                 if not type(param_value) in param_type:
                     self.logger.error(
-                        "    - Type=%s, Required Type=%s. (ERROR)"
-                        % (type(param_value), param_type)
-                    )
+                        '    - Type=%s, Required Type=%s. (ERROR)' %
+                        (type(param_value), param_type))
                     raise TefloError(
-                        "Error occurred while validating required provider "
-                        "parameters for resource %s" % getattr(resource, "name")
+                        'Error occurred while validating required provider '
+                        'parameters for resource %s' % getattr(resource, 'name')
                     )
             except KeyError:
-                msg = msg + "does not exist."
+                msg = msg + 'does not exist.'
                 self.logger.error(msg)
                 raise TefloError(msg)
 
@@ -734,24 +689,23 @@ class TefloProvider(LoggerMixin, TimeMixin):
         :type resource: object
         """
         for item in self.opt_params:
-            name = getattr(resource, "name")
+            name = getattr(resource, 'name')
             param, param_type = item[0], item[1]
             msg = "Asset %s : optional param '%s' " % (name, param)
             try:
-                param_value = getattr(resource, "provider_params")[param]
-                self.logger.info(msg + "exists.")
+                param_value = getattr(resource, 'provider_params')[param]
+                self.logger.info(msg + 'exists.')
 
                 if not type(param_value) in param_type:
                     self.logger.error(
-                        "    - Type=%s, Optional Type=%s. (ERROR)"
-                        % (type(param_value), param_type)
-                    )
+                        '    - Type=%s, Optional Type=%s. (ERROR)' %
+                        (type(param_value), param_type))
                     raise TefloError(
-                        "Error occurred while validating required provider "
-                        "parameters for resource %s" % getattr(resource, "name")
+                        'Error occurred while validating required provider '
+                        'parameters for resource %s' % getattr(resource, 'name')
                     )
             except KeyError:
-                self.logger.warning(msg + "is undefined for resource.")
+                self.logger.warning(msg + 'is undefined for resource.')
 
     def validate_req_credential_params(self, resource):
         """Validate the required credential parameters exists in the host.
@@ -760,31 +714,31 @@ class TefloProvider(LoggerMixin, TimeMixin):
         :type resource: object
         """
         for item in self.req_credential_params:
-            name = getattr(resource, "name")
+            name = getattr(resource, 'name')
             param, param_type = item[0], item[1]
             msg = "Resource %s : required credential param '%s' " % (name, param)
             try:
-                provider = getattr(resource, "provider")
-                param_value = getattr(provider, "credentials")[param]
+                provider = getattr(resource, 'provider')
+                param_value = getattr(provider, 'credentials')[param]
                 if param_value:
-                    self.logger.info(msg + "exists.")
+                    self.logger.info(msg + 'exists.')
                 else:
                     raise TefloError(
-                        "Error occurred while validating required provider "
-                        "parameters for resource %s" % getattr(resource, "name")
+                        'Error occurred while validating required provider '
+                        'parameters for resource %s' % getattr(resource, 'name')
                     )
 
                 if not type(param_value) in param_type:
                     self.logger.error(
-                        "    - Type=%s, Required Type=%s. (ERROR)"
-                        % (type(param_value), param_type)
+                        '    - Type=%s, Required Type=%s. (ERROR)' %
+                        (type(param_value), param_type)
                     )
                     raise TefloError(
-                        "Error occurred while validating required provider "
-                        "parameters for resource %s" % getattr(resource, "name")
+                        'Error occurred while validating required provider '
+                        'parameters for resource %s' % getattr(resource, 'name')
                     )
             except (AttributeError, KeyError):
-                msg = msg + "does not exist."
+                msg = msg + 'does not exist.'
                 self.logger.error(msg)
                 raise TefloError(msg)
 
@@ -795,30 +749,30 @@ class TefloProvider(LoggerMixin, TimeMixin):
         :type resources: object
         """
         for item in self.opt_credential_params:
-            name = getattr(resources, "name")
+            name = getattr(resources, 'name')
             param, param_type = item[0], item[1]
             msg = "Resource %s : optional credential param '%s' " % (name, param)
             try:
-                provider = getattr(resources, "provider")
-                param_value = getattr(provider, "credentials")[param]
+                provider = getattr(resources, 'provider')
+                param_value = getattr(provider, 'credentials')[param]
                 if param_value:
-                    self.logger.info(msg + "exists.")
+                    self.logger.info(msg + 'exists.')
                 else:
                     raise TefloError(
-                        "Error occurred while validating required provider "
-                        "parameters for resource %s" % getattr(resources, "name")
+                        'Error occurred while validating required provider '
+                        'parameters for resource %s' % getattr(resources, 'name')
                     )
                 if not type(param_value) in param_type:
                     self.logger.error(
-                        "    - Type=%s, Optional Type=%s. (ERROR)"
-                        % (type(param_value), param_type)
+                        '    - Type=%s, Optional Type=%s. (ERROR)' %
+                        (type(param_value), param_type)
                     )
                     raise TefloError(
-                        "Error occurred while validating required provider "
-                        "parameters for resources %s" % getattr(resources, "name")
+                        'Error occurred while validating required provider '
+                        'parameters for resources %s' % getattr(resources, 'name')
                     )
             except (AttributeError, KeyError):
-                self.logger.warning(msg + "does not exist.")
+                self.logger.warning(msg + 'does not exist.')
 
 
 class CloudProvider(TefloProvider):
@@ -828,12 +782,14 @@ class CloudProvider(TefloProvider):
         super(CloudProvider, self).__init__()
         """Constructor."""
         self._req_params = [
-            ("name", [str]),
-            ("image", [str]),
-            ("flavor", [str]),
-            ("networks", [list]),
+            ('name', [str]),
+            ('image', [str]),
+            ('flavor', [str]),
+            ('networks', [list])
         ]
-        self._opt_params = [("hostname", [str])]
+        self._opt_params = [
+            ('hostname', [str])
+        ]
 
 
 class PhysicalProvider(TefloProvider):
@@ -884,7 +840,7 @@ class TefloOrchestrator(LoggerMixin, TimeMixin):
 
     @name.setter
     def name(self, value):
-        raise AttributeError("You cannot set name for the orchestrator.")
+        raise AttributeError('You cannot set name for the orchestrator.')
 
     @property
     def action(self):
@@ -892,9 +848,8 @@ class TefloOrchestrator(LoggerMixin, TimeMixin):
 
     @action.setter
     def action(self, value):
-        raise AttributeError(
-            "You cannot set the action the orchestrator will" " perform."
-        )
+        raise AttributeError('You cannot set the action the orchestrator will'
+                             ' perform.')
 
     @property
     def hosts(self):
@@ -902,7 +857,7 @@ class TefloOrchestrator(LoggerMixin, TimeMixin):
 
     @hosts.setter
     def hosts(self, value):
-        raise AttributeError("Hosts cannot be set once the object is created.")
+        raise AttributeError('Hosts cannot be set once the object is created.')
 
     @property
     def status(self):
@@ -918,10 +873,7 @@ class TefloOrchestrator(LoggerMixin, TimeMixin):
         Build a set of mandatory parameters
         :return: a set
         """
-        return {
-            "{}_{}".format(cls.__orchestrator_name__, k)
-            for k in cls._mandatory_parameters
-        }
+        return {'{}_{}'.format(cls.__orchestrator_name__, k) for k in cls._mandatory_parameters}
 
     @classmethod
     def get_mandatory_parameters(cls):
@@ -937,10 +889,7 @@ class TefloOrchestrator(LoggerMixin, TimeMixin):
         Build a set of optional parameters
         :return: a set
         """
-        return {
-            "{}_{}".format(cls.__orchestrator_name__, k)
-            for k in cls._optional_parameters
-        }
+        return {'{}_{}'.format(cls.__orchestrator_name__, k) for k in cls._optional_parameters}
 
     @classmethod
     def get_optional_parameters(cls):
@@ -956,7 +905,8 @@ class TefloOrchestrator(LoggerMixin, TimeMixin):
         Build a set of all parameters
         :return: a set
         """
-        return cls._mandatory_parameters_set().union(cls._optional_parameters_set())
+        return cls._mandatory_parameters_set()\
+            .union(cls._optional_parameters_set())
 
     @classmethod
     def get_all_parameters(cls):
@@ -1012,7 +962,7 @@ class TefloExecutor(LoggerMixin, TimeMixin):
 
     @name.setter
     def name(self, value):
-        raise AttributeError("You cannot set name for the executor.")
+        raise AttributeError('You cannot set name for the executor.')
 
     @property
     def execute(self):
@@ -1020,7 +970,7 @@ class TefloExecutor(LoggerMixin, TimeMixin):
 
     @execute.setter
     def execute(self, value):
-        raise AttributeError("You cannot set the execute to run.")
+        raise AttributeError('You cannot set the execute to run.')
 
     @property
     def hosts(self):
@@ -1028,7 +978,7 @@ class TefloExecutor(LoggerMixin, TimeMixin):
 
     @hosts.setter
     def hosts(self, value):
-        raise AttributeError("Hosts cannot be set once the object is created.")
+        raise AttributeError('Hosts cannot be set once the object is created.')
 
     @classmethod
     def _mandatory_parameters_set(cls):
@@ -1036,9 +986,7 @@ class TefloExecutor(LoggerMixin, TimeMixin):
         Build a set of mandatory parameters
         :return: a set
         """
-        return {
-            "{}_{}".format(cls.__executor_name__, k) for k in cls._mandatory_parameters
-        }
+        return {'{}_{}'.format(cls.__executor_name__, k) for k in cls._mandatory_parameters}
 
     @classmethod
     def get_mandatory_parameters(cls):
@@ -1054,9 +1002,7 @@ class TefloExecutor(LoggerMixin, TimeMixin):
         Build a set of optional parameters
         :return: a set
         """
-        return {
-            "{}_{}".format(cls.__executor_name__, k) for k in cls._optional_parameters
-        }
+        return {'{}_{}'.format(cls.__executor_name__, k) for k in cls._optional_parameters}
 
     @classmethod
     def get_optional_parameters(cls):
@@ -1072,7 +1018,8 @@ class TefloExecutor(LoggerMixin, TimeMixin):
         Build a set of all parameters
         :return: a set
         """
-        return cls._mandatory_parameters_set().union(cls._optional_parameters_set())
+        return cls._mandatory_parameters_set()\
+            .union(cls._optional_parameters_set())
 
     @classmethod
     def get_all_parameters(cls):
@@ -1128,20 +1075,19 @@ class TefloImporter(LoggerMixin, TimeMixin):
         self._report = report
 
         # set commonly accessed data used by importers
-        self.report_name = getattr(report, "name")
-        self.data_folder = getattr(report, "data_folder")
-        self.provider = getattr(getattr(report, "provider"), "name", "dummy")
-        self.provider_params = getattr(report, "provider_params", {})
-        self.provider_credentials = getattr(
-            getattr(report, "provider"), "credentials", {}
-        )
-        self.workspace = getattr(report, "workspace")
-        self.config = getattr(report, "config")
+        self.report_name = getattr(report, 'name')
+        self.data_folder = getattr(report, 'data_folder')
+        self.provider = getattr(getattr(report, 'provider'), 'name', 'dummy')
+        self.provider_params = getattr(report, 'provider_params', {})
+        self.provider_credentials = getattr(getattr(
+            report, 'provider'), 'credentials', {})
+        self.workspace = getattr(report, 'workspace')
+        self.config = getattr(report, 'config')
 
-        if not self.name and self.__class__.__name__ != "TefloImporter":
+        if not self.name and self.__class__.__name__ != 'TefloImporter':
             raise TefloImporterError(
-                "Attribute __importer_name__ is None. Please set the "
-                "attribute and retry creating an object from the class."
+                'Attribute __importer_name__ is None. Please set the '
+                'attribute and retry creating an object from the class.'
             )
 
     @property
@@ -1151,7 +1097,7 @@ class TefloImporter(LoggerMixin, TimeMixin):
 
     @name.setter
     def name(self, value):
-        raise AttributeError("You cannot set name for the importer.")
+        raise AttributeError('You cannot set name for the importer.')
 
     @property
     def report(self):
@@ -1159,7 +1105,7 @@ class TefloImporter(LoggerMixin, TimeMixin):
 
     @report.setter
     def report(self, value):
-        raise AttributeError("You cannot set the report to run.")
+        raise AttributeError('You cannot set the report to run.')
 
     def import_artifacts(self):
         raise NotImplementedError
@@ -1177,21 +1123,20 @@ class TefloImporter(LoggerMixin, TimeMixin):
 class TefloPlugin(LoggerMixin, TimeMixin):
     """Teflo gateway class.
 
-    Base class that all teflo resource implmentations will use. This
-    is to facilitate decoupling the interface from the implementation.
-    """
-
+        Base class that all teflo resource implmentations will use. This
+        is to facilitate decoupling the interface from the implementation.
+        """
     # set the plugin name
     __plugin_name__ = None
 
-    __schema_file_path__ = ""
+    __schema_file_path__ = ''
 
     @classmethod
     def get_schema_keys(cls):
 
         with open(cls.__schema_file_path__) as f:
             schema_data = f.read()
-        return yaml.safe_load(schema_data).get("mapping").keys()
+        return yaml.safe_load(schema_data).get('mapping').keys()
 
     @classmethod
     def build_profile(cls, resource):
@@ -1257,22 +1202,16 @@ class ProvisionerPlugin(TefloPlugin):
         self.asset = asset
 
         # set commonly accessed data used by provisioners
-        self.data_folder = getattr(self.asset, "data_folder")
-        if hasattr(self.asset, "provider"):
-            self.provider_params = {
-                k: v
-                for k, v in self.asset.profile().items()
-                if k not in getattr(self.asset, "_fields")
-            }.get("provider")
+        self.data_folder = getattr(self.asset, 'data_folder')
+        if hasattr(self.asset, 'provider'):
+            self.provider_params = {k: v for k, v in self.asset.profile().items()
+                                    if k not in getattr(self.asset, '_fields')}.get('provider')
         else:
-            self.provider_params = {
-                k: v
-                for k, v in self.asset.profile().items()
-                if k not in getattr(self.asset, "_fields")
-            }
-        self.provider_credentials = getattr(self.asset, "credential", {})
-        self.workspace = getattr(self.asset, "workspace")
-        self.config = getattr(self.asset, "config")
+            self.provider_params = {k: v for k, v in self.asset.profile().items()
+                                    if k not in getattr(self.asset, '_fields')}
+        self.provider_credentials = getattr(self.asset, 'credential', {})
+        self.workspace = getattr(self.asset, 'workspace')
+        self.config = getattr(self.asset, 'config')
 
     def create(self):
         raise NotImplementedError
@@ -1300,29 +1239,26 @@ class ImporterPlugin(TefloPlugin):
 
         # set commonly accessed data used by importer_plugin
         self.report = report
-        self.report_name = getattr(report, "name")
-        self.data_folder = getattr(report, "data_folder")
+        self.report_name = getattr(report, 'name')
+        self.data_folder = getattr(report, 'data_folder')
         self.import_results = []
 
         # provider_params are plugin specific parameters
         # for backward compatibility, if provider key was used in the SDF get the provider attribute from report profile
         # if no provider key was used create teh provider_params  using the _fields attribute from report profile
-        if hasattr(report, "provider"):
-            self.provider_params = self.report.profile().get("provider")
+        if hasattr(report, 'provider'):
+            self.provider_params = self.report.profile().get('provider')
         else:
-            self.provider_params = {
-                k: v
-                for k, v in self.report.profile().items()
-                if k not in getattr(self.report, "_fields")
-            }
+            self.provider_params = {k: v for k, v in self.report.profile().items()
+                                    if k not in getattr(self.report, '_fields')}
         # credentials specific to plugin
-        self.provider_credentials = getattr(self.report, "credential", {})
-        self.workspace = getattr(self.report, "workspace")
+        self.provider_credentials = getattr(self.report, 'credential', {})
+        self.workspace = getattr(self.report, 'workspace')
         self.artifacts = []
-        self.config = getattr(self.report, "config")
+        self.config = getattr(self.report, 'config')
         # build the config params that might be useful to plugin and instantiate
         if report.do_import:
-            plugin_name = getattr(self.report, "importer_plugin").__plugin_name__
+            plugin_name = getattr(self.report, 'importer_plugin').__plugin_name__
             config_params = dict()
             for k, v in self.config.items():
                 if plugin_name.upper() in k:
@@ -1372,7 +1308,7 @@ class OrchestratorPlugin(TefloPlugin):
 
     @name.setter
     def name(self, value):
-        raise AttributeError("You cannot set name for the orchestrator.")
+        raise AttributeError('You cannot set name for the orchestrator.')
 
     @property
     def action(self):
@@ -1380,9 +1316,8 @@ class OrchestratorPlugin(TefloPlugin):
 
     @action.setter
     def action(self, value):
-        raise AttributeError(
-            "You cannot set the action the orchestrator will" " perform."
-        )
+        raise AttributeError('You cannot set the action the orchestrator will'
+                             ' perform.')
 
     @property
     def hosts(self):
@@ -1390,7 +1325,7 @@ class OrchestratorPlugin(TefloPlugin):
 
     @hosts.setter
     def hosts(self, value):
-        raise AttributeError("Hosts cannot be set once the object is created.")
+        raise AttributeError('Hosts cannot be set once the object is created.')
 
     @property
     def status(self):
@@ -1432,7 +1367,7 @@ class ExecutorPlugin(TefloPlugin):
 
     @name.setter
     def name(self, value):
-        raise AttributeError("You cannot set name for the executor.")
+        raise AttributeError('You cannot set name for the executor.')
 
     @property
     def execute(self):
@@ -1440,7 +1375,7 @@ class ExecutorPlugin(TefloPlugin):
 
     @execute.setter
     def execute(self, value):
-        raise AttributeError("You cannot set the execute to run.")
+        raise AttributeError('You cannot set the execute to run.')
 
     @property
     def hosts(self):
@@ -1448,7 +1383,7 @@ class ExecutorPlugin(TefloPlugin):
 
     @hosts.setter
     def hosts(self, value):
-        raise AttributeError("Hosts cannot be set once the object is created.")
+        raise AttributeError('Hosts cannot be set once the object is created.')
 
     @property
     def status(self):
@@ -1470,7 +1405,7 @@ class NotificationPlugin(TefloPlugin):
 
     def __init__(self, notification):
         self.notification = notification
-        self.config = getattr(notification, "config")
+        self.config = getattr(notification, 'config')
 
     def notify(self):
         raise NotImplementedError
@@ -1482,9 +1417,9 @@ class NotificationPlugin(TefloPlugin):
 
         crd = dict()
 
-        if getattr(self.notification, "credential"):
-            for item in self.config["CREDENTIALS"]:
-                if item["name"] == getattr(self.notification, "credential"):
+        if getattr(self.notification, 'credential'):
+            for item in self.config['CREDENTIALS']:
+                if item['name'] == getattr(self.notification, 'credential'):
                     crd = item
                     break
 
@@ -1493,15 +1428,15 @@ class NotificationPlugin(TefloPlugin):
     def get_config_params(self):
 
         cfg = dict()
-        for item in self.config["NOTIFICATIONS"]:
-            if item["name"] == getattr(self.notification, "notifier").__plugin_name__:
+        for item in self.config['NOTIFICATIONS']:
+            if item['name'] == getattr(self.notification, 'notifier').__plugin_name__:
                 cfg = item
                 break
         return cfg
 
 
 class SingletonMixin(object):
-    """This class helps in creating a singleton object for a class,
+    """ This class helps in creating a singleton object for a class,
     so that object is created only once"""
 
     __singleton_lock = threading.Lock()
@@ -1535,32 +1470,30 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
         """
 
         self.config = config
-        self.results_folder = self.config["RESULTS_FOLDER"]
+        self.results_folder = self.config['RESULTS_FOLDER']
         self.uid = uid
-        self.lock_file = "/tmp/cbn_%s.lock" % self.uid
-        self.static_inv_dir = self.config["INVENTORY_FOLDER"]
+        self.lock_file = '/tmp/cbn_%s.lock' % self.uid
+        self.static_inv_dir = self.config['INVENTORY_FOLDER']
         self.inv_dump = inv_dump
         self._create_inv_dir()
 
     def _create_inv_dir(self):
         # set & create the inventory directory if not already present
-        if "inventory" in (
-            os.path.basename(self.static_inv_dir),
-            os.path.basename(os.path.dirname(self.static_inv_dir)),
-        ):
-            self.inv_dir = os.path.expandvars(os.path.expanduser(self.static_inv_dir))
-        else:
+        if 'inventory' in (os.path.basename(self.static_inv_dir),
+                           os.path.basename(os.path.dirname(self.static_inv_dir))):
             self.inv_dir = os.path.expandvars(
-                os.path.expanduser(os.path.join(self.static_inv_dir, "inventory"))
+                os.path.expanduser(self.static_inv_dir)
             )
+        else:
+            self.inv_dir = os.path.expandvars(os.path.expanduser(os.path.join(self.static_inv_dir, 'inventory')))
         if not os.path.isdir(os.path.abspath(self.inv_dir)):
             os.makedirs(self.inv_dir)
 
         # Setting config with updated static_inv folder
-        self.config["INVENTORY_FOLDER"] = self.inv_dir
+        self.config['INVENTORY_FOLDER'] = self.inv_dir
 
         # set the master inventory
-        self.master_inv = os.path.join(self.inv_dir, "inventory-%s" % self.uid)
+        self.master_inv = os.path.join(self.inv_dir, 'inventory-%s' % self.uid)
 
     def create_inventory(self, all_hosts):
         """Create the master ansible inventory.
@@ -1574,8 +1507,8 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
             # check for any old master inventories and delete them.
             # Check both the static inv folder as well as the .results/inventory folder for old master inventories
 
-            inv_results_dir = os.path.join(self.results_folder, "inventory/inventory*")
-            stat_inv_dir = os.path.join(self.inv_dir, "inventory*")
+            inv_results_dir = os.path.join(self.results_folder, 'inventory/inventory*')
+            stat_inv_dir = os.path.join(self.inv_dir, 'inventory*')
             for path in [stat_inv_dir, inv_results_dir]:
                 if glob(path):
                     for f in glob(path):
@@ -1601,12 +1534,12 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
             # added to same host group the order is predictable.
             for host in sorted(all_hosts, key=lambda h: h.name):
                 section = host.name
-                section_vars = "%s:vars" % section
+                section_vars = '%s:vars' % section
                 # just adding the assets who have valid ip address to the inventory. This will avoid empty  entries of
                 # assets with no ip_address
-                if hasattr(host, "ip_address") and getattr(host, "ip_address", None):
-                    if hasattr(host, "groups"):
-                        for sect in getattr(host, "groups", []):
+                if hasattr(host, 'ip_address') and getattr(host, 'ip_address', None):
+                    if hasattr(host, 'groups'):
+                        for sect in getattr(host, 'groups', []):
                             host_section = sect + ":children"
                             if host_section in config.sections():
                                 config.set(host_section, host.name)
@@ -1620,7 +1553,7 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
 
                     # add ip address to group
                     if isinstance(host.ip_address, dict):
-                        config.set(section, host.ip_address.get("public"))
+                        config.set(section, host.ip_address.get('public'))
                     elif isinstance(host.ip_address, list):
                         [config.set(section, ip) for ip in host.ip_address]
                     elif isinstance(host.ip_address, string_types):
@@ -1628,29 +1561,26 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
 
                     # add host vars
                     for k, v in host.ansible_params.items():
-                        if k in ["ansible_ssh_private_key_file"]:
-                            v = os.path.join(getattr(host, "workspace"), v)
-                        if k == "ansible_port":
+                        if k in ['ansible_ssh_private_key_file']:
+                            v = os.path.join(getattr(host, 'workspace'), v)
+                        if k == 'ansible_port':
                             v = str(v)
                         config.set(section_vars, k, v)
 
                     # get pkey var form ansible.cfg
-                    ans_path = self.config["WORKSPACE"] + "/ansible.cfg"
+                    ans_path = self.config['WORKSPACE'] + '/ansible.cfg'
                     if os.path.exists(ans_path):
                         ans_config = RawConfigParser(allow_no_value=True)
                         with open(ans_path) as conf:
                             ans_config.read_file(conf)
 
-                        for k, v in ans_config["defaults"].items():
+                        for k, v in ans_config['defaults'].items():
                             config.set(section_vars, k, v)
 
                     # get ansible group_vars file
-                    group_vars_path = (
-                        self.config["WORKSPACE"]
-                        + "/ansible/group_vars/%s.yml" % section
-                    )
+                    group_vars_path = self.config['WORKSPACE'] + '/ansible/group_vars/%s.yml' % section
                     if os.path.exists(group_vars_path):
-                        group_vars = file_mgmt("r", group_vars_path)
+                        group_vars = file_mgmt('r', group_vars_path)
                         for k, v in group_vars.items():
                             config.set(section_vars, k, v)
 
@@ -1667,27 +1597,27 @@ class Inventory(LoggerMixin, FileLockMixin, SingletonMixin):
 
     def log_inventory_content(self, parser):
         # log the inventory file content
-        cfg_str = ""
+        cfg_str = ''
         new_section = False
         for section in parser.sections():
             if new_section:
-                cfg_str += "\n"
-            cfg_str += "[" + section.strip() + "]" + "\n"
+                cfg_str += '\n'
+            cfg_str += '[' + section.strip() + ']' + '\n'
             new_section = False
             for k, v in parser.items(section):
                 if v:
-                    cfg_str += k + "=" + v
+                    cfg_str += k + '=' + v
                 else:
                     cfg_str += k
-                cfg_str += "\n"
+                cfg_str += '\n'
             new_section = True
-        self.logger.debug("\n" + cfg_str)
+        self.logger.debug('\n' + cfg_str)
 
     def write_inventory(self, config=None):
         # generic method to write out the inventory file
         if config:
-            with open(self.master_inv, "w") as f:
+            with open(self.master_inv, 'w') as f:
                 config.write(f)
         else:
-            with open(self.master_inv, "w+") as inv_file:
+            with open(self.master_inv, 'w+') as inv_file:
                 inv_file.write(self.inv_dump)

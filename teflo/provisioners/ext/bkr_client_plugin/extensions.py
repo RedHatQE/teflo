@@ -23,16 +23,16 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+
 import os
 
 
 def valid_file_exist(value, rule_obj, path):
-    """Verify if the given file exist."""
+    """ Verify if the given file exist."""
 
     if os.path.exists(value):
         return True
     else:
         raise AssertionError(
-            "%s must be an existing file! Cannot find file: %s."
-            % (path.split("/")[-1], value)
+            '%s must be an existing file! Cannot find file: %s.' % (path.split('/')[-1], value)
         )

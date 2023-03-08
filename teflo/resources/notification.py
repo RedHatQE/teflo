@@ -25,46 +25,41 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-from collections import OrderedDict
 
-from .._compat import string_types
-from ..constants import TASKLIST
-from ..core import TefloResource
-from ..core import TefloResourceError
-from ..helpers import get_notification_plugin_list
-from ..helpers import get_notifier_plugin_class
+from collections import OrderedDict
+from ..core import TefloResource, TefloResourceError
+from ..tasks import NotificationTask, ValidateTask
+from ..helpers import get_notification_plugin_list, get_notifier_plugin_class
 from ..notifiers import Notifier
-from ..tasks import NotificationTask
-from ..tasks import ValidateTask
+from ..constants import TASKLIST
+from .._compat import string_types
 
 
 class Notification(TefloResource):
 
-    _valid_tasks_types = ["validate", "notification"]
+    _valid_tasks_types = ['validate', 'notification']
 
     _fields = [
-        "name",
-        "description",
-        "notifier",
-        "credential",
-        "on_success",
-        "on_failure",
-        "on_tasks",
-        "on_start",
-        "on_demand",
+        'name',
+        'description',
+        'notifier',
+        'credential',
+        'on_success',
+        'on_failure',
+        'on_tasks',
+        'on_start',
+        'on_demand',
         "validate_timeout",
-        "notification_timeout",
+        "notification_timeout"
     ]
 
-    def __init__(
-        self,
-        config=None,
-        name=None,
-        parameters={},
-        validate_task_cls=ValidateTask,
-        notification_task_cls=NotificationTask,
-        **kwargs
-    ):
+    def __init__(self,
+                 config=None,
+                 name=None,
+                 parameters={},
+                 validate_task_cls=ValidateTask,
+                 notification_task_cls=NotificationTask,
+                 **kwargs):
         """Constructor.
 
         :param config: teflo configuration
@@ -81,7 +76,7 @@ class Notification(TefloResource):
         super(Notification, self).__init__(config=config, name=name, **kwargs)
         # set the timeout for VALIDATE
         try:
-            if parameters.get("validate_timeout") is not None:
+            if parameters.get('validate_timeout') is not None:
                 self._validate_timeout = parameters.pop("validate_timeout")
             else:
                 self._validate_timeout = config["TIMEOUT"]["VALIDATE"]
@@ -91,7 +86,7 @@ class Notification(TefloResource):
 
         # set the timeout for NOTIFICATION
         try:
-            if parameters.get("notification_timeout") is not None:
+            if parameters.get('notification_timeout') is not None:
                 self._notification_timeout = parameters.pop("notification_timeout")
             else:
                 self._notification_timeout = config["TIMEOUT"]["NOTIFICATION"]
@@ -101,44 +96,41 @@ class Notification(TefloResource):
 
         # set the resource name
         if name is None:
-            self._name = parameters.pop("name", None)
+            self._name = parameters.pop('name', None)
             if self._name is None:
-                raise TefloResourceError(
-                    "Unable to build notification object. Name" " field missing!"
-                )
+                raise TefloResourceError('Unable to build notification object. Name'
+                                          ' field missing!')
         else:
             self._name = name
 
-        self._description = parameters.pop("description", None)
+        self._description = parameters.pop('description', None)
 
-        notifier = parameters.pop("notifier", "email-notifier")
+        notifier = parameters.pop('notifier', 'email-notifier')
         if notifier in get_notification_plugin_list():
             self._notifier = get_notifier_plugin_class(notifier)
         else:
-            raise TefloResourceError(
-                "The specified notification, %s, does not exist." % notifier
-            )
+            raise TefloResourceError('The specified notification, %s, does not exist.' % notifier)
 
         self._scenario = None
 
-        if "on_success" not in parameters and "on_failure" not in parameters:
+        if 'on_success' not in parameters and 'on_failure' not in parameters:
             self._on_success = True
             self._on_failure = True
-        elif "on_success" not in parameters or "on_failure" not in parameters:
-            self._on_success = parameters.pop("on_success", False)
-            self._on_failure = parameters.pop("on_failure", False)
+        elif 'on_success' not in parameters or 'on_failure' not in parameters:
+            self._on_success = parameters.pop('on_success', False)
+            self._on_failure = parameters.pop('on_failure', False)
         else:
-            self._on_success = parameters.pop("on_success")
-            self._on_failure = parameters.pop("on_failure")
+            self._on_success = parameters.pop('on_success')
+            self._on_failure = parameters.pop('on_failure')
 
-        self._on_tasks = parameters.pop("on_tasks", TASKLIST)
+        self._on_tasks = parameters.pop('on_tasks', TASKLIST)
 
         if isinstance(self._on_tasks, string_types):
-            self._on_tasks = self._on_tasks.replace(" ", "").split(",")
+            self._on_tasks = self._on_tasks.replace(' ', '').split(',')
 
-        self._on_start = parameters.pop("on_start", False)
+        self._on_start = parameters.pop('on_start', False)
 
-        self._on_demand = parameters.pop("on_demand", False)
+        self._on_demand = parameters.pop('on_demand', False)
 
         if self.on_start:
             self._on_failure = None
@@ -150,7 +142,7 @@ class Notification(TefloResource):
             self._on_failure = None
             self._on_start = None
 
-        self._credential = parameters.pop("credential", None)
+        self._credential = parameters.pop('credential', None)
 
         # load in rest of parameters
         for p, v in parameters.items():
@@ -170,8 +162,8 @@ class Notification(TefloResource):
     def __set_feature_toggles_(self):
 
         self._feature_toggles = None
-        for item in self.config["TOGGLES"]:
-            if item["name"] == "notification":
+        for item in self.config['TOGGLES']:
+            if item['name'] == 'notification':
                 self._feature_toggles = item
 
     @property
@@ -186,7 +178,7 @@ class Notification(TefloResource):
     @notifier.setter
     def notifier(self, value):
         """Set notifier property."""
-        raise AttributeError("Notifier property cannot be set.")
+        raise AttributeError('Notifier property cannot be set.')
 
     @property
     def on_success(self):
@@ -200,7 +192,7 @@ class Notification(TefloResource):
     @on_success.setter
     def on_success(self, value):
         """Set on_success property."""
-        raise AttributeError("On_success property cannot be set.")
+        raise AttributeError('On_success property cannot be set.')
 
     @on_success.deleter
     def on_success(self):
@@ -219,7 +211,7 @@ class Notification(TefloResource):
     @on_failure.setter
     def on_failure(self, value):
         """Set on_failure property."""
-        raise AttributeError("On_failure property cannot be set.")
+        raise AttributeError('On_failure property cannot be set.')
 
     @on_failure.deleter
     def on_failure(self):
@@ -238,7 +230,7 @@ class Notification(TefloResource):
     @on_tasks.setter
     def on_tasks(self, value):
         """Set on_task property."""
-        raise AttributeError("On_tasks property cannot be set.")
+        raise AttributeError('On_tasks property cannot be set.')
 
     @on_tasks.deleter
     def on_tasks(self):
@@ -257,7 +249,7 @@ class Notification(TefloResource):
     @on_start.setter
     def on_start(self, value):
         """Set on_start property."""
-        raise AttributeError("On_start property cannot be set.")
+        raise AttributeError('On_start property cannot be set.')
 
     @on_start.deleter
     def on_start(self):
@@ -276,7 +268,7 @@ class Notification(TefloResource):
     @on_demand.setter
     def on_demand(self, value):
         """Set on_demand property."""
-        raise AttributeError("On_demand property cannot be set.")
+        raise AttributeError('On_demand property cannot be set.')
 
     @on_demand.deleter
     def on_demand(self):
@@ -295,10 +287,8 @@ class Notification(TefloResource):
     @credential.setter
     def credential(self, value):
         """Set credential property."""
-        raise AttributeError(
-            "You cannot set the asset credential after notification "
-            "class is instantiated."
-        )
+        raise AttributeError('You cannot set the asset credential after notification '
+                             'class is instantiated.')
 
     @credential.deleter
     def credential(self):
@@ -325,21 +315,18 @@ class Notification(TefloResource):
     def profile(self):
         """Builds a profile for the notification resource.
 
-        :return: the notification profile
-        :rtype: OrderedDict
-        """
+            :return: the notification profile
+            :rtype: OrderedDict
+            """
 
         profile = OrderedDict()
-        filtered_attr = {
-            k: v
-            for k, v in vars(self).items()
-            if not k.startswith("_") and not k.startswith("scenario")
-        }
+        filtered_attr = {k: v for k, v in vars(self).items() if not k.startswith('_') and not k.startswith('scenario')}
 
         # update asset fields
         for f in self._fields:
-            if hasattr(self, f) and f == "notifier":
-                profile.update({"notifier": getattr(self.notifier, "__plugin_name__")})
+            if hasattr(self, f) and f == 'notifier':
+                profile.update({'notifier': getattr(
+                    self.notifier, '__plugin_name__')})
                 continue
             if hasattr(self, f) and getattr(self, f) is not None:
                 profile.update({f: getattr(self, f)})
@@ -352,7 +339,7 @@ class Notification(TefloResource):
         """Validate the notification."""
 
         # TODO This will change once we get everything over to use the plugin model
-        getattr(Notifier(self), "validate")()
+        getattr(Notifier(self), 'validate')()
 
     def _construct_validate_task(self):
         """Setup the validate task data structure.
@@ -361,11 +348,11 @@ class Notification(TefloResource):
         :rtype: dict
         """
         task = {
-            "task": self._validate_task_cls,
-            "name": str(self.name),
-            "resource": self,
-            "methods": self._req_tasks_methods,
-            "timeout": self._validate_timeout,
+            'task': self._validate_task_cls,
+            'name': str(self.name),
+            'resource': self,
+            'methods': self._req_tasks_methods,
+            "timeout": self._validate_timeout
         }
         return task
 
@@ -376,11 +363,11 @@ class Notification(TefloResource):
         :rtype: dict
         """
         task = {
-            "task": self._notification_task_cls,
-            "name": str(self.name),
-            "resource": self,
-            "msg": "triggering %s" % self.name,
-            "methods": self._req_tasks_methods,
-            "timeout": self._notification_timeout,
+            'task': self._notification_task_cls,
+            'name': str(self.name),
+            'resource': self,
+            'msg': 'triggering %s' % self.name,
+            'methods': self._req_tasks_methods,
+            "timeout": self._notification_timeout
         }
         return task

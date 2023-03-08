@@ -15,6 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 """
 
     This is a generic interface that processes teflo's execute tasks.
@@ -22,13 +23,13 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-from ..core import LoggerMixin
-from ..core import TimeMixin
+
+from ..core import LoggerMixin, TimeMixin
 from ..exceptions import TefloExecuteError
 
 
 class ExecuteManager(LoggerMixin, TimeMixin):
-    """The main executor for Teflo.
+    """ The main executor for Teflo.
 
     The runner class provides three different types on how you can execute
     tests. Its intention is to be generic enough where you just need to supply
@@ -36,7 +37,7 @@ class ExecuteManager(LoggerMixin, TimeMixin):
     remote hosts will be run through ansible.
     """
 
-    __executor_name__ = "execute_manager"
+    __executor_name__ = 'execute_manager'
 
     def __init__(self, package):
         """Constructor.
@@ -45,7 +46,7 @@ class ExecuteManager(LoggerMixin, TimeMixin):
         :type package: object
         """
         self.execute = package
-        self.plugin = getattr(package, "executor")(package)
+        self.plugin = getattr(package, 'executor')(package)
 
         # # attribute defining overall status of test execution. why is this
         # # needed? when a test fails we handle the exception raised and call
@@ -61,23 +62,18 @@ class ExecuteManager(LoggerMixin, TimeMixin):
         except Exception:
             raise
         else:
-            self.logger.info(
-                "successfully validated scenario Execute resource %s against the schema!"
-                % self.plugin.execute_name
-            )
+            self.logger.info('successfully validated scenario Execute resource %s against the schema!'
+                             % self.plugin.execute_name)
 
     def run(self):
 
-        """Run method for executor."""
+        """Run method for executor.
+        """
         res = self.plugin.run()
         if res == 0:
-            setattr(self.execute, "status", 0)
-            self.logger.info(
-                "Execute stage passed : Successfully completed execute task: %s."
-                % self.plugin.execute_name
-            )
+            setattr(self.execute, 'status', 0)
+            self.logger.info('Execute stage passed : Successfully completed execute task: %s.'
+                             % self.plugin.execute_name)
         else:
-            setattr(self.execute, "status", 1)
-            raise TefloExecuteError(
-                "Execute stage failed : Failed to perform %s" % self.plugin.execute_name
-            )
+            setattr(self.execute, 'status', 1)
+            raise TefloExecuteError("Execute stage failed : Failed to perform %s" % self.plugin.execute_name)

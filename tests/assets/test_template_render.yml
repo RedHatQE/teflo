@@ -20,7 +20,7 @@ provision:
 
 orchestrate:
   - name: "{{ from_cmd_line }}"
-    description: "Test teflo"
+    description: "Test teflo" 
     orchestrator: ansible
     hosts: local_host
     ansible_playbook:
@@ -28,3 +28,5 @@ orchestrate:
     ansible_options:
       extra_vars:
         hello: "{{ hello }}"
+
+

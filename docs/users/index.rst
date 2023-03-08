@@ -25,3 +25,7 @@ Detailed Information
    variable_data
    resource_labels
    faqs
+
+
+
+

@@ -12,7 +12,7 @@ frameworks, etc. This is all defined by the user. When you setup your scenario
 descriptor file (SDF) orchestrate section, you define the actions you wish to
 run. Lets look at an example below:
 
-.. literalinclude:: ../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../examples/docs-usage/orchestrate.yml
     :lines: 297-327
 
 The orchestrate section above has two actions to be run. Both actions are

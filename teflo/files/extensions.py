@@ -23,17 +23,16 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+
 from teflo.constants import PROVISIONERS
-from teflo.helpers import get_executor_plugin_class
-from teflo.helpers import get_executors_plugin_list
-from teflo.helpers import get_orchestrators_plugin_list
+from teflo.helpers import get_executor_plugin_class, get_executors_plugin_list, get_orchestrators_plugin_list
 
 
 def type_str_list(value, rule_obj, path):
     """Verify a key's value is either a string or list."""
     if not isinstance(value, (str, list)):
         raise AssertionError(
-            "%s must be either a string or list." % path.split("/")[-1]
+            '%s must be either a string or list.' % path.split('/')[-1]
         )
     return True
 
@@ -44,8 +43,8 @@ def valid_orchestrator(value, rule_obj, path):
     orchestrators = get_orchestrators_plugin_list()
     if value.lower() not in orchestrators:
         raise AssertionError(
-            "Orchestrator %s is invalid.\n"
-            "Available orchestrators %s" % (value, orchestrators)
+            'Orchestrator %s is invalid.\n'
+            'Available orchestrators %s' % (value, orchestrators)
         )
     return True
 
@@ -55,16 +54,17 @@ def valid_executor(value, rule_obj, path):
     executors = get_executors_plugin_list()
     if value.lower() not in executors:
         raise AssertionError(
-            "Executor %s is invalid.\n" "Available executors %s" % (value, executors)
+            'Executor %s is invalid.\n'
+            'Available executors %s' % (value, executors)
         )
     return True
 
 
 def valid_asset_provider_params(value, rule_obj, path):
-    """Verify that the specified provider has a provisioner mapped to it."""
-    provisioner = value["provisioner"]
-    provider = value["provider"]
-    if provider["name"] in PROVISIONERS:
+    """ Verify that the specified provider has a provisioner mapped to it."""
+    provisioner = value['provisioner']
+    provider = value['provider']
+    if provider['name'] in PROVISIONERS:
         if provisioner:
             for plugins in PROVISIONERS[provider]:
                 if isinstance(plugins, list):
@@ -80,7 +80,7 @@ def valid_asset_provider_params(value, rule_obj, path):
             for plugins in PROVISIONERS[provider]:
                 if isinstance(plugins, list):
                     for plugin in plugins:
-                        if plugin.startswith(provider["name"]):
+                        if plugin.startswith(provider['name']):
                             plugin.validate(provider)
                             break
                 else:

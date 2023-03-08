@@ -25,20 +25,19 @@
     :license: GPLv3, see LICENSE for more details.
 """
 import sys
-
 import ansible
 
 _ver = sys.version_info
 
-ansible_ver = int(ansible.__version__.split(".")[:2][1])
+ansible_ver = int(ansible.__version__.split('.')[:2][1])
 # Python 2.x?
-is_py2 = _ver[0] == 2
+is_py2 = (_ver[0] == 2)
 
 # Python 3.x?
-is_py3 = _ver[0] == 3
+is_py3 = (_ver[0] == 3)
 
 # Windows
-is_win = sys.platform.startswith("win")
+is_win = sys.platform.startswith('win')
 
 try:
     import simplejson as json
@@ -60,7 +59,7 @@ except ImportError:
 try:
     string_types = (str, unicode)
 except NameError:
-    string_types = (str,)
+    string_types = (str, )
 
 try:
     from urlparse import urlparse

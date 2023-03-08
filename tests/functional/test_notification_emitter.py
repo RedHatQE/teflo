@@ -15,6 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 """
     tests.test_asset_provisioner
 
@@ -23,49 +24,50 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
+
 import mock
 import pytest
 
+from teflo.resources import Notification
 from teflo.core import NotificationPlugin
 from teflo.notifiers import Notifier
-from teflo.resources import Notification
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope='class')
 def note_params():
-    params = dict(
-        description="description",
-        notifier="email-notifier",
-        to="jsmith@email.com",
-        subject="test",
-    )
-    params["from"] = "fbar@email.com"
+    params = dict(description='description',
+                  notifier='email-notifier',
+                  to='jsmith@email.com',
+                  subject='test')
+    params['from'] = 'fbar@email.com'
     return params
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope='class')
 def plugin():
-    pg = mock.MagicMock(spec=NotificationPlugin, __plugin_name__="email-notifier")
+    pg = mock.MagicMock(spec=NotificationPlugin,
+                        __plugin_name__='email-notifier')
     pg.notify = mock.MagicMock(return_value=[])
     pg.validate = mock.MagicMock(return_value=[])
     return pg
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope='class')
 def note(plugin, note_params):
-    note = mock.MagicMock(spec=Notification, name="Test-Note")
+    note = mock.MagicMock(spec=Notification, name='Test-Note')
     plugin.notification = note
     note.notifier = plugin
     return note
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope='class')
 def note_emitter(note):
     ne = Notifier(note)
     return ne
 
 
 class TestNotificationEmitter(object):
+
     @staticmethod
     def test_notification_emitter_constructor(note_emitter):
         assert isinstance(note_emitter, Notifier)
@@ -84,14 +86,14 @@ class TestNotificationEmitter(object):
 
     @staticmethod
     def test_notification_emitter_notify_exception(plugin, note_emitter):
-        plugin.notify.side_effect = Exception("Mock Notify Failure")
+        plugin.notify.side_effect = Exception('Mock Notify Failure')
         note_emitter.plugin = plugin
         with pytest.raises(Exception):
             note_emitter.notify()
 
     @staticmethod
     def test_notification_emitter_validate_exception(plugin, note_emitter):
-        plugin.validate.side_effect = Exception("Mock Validate Failure")
+        plugin.validate.side_effect = Exception('Mock Validate Failure')
         note_emitter.plugin = plugin
         with pytest.raises(Exception):
             note_emitter.validate()

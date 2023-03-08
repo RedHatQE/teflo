@@ -15,7 +15,7 @@ done
 if [ $result -ne 30 ]; then
    echo "warning: result is not equal to 30."
    exit 2
-else
+else	
    echo "X+Y=$result"
    exit 0
 fi

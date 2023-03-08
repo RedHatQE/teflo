@@ -28,8 +28,7 @@ from ..core import TefloTask
 
 class ValidateTask(TefloTask):
     """Validate task."""
-
-    __task_name__ = "validate"
+    __task_name__ = 'validate'
 
     def __init__(self, resource, **kwargs):
         """Constructor.
@@ -48,13 +47,13 @@ class ValidateTask(TefloTask):
         This method is the main entry point to the task.
         """
         self.logger.info(
-            "Validating %s (%s)", self.resource.__class__, self.resource.name
+            'Validating %s (%s)', self.resource.__class__, self.resource.name
         )
         try:
             # validate the given resource
             self.resource.validate()
         except Exception:
-            self.logger.error("Failed to validate %s" % self.resource.name)
+            self.logger.error('Failed to validate %s' % self.resource.name)
             stackmsg = self.get_formatted_traceback()
             self.logger.error(stackmsg)
             raise

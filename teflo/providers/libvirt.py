@@ -24,17 +24,16 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-from collections import OrderedDict
 
 from ..core import TefloProvider
 from ..exceptions import TefloProviderError
+from collections import OrderedDict
 
 
 class LibvirtProvider(TefloProvider):
 
     """Libvirt Provider class."""
-
-    __provider_name__ = "libvirt"
+    __provider_name__ = 'libvirt'
 
     def __init__(self):
         """Constructor.
@@ -50,64 +49,81 @@ class LibvirtProvider(TefloProvider):
         """
         super(LibvirtProvider, self).__init__()
 
-        self._supported_roles = ["libvirt_node", "libvirt_network", "libvirt_storage"]
+        self._supported_roles = [
+            'libvirt_node',
+            'libvirt_network',
+            'libvirt_storage'
+        ]
 
-        self.req_params = [("role", [str])]
+        self.req_params = [
+            ('role', [str])
+        ]
 
-        self.req_node_params = [("vcpus", [int]), ("memory", [int])]
+        self.req_node_params = [
+            ('vcpus', [int]),
+            ('memory', [int])
+        ]
 
         self.opt_node_params = [
-            ("hostname", [str]),
-            ("ip_address", [str]),
-            ("node_id", [str]),
-            ("name_separator", [str]),
-            ("cpu_mode", [str]),
-            ("uri", [str]),
-            ("driver", [str]),
-            ("image_src", [str]),
-            ("arch", [str]),
-            ("remote_user", [str]),
-            ("boot_dev", [str]),
-            ("additional_storage", [str]),
-            ("disk_cache", [str]),
-            ("disk_type", [str]),
-            ("network_bridge", [str]),
-            ("ssh_key", [str]),
-            ("xml", [str]),
-            ("cloud_config", [dict]),
-            ("networks", [list]),
-            ("storage", [list]),
-            ("libvirt_image_path", [str]),
-            ("libvirt_user", [str]),
-            ("libvirt_become", [bool]),
-            ("count", [int]),
-            ("domain", [str]),
+            ('hostname', [str]),
+            ('ip_address', [str]),
+            ('node_id', [str]),
+            ('name_separator', [str]),
+            ('cpu_mode', [str]),
+            ('uri', [str]),
+            ('driver', [str]),
+            ('image_src', [str]),
+            ('arch', [str]),
+            ('remote_user', [str]),
+            ('boot_dev', [str]),
+            ('additional_storage', [str]),
+            ('disk_cache', [str]),
+            ('disk_type', [str]),
+            ('network_bridge', [str]),
+            ('ssh_key', [str]),
+            ('xml', [str]),
+            ('cloud_config', [dict]),
+            ('networks', [list]),
+            ('storage', [list]),
+            ('libvirt_image_path', [str]),
+            ('libvirt_user', [str]),
+            ('libvirt_become', [bool]),
+            ('count', [int]),
+            ('domain', [str]),
         ]
 
         self.opt_network_params = [
-            ("uri", [str]),
-            ("ip", [str]),
-            ("prefix", [str]),
-            ("dhcp_start", [str]),
-            ("dhcp_end", [str]),
-            ("bridge", [str]),
-            ("domain", [str]),
-            ("forward_mode", [str]),
-            ("netmask", [str]),
-            ("forward_dev", [str]),
-            ("delete_on_destroy", [bool]),
-            ("dns", [dict]),
+            ('uri', [str]),
+            ('ip', [str]),
+            ('prefix', [str]),
+            ('dhcp_start', [str]),
+            ('dhcp_end', [str]),
+            ('bridge', [str]),
+            ('domain', [str]),
+            ('forward_mode', [str]),
+            ('netmask', [str]),
+            ('forward_dev', [str]),
+            ('delete_on_destroy', [bool]),
+            ('dns', [dict])
         ]
 
-        self.req_storage_params = [("size", [str]), ("path", [str])]
+        self.req_storage_params = [
+            ('size', [str]),
+            ('path', [str])
+        ]
 
         self.opt_storage_params = [
-            ("uri", [str]),
+            ('uri', [str]),
         ]
 
-        self.opt_credential_params = [("username", [str]), ("password", [str])]
+        self.opt_credential_params = [
+            ('username', [str]),
+            ('password', [str])
+        ]
 
-        self.req_credential_params = [("create_creds", [str])]
+        self.req_credential_params = [
+            ('create_creds', [str])
+        ]
 
     def validate_req_params(self, resource):
 
@@ -116,8 +132,8 @@ class LibvirtProvider(TefloProvider):
         :param resource: host resource
         :type resource: object
         """
-        name = getattr(resource, "name")
-        provider_params = getattr(resource, "provider_params")
+        name = getattr(resource, 'name')
+        provider_params = getattr(resource, 'provider_params')
 
         for item in self.req_params:
             param, param_type = item[0], item[1]
@@ -125,40 +141,29 @@ class LibvirtProvider(TefloProvider):
             try:
 
                 param_value = provider_params[param]
-                self.logger.info(msg + "exists.")
+                self.logger.info(msg + 'exists.')
                 found_req_param = True
 
                 if not type(param_value) in param_type:
                     self.logger.error(
-                        "    - Type=%s, Required Type=%s. (ERROR)"
-                        % (type(param_value), param_type)
-                    )
+                        '    - Type=%s, Required Type=%s. (ERROR)' %
+                        (type(param_value), param_type))
                     raise TefloProviderError(
-                        "Error occurred while validating required provider "
-                        "parameters for resource %s" % name
+                        'Error occurred while validating required provider '
+                        'parameters for resource %s' % name
                     )
-                if (
-                    param_value
-                    and param_value in self._supported_roles
-                    and param_value == self._supported_roles[0]
-                ):
+                if param_value and param_value in self._supported_roles and param_value == self._supported_roles[0]:
                     self.validate_req_node_params(provider_params, name)
                     break
 
-                if (
-                    param_value
-                    and param_value in self._supported_roles
-                    and param_value == self._supported_roles[2]
-                ):
+                if param_value and param_value in self._supported_roles and param_value == self._supported_roles[2]:
                     self.validate_req_storage_params(provider_params, name)
                     break
 
             except KeyError:
-                msg += " does not exist."
+                msg += ' does not exist.'
                 self.logger.error(msg)
-                raise TefloProviderError(
-                    "A required provider parameter was not specified."
-                )
+                raise TefloProviderError('A required provider parameter was not specified.')
 
     def validate_opt_params(self, resource):
 
@@ -167,35 +172,23 @@ class LibvirtProvider(TefloProvider):
         :param resource: host resource
         :type resource: object
         """
-        name = getattr(resource, "name")
-        provider_params = getattr(resource, "provider_params")
+        name = getattr(resource, 'name')
+        provider_params = getattr(resource, 'provider_params')
 
         for item in self.req_params:
             param, param_type = item[0], item[1]
             try:
 
                 param_value = provider_params[param]
-                if (
-                    param_value
-                    and param_value in self._supported_roles
-                    and param_value == self._supported_roles[0]
-                ):
+                if param_value and param_value in self._supported_roles and param_value == self._supported_roles[0]:
                     self.validate_opt_node_params(provider_params, name)
                     break
 
-                if (
-                    param_value
-                    and param_value in self._supported_roles
-                    and param_value == self._supported_roles[1]
-                ):
+                if param_value and param_value in self._supported_roles and param_value == self._supported_roles[1]:
                     self.validate_opt_network_params(provider_params, name)
                     break
 
-                if (
-                    param_value
-                    and param_value in self._supported_roles
-                    and param_value == self._supported_roles[2]
-                ):
+                if param_value and param_value in self._supported_roles and param_value == self._supported_roles[2]:
                     self.validate_opt_storage_params(provider_params, name)
                     break
 
@@ -212,15 +205,15 @@ class LibvirtProvider(TefloProvider):
                 val = param_value[rnp]
                 if not type(val) in rnt:
                     self.logger.error(
-                        "    - Type=%s, Required Type=%s. (ERROR)" % (type(val), rnt)
-                    )
+                        '    - Type=%s, Required Type=%s. (ERROR)' %
+                        (type(val), rnt))
                     raise TefloProviderError(
-                        "Error occurred while validating required provider "
-                        "parameters for resource %s" % name
+                        'Error occurred while validating required provider '
+                        'parameters for resource %s' % name
                     )
-                self.logger.info(msg + "exists.")
+                self.logger.info(msg + 'exists.')
             except KeyError:
-                msg = msg + "does not exist."
+                msg = msg + 'does not exist.'
                 self.logger.error(msg)
                 raise TefloProviderError(msg)
 
@@ -234,15 +227,15 @@ class LibvirtProvider(TefloProvider):
                 val = param_value[onp]
                 if not type(val) in ont:
                     self.logger.error(
-                        "    - Type=%s, Optional Type=%s. (ERROR)" % (type(val), ont)
-                    )
+                        '    - Type=%s, Optional Type=%s. (ERROR)' %
+                        (type(val), ont))
                     raise TefloProviderError(
-                        "Error occurred while validating optional provider "
-                        "parameters for resource %s" % name
+                        'Error occurred while validating optional provider '
+                        'parameters for resource %s' % name
                     )
-                self.logger.info(msg + "exists.")
+                self.logger.info(msg + 'exists.')
             except KeyError:
-                self.logger.warning(msg + "is undefined for resource.")
+                self.logger.warning(msg + 'is undefined for resource.')
 
     def validate_opt_network_params(self, param_value, name):
 
@@ -254,15 +247,15 @@ class LibvirtProvider(TefloProvider):
                 val = param_value[onp]
                 if not type(val) in ont:
                     self.logger.error(
-                        "    - Type=%s, Optional Type=%s. (ERROR)" % (type(val), ont)
-                    )
+                        '    - Type=%s, Optional Type=%s. (ERROR)' %
+                        (type(val), ont))
                     raise TefloProviderError(
-                        "Error occurred while validating optional provider "
-                        "parameters for resource %s" % name
+                        'Error occurred while validating optional provider '
+                        'parameters for resource %s' % name
                     )
-                self.logger.info(msg + "exists.")
+                self.logger.info(msg + 'exists.')
             except KeyError:
-                self.logger.warning(msg + "is undefined for resource.")
+                self.logger.warning(msg + 'is undefined for resource.')
 
     def validate_req_storage_params(self, param_value, name):
 
@@ -274,15 +267,15 @@ class LibvirtProvider(TefloProvider):
                 val = param_value[rsp]
                 if not type(val) in rst:
                     self.logger.error(
-                        "    - Type=%s, Required Type=%s. (ERROR)" % (type(val), rst)
-                    )
+                        '    - Type=%s, Required Type=%s. (ERROR)' %
+                        (type(val), rst))
                     raise TefloProviderError(
-                        "Error occurred while validating required provider "
-                        "parameters for resource %s" % name
+                        'Error occurred while validating required provider '
+                        'parameters for resource %s' % name
                     )
-                self.logger.info(msg + "exists.")
+                self.logger.info(msg + 'exists.')
             except KeyError:
-                msg = msg + "does not exist."
+                msg = msg + 'does not exist.'
                 self.logger.error(msg)
                 raise TefloProviderError(msg)
 
@@ -296,12 +289,12 @@ class LibvirtProvider(TefloProvider):
                 val = param_value[osp]
                 if not type(val) in ost:
                     self.logger.error(
-                        "    - Type=%s, Optional Type=%s. (ERROR)" % (type(val), ost)
-                    )
+                        '    - Type=%s, Optional Type=%s. (ERROR)' %
+                        (type(val), ost))
                     raise TefloProviderError(
-                        "Error occurred while validating optional provider "
-                        "parameters for resource %s" % name
+                        'Error occurred while validating optional provider '
+                        'parameters for resource %s' % name
                     )
-                self.logger.info(msg + "exists.")
+                self.logger.info(msg + 'exists.')
             except KeyError:
-                self.logger.warning(msg + "is undefined for resource.")
+                self.logger.warning(msg + 'is undefined for resource.')

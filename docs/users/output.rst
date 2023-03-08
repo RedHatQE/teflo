@@ -31,7 +31,7 @@ input one) just with additional information from the run. For example: the
 provision task finishes and has additional data about the host machines created.
 The results file would include this additional data returned back from the
 provision task. This file is stored in the data folder *.results* directory
-named *{scenario descriptor file name without file extension}_results.yml*.
+named *{scenario descriptor file name without file extension}_results.yml*. 
 This allows users to continue executing teflo tasks if run individually.
 It eliminates the need for restarting the entire scenario
 from the beginning.
@@ -62,7 +62,7 @@ Included Scenario Results File
 ------------------------------
 
 If *include* section is present in the scenario file and it has a valid scenario descriptor
-file, then on a teflo run there will be an additional results file for this included
+file, then on a teflo run there will be an additional results file for this included 
 scenario with its filename(without file extension) in the prefix. e.g. common_results.yml
 will be the name of the results file for included scenario with file name common.yml. This allows
 the users to use this common_results.yml file and include it in other scenarios as needed,

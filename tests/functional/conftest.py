@@ -15,6 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 """
     tests.conftest
 
@@ -23,40 +24,17 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-from fixtures import action1
-from fixtures import action2
-from fixtures import action_resource
-from fixtures import action_resource_cleanup
-from fixtures import asset1
-from fixtures import asset2
-from fixtures import asset3
-from fixtures import basic_scenario_graph_with_provision_only
-from fixtures import config
-from fixtures import default_host_params
-from fixtures import default_note_params
-from fixtures import execute1
-from fixtures import execute2
-from fixtures import execute3
-from fixtures import execute_resource
-from fixtures import host
-from fixtures import master_child_scenario
-from fixtures import notification_default_resource
-from fixtures import notification_on_demand_resource
-from fixtures import notification_on_failure_resource
-from fixtures import notification_on_start_resource
-from fixtures import notification_on_success_resource
-from fixtures import report_resource
-from fixtures import scenario
-from fixtures import scenario1
-from fixtures import scenario_graph
-from fixtures import scenario_graph1
-from fixtures import scenario_labels
-from fixtures import scenario_resource
-from fixtures import scenario_resource1
-from fixtures import timeout_param_execute
-from fixtures import timeout_param_orchestrate
-from fixtures import timeout_param_provision
-from fixtures import timeout_param_report
+
+from fixtures import action_resource, action_resource_cleanup, scenario, \
+    report_resource, execute_resource, host, default_host_params, \
+    scenario_resource, config, master_child_scenario, scenario1, asset1, asset3, action1,\
+    scenario_resource1, execute1, execute2, execute3, asset2, action2, scenario_labels, notification_default_resource, \
+    notification_on_start_resource, notification_on_demand_resource, notification_on_success_resource, \
+    notification_on_failure_resource, default_note_params,\
+    scenario_resource1, execute1, execute2, asset2, action2, scenario_labels,\
+    timeout_param_provision, timeout_param_execute,\
+    timeout_param_report, timeout_param_orchestrate, \
+    basic_scenario_graph_with_provision_only, scenario_graph, scenario_graph1
 
 __all__ = [
     basic_scenario_graph_with_provision_only,
@@ -92,5 +70,5 @@ __all__ = [
     timeout_param_execute,
     timeout_param_report,
     timeout_param_orchestrate,
-    scenario_graph1,
+    scenario_graph1
 ]

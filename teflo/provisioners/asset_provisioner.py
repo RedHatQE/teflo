@@ -15,6 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 """
     teflo.provisioners.host_provisioner
 
@@ -24,13 +25,13 @@
     :copyright: (c) 2022 Red Hat, Inc.
     :license: GPLv3, see LICENSE for more details.
 """
-import copy
-import json
+
 from pprint import pformat
 
-from teflo.core import LoggerMixin
-from teflo.core import TimeMixin
+from teflo.core import LoggerMixin, TimeMixin
 from teflo.helpers import mask_credentials_password
+import copy
+import json
 
 
 class AssetProvisioner(LoggerMixin, TimeMixin):
@@ -40,8 +41,7 @@ class AssetProvisioner(LoggerMixin, TimeMixin):
     cleanup tasks
 
     """
-
-    __provisioner_name__ = "asset-provisioner"
+    __provisioner_name__ = 'asset-provisioner'
 
     def __init__(self, asset):
         """Constructor.
@@ -52,20 +52,14 @@ class AssetProvisioner(LoggerMixin, TimeMixin):
         :type asset: object
         """
 
-        self.plugin = getattr(asset, "provisioner")(asset)
+        self.plugin = getattr(asset, 'provisioner')(asset)
 
     def print_commonly_used_attributes(self):
         """Print commonly used attributes from the class instance."""
-        self.logger.debug(
-            "Available provider parameters:\n %s"
-            % pformat(getattr(self.plugin, "provider_params"))
-        )
-        self.logger.debug(
-            "Available provider credentials:\n %s"
-            % pformat(
-                mask_credentials_password(getattr(self.plugin, "provider_credentials"))
-            )
-        )
+        self.logger.debug('Available provider parameters:\n %s'
+                          % pformat(getattr(self.plugin, 'provider_params')))
+        self.logger.debug('Available provider credentials:\n %s'
+                          % pformat(mask_credentials_password(getattr(self.plugin, 'provider_credentials'))))
 
     def validate(self):
         """
@@ -78,17 +72,15 @@ class AssetProvisioner(LoggerMixin, TimeMixin):
         except Exception:
             raise
         else:
-            self.logger.info(
-                "successfully validated scenario Asset against the schema!"
-            )
+            self.logger.info('successfully validated scenario Asset against the schema!')
 
     def create(self):
         """Create method. (must implement!)
 
         Provision the host supplied.
         """
-        host = getattr(getattr(self.plugin, "asset"), "name")
-        self.logger.info("Provisioning asset %s." % host)
+        host = getattr(getattr(self.plugin, 'asset'), 'name')
+        self.logger.info('Provisioning asset %s.' % host)
         self.print_commonly_used_attributes()
         try:
             res = self.plugin.create()
@@ -107,66 +99,51 @@ class AssetProvisioner(LoggerMixin, TimeMixin):
                     # To apply names to the multiple beaker/aws resources Teflo adds a number next to the given asset
                     # name e.g. asset_name_0 , asset_name_1. The below logic is to find out if beaker/aws resources were
                     # provisioned by linchpin plugin.
-                    host_profile = copy.deepcopy(
-                        getattr(getattr(self.plugin, "asset"), "profile")()
-                    )
-                    provisioner_name = ""
-                    if host_profile.get("provider"):
-                        provisioner_name = host_profile["provider"]["name"]
-                    elif host_profile.get("resource_group_type"):
-                        provisioner_name = host_profile.get("resource_group_type")
-                    elif host_profile.get("cfgs"):
-                        provisioner_name = host_profile.get("cfgs").keys[0]
+                    host_profile = copy.deepcopy(getattr(getattr(self.plugin, 'asset'), 'profile')())
+                    provisioner_name = ''
+                    if host_profile.get('provider'):
+                        provisioner_name = host_profile['provider']['name']
+                    elif host_profile.get('resource_group_type'):
+                        provisioner_name = host_profile.get('resource_group_type')
+                    elif host_profile.get('cfgs'):
+                        provisioner_name = host_profile.get('cfgs').keys[0]
 
                     if any(x in provisioner_name for x in ["beaker", "aws"]):
-                        host_profile["name"] = host_profile["name"] + "_" + str(i)
+                        host_profile['name'] = host_profile['name'] + '_' + str(i)
                     else:
-                        host_profile["name"] = res[i].pop("name")
+                        host_profile['name'] = res[i].pop('name')
 
                     # removing the 'name' key  and its value from the results res if present.
                     # as it can interfere with provider's name key
-                    if res[i].get("name"):
-                        del res[i]["name"]
+                    if res[i].get('name'):
+                        del res[i]['name']
 
-                    if "ip" in res[i]:
-                        host_profile["ip_address"] = res[i].pop("ip")
-                    if host_profile.get("provider", False):
-                        host_profile.get("provider").update(res[i])
+                    if 'ip' in res[i]:
+                        host_profile['ip_address'] = res[i].pop('ip')
+                    if host_profile.get('provider', False):
+                        host_profile.get('provider').update(res[i])
                     else:
                         host_profile.update(res[i])
                     self.logger.debug(json.dumps(host_profile, indent=4))
                     res_profile_list.append(host_profile)
-                self.logger.info(
-                    "Successfully provisioned %s asset(s) %s with asset_id(s) %s:"
-                    % (
-                        len(res_profile_list),
-                        [res_profile_list[i]["name"] for i in range(0, len(res))],
-                        [
-                            res_profile_list[i]["provider"]["asset_id"]
-                            if res_profile_list[i].get("provider")
-                            else res_profile_list[i]["asset_id"]
-                            for i in range(0, len(res))
-                        ],
-                    )
-                )
+                self.logger.info('Successfully provisioned %s asset(s) %s with asset_id(s) %s:'
+                                 % (len(res_profile_list), [res_profile_list[i]['name'] for i in range(0, len(res))],
+                                    [res_profile_list[i]['provider']['asset_id'] if res_profile_list[i].get('provider')
+                                     else res_profile_list[i]['asset_id'] for i in range(0, len(res))]))
                 return res_profile_list
             else:
                 # Single resource has been provisioned
-                host_profile = copy.deepcopy(
-                    getattr(getattr(self.plugin, "asset"), "profile")()
-                )
-                if res[-1].get("name", False):
-                    host_profile["name"] = res[-1].pop("name")
-                if "ip" in res[-1]:
-                    host_profile["ip_address"] = res[-1].pop("ip")
-                if host_profile.get("provider", False):
-                    host_profile.get("provider").update(res[-1])
+                host_profile = copy.deepcopy(getattr(getattr(self.plugin, 'asset'), 'profile')())
+                if res[-1].get('name', False):
+                    host_profile['name'] = res[-1].pop('name')
+                if 'ip' in res[-1]:
+                    host_profile['ip_address'] = res[-1].pop('ip')
+                if host_profile.get('provider', False):
+                    host_profile.get('provider').update(res[-1])
                 else:
                     host_profile.update(res[-1])
-                self.logger.info(
-                    "Successfully provisioned asset %s with asset_id %s."
-                    % (host, res[-1].get("asset_id"))
-                )
+                self.logger.info('Successfully provisioned asset %s with asset_id %s.'
+                                 % (host, res[-1].get('asset_id')))
                 return [host_profile]
 
         except Exception as ex:
@@ -178,15 +155,13 @@ class AssetProvisioner(LoggerMixin, TimeMixin):
 
         Teardown the host supplied.
         """
-        host = getattr(getattr(self.plugin, "asset"), "name")
-        self.logger.info("Delete asset %s." % host)
+        host = getattr(getattr(self.plugin, 'asset'), 'name')
+        self.logger.info('Delete asset %s.' % host)
         self.print_commonly_used_attributes()
         try:
             self.plugin.delete()
-            self.logger.info(
-                "Successfully deleted asset %s with asset_id %s."
-                % (host, getattr(getattr(self.plugin, "asset"), "asset_id"))
-            )
+            self.logger.info('Successfully deleted asset %s with asset_id %s.' %
+                             (host, getattr(getattr(self.plugin, 'asset'), 'asset_id')))
         except Exception as ex:
             self.logger.error(ex)
             raise

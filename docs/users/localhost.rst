@@ -15,7 +15,7 @@ The following is an example of a statically defined local machine:
 Example
 +++++++
 
-.. literalinclude:: ../../examples/docs-usage/orchestrate.txt
+.. literalinclude:: ../../examples/docs-usage/orchestrate.yml
     :lines: 331-363
 
 When explicitly defined, this host entry is written to the master inventory
@@ -65,3 +65,4 @@ respectively, that are not defined in the provision section.
             ignore_rc: True
         artifacts:
           - /home/user/tests/suite_results.xml
+

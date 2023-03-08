@@ -119,3 +119,4 @@ Glossary
         Yellowdog Updater, Modified (YUM) is an open-source command-line
         package-management utility for computers running the GNU/Linux
         operating system using the RPM Package Manager
+
