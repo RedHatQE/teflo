@@ -556,7 +556,7 @@ This example will provision 2 resources *openstack-node_0* and *openstack-node_1
 By default count value is 1.
 
 .. code-block:: yaml
-   
+
     provision:
     - name: openstack-node
       groups: node

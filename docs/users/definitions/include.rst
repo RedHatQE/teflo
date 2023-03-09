@@ -9,9 +9,9 @@ This reduces the redundancy of putting the same set of steps in every scenario f
 scenario file is a single node of the whole __*Scenario Graph*__
 
 When running a scenario that is using the include option, several results files will be generated.
-One for each of the scenarios. the included scenario will use the scenario's name as a prefix. 
-e.g. common_scenario_results.yml where common_scenario is the name of the included scenario file. 
-All these files will be stored in the same location. This allows users to run common.yml(s) once 
+One for each of the scenarios. the included scenario will use the scenario's name as a prefix.
+e.g. common_scenario_results.yml where common_scenario is the name of the included scenario file.
+All these files will be stored in the same location. This allows users to run common.yml(s) once
 and their result(s) can be included in other scenario files saving time on test executions.
 Also see `Teflo Output <../output.html>`_
 
@@ -121,7 +121,7 @@ Example
 
                 /    \
 
-            sdf12 sdf13              
+            sdf12 sdf13
 
 The above is an complex include usage. Consider sdf1-sdf13 are different included scenarios
 and sdf is the main scenario

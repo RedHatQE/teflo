@@ -43,7 +43,7 @@ docs:
 docs-wiki:
 	./shell_tox.sh
 
-bump-major: 
+bump-major:
 	bumpversion major --commit
 
 bump-minor:

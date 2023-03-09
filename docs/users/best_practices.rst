@@ -102,7 +102,7 @@ executing teflo.
         - Yes
 
     *   - common_scenario.yml
-        - This is the scenario file used in the include section of the scenario.yml. 
+        - This is the scenario file used in the include section of the scenario.yml.
         - No
 
     *   - tests
