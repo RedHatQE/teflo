@@ -4,7 +4,7 @@ Report
 Overview
 --------
 
-Teflo's report section declares which test artifacts collected during execution 
+Teflo's report section declares which test artifacts collected during execution
 are to be imported into a Report & Analysis system. The input for artifact import
 will depend on the destination system.
 

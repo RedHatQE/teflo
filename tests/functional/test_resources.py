@@ -521,7 +521,7 @@ class TestReportResource(object):
         with pytest.raises(AttributeError) as ex:
             report.resource_id = "hello"
         assert 'You cannot set resource_id after class is instantiated.' in ex.value.args
-        
+
 
     @staticmethod
     @mock.patch('teflo.resources.reports.get_importers_plugin_list')
