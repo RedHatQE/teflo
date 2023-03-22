@@ -3,12 +3,12 @@
 remote_workspace:
   - workspace_url: https://github.com/dno-github/remote-teflo-lib1.git
     alias_name: remote
-  - workspace_url: https://github.com/dno-github/remote-teflo-lib1.git
+  - workspace_url: git@github.com:dno-github/remote-teflo-lib1.git
     alias_name: remote2
 
 include:
   - "remote/sdf_remote.yml"
-
+  - "remote2/sdf_remote.yml"
 name: sdf using remote include
 description: "Provision step"
 
