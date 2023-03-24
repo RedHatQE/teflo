@@ -71,13 +71,11 @@ def config():
 def default_host_params():
     return dict(
         groups='client',
-        provider=dict(
-            name='openstack',
-            credential='openstack',
-            image='image',
-            flavor='small',
-            networks=['network']
-        )
+        provisioner='openstack',
+        credential='openstack',
+        image='image',
+        flavor='small',
+        networks=['network']
     )
 
 
@@ -85,12 +83,11 @@ def default_host_params():
 def timeout_param_provision():
     return dict(
         groups='client',
-        provider=dict(
-            name='openstack',
-            credential='openstack',
-            image='image',
-            flavor='small',
-            networks=['network']),
+        provisioner='openstack',
+        credential='openstack',
+        image='image',
+        flavor='small',
+        networks=['network'],
         provision_timeout=20
     )
 
