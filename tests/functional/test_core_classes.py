@@ -373,16 +373,6 @@ class TestLoggerMixin(object):
         cfg['DATA_FOLDER'] = '/tmp/%s' % random.randint(0, 1000)
         logger_mixin.create_logger(name=__name__, config=cfg)
 
-    # TODO commented the following test, as it is failing on github action env. Need to investigate this and uncomment
-    # @staticmethod
-    # def test_create_logger_dir_permission_denied(logger_mixin, config):
-    #
-    #     with pytest.raises(LoggerMixinError):
-    #         logger_mixin.logger.handlers = []
-    #         cfg = copy.copy(config)
-    #         cfg['DATA_FOLDER'] = '/root'
-    #         logger_mixin.create_logger(name=__name__, config=cfg)
-
 
 class TestTefloResource(object):
     @staticmethod

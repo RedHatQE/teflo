@@ -657,15 +657,6 @@ class TestScenarioResource(object):
         assert os.path.exists(scenario.data_folder)
         os.removedirs(scenario.data_folder)
 
-    # TODO commented the following test, as it is failing on github action env. Need to investigate this and uncomment
-    # @staticmethod
-    # def test_create_scenario_03():
-    #     config = Config()
-    #     config['DATA_FOLDER'] = '/root/%s' % uuid.uuid4()
-    #     with pytest.raises(ScenarioError):
-    #         Scenario(config=config, parameters={'k': 'v'})
-
-
     @staticmethod
     @mock.patch.object(os, 'makedirs')
     @pytest.mark.filterwarnings('ignore::DeprecationWarning')
