@@ -30,7 +30,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: install required packages
         run: |
-          dnf install -y glibc-langpack-en gcc python3 python3-devel python3-pip krb5-workstation krb5-devel git
+          dnf install -y glibc-langpack-en gcc python3 python3-devel python3-pip krb5-workstation krb5-devel git --nogpgcheck
 
 #      - name: update locale
 #        run: localectl set-locale LANG=en_US.utf8
