@@ -205,27 +205,14 @@ class Asset(TefloResource):
             # lets setup any feature toggles that we defined in the configuration file
             self.__set_feature_toggles_()
 
-            # TODO remove this , it is additional
-            self._provisioner = get_default_provisioner_plugin()
-
-            if provisioner_name is None and self.has_provider:
-                try:
-                    self._provisioner = get_default_provisioner_plugin(self._provider)
-                except KeyError:
-                    raise TefloResourceError('Specified provider is not supported by a provisioner.')
-            elif provisioner_name:
+            if provisioner_name:
                 found_name = False
                 for name in get_provisioners_plugins_list():
                     if name.startswith(provisioner_name):
                         found_name = True
                         break
-
                 if found_name:
-                    if self.has_provider and \
-                            is_provider_mapped_to_provisioner(self._provider, provisioner_name):
-                        self._provisioner = get_provisioner_plugin_class(provisioner_name)
-                    else:
-                        self._provisioner = get_provisioner_plugin_class(provisioner_name)
+                    self._provisioner = get_provisioner_plugin_class(provisioner_name)
                 else:
                     self.logger.error('Provisioner %s for asset %s is invalid.'
                                       % (provisioner_name, self.name))
@@ -264,13 +251,10 @@ class Asset(TefloResource):
         self._provider = {}
 
         if parameters.get('provider', False):
-            creds = parameters.get('provider').pop('credential', None)
-            for p, v in parameters.pop('provider').items():
-                if p == 'name':
-                    self._provider = v
-                    continue
-                setattr(self, p, v)
-            self.has_provider = True
+            raise TefloResourceError('Provider key is deprecated and is no longer supported. '
+                                     'Visit '
+                                     'https://teflo.readthedocs.io/en/latest/users/definitions/provision.html#provision'
+                                     ' to see examples for provisioning assets')
         else:
             # set no provider object
             creds = parameters.pop('credential', None)

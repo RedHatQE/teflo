@@ -74,6 +74,7 @@ mapping:
       - type: map
         allowempty: True
         matching-rule: any
+        func: check_provider_present
         mapping:
           name:
             required: True
@@ -85,10 +86,7 @@ mapping:
             type: any
           provisioner:
             type: str
-          provider:
-            allowempty: True
             required: False
-            type: map
           ansible_params:
             type: map
             allowempty: True

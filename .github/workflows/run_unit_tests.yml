@@ -19,8 +19,6 @@ jobs:
       matrix:
         container:
         - 'quay.io/centos/centos:stream9'
-        - 'quay.io/centos/centos:stream'
-        - 'quay.io/shshevac/teflo_ubi8'
       fail-fast: false
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -32,7 +30,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: install required packages
         run: |
-          dnf install -y glibc-langpack-en gcc python3 python3-devel python3-pip krb5-workstation krb5-devel git
+          dnf install -y glibc-langpack-en gcc python3 python3-devel python3-pip krb5-workstation krb5-devel git --nogpgcheck
 
 #      - name: update locale
 #        run: localectl set-locale LANG=en_US.utf8

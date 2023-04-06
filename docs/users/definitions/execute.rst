@@ -193,7 +193,7 @@ For this case, teflo has two options to handle these situations:
  #.  ignore the return code for the test execution
  #.  give list of valid return codes that will not flag failure
 
-Option 1 to handle non-zero return codes is called **ignore_rc**, this option 
+Option 1 to handle non-zero return codes is called **ignore_rc**, this option
 can be used at the top level key of execute or can also be used for each
 specific call.  The following shows an example, where it is defined in both
 areas.  The top level is set to False, which is the default, then it is used

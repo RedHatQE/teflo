@@ -1,3 +1,7 @@
+.. warning::
+    **This project is in maintenance mode and will not have any new feature development.**
+
+
 Welcome to Teflo!
 ==================
 

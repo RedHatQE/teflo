@@ -60,29 +60,15 @@ def valid_executor(value, rule_obj, path):
     return True
 
 
-def valid_asset_provider_params(value, rule_obj, path):
-    """ Verify that the specified provider has a provisioner mapped to it."""
-    provisioner = value['provisioner']
-    provider = value['provider']
-    if provider['name'] in PROVISIONERS:
-        if provisioner:
-            for plugins in PROVISIONERS[provider]:
-                if isinstance(plugins, list):
-                    for plugin in plugins:
-                        if plugin != provisioner:
-                            continue
-                        else:
-                            plugin.validate(provider)
-                            break
-                else:
-                    plugins.validate(provider)
-        else:
-            for plugins in PROVISIONERS[provider]:
-                if isinstance(plugins, list):
-                    for plugin in plugins:
-                        if plugin.startswith(provider['name']):
-                            plugin.validate(provider)
-                            break
-                else:
-                    plugins.validate(provider)
+def check_provider_present(value, rule_obj, path):
+    if value.get('provider'):
+        raise AssertionError(
+            'Provider key is no longer supported  %s. '
+            'Visit https://teflo.readthedocs.io/en/latest/users/definitions/provision.html#provision to see examples '
+            'for provisioning assets' % value.get('provider')
+        )
+    if not value.get('provisioner') and not value.get("ip_address"):
+        raise AssertionError(
+            'If provisioner is not provided, an ip_address is needed for considering the asset as static'
+        )
     return True

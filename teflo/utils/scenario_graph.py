@@ -173,7 +173,7 @@ class ScenarioGraph():
 
         if self.iterate_method == "by_depth":
 
-            while len(self.stack) is not 0:
+            while len(self.stack) != 0:
                 self.current = self.stack[-1]
                 if self.prev is None or self.current in self.prev.child_scenarios:
 
@@ -185,7 +185,7 @@ class ScenarioGraph():
                         self.visited[self.stack.pop()] = True
                         self.prev = self.current
                         return self.current
-                elif (self.prev in self.current.child_scenarios and self.prev is not self.current.child_scenarios[-1]):
+                elif self.prev in self.current.child_scenarios and self.prev is not self.current.child_scenarios[-1]:
                     if self.next_unvisited_sc(self.current.child_scenarios) is not None:
                         next_sc = self.next_unvisited_sc(self.current.child_scenarios)
                         self.stack.append(next_sc)
@@ -213,7 +213,7 @@ class ScenarioGraph():
                     if len(child) != 0:
                         self.stack.append(child)
 
-            while len(self.stack) is not 0:
+            while len(self.stack) != 0:
                 # current scenario list
                 self.current = self.stack[-1]
 

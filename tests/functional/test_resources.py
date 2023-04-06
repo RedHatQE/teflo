@@ -311,6 +311,7 @@ def task_list_report_2(report1, report2, report3):
     ]
     return task_result_list
 
+
 class TestActionResource(object):
     @staticmethod
     def test_create_action_with_name():
@@ -356,16 +357,6 @@ class TestActionResource(object):
         action = Action(parameters=params)
         assert action.name == 'action'
 
-    @staticmethod
-    def test_create_action_with_name_in_parameters():
-        params = dict(
-            name='action',
-            description='description goes here.',
-            hosts=['host01']
-        )
-
-        action = Action(parameters=params)
-        assert action.name == 'action'
 
     @staticmethod
     def test_resource_id_generation():
@@ -521,7 +512,7 @@ class TestReportResource(object):
         with pytest.raises(AttributeError) as ex:
             report.resource_id = "hello"
         assert 'You cannot set resource_id after class is instantiated.' in ex.value.args
-        
+
 
     @staticmethod
     @mock.patch('teflo.resources.reports.get_importers_plugin_list')
@@ -665,15 +656,6 @@ class TestScenarioResource(object):
         scenario = Scenario(config=config, parameters={'k': 'v'})
         assert os.path.exists(scenario.data_folder)
         os.removedirs(scenario.data_folder)
-
-    # TODO commented the following test, as it is failing on github action env. Need to investigate this and uncomment
-    # @staticmethod
-    # def test_create_scenario_03():
-    #     config = Config()
-    #     config['DATA_FOLDER'] = '/root/%s' % uuid.uuid4()
-    #     with pytest.raises(ScenarioError):
-    #         Scenario(config=config, parameters={'k': 'v'})
-
 
     @staticmethod
     @mock.patch.object(os, 'makedirs')
@@ -943,13 +925,14 @@ class TestAssetResource(object):
 
     def test_create_host_undefined_provider(self, default_host_params, config):
         params = self.__get_params_copy__(default_host_params)
-        params.pop('provider')
+        # params.pop('provider')
+        params.pop('provisioner')
         with pytest.raises(TefloResourceError):
             host = Asset(name='host01', parameters=params, config=config)
 
     def test_create_host_invalid_provider(self, default_host_params, config):
         params = self.__get_params_copy__(default_host_params)
-        params['provider']['name'] = 'null'
+        params['provisioner'] = 'null'
         with pytest.raises(TefloResourceError):
             Asset(name='host01', parameters=params, config=config)
 
@@ -969,13 +952,14 @@ class TestAssetResource(object):
 
     def test_create_host_undefined_credential(self, default_host_params, config):
         params = self.__get_params_copy__(default_host_params)
-        params['provider'].pop('credential')
+        params.pop('credential')
         host = Asset(name='host01', parameters=params, config=config)
         assert not hasattr(host, 'credential')
 
     def test_create_host_provider_static(self, default_host_params):
         params = self.__get_params_copy__(default_host_params)
-        params.pop('provider')
+        params.pop('provisioner')
+        params.pop('credential')
         params['ip_address'] = '127.0.0.1'
         asset = Asset(name='host01', parameters=params)
         assert asset.is_static
@@ -1009,14 +993,6 @@ class TestAssetResource(object):
         assert 'You cannot set the ansible parameters directly. This is set' \
                ' one time within the YAML input.' in ex.value.args
 
-    def test_provider_property(self, host):
-        assert isinstance(host.provider, string_types)
-
-    def test_provider_setter(self, host):
-        with pytest.raises(AttributeError) as ex:
-            host.provider = 'null'
-        assert 'You cannot set the asset provider after asset class is ' \
-               'instantiated.' in ex.value.args[0]
 
     def test_group_property(self, default_host_params, config):
         params = self.__get_params_copy__(default_host_params)

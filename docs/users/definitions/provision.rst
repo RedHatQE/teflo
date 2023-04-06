@@ -25,7 +25,6 @@ required or optional:
         provisioner: <provisioner>
         metadata: <dict_key_values>
         ansible_params: <dict_key_values>
-        provider: <dict_key_values>
 
 .. list-table::
     :widths: auto
@@ -78,8 +77,7 @@ Provider
 
 .. attention::
 
-            The provider key is no longer a requirement for all provisioners. Going forward this
-            key is only supported for the **beaker-client** and **openstack-libcloud** provisioners.
+            The provider key is no longer a requirement for all provisioners.
 
 Groups
 +++++++
@@ -420,7 +418,7 @@ please refer `here <here <https://redhatqe.github.io/teflo_openstack_client_plug
 Provisioning Assets with Linchpin
 ----------------------------------
 
-Usera can provision assets using all Linchpin supported providers
+Users can provision assets using all Linchpin supported providers
 using the Linchpin plugin.
 
 First the plugin must be installed.
@@ -449,10 +447,9 @@ supported by the linchpin provisioner.
 
 .. note::
 
-   Users who were using the linchpin provisoiner and using the **provider**
-   key, we will only be supported for OpenStack and Beaker Providers. It is highly
-   recommended that users migrate to using the new set of linchpin provisioner keys.
-   Refer to second example below.
+   **provider** key is no longer supported to be used with linchpin provisoiner
+   It is highly recommended that users migrate to using the new set of linchpin
+   provisioner keys.
 
 .. note::
 
@@ -510,9 +507,6 @@ This example uses a PinFile that has already been developed with specific target
 Example 2
 ~~~~~~~~~
 
-This example uses the more traditional way of provisioning with Teflo. It's recommended that users
-still using the **provider** key with the Linchpin provisioner should switch over to this style.
-
 .. code-block:: yaml
 
     ---
@@ -556,7 +550,7 @@ This example will provision 2 resources *openstack-node_0* and *openstack-node_1
 By default count value is 1.
 
 .. code-block:: yaml
-   
+
     provision:
     - name: openstack-node
       groups: node
