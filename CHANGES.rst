@@ -1,3 +1,17 @@
+Version 2.4.0 (2023-04-05)
+This will be the last official release!
+Bug Fixes and Documentation Modification
+~~~~~~~~~
+* Fixed ssh-python issue
+* fix to get collection playbook installed in default path
+* Correction in Rtd version and doc change 
+
+Maintenance
+~~~~~~~~~~~
+* Removed unsupported containers from github actions 
+* Raise error when provider key is used 
+* added reduced pre-commit hooks 
+
 Version 2.3.0 (2023-02-06)
 --------------------------
 
