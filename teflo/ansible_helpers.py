@@ -733,6 +733,7 @@ class AnsibleService(object):
             with open('shell-results-' + self.uid + '.json') as f:
 
                 my_json = json.load(f)
+                self.logger.info(f"This is the json format of 'shell-results-' + {self.uid} + '.json' : {my_json} \n")
                 for item in my_json:
                     sh_results['host'] = item['host_name']
                     sh_results['rc'] = int(item['rc'])
@@ -745,7 +746,8 @@ class AnsibleService(object):
                                       'logging in the teflo.cfg file and try again.')
 
         # remove Shell Results file
-        os.remove('shell-results-' + self.uid + '.json')
+        # TODO remove this comment
+        #os.remove('shell-results-' + self.uid + '.json')
 
         return sh_results
 
