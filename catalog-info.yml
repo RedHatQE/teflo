@@ -1,0 +1,15 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: teflo
+  title: Teflo
+  description: Teflo is a standalone orchestration software that controls the flow of a set of testing scenarios, allowing users to provision machines, deploy software, execute tests against them and manage generated artifacts and report results.
+  namespace: qe-tools
+  annotations:
+    github.com/project-slug: 'RedHatQE/teflo'
+    servicenow.com/appcode: CBN-001
+spec:
+  type: library
+  lifecycle: production
+  owner: user:redhat/rushinde
