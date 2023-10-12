@@ -118,7 +118,7 @@ class BeakerClientProvisionerPlugin(ProvisionerPlugin):
             conf_obj.write('KRB_KEYTAB = "%s"\n' % keytab)
             conf_obj.write('KRB_PRINCIPAL = "%s"\n' % self.provider_credentials[
                 'keytab_principal'])
-            conf_obj.write('KRB_REALM = "REDHAT.COM"\n')
+            conf_obj.write('KRB_REALM = "%s"\n' % self.provider_credentials.get('realm', 'IPA.REDHAT.COM'))
         conf_obj.close()
 
     def _connect(self):
