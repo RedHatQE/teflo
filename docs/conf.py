@@ -25,9 +25,9 @@ copyright = u'2022, Red Hat Inc.'
 author = u'Red Hat Inc.'
 
 # The short X.Y version
-version = u'2.4.0'
+version = u'2.4.1'
 # The full version, including alpha/beta/rc tags
-release = u'2.4.0'
+release = u'2.4.1'
 
 
 # -- General configuration ---------------------------------------------------
