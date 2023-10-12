@@ -1,3 +1,9 @@
+Version 2.4.1 (2023-10-12)
+--------------------------
+Bug Fixes
+~~~~~~~~~
+* Updated realm for beaker credentials
+
 Version 2.4.0 (2023-04-05)
 --------------------------
 This will be the last official release!
