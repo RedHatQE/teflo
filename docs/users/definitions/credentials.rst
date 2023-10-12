@@ -21,7 +21,7 @@ You need to define the **CREDENTIAL_PATH** and **VAULTPASS** fields
 in the **teflo.cfg**.
 
 .. note::
-    **For the VAULTPASS, you can also export it to be an enviroment variable,
+    **For the VAULTPASS, you can also export it to be an environment variable,
     so you can protect the password**
 
     the credentials can be either put in teflo.cfg OR put providing a separate credentials file. These are mutually exclusive
@@ -86,6 +86,11 @@ either keytab and keytab_principal or username and password:
         - String
         - False
 
+    *   - realm
+        - realm to be used. default is ipa.redhat.com
+        - String
+        - False
+
 
 Below is an example credentials section in the teflo.cfg file.  If the
 credential was defined as below, it should be referenced in your teflo
@@ -100,6 +105,7 @@ scenario descriptor by the host as **credential: beaker-creds**:
   username=<username>
   password=<password>
   ca_cert=<ca_cert_path>
+  realm=<realm to be used, default is ipa.redhat.com>
 
 The following is an example of a resource in the scenario descriptor file
 that references this credential:
